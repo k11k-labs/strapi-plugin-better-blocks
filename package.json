@@ -1,0 +1,99 @@
+{
+  "name": "strapi-plugin-better-blocks",
+  "version": "0.1.0",
+  "description": "An enhanced Rich Text (Blocks) field for Strapi with inline color picker and more",
+  "strapi": {
+    "kind": "plugin",
+    "name": "better-blocks",
+    "displayName": "Better Blocks",
+    "description": "An enhanced Rich Text (Blocks) field for Strapi with inline color picker and more"
+  },
+  "keywords": [
+    "strapi",
+    "plugin",
+    "rich-text",
+    "blocks",
+    "color-picker"
+  ],
+  "type": "commonjs",
+  "exports": {
+    "./package.json": "./package.json",
+    "./strapi-admin": {
+      "types": "./dist/admin/src/index.d.ts",
+      "source": "./admin/src/index.ts",
+      "import": "./dist/admin/index.mjs",
+      "require": "./dist/admin/index.js",
+      "default": "./dist/admin/index.js"
+    },
+    "./strapi-server": {
+      "types": "./dist/server/src/index.d.ts",
+      "source": "./server/src/index.ts",
+      "import": "./dist/server/index.mjs",
+      "require": "./dist/server/index.js",
+      "default": "./dist/server/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "yarn clean && strapi-plugin build --minify",
+    "clean": "rm -rf dist",
+    "lint": "prettier --check .",
+    "format": "prettier --write .",
+    "test:ts:front": "tsc -p admin/tsconfig.json",
+    "test:ts:back": "tsc -p server/tsconfig.json",
+    "verify": "strapi-plugin verify",
+    "watch": "strapi-plugin watch",
+    "watch:link": "strapi-plugin watch:link",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,md,yml,yaml,css}": "prettier --write"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@strapi/sdk-plugin": "^5.3.2",
+    "@strapi/strapi": "^5.12.5",
+    "@strapi/typescript-utils": "^5.12.5",
+    "@types/react": "^18.3.8",
+    "@types/react-dom": "^18.3.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.3",
+    "prettier": "^3.5.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.30.0",
+    "styled-components": "^6.1.17",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "@radix-ui/react-tooltip": "^1.0.0",
+    "@strapi/design-system": "^2.0.0",
+    "@strapi/icons": "^2.0.0",
+    "@strapi/strapi": "^5.0.0",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "react-intl": "^6.0.0 || ^7.0.0",
+    "react-router-dom": "^6.0.0",
+    "slate": "0.94.1",
+    "slate-history": "0.93.0",
+    "slate-react": "0.98.3",
+    "styled-components": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  },
+  "license": "MIT",
+  "author": "k11k-labs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks/issues"
+  },
+  "homepage": "https://github.com/k11k-labs/strapi-plugin-better-blocks#readme",
+  "packageManager": "yarn@1.22.22"
+}

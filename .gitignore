@@ -1,0 +1,103 @@
+############################
+# OS X
+############################
+
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+.Spotlight-V100
+.Trashes
+._*
+
+############################
+# Linux
+############################
+
+*~
+
+############################
+# Windows
+############################
+
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+############################
+# Packages
+############################
+
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+############################
+# Logs and databases
+############################
+
+.tmp
+*.log
+*.sql
+*.sqlite
+*.sqlite3
+
+############################
+# Misc.
+############################
+
+*#
+ssl
+.idea
+nbproject
+
+############################
+# Node.js
+############################
+
+lib-cov
+lcov.info
+pids
+logs
+results
+node_modules
+.node_history
+package-lock.json
+
+############################
+# Tests
+############################
+
+coverage
+junit.xml
+
+############################
+# Strapi
+############################
+
+.env
+.cache
+.strapi
+dist
+
+############################
+# Playground
+############################
+
+playground/strapi/node_modules
+playground/strapi/.tmp
+playground/strapi/.cache
+playground/strapi/.strapi
+playground/strapi/dist
+playground/strapi/build
+playground/strapi/yarn.lock
+playground/strapi/yarn-error.log
+playground/strapi/package-lock.json
+playground/strapi/.env
+playground/strapi/database

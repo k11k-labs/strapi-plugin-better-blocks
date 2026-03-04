@@ -1,0 +1,9 @@
+coverage/
+.github/
+.nvmrc
+.eslintrc
+.eslintignore
+*.map
+*.spec.*
+**/tests/**
+node_modules/
