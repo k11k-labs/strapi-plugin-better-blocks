@@ -1,0 +1,29 @@
+services:
+  # Strapi v5 — http://localhost:1337/admin
+  strapi:
+    image: node:20-alpine
+    working_dir: /app
+    entrypoint: ['/bin/sh', '/scripts/entrypoint.sh']
+    volumes:
+      # Plugin source (read-only, copied to /plugin-build by entrypoint)
+      - ./package.json:/plugin/package.json:ro
+      - ./yarn.lock:/plugin/yarn.lock:ro
+      - ./admin:/plugin/admin:ro
+      - ./server:/plugin/server:ro
+      - ./.prettierrc:/plugin/.prettierrc:ro
+      # Playground app
+      - ./playground/strapi:/app
+      # Entrypoint script
+      - ./playground/scripts:/scripts:ro
+      # Persist node_modules across restarts
+      - strapi_node_modules:/app/node_modules
+    ports:
+      - '1337:1337'
+    environment:
+      HOST: 0.0.0.0
+      PORT: 1337
+      DATABASE_CLIENT: sqlite
+      NODE_ENV: development
+
+volumes:
+  strapi_node_modules:
