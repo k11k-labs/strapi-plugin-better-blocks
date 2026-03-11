@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import * as path from 'path';
 import type { Core } from '@strapi/strapi';
 import seedArticle from './seed-article.json';
 
@@ -74,8 +76,59 @@ export default {
     const articleCount = await strapi.db.query('api::article.article').count();
 
     if (articleCount === 0) {
+      // Upload the seed SVG image to Media Library
+      const svgPath = path.join(__dirname, 'better-blocks.svg');
+      let uploadedImage: Record<string, unknown> | null = null;
+
+      if (fs.existsSync(svgPath)) {
+        const stats = fs.statSync(svgPath);
+        const uploadService = strapi.plugin('upload').service('upload');
+
+        const [uploaded] = await uploadService.upload({
+          data: {
+            fileInfo: {
+              name: 'better-blocks.svg',
+              alternativeText: 'Better Blocks logo',
+              caption: 'Better Blocks plugin banner',
+            },
+          },
+          files: {
+            path: svgPath,
+            name: 'better-blocks.svg',
+            type: 'image/svg+xml',
+            size: stats.size,
+          },
+        });
+
+        uploadedImage = uploaded;
+        strapi.log.info('Uploaded seed image: better-blocks.svg');
+      }
+
+      // Build article data, replacing placeholder image with uploaded one
+      const articleData = JSON.parse(JSON.stringify(seedArticle));
+      if (uploadedImage) {
+        const imageBlock = articleData.content.find(
+          (block: any) => block.type === 'image'
+        );
+        if (imageBlock) {
+          imageBlock.image = {
+            name: uploadedImage.name,
+            alternativeText:
+              uploadedImage.alternativeText || 'Better Blocks logo',
+            url: uploadedImage.url,
+            width: uploadedImage.width || 600,
+            height: uploadedImage.height || 200,
+            formats: uploadedImage.formats || {},
+            hash: uploadedImage.hash,
+            ext: uploadedImage.ext,
+            mime: uploadedImage.mime,
+            size: uploadedImage.size,
+          };
+        }
+      }
+
       const article = await strapi.documents('api::article.article').create({
-        data: seedArticle as any,
+        data: articleData as any,
       });
 
       await strapi.documents('api::article.article').publish({
