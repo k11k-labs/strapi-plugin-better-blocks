@@ -1,296 +1,11 @@
 import type { Core } from '@strapi/strapi';
-
-const SEED_ADMIN = {
-  username: 'admin',
-  password: 'Admin1234!',
-  firstname: 'Admin',
-  lastname: 'User',
-  email: 'admin@example.com',
-  blocked: false,
-  isActive: true,
-};
-
-const SEED_ARTICLE_CONTENT = [
-  {
-    type: 'heading',
-    level: 1,
-    children: [
-      { type: 'text', text: 'Better Blocks Renderer — Feature Showcase' },
-    ],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      { type: 'text', text: 'This article demonstrates ' },
-      { type: 'text', text: 'every feature', bold: true },
-      { type: 'text', text: ' supported by the renderer.' },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 2,
-    children: [{ type: 'text', text: 'Standard Text Modifiers' }],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      { type: 'text', text: 'Bold text', bold: true },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Italic text', italic: true },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Underlined text', underline: true },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Strikethrough text', strikethrough: true },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Inline code', code: true },
-    ],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      { type: 'text', text: 'Combined: ', bold: true, italic: true },
-      {
-        type: 'text',
-        text: 'bold + italic + underline',
-        bold: true,
-        italic: true,
-        underline: true,
-      },
-      { type: 'text', text: ' and ' },
-      {
-        type: 'text',
-        text: 'bold + strikethrough',
-        bold: true,
-        strikethrough: true,
-      },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 2,
-    children: [
-      {
-        type: 'text',
-        text: 'Better Blocks: Color & Highlight',
-        color: '#7C3AED',
-      },
-    ],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      { type: 'text', text: 'Red text', color: '#E53E3E' },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Blue text', color: '#3182CE' },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Green text', color: '#38A169' },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Purple text', color: '#7C3AED' },
-    ],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      { type: 'text', text: 'Yellow highlight', backgroundColor: '#FEFCBF' },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Pink highlight', backgroundColor: '#FED7D7' },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Blue highlight', backgroundColor: '#BEE3F8' },
-      { type: 'text', text: ' · ' },
-      { type: 'text', text: 'Green highlight', backgroundColor: '#C6F6D5' },
-    ],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      {
-        type: 'text',
-        text: 'Red on yellow',
-        color: '#E53E3E',
-        backgroundColor: '#FEFCBF',
-      },
-      { type: 'text', text: ' · ' },
-      {
-        type: 'text',
-        text: 'Bold blue on pink',
-        bold: true,
-        color: '#3182CE',
-        backgroundColor: '#FED7D7',
-      },
-      { type: 'text', text: ' · ' },
-      {
-        type: 'text',
-        text: 'Italic green on blue',
-        italic: true,
-        color: '#38A169',
-        backgroundColor: '#BEE3F8',
-      },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 2,
-    children: [{ type: 'text', text: 'Links' }],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      { type: 'text', text: 'Check out ' },
-      {
-        type: 'link',
-        url: 'https://github.com/k11k-labs/better-blocks-react-renderer',
-        children: [{ type: 'text', text: 'the repo on GitHub' }],
-      },
-      { type: 'text', text: ' and ' },
-      {
-        type: 'link',
-        url: 'https://github.com/k11k-labs/strapi-plugin-better-blocks',
-        children: [{ type: 'text', text: 'the Strapi plugin', bold: true }],
-      },
-      { type: 'text', text: '.' },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 2,
-    children: [{ type: 'text', text: 'Lists' }],
-  },
-  {
-    type: 'heading',
-    level: 3,
-    children: [{ type: 'text', text: 'Unordered list' }],
-  },
-  {
-    type: 'list',
-    format: 'unordered',
-    children: [
-      {
-        type: 'list-item',
-        children: [{ type: 'text', text: 'First item' }],
-      },
-      {
-        type: 'list-item',
-        children: [
-          { type: 'text', text: 'Second item with ' },
-          { type: 'text', text: 'bold', bold: true },
-        ],
-      },
-      {
-        type: 'list',
-        format: 'unordered',
-        children: [
-          {
-            type: 'list-item',
-            children: [{ type: 'text', text: 'Nested item' }],
-          },
-          {
-            type: 'list-item',
-            children: [
-              {
-                type: 'text',
-                text: 'Another nested item',
-                color: '#E53E3E',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'list-item',
-        children: [{ type: 'text', text: 'Third item' }],
-      },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 3,
-    children: [{ type: 'text', text: 'Ordered list' }],
-  },
-  {
-    type: 'list',
-    format: 'ordered',
-    children: [
-      {
-        type: 'list-item',
-        children: [{ type: 'text', text: 'Step one' }],
-      },
-      {
-        type: 'list-item',
-        children: [{ type: 'text', text: 'Step two' }],
-      },
-      {
-        type: 'list-item',
-        children: [{ type: 'text', text: 'Step three' }],
-      },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 2,
-    children: [{ type: 'text', text: 'Blockquote' }],
-  },
-  {
-    type: 'quote',
-    children: [
-      {
-        type: 'text',
-        text: 'The best way to predict the future is to invent it.',
-        italic: true,
-      },
-      { type: 'text', text: ' — Alan Kay' },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 2,
-    children: [{ type: 'text', text: 'Code Block' }],
-  },
-  {
-    type: 'code',
-    children: [
-      {
-        type: 'text',
-        text: "import { BlocksRenderer } from '@k11k/better-blocks-react-renderer';\n\n<BlocksRenderer content={blocks} />",
-      },
-    ],
-  },
-  {
-    type: 'heading',
-    level: 2,
-    children: [{ type: 'text', text: 'Image' }],
-  },
-  {
-    type: 'image',
-    image: {
-      url: 'https://placehold.co/600x200/7C3AED/white?text=Better+Blocks',
-      alternativeText: 'Better Blocks placeholder image',
-      width: 600,
-      height: 200,
-    },
-    children: [{ type: 'text', text: '' }],
-  },
-  {
-    type: 'paragraph',
-    children: [{ type: 'text', text: '' }],
-  },
-  {
-    type: 'paragraph',
-    children: [
-      {
-        type: 'text',
-        text: 'All features working!',
-        bold: true,
-        color: '#38A169',
-      },
-    ],
-  },
-];
+import seedArticle from './seed-article.json';
 
 export default {
-  register(/* { strapi }: { strapi: Core.Strapi } */) {},
+  register() {},
 
   async bootstrap({ strapi }: { strapi: Core.Strapi }) {
-    // Seed admin user
+    // Create default admin user if none exists
     const adminCount = await strapi.db.query('admin::user').count();
 
     if (adminCount === 0) {
@@ -301,33 +16,73 @@ export default {
       if (superAdminRole) {
         const hashedPassword = await strapi
           .service('admin::auth')
-          .hashPassword(SEED_ADMIN.password);
+          .hashPassword('admin12#');
         await strapi.db.query('admin::user').create({
           data: {
-            ...SEED_ADMIN,
+            username: 'admin',
+            email: 'admin@example.com',
+            firstname: 'Admin',
+            lastname: 'User',
             password: hashedPassword,
+            isActive: true,
+            blocked: false,
+            registrationToken: null,
             roles: [superAdminRole.id],
           },
         });
-        console.log(
-          '✓ Seed: admin user created (admin@example.com / Admin1234!)'
+        strapi.log.info(
+          'Created default admin user (admin@example.com / admin12#)'
         );
       }
     }
 
-    // Seed article
+    // Enable public access to Article find & findOne
+    const publicRole = await strapi.db
+      .query('plugin::users-permissions.role')
+      .findOne({ where: { type: 'public' } });
+
+    if (publicRole) {
+      const existing = await strapi.db
+        .query('plugin::users-permissions.permission')
+        .findMany({
+          where: {
+            role: publicRole.id,
+            action: { $startsWith: 'api::article' },
+          },
+        });
+
+      if (existing.length === 0) {
+        const actions = [
+          'api::article.article.find',
+          'api::article.article.findOne',
+        ];
+
+        for (const action of actions) {
+          await strapi.db.query('plugin::users-permissions.permission').create({
+            data: {
+              action,
+              role: publicRole.id,
+            },
+          });
+        }
+
+        strapi.log.info('Enabled public access for Article find & findOne');
+      }
+    }
+
+    // Seed showcase article if no articles exist
     const articleCount = await strapi.db.query('api::article.article').count();
 
     if (articleCount === 0) {
-      await strapi.db.query('api::article.article').create({
-        data: {
-          content: SEED_ARTICLE_CONTENT,
-          publishedAt: new Date(),
-        },
+      const article = await strapi.documents('api::article.article').create({
+        data: seedArticle as any,
       });
-      console.log(
-        '✓ Seed: demo article created with all Better Blocks features'
-      );
+
+      await strapi.documents('api::article.article').publish({
+        documentId: article.documentId,
+      });
+
+      strapi.log.info('Created and published seed showcase article');
     }
   },
 };
