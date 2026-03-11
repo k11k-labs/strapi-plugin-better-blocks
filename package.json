@@ -10,10 +10,21 @@
   },
   "keywords": [
     "strapi",
-    "plugin",
+    "strapi-plugin",
+    "strapi-v5",
     "rich-text",
     "blocks",
-    "color-picker"
+    "blocks-editor",
+    "editor",
+    "color",
+    "color-picker",
+    "highlight",
+    "text-color",
+    "background-color",
+    "custom-field",
+    "cms",
+    "headless-cms",
+    "slate"
   ],
   "type": "commonjs",
   "exports": {
