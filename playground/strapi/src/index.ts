@@ -84,6 +84,13 @@ export default {
         const stats = fs.statSync(svgPath);
         const uploadService = strapi.plugin('upload').service('upload');
 
+        const fileStat = {
+          name: 'better-blocks.svg',
+          type: 'image/svg+xml',
+          size: stats.size,
+          getStream: () => fs.createReadStream(svgPath),
+        };
+
         const [uploaded] = await uploadService.upload({
           data: {
             fileInfo: {
@@ -92,12 +99,7 @@ export default {
               caption: 'Better Blocks plugin banner',
             },
           },
-          files: {
-            path: svgPath,
-            name: 'better-blocks.svg',
-            type: 'image/svg+xml',
-            size: stats.size,
-          },
+          files: fileStat,
         });
 
         uploadedImage = uploaded;
