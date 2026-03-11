@@ -77,7 +77,7 @@ export default {
 
     if (articleCount === 0) {
       // Upload the seed SVG image to Media Library
-      const svgPath = path.join(__dirname, 'better-blocks.svg');
+      const svgPath = path.resolve(process.cwd(), 'src', 'better-blocks.svg');
       let uploadedImage: Record<string, unknown> | null = null;
 
       if (fs.existsSync(svgPath)) {
