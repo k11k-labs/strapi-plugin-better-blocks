@@ -23,7 +23,7 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
     "styled-components": "^6.0.0",
-    "strapi-plugin-better-blocks": "file:../../"
+    "@k11k/strapi-plugin-better-blocks": "file:../../"
   },
   "devDependencies": {
     "@types/node": "^20",

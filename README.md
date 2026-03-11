@@ -3,14 +3,14 @@
 <p align="center">An enhanced Rich Text (Blocks) editor for Strapi v5 with inline text color, background highlight, and more.</p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/strapi-plugin-better-blocks">
-    <img alt="npm version" src="https://img.shields.io/npm/v/strapi-plugin-better-blocks.svg" />
+  <a href="https://www.npmjs.com/package/@k11k/strapi-plugin-better-blocks">
+    <img alt="npm version" src="https://img.shields.io/npm/v/@k11k/strapi-plugin-better-blocks.svg" />
   </a>
-  <a href="https://www.npmjs.com/package/strapi-plugin-better-blocks">
-    <img alt="npm downloads" src="https://img.shields.io/npm/dm/strapi-plugin-better-blocks.svg" />
+  <a href="https://www.npmjs.com/package/@k11k/strapi-plugin-better-blocks">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dm/@k11k/strapi-plugin-better-blocks.svg" />
   </a>
   <a href="https://github.com/k11k-labs/strapi-plugin-better-blocks/blob/main/LICENSE">
-    <img alt="license" src="https://img.shields.io/npm/l/strapi-plugin-better-blocks.svg" />
+    <img alt="license" src="https://img.shields.io/npm/l/@k11k/strapi-plugin-better-blocks.svg" />
   </a>
 </p>
 
@@ -53,10 +53,10 @@
 
 ```bash
 # Using yarn
-yarn add strapi-plugin-better-blocks
+yarn add @k11k/strapi-plugin-better-blocks
 
 # Using npm
-npm install strapi-plugin-better-blocks
+npm install @k11k/strapi-plugin-better-blocks
 ```
 
 After installation, rebuild your Strapi admin panel:
