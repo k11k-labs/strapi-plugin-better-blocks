@@ -164,7 +164,7 @@ Neutral:#EDF2F7
 
 - **Node.js** &ge; 20.0.0
 - **Strapi** v5.x
-- **Slate** 0.94.1 (provided by Strapi)
+- **Slate** 0.94.1 (bundled with Strapi)
 
 ## Contributing
 
