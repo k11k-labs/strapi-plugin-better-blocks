@@ -1,6 +1,7 @@
 import { PLUGIN_ID } from './pluginId';
 import { Initializer } from './components/Initializer';
 import { PluginIcon } from './components/PluginIcon';
+import Input from './components/Input';
 import * as yup from 'yup';
 
 export default {
@@ -28,7 +29,7 @@ export default {
           'An enhanced Rich Text (Blocks) field with inline color picker and more',
       },
       components: {
-        Input: async () => import('./components/Input'),
+        Input: async () => ({ default: Input }),
       },
       options: {
         base: [

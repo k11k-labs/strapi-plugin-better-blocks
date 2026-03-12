@@ -101,3 +101,4 @@ playground/strapi/yarn-error.log
 playground/strapi/package-lock.json
 playground/strapi/.env
 playground/strapi/database
+playground/strapi/public/uploads

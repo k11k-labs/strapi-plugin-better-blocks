@@ -81,7 +81,9 @@
     "typescript": "^5.8.3"
   },
   "peerDependencies": {
+    "@radix-ui/react-toolbar": "^1.0.0",
     "@radix-ui/react-tooltip": "^1.0.0",
+    "@strapi/admin": "^5.0.0",
     "@strapi/design-system": "^2.0.0",
     "@strapi/icons": "^2.0.0",
     "@strapi/strapi": "^5.0.0",

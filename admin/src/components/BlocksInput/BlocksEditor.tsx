@@ -19,6 +19,7 @@ import { getTranslation } from '../../utils/getTranslation';
 
 import { codeBlocks } from './Blocks/Code';
 import { headingBlocks } from './Blocks/Heading';
+import { imageBlocks, withImages } from './Blocks/Image';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
 import { paragraphBlocks } from './Blocks/Paragraph';
@@ -71,6 +72,7 @@ const selectorBlockKeys = [
   'heading-six',
   'list-ordered',
   'list-unordered',
+  'image',
   'quote',
   'code',
 ] as const;
@@ -213,7 +215,13 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
   ) => {
     const { formatMessage } = useIntl();
     const [editor] = React.useState(() =>
-      pipe(withHistory, withStrapiSchema, withReact, withLinks)(createEditor())
+      pipe(
+        withHistory,
+        withStrapiSchema,
+        withReact,
+        withLinks,
+        withImages
+      )(createEditor())
     );
     const [liveText, setLiveText] = React.useState('');
     const ariaDescriptionId = React.useId();
@@ -294,6 +302,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...headingBlocks,
         ...listBlocks,
         ...linkBlocks,
+        ...imageBlocks,
         ...quoteBlocks,
         ...codeBlocks,
       }),
