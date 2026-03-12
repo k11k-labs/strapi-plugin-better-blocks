@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.2.1
+
+### Patch Changes
+
+- [#12](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/12) [`c066f0f`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/c066f0f615d63168c03350fc70fd9ee32df2eeee) Thanks [@kkukielka](https://github.com/kkukielka)! - Add Frontend Rendering section to README with link to @k11k/better-blocks-react-renderer.
+
 ## 0.2.0
 
 ### Minor Changes
