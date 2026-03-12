@@ -28,8 +28,9 @@
 4. [Configuration](#configuration)
 5. [Usage](#usage)
 6. [Custom Color Presets](#custom-color-presets)
-7. [Contributing](#contributing)
-8. [License](#license)
+7. [Frontend Rendering](#frontend-rendering)
+8. [Contributing](#contributing)
+9. [License](#license)
 
 ---
 
@@ -159,6 +160,30 @@ Neutral:#EDF2F7
 **Text colors:** Teal, Dark, Gray, Light Gray, Silver, Medium Gray, White
 
 **Background colors:** Yellow, Green, Blue, Pink, Purple, Orange, Gray, Teal, Red, Cyan
+
+## Frontend Rendering
+
+To render Better Blocks content in your React frontend, use the companion renderer:
+
+```bash
+# Using yarn
+yarn add @k11k/better-blocks-react-renderer
+
+# Using npm
+npm install @k11k/better-blocks-react-renderer
+```
+
+```tsx
+import { BlocksRenderer } from '@k11k/better-blocks-react-renderer';
+
+const MyComponent = ({ content }) => {
+  return <BlocksRenderer content={content} />;
+};
+```
+
+The renderer supports all Better Blocks features including text colors, background highlights, images, and all standard block types.
+
+See the [@k11k/better-blocks-react-renderer](https://github.com/k11k-labs/better-blocks-react-renderer) repository for full documentation.
 
 ## Requirements
 
