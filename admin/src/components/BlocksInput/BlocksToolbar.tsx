@@ -250,7 +250,6 @@ const BlocksDropdown = () => {
     handleConversionResult(maybeRenderModal);
 
     setBlockSelected(optionKey);
-
     ReactEditor.focus(editor as ReactEditor);
   };
 
