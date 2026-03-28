@@ -26,6 +26,34 @@ const CountBadge = styled.span`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.neutral600};
   white-space: nowrap;
+  min-width: 32px;
+  text-align: right;
+`;
+
+const NavBtn = styled.button`
+  background: ${({ theme }) => theme.colors.neutral100};
+  border: 1px solid ${({ theme }) => theme.colors.neutral200};
+  border-radius: ${({ theme }) => theme.borderRadius};
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 10px;
+  color: ${({ theme }) => theme.colors.neutral600};
+  flex-shrink: 0;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.colors.primary100};
+    color: ${({ theme }) => theme.colors.primary600};
+    border-color: ${({ theme }) => theme.colors.primary200};
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
 `;
 
 /* ---------------------------------------------------------------------------
@@ -47,6 +75,10 @@ const decorateSearchMatches = (editor: any) => {
   if (!search) return () => [] as Range[];
 
   const searchLower = search.toLowerCase();
+  const activeIndex: number = (editor as any).__findReplaceActiveIndex ?? 0;
+
+  // Count matches globally to know which one is "active"
+  let globalMatchCounter = 0;
 
   return ([node, path]: [any, number[]]): Range[] => {
     if (!Text.isText(node)) return [];
@@ -56,11 +88,14 @@ const decorateSearchMatches = (editor: any) => {
     while (true) {
       const index = textLower.indexOf(searchLower, offset);
       if (index === -1) break;
+      const isActive = globalMatchCounter === activeIndex;
       ranges.push({
         anchor: { path, offset: index },
         focus: { path, offset: index + search.length },
-        highlight: true,
-      } as Range & { highlight: boolean });
+        searchHighlight: true,
+        searchHighlightActive: isActive,
+      } as any);
+      globalMatchCounter++;
       offset = index + 1;
     }
     return ranges;
@@ -98,12 +133,12 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
     return matches;
   }, [editor, searchText]);
 
-  // Store search text on editor and force Slate to re-decorate
+  // Store search text + active index on editor and force Slate to re-decorate
   React.useEffect(() => {
     (editor as any).__findReplaceSearch = open ? searchText : '';
-    // Trigger a re-render of the editor so decorate picks up the new search
+    (editor as any).__findReplaceActiveIndex = currentMatch;
     editor.onChange();
-  }, [editor, searchText, open]);
+  }, [editor, searchText, open, currentMatch]);
 
   React.useEffect(() => {
     const matches = findMatches();
@@ -198,33 +233,16 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
         </Box>
       </Popover.Trigger>
       <Popover.Content onPointerDownOutside={() => setOpen(false)}>
-        <Flex direction="column" gap={3} padding={4} style={{ width: '340px' }}>
+        <Flex direction="column" gap={3} padding={4} style={{ width: '360px' }}>
           {/* Header */}
-          <Flex justifyContent="space-between" alignItems="center">
-            <Box style={{ fontWeight: 600, fontSize: '14px' }}>
-              {formatMessage({
-                id: 'components.Blocks.findReplace.title',
-                defaultMessage: 'Find and replace',
-              })}
-            </Box>
-            <Box
-              tag="button"
-              style={{
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                fontSize: '18px',
-                lineHeight: 1,
-                padding: '2px',
-              }}
-              onMouseDown={(e: React.MouseEvent) => {
-                e.preventDefault();
-                setOpen(false);
-              }}
-            >
-              &times;
-            </Box>
-          </Flex>
+          <Box
+            style={{ fontWeight: 600, fontSize: '14px', textAlign: 'center' }}
+          >
+            {formatMessage({
+              id: 'components.Blocks.findReplace.title',
+              defaultMessage: 'Find and replace',
+            })}
+          </Box>
 
           {/* Find row */}
           <Flex gap={2} alignItems="center">
@@ -249,51 +267,35 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
                 }}
               />
             </Field.Root>
-            <Flex gap={1} alignItems="center">
-              <Box
-                tag="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  padding: '4px',
-                }}
-                title="Previous"
-                onMouseDown={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  handlePrev();
-                }}
-              >
-                &#8593;
-              </Box>
-              <Box
-                tag="button"
-                style={{
-                  background: 'none',
-                  border: 'none',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                  padding: '4px',
-                }}
-                title="Next"
-                onMouseDown={(e: React.MouseEvent) => {
-                  e.preventDefault();
-                  handleNext();
-                }}
-              >
-                &#8595;
-              </Box>
-              <CountBadge>
-                {searchText
-                  ? `${matchCount > 0 ? currentMatch + 1 : 0}/${matchCount}`
-                  : ''}
-              </CountBadge>
-            </Flex>
+            <NavBtn
+              title="Previous"
+              disabled={matchCount === 0}
+              onMouseDown={(e: React.MouseEvent) => {
+                e.preventDefault();
+                handlePrev();
+              }}
+            >
+              &#9650;
+            </NavBtn>
+            <NavBtn
+              title="Next"
+              disabled={matchCount === 0}
+              onMouseDown={(e: React.MouseEvent) => {
+                e.preventDefault();
+                handleNext();
+              }}
+            >
+              &#9660;
+            </NavBtn>
+            <CountBadge>
+              {searchText
+                ? `${matchCount > 0 ? currentMatch + 1 : 0}/${matchCount}`
+                : ''}
+            </CountBadge>
           </Flex>
 
           {/* Replace row */}
-          <Field.Root>
+          <Field.Root width="100%">
             <Field.Input
               name="replace"
               placeholder={formatMessage({

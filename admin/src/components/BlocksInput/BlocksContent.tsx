@@ -421,17 +421,24 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
       // Apply inline color and background color if present
       const leafColor = (props.leaf as any).color;
       const leafBgColor = (props.leaf as any).backgroundColor;
-      const isSearchHighlight = (props.leaf as any).highlight;
+      const isSearchHighlight = (props.leaf as any).searchHighlight;
+      const isSearchActive = (props.leaf as any).searchHighlightActive;
       const style: React.CSSProperties = {
         ...(leafColor ? { color: leafColor } : {}),
         ...(leafBgColor ? { backgroundColor: leafBgColor } : {}),
-        ...(isSearchHighlight
+        ...(isSearchActive
           ? {
-              backgroundColor: '#fbbf24',
-              color: '#1c1c1e',
+              backgroundColor: '#f97316',
+              color: '#ffffff',
               borderRadius: '2px',
             }
-          : {}),
+          : isSearchHighlight
+            ? {
+                backgroundColor: '#fbbf24',
+                color: '#1c1c1e',
+                borderRadius: '2px',
+              }
+            : {}),
       };
 
       return (
