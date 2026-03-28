@@ -134,6 +134,37 @@ const TableElement = ({
     });
   };
 
+  const removeRow = () => {
+    allowTableEdit(editor, () => {
+      const tableNode = element as any;
+      // Don't remove if only 1 data row + header
+      if (tableNode.children.length <= 2) return;
+      // Remove last non-header row
+      Transforms.removeNodes(editor, {
+        at: [...path, tableNode.children.length - 1],
+      });
+    });
+  };
+
+  const removeColumn = () => {
+    allowTableEdit(editor, () => {
+      const tableNode = element as any;
+      const colCount = tableNode.children[0]?.children?.length || 0;
+      // Don't remove if only 1 column
+      if (colCount <= 1) return;
+      // Remove last column from each row (reverse order for stable paths)
+      for (
+        let rowIndex = tableNode.children.length - 1;
+        rowIndex >= 0;
+        rowIndex--
+      ) {
+        Transforms.removeNodes(editor, {
+          at: [...path, rowIndex, colCount - 1],
+        });
+      }
+    });
+  };
+
   const removeTable = () => {
     allowTableEdit(editor, () => {
       Transforms.removeNodes(editor, { at: path });
@@ -164,6 +195,22 @@ const TableElement = ({
             }}
           >
             + Col
+          </ActionBtn>
+          <ActionBtn
+            onMouseDown={(e) => {
+              e.preventDefault();
+              removeRow();
+            }}
+          >
+            - Row
+          </ActionBtn>
+          <ActionBtn
+            onMouseDown={(e) => {
+              e.preventDefault();
+              removeColumn();
+            }}
+          >
+            - Col
           </ActionBtn>
           <ActionBtn
             onMouseDown={(e) => {
