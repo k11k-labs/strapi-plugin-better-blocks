@@ -55,8 +55,11 @@ const insertLink = (editor: Editor, { url }: { url: string }) => {
   }
 };
 
-const editLink = (editor: Editor, link: { url: string; text: string }) => {
-  const { url, text } = link;
+const editLink = (
+  editor: Editor,
+  link: { url: string; text: string; target?: '_blank'; rel?: string }
+) => {
+  const { url, text, target, rel } = link;
 
   if (!editor.selection) {
     return;
@@ -69,9 +72,15 @@ const editLink = (editor: Editor, link: { url: string; text: string }) => {
 
   if (linkEntry) {
     const [, linkPath] = linkEntry;
-    Transforms.setNodes<LinkNode>(editor, { url } as Partial<LinkNode>, {
-      at: linkPath,
-    });
+    Transforms.setNodes<LinkNode>(
+      editor,
+      {
+        url,
+        target: target ?? null,
+        rel: rel ?? null,
+      } as Partial<LinkNode>,
+      { at: linkPath }
+    );
 
     // If link text is different, we remove the old text and insert the new one
     if (text !== '' && text !== Editor.string(editor, linkPath)) {

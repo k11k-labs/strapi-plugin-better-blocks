@@ -19,6 +19,10 @@ import { getTranslation } from '../../utils/getTranslation';
 
 import { codeBlocks } from './Blocks/Code';
 import { headingBlocks } from './Blocks/Heading';
+import {
+  horizontalLineBlocks,
+  withHorizontalLine,
+} from './Blocks/HorizontalLine';
 import { imageBlocks, withImages } from './Blocks/Image';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
@@ -30,6 +34,7 @@ import { EditorLayout } from './EditorLayout';
 import { type ModifiersStore, modifiers } from './Modifiers';
 import { withLinks } from './plugins/withLinks';
 import { withStrapiSchema } from './plugins/withStrapiSchema';
+import { WordCount } from './WordCount';
 import { type Schema } from '@strapi/types';
 
 /* -------------------------------------------------------------------------------------------------
@@ -60,7 +65,7 @@ interface SelectorBlock extends BaseBlock {
   label: MessageDescriptor;
 }
 
-type NonSelectorBlockKey = 'list-item' | 'link';
+type NonSelectorBlockKey = 'list-item' | 'link' | 'horizontal-line';
 
 const selectorBlockKeys = [
   'paragraph',
@@ -220,7 +225,8 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withStrapiSchema,
         withReact,
         withLinks,
-        withImages
+        withImages,
+        withHorizontalLine
       )(createEditor())
     );
     const [liveText, setLiveText] = React.useState('');
@@ -305,6 +311,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...imageBlocks,
         ...quoteBlocks,
         ...codeBlocks,
+        ...horizontalLineBlocks,
       }),
       []
     ) satisfies BlocksStore;
@@ -346,6 +353,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
               <BlocksToolbar />
               <EditorDivider width="100%" />
               <BlocksContent {...contentProps} />
+              <WordCount />
               {!isExpandedMode && (
                 <ExpandIconButton
                   label={formatMessage({

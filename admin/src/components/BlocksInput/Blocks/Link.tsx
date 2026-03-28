@@ -3,6 +3,7 @@ import * as React from 'react';
 import {
   Box,
   Button,
+  Checkbox,
   Field,
   Flex,
   Popover,
@@ -55,6 +56,9 @@ const LinkContent = React.forwardRef<HTMLAnchorElement, LinkContentProps>(
       .join('');
     const [linkText, setLinkText] = React.useState(elementText);
     const [linkUrl, setLinkUrl] = React.useState(link.url);
+    const [openInNewTab, setOpenInNewTab] = React.useState(
+      link.target === '_blank'
+    );
     const linkInputRef = React.useRef<HTMLInputElement>(null);
     const isLastInsertedLink = editor.lastInsertedLinkPath
       ? !Path.equals(path, editor.lastInsertedLinkPath)
@@ -89,7 +93,12 @@ const LinkContent = React.forwardRef<HTMLAnchorElement, LinkContentProps>(
         Transforms.select(editor, parentPath);
       }
 
-      editLink(editor, { url: linkUrl, text: linkText });
+      editLink(editor, {
+        url: linkUrl,
+        text: linkText,
+        target: openInNewTab ? '_blank' : undefined,
+        rel: openInNewTab ? 'noopener noreferrer' : undefined,
+      });
       setPopoverOpen(false);
       editor.lastInsertedLinkPath = null;
       ReactEditor.focus(editor);
@@ -115,7 +124,8 @@ const LinkContent = React.forwardRef<HTMLAnchorElement, LinkContentProps>(
       (link.url &&
         link.url === linkUrl &&
         elementText &&
-        elementText === linkText);
+        elementText === linkText &&
+        openInNewTab === (link.target === '_blank'));
 
     return (
       <Popover.Root open={popoverOpen}>
@@ -125,6 +135,8 @@ const LinkContent = React.forwardRef<HTMLAnchorElement, LinkContentProps>(
             ref={forwardedRef}
             tag="a"
             href={link.url}
+            target={link.target}
+            rel={link.rel}
             onClick={() => setPopoverOpen(true)}
             color="primary600"
           >
@@ -174,6 +186,17 @@ const LinkContent = React.forwardRef<HTMLAnchorElement, LinkContentProps>(
                 />
               </Flex>
             </Field.Root>
+            <Flex width="368px">
+              <Checkbox
+                checked={openInNewTab}
+                onCheckedChange={(checked: boolean) => setOpenInNewTab(checked)}
+              >
+                {formatMessage({
+                  id: 'components.Blocks.popover.openInNewTab',
+                  defaultMessage: 'Open in new tab',
+                })}
+              </Checkbox>
+            </Flex>
             <Flex justifyContent="space-between" width="100%">
               <RemoveButton
                 variant="danger-light"
