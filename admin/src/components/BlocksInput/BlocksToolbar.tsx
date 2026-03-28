@@ -81,6 +81,9 @@ const ToolbarSeparator = styled(Flex)`
 `;
 
 const ToolbarWrapper = styled<FlexComponent>(Flex)`
+  flex-wrap: wrap;
+  align-items: center;
+
   &[aria-disabled='true'] {
     cursor: not-allowed;
     background: ${({ theme }) => theme.colors.neutral150};
@@ -1297,7 +1300,7 @@ const BlocksToolbar = () => {
         <InlineColorPicker />
         <ToolbarSeparator />
         <Toolbar.ToggleGroup type="multiple" asChild>
-          <Flex direction="row" gap={1} grow={1} overflow="hidden">
+          <Flex direction="row" gap={1} wrap="wrap">
             <EditorToolbarObserver observedComponents={observedComponents} />
           </Flex>
         </Toolbar.ToggleGroup>
