@@ -113,8 +113,11 @@ const CATEGORIES: Record<string, string[]> = {
 
 const CharGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
-  gap: 1px;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+  max-height: 180px;
+  overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 const CharBtn = styled.button`
@@ -208,7 +211,7 @@ const SpecialCharPicker = ({ disabled }: { disabled: boolean }) => {
         </Box>
       </Popover.Trigger>
       <Popover.Content onPointerDownOutside={() => setOpen(false)}>
-        <Flex direction="column" gap={2} padding={3} style={{ width: '340px' }}>
+        <Flex direction="column" gap={2} padding={3} style={{ width: '290px' }}>
           <TabsRow gap={1}>
             {Object.keys(CATEGORIES).map((cat) => (
               <CategoryTab
