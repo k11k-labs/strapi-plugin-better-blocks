@@ -23,6 +23,9 @@ const getElementStyle = (props: RenderElementProps): React.CSSProperties => {
   if (element.fontColor) {
     style.color = element.fontColor;
   }
+  if (element.textAlign) {
+    style.textAlign = element.textAlign as React.CSSProperties['textAlign'];
+  }
   return style;
 };
 

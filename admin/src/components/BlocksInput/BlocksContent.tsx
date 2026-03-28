@@ -452,10 +452,14 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
 
       // Link is inline block so it cannot be dragged
       // List items and nested list blocks (path depth > 1 means not a top-level editor child) are skipped from dragged items
+      const elType = (element as any).type;
       if (
         isLinkNode(element as any) ||
         (isListNode(element as any) && nodePath.length > 1) ||
-        (element as any).type === 'list-item'
+        elType === 'list-item' ||
+        elType === 'table-row' ||
+        elType === 'table-cell' ||
+        elType === 'table-header-cell'
       ) {
         return block.renderElement(props);
       }
