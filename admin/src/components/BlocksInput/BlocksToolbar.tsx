@@ -952,25 +952,28 @@ const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
   });
 
   return (
-    <Popover.Root open={showInput} onOpenChange={setShowInput}>
+    <Popover.Root open={showInput}>
       <Popover.Trigger>
-        <Tooltip label={label}>
-          <FlexButton
-            tag="button"
-            alignItems="center"
-            justifyContent="center"
-            width={7}
-            height={7}
-            hasRadius
-            aria-disabled={disabled}
-            aria-label={label}
-            onClick={() => !disabled && setShowInput(true)}
-          >
-            <Play fill={disabled ? 'neutral300' : 'neutral600'} />
-          </FlexButton>
-        </Tooltip>
+        <FlexButton
+          tag="button"
+          alignItems="center"
+          justifyContent="center"
+          width={7}
+          height={7}
+          hasRadius
+          aria-disabled={disabled}
+          aria-label={label}
+          title={label}
+          onMouseDown={(e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!disabled) setShowInput((v) => !v);
+          }}
+        >
+          <Play fill={disabled ? 'neutral300' : 'neutral600'} />
+        </FlexButton>
       </Popover.Trigger>
-      <Popover.Content>
+      <Popover.Content onPointerDownOutside={() => setShowInput(false)}>
         <Flex padding={3} direction="column" gap={3}>
           <Field.Root width="300px">
             <Flex direction="column" gap={1} alignItems="stretch">
