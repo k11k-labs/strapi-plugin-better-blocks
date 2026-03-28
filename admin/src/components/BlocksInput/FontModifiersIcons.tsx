@@ -214,6 +214,52 @@ export const AlignJustifyIcon = ({
   );
 };
 
+export const LineHeightIcon = ({
+  fill,
+  ...props
+}: React.SVGProps<SVGSVGElement> & { fill?: string }) => {
+  const { colors } = useTheme();
+  const c = fill
+    ? colors[fill as keyof typeof colors] || fill
+    : colors.neutral600;
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" {...props} fill="none">
+      <path
+        d="M11 6h10M11 12h10M11 18h10"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+      <path d="M5 4l-2 3h4L5 4zM5 20l-2-3h4l-2 3z" fill={c} />
+      <path d="M5 7v10" stroke={c} strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+};
+
+export const SpecialCharIcon = ({
+  fill,
+  ...props
+}: React.SVGProps<SVGSVGElement> & { fill?: string }) => {
+  const { colors } = useTheme();
+  const c = fill
+    ? colors[fill as keyof typeof colors] || fill
+    : colors.neutral600;
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" {...props} fill="none">
+      <text
+        x="4"
+        y="18"
+        fontFamily="serif"
+        fontSize="18"
+        fontWeight="400"
+        fill={c}
+      >
+        {'\u03A9'}
+      </text>
+    </svg>
+  );
+};
+
 export const Subsscript = ({ fill }: FontModifierIconProps) => {
   const { colors } = useTheme();
 

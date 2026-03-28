@@ -19,6 +19,7 @@ import {
   Link,
   Minus,
   PaintBrush,
+  PaintRoller,
   GridNine,
   Play,
   IndentIncrease,
@@ -71,7 +72,9 @@ import {
 } from './FontModifiersIcons';
 import { EmojiPicker } from './EmojiPicker';
 import { FindReplace } from './FindReplace';
+import { LineHeightIcon } from './FontModifiersIcons';
 import InlineColorPicker from './InlineColorPicker';
+import { SpecialCharPicker } from './SpecialCharPicker';
 
 const ToolbarSeparator = styled(Flex)`
   width: 1px;
@@ -1033,6 +1036,131 @@ const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
+const LINE_HEIGHT_OPTIONS = [
+  { value: undefined, label: 'Default' },
+  { value: '1', label: '1' },
+  { value: '1.15', label: '1.15' },
+  { value: '1.5', label: '1.5' },
+  { value: '2', label: '2' },
+  { value: '2.5', label: '2.5' },
+  { value: '3', label: '3' },
+];
+
+const LineHeightButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('LineHeightButton');
+  const { formatMessage } = useIntl();
+
+  const getCurrentLineHeight = (): string | undefined => {
+    if (!editor.selection) return undefined;
+    const [node] = Editor.parent(editor, editor.selection.anchor, {
+      edge: 'start',
+      depth: 2,
+    });
+    return (node as any).lineHeight;
+  };
+
+  const currentLH = getCurrentLineHeight();
+
+  const setLineHeight = (lh: string | undefined) => {
+    if (!editor.selection) return;
+    const entry = Editor.above(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        'type' in n &&
+        !['text', 'link', 'list-item'].includes((n as any).type),
+    });
+    if (entry) {
+      const [, path] = entry;
+      Transforms.setNodes(editor, { lineHeight: lh } as any, { at: path });
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <Menu.Root>
+      <Menu.Trigger disabled={disabled}>
+        <Tooltip
+          label={formatMessage({
+            id: 'components.Blocks.lineHeight',
+            defaultMessage: 'Line height',
+          })}
+        >
+          <FlexButton
+            tag="button"
+            alignItems="center"
+            justifyContent="center"
+            width={7}
+            height={7}
+            hasRadius
+            aria-disabled={disabled}
+          >
+            <LineHeightIcon fill={disabled ? 'neutral300' : 'neutral600'} />
+          </FlexButton>
+        </Tooltip>
+      </Menu.Trigger>
+      <Menu.Content>
+        {LINE_HEIGHT_OPTIONS.map((opt) => (
+          <StyledMenuItem
+            key={opt.label}
+            onSelect={() => setLineHeight(opt.value)}
+            $isActive={currentLH === opt.value}
+          >
+            {opt.label}
+          </StyledMenuItem>
+        ))}
+      </Menu.Content>
+    </Menu.Root>
+  );
+};
+
+const FormatPainterButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('FormatPainterButton');
+  const [storedMarks, setStoredMarks] = React.useState<Record<
+    string,
+    any
+  > | null>(null);
+
+  const handleClick = () => {
+    if (storedMarks) {
+      // Apply stored marks to current selection
+      if (editor.selection) {
+        Object.entries(storedMarks).forEach(([key, value]) => {
+          if (key !== 'type' && key !== 'text') {
+            if (value) {
+              Editor.addMark(editor, key, value);
+            } else {
+              Editor.removeMark(editor, key);
+            }
+          }
+        });
+      }
+      setStoredMarks(null);
+    } else {
+      // Copy marks from current selection
+      const marks = Editor.marks(editor);
+      if (marks) {
+        const { text, ...rest } = marks as any;
+        setStoredMarks(rest);
+      }
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <ToolbarButton
+      icon={PaintRoller}
+      name="formatPainter"
+      label={{
+        id: 'components.Blocks.formatPainter',
+        defaultMessage: 'Format painter',
+      }}
+      isActive={storedMarks !== null}
+      disabled={disabled}
+      handleClick={handleClick}
+    />
+  );
+};
+
 const IndentButton = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('IndentButton');
 
@@ -1306,6 +1434,7 @@ const BlocksToolbar = () => {
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
         <TextAlignButton disabled={isButtonDisabled} />
+        <LineHeightButton disabled={isButtonDisabled} />
         <Toolbar.ToggleGroup type="multiple" asChild>
           <Flex direction="row" gap={1}>
             <IndentButton disabled={isButtonDisabled} />
@@ -1315,7 +1444,9 @@ const BlocksToolbar = () => {
         <ToolbarSeparator />
         <Toolbar.ToggleGroup type="multiple" asChild>
           <Flex direction="row" gap={1}>
+            <FormatPainterButton disabled={isButtonDisabled} />
             <EmojiPicker disabled={isButtonDisabled} />
+            <SpecialCharPicker disabled={isButtonDisabled} />
             <InsertTableButton disabled={disabled} />
             <InsertMediaButton disabled={disabled} />
             <HorizontalLineButton disabled={disabled} />

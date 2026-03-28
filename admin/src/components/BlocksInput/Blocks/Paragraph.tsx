@@ -23,6 +23,9 @@ const paragraphBlocks: Pick<BlocksStore, 'paragraph'> = {
       if ((element as any).indent) {
         style.marginLeft = `${(element as any).indent * 2}rem`;
       }
+      if ((element as any).lineHeight) {
+        style.lineHeight = (element as any).lineHeight;
+      }
 
       return (
         <Typography tag="p" variant="omega" {...props.attributes} style={style}>
