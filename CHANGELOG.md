@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.3.0
+
+### Minor Changes
+
+- [#14](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/14) [`677e545`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/677e5452a3bfa2b71d45bfb7c1eced53aaaaa1af) Thanks [@kkukielka](https://github.com/kkukielka)! - Add nested lists with per-level format switching. Users can infinitely nest lists using Tab to indent and Shift+Tab to outdent, and independently choose ordered or unordered format at each nesting level via the toolbar.
+
 ## 0.2.1
 
 ### Patch Changes
