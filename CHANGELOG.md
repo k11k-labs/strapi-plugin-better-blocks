@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.4.0
+
+### Minor Changes
+
+- [#18](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/18) [`8b08055`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/8b08055105c39f8a00d9e6db770c354b5de7c707) Thanks [@kkukielka](https://github.com/kkukielka)! - Add Phase 1 editor improvements: horizontal line insert button, undo/redo toolbar buttons, remove formatting button, link "open in new tab" option, and word/character count footer bar.
+
 ## 0.3.0
 
 ### Minor Changes
