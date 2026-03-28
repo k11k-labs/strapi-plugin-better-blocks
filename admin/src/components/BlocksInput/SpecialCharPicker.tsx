@@ -1,5 +1,11 @@
 import * as React from 'react';
-import { Box, Flex, Popover, Field } from '@strapi/design-system';
+import {
+  Box,
+  Flex,
+  Popover,
+  SingleSelect,
+  SingleSelectOption,
+} from '@strapi/design-system';
 import { useIntl } from 'react-intl';
 import { Transforms } from 'slate';
 import { ReactEditor } from 'slate-react';
@@ -139,32 +145,6 @@ const CharBtn = styled.button`
   }
 `;
 
-const CategoryTab = styled.button<{ $active: boolean }>`
-  background: ${({ theme, $active }) =>
-    $active ? theme.colors.primary100 : 'none'};
-  border: 1px solid
-    ${({ theme, $active }) =>
-      $active ? theme.colors.primary200 : 'transparent'};
-  color: ${({ theme, $active }) =>
-    $active ? theme.colors.primary600 : theme.colors.neutral600};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: 3px 8px;
-  font-size: 12px;
-  cursor: pointer;
-  white-space: nowrap;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary100};
-  }
-`;
-
-const TabsRow = styled(Flex)`
-  overflow-x: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
 const SpecialCharPicker = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('SpecialCharPicker');
   const { formatMessage } = useIntl();
@@ -212,20 +192,16 @@ const SpecialCharPicker = ({ disabled }: { disabled: boolean }) => {
       </Popover.Trigger>
       <Popover.Content onPointerDownOutside={() => setOpen(false)}>
         <Flex direction="column" gap={2} padding={3} style={{ width: '290px' }}>
-          <TabsRow gap={1}>
+          <SingleSelect
+            value={category}
+            onChange={(val: unknown) => setCategory(val as string)}
+          >
             {Object.keys(CATEGORIES).map((cat) => (
-              <CategoryTab
-                key={cat}
-                $active={category === cat}
-                onMouseDown={(e) => {
-                  e.preventDefault();
-                  setCategory(cat);
-                }}
-              >
+              <SingleSelectOption key={cat} value={cat}>
                 {cat}
-              </CategoryTab>
+              </SingleSelectOption>
             ))}
-          </TabsRow>
+          </SingleSelect>
           <CharGrid>
             {(CATEGORIES[category] || []).map((char, i) => (
               <CharBtn
