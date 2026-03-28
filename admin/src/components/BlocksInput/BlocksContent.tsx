@@ -40,6 +40,7 @@ import { getTranslation } from '../../utils/getTranslation';
 import { decorateCode } from './Blocks/Code';
 import { useBlocksEditorContext } from './BlocksEditor';
 import { useConversionModal } from './BlocksToolbar';
+import { decorateSearchMatches } from './FindReplace';
 import {
   CustomElement,
   getEntries,
@@ -420,9 +421,17 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
       // Apply inline color and background color if present
       const leafColor = (props.leaf as any).color;
       const leafBgColor = (props.leaf as any).backgroundColor;
+      const isSearchHighlight = (props.leaf as any).highlight;
       const style: React.CSSProperties = {
         ...(leafColor ? { color: leafColor } : {}),
         ...(leafBgColor ? { backgroundColor: leafBgColor } : {}),
+        ...(isSearchHighlight
+          ? {
+              backgroundColor: '#fbbf24',
+              color: '#1c1c1e',
+              borderRadius: '2px',
+            }
+          : {}),
       };
 
       return (
@@ -703,7 +712,12 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
             readOnly={disabled}
             placeholder={placeholder}
             $isExpandedMode={isExpandedMode}
-            decorate={decorateCode}
+            decorate={(entry) => {
+              const codeRanges = decorateCode(entry) || [];
+              const searchDecorate = decorateSearchMatches(editor);
+              const searchRanges = searchDecorate(entry as [any, number[]]);
+              return [...codeRanges, ...searchRanges];
+            }}
             renderElement={renderElement}
             renderLeaf={renderLeaf}
             onKeyDown={handleKeyDown}

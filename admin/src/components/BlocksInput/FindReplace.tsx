@@ -28,6 +28,45 @@ const CountBadge = styled.span`
   white-space: nowrap;
 `;
 
+/* ---------------------------------------------------------------------------
+ * Search context — shared with BlocksContent for highlight decorations
+ * -------------------------------------------------------------------------*/
+
+/**
+ * Get the current search text stored on the editor.
+ * Used by BlocksContent decorate function to highlight matches.
+ */
+const getSearchText = (editor: any): string => editor.__findReplaceSearch || '';
+
+/**
+ * Decorate function for highlighting search matches.
+ * Call this from BlocksContent's decorate prop.
+ */
+const decorateSearchMatches = (editor: any) => {
+  const search = getSearchText(editor);
+  if (!search) return () => [] as Range[];
+
+  const searchLower = search.toLowerCase();
+
+  return ([node, path]: [any, number[]]): Range[] => {
+    if (!Text.isText(node)) return [];
+    const ranges: Range[] = [];
+    const textLower = node.text.toLowerCase();
+    let offset = 0;
+    while (true) {
+      const index = textLower.indexOf(searchLower, offset);
+      if (index === -1) break;
+      ranges.push({
+        anchor: { path, offset: index },
+        focus: { path, offset: index + search.length },
+        highlight: true,
+      } as Range & { highlight: boolean });
+      offset = index + 1;
+    }
+    return ranges;
+  };
+};
+
 const FindReplace = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('FindReplace');
   const { formatMessage } = useIntl();
@@ -58,6 +97,11 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
     }
     return matches;
   }, [editor, searchText]);
+
+  // Store search text on editor so decorate can highlight matches
+  React.useEffect(() => {
+    (editor as any).__findReplaceSearch = open ? searchText : '';
+  }, [editor, searchText, open]);
 
   React.useEffect(() => {
     const matches = findMatches();
@@ -236,4 +280,4 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
-export { FindReplace };
+export { FindReplace, decorateSearchMatches };
