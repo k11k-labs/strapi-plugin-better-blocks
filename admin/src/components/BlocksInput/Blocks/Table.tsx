@@ -189,8 +189,23 @@ const TableCellElement = ({
  * Void plugin for table structure
  * -------------------------------------------------------------------------*/
 
+const TABLE_TYPES = ['table', 'table-row', 'table-cell', 'table-header-cell'];
+
+const isTableElement = (node: any): boolean =>
+  node && 'type' in node && TABLE_TYPES.includes(node.type);
+
 const withTables = (editor: Editor): Editor => {
-  const { deleteBackward, deleteForward, insertBreak } = editor;
+  const { deleteBackward, deleteForward, insertBreak, normalizeNode } = editor;
+
+  // Prevent normalizer from removing table structure nodes
+  editor.normalizeNode = (entry) => {
+    const [node, path] = entry;
+    if (isTableElement(node)) {
+      // Don't let Slate normalize away table elements
+      return;
+    }
+    normalizeNode(entry);
+  };
 
   // Prevent deleting across table cell boundaries
   editor.deleteBackward = (unit) => {
