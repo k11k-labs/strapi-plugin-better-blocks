@@ -19,7 +19,6 @@ import {
   Link,
   Minus,
   PaintBrush,
-  PaintRoller,
   GridNine,
   Play,
   IndentIncrease,
@@ -1113,54 +1112,6 @@ const LineHeightButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
-const FormatPainterButton = ({ disabled }: { disabled: boolean }) => {
-  const { editor } = useBlocksEditorContext('FormatPainterButton');
-  const [storedMarks, setStoredMarks] = React.useState<Record<
-    string,
-    any
-  > | null>(null);
-
-  const handleClick = () => {
-    if (storedMarks) {
-      // Apply stored marks to current selection
-      if (editor.selection) {
-        Object.entries(storedMarks).forEach(([key, value]) => {
-          if (key !== 'type' && key !== 'text') {
-            if (value) {
-              Editor.addMark(editor, key, value);
-            } else {
-              Editor.removeMark(editor, key);
-            }
-          }
-        });
-      }
-      setStoredMarks(null);
-    } else {
-      // Copy marks from current selection
-      const marks = Editor.marks(editor);
-      if (marks) {
-        const { text, ...rest } = marks as any;
-        setStoredMarks(rest);
-      }
-    }
-    ReactEditor.focus(editor as ReactEditor);
-  };
-
-  return (
-    <ToolbarButton
-      icon={PaintRoller}
-      name="formatPainter"
-      label={{
-        id: 'components.Blocks.formatPainter',
-        defaultMessage: 'Format painter',
-      }}
-      isActive={storedMarks !== null}
-      disabled={disabled}
-      handleClick={handleClick}
-    />
-  );
-};
-
 const IndentButton = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('IndentButton');
 
@@ -1444,7 +1395,6 @@ const BlocksToolbar = () => {
         <ToolbarSeparator />
         <Toolbar.ToggleGroup type="multiple" asChild>
           <Flex direction="row" gap={1}>
-            <FormatPainterButton disabled={isButtonDisabled} />
             <EmojiPicker disabled={isButtonDisabled} />
             <SpecialCharPicker disabled={isButtonDisabled} />
             <InsertTableButton disabled={disabled} />
