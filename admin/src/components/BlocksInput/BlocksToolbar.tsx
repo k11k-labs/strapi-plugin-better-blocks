@@ -332,7 +332,12 @@ const BlocksDropdown = () => {
       );
 
       // Change the value selected in the dropdown if it doesn't match the anchor block key
-      if (anchorBlockKey && anchorBlockKey !== blockSelected) {
+      // Only update if it's a selector block (has icon/label), otherwise keep current selection
+      if (
+        anchorBlockKey &&
+        anchorBlockKey !== blockSelected &&
+        isSelectorBlockKey(anchorBlockKey)
+      ) {
         setBlockSelected(anchorBlockKey as SelectorBlockKey);
       }
     }
