@@ -198,7 +198,35 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
         </Box>
       </Popover.Trigger>
       <Popover.Content onPointerDownOutside={() => setOpen(false)}>
-        <Flex direction="column" gap={2} padding={3} style={{ width: '320px' }}>
+        <Flex direction="column" gap={3} padding={4} style={{ width: '340px' }}>
+          {/* Header */}
+          <Flex justifyContent="space-between" alignItems="center">
+            <Box style={{ fontWeight: 600, fontSize: '14px' }}>
+              {formatMessage({
+                id: 'components.Blocks.findReplace.title',
+                defaultMessage: 'Find and replace',
+              })}
+            </Box>
+            <Box
+              tag="button"
+              style={{
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontSize: '18px',
+                lineHeight: 1,
+                padding: '2px',
+              }}
+              onMouseDown={(e: React.MouseEvent) => {
+                e.preventDefault();
+                setOpen(false);
+              }}
+            >
+              &times;
+            </Box>
+          </Flex>
+
+          {/* Find row */}
           <Flex gap={2} alignItems="center">
             <Field.Root style={{ flex: 1 }}>
               <Field.Input
@@ -206,7 +234,7 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
                 name="find"
                 placeholder={formatMessage({
                   id: 'components.Blocks.find.placeholder',
-                  defaultMessage: 'Find...',
+                  defaultMessage: 'Find in text...',
                 })}
                 value={searchText}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -221,30 +249,50 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
                 }}
               />
             </Field.Root>
-            <CountBadge>
-              {searchText
-                ? `${matchCount > 0 ? currentMatch + 1 : 0}/${matchCount}`
-                : ''}
-            </CountBadge>
+            <Flex gap={1} alignItems="center">
+              <Box
+                tag="button"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  padding: '4px',
+                }}
+                title="Previous"
+                onMouseDown={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  handlePrev();
+                }}
+              >
+                &#8593;
+              </Box>
+              <Box
+                tag="button"
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  fontSize: '16px',
+                  padding: '4px',
+                }}
+                title="Next"
+                onMouseDown={(e: React.MouseEvent) => {
+                  e.preventDefault();
+                  handleNext();
+                }}
+              >
+                &#8595;
+              </Box>
+              <CountBadge>
+                {searchText
+                  ? `${matchCount > 0 ? currentMatch + 1 : 0}/${matchCount}`
+                  : ''}
+              </CountBadge>
+            </Flex>
           </Flex>
-          <Flex gap={1}>
-            <Button
-              variant="tertiary"
-              size="S"
-              onClick={handlePrev}
-              disabled={matchCount === 0}
-            >
-              Prev
-            </Button>
-            <Button
-              variant="tertiary"
-              size="S"
-              onClick={handleNext}
-              disabled={matchCount === 0}
-            >
-              Next
-            </Button>
-          </Flex>
+
+          {/* Replace row */}
           <Field.Root>
             <Field.Input
               name="replace"
@@ -258,7 +306,17 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
               }
             />
           </Field.Root>
-          <Flex gap={1}>
+
+          {/* Actions row */}
+          <Flex justifyContent="flex-end" gap={2}>
+            <Button
+              variant="tertiary"
+              size="S"
+              onClick={handleReplaceAll}
+              disabled={matchCount === 0}
+            >
+              Replace all
+            </Button>
             <Button
               variant="tertiary"
               size="S"
@@ -267,13 +325,8 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
             >
               Replace
             </Button>
-            <Button
-              variant="tertiary"
-              size="S"
-              onClick={handleReplaceAll}
-              disabled={matchCount === 0}
-            >
-              Replace all
+            <Button size="S" onClick={handleNext} disabled={matchCount === 0}>
+              Find
             </Button>
           </Flex>
         </Flex>
