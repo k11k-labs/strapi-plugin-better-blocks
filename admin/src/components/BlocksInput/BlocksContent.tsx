@@ -38,7 +38,7 @@ import { DIRECTIONS } from '../../hooks/useDragAndDrop';
 import { getTranslation } from '../../utils/getTranslation';
 
 import { decorateCode } from './Blocks/Code';
-import { type BlocksStore, useBlocksEditorContext } from './BlocksEditor';
+import { useBlocksEditorContext } from './BlocksEditor';
 import { useConversionModal } from './BlocksToolbar';
 import {
   CustomElement,

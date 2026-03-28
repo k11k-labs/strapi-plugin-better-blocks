@@ -280,6 +280,17 @@ const handleEnterKeyOnList = (editor: Editor) => {
     editor,
     currentListItemPath
   );
+
+  // Check if parent list is a todo list — new items need `checked: false`
+  const isTodoList =
+    !Editor.isEditor(currentList) &&
+    'type' in currentList &&
+    currentList.type === 'list' &&
+    (currentList as any).format === 'todo';
+  const newListItemAttrs: any = { type: 'list-item' };
+  if (isTodoList) {
+    newListItemAttrs.checked = false;
+  }
   const isListEmpty =
     currentList.children.length === 1 &&
     isText(currentListItem.children[0]) &&
@@ -298,7 +309,7 @@ const handleEnterKeyOnList = (editor: Editor) => {
     // If the focus is at the beginning of a child node, shift below the list item and create a new list-item
     const currentNode = Editor.above(editor, { at: editor.selection.anchor });
     Transforms.insertNodes(editor, {
-      type: 'list-item',
+      ...newListItemAttrs,
       children: [{ type: 'text', text: '' }],
     } as Block<'list-item'>);
     if (currentNode) {
@@ -370,13 +381,20 @@ const handleEnterKeyOnList = (editor: Editor) => {
       // If there was nothing after the cursor, create a fresh new list item,
       // in order to avoid carrying over the modifiers from the previous list item
       Transforms.insertNodes(editor, {
-        type: 'list-item',
+        ...newListItemAttrs,
         children: [{ type: 'text', text: '' }],
       } as Block<'list-item'>);
     } else {
       // If there is something after the cursor, split the current list item,
       // so that we keep the content and the modifiers
       Transforms.splitNodes(editor);
+      // For todo lists, reset the new (split) item to unchecked
+      if (isTodoList) {
+        Transforms.setNodes(editor, { checked: false } as any, {
+          match: (n) =>
+            !Editor.isEditor(n) && 'type' in n && n.type === 'list-item',
+        });
+      }
     }
   }
 };
