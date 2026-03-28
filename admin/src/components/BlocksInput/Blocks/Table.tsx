@@ -195,13 +195,54 @@ const isTableElement = (node: any): boolean =>
   node && 'type' in node && TABLE_TYPES.includes(node.type);
 
 const withTables = (editor: Editor): Editor => {
-  const { deleteBackward, deleteForward, insertBreak, normalizeNode } = editor;
+  const { deleteBackward, deleteForward, insertBreak, normalizeNode, apply } =
+    editor;
+
+  // Block any operation that would remove/merge/move table structure nodes
+  editor.apply = (op) => {
+    if (
+      (op.type === 'remove_node' ||
+        op.type === 'merge_node' ||
+        op.type === 'move_node') &&
+      op.path.length > 0
+    ) {
+      // Check if the target node is a table structure element
+      try {
+        const node =
+          op.type === 'remove_node'
+            ? (op as any).node
+            : Editor.node(editor, op.path)?.[0];
+        if (node && isTableElement(node)) {
+          return; // Block this operation
+        }
+      } catch {
+        // Path may be invalid, let it through
+      }
+    }
+
+    // Block set_node that would change a table cell type to something else
+    if (op.type === 'set_node' && op.path.length > 0) {
+      try {
+        const [node] = Editor.node(editor, op.path);
+        if (
+          isTableElement(node) &&
+          (op as any).newProperties?.type &&
+          !TABLE_TYPES.includes((op as any).newProperties.type)
+        ) {
+          return; // Don't allow converting table elements to other types
+        }
+      } catch {
+        // Path may be invalid
+      }
+    }
+
+    apply(op);
+  };
 
   // Prevent normalizer from removing table structure nodes
   editor.normalizeNode = (entry) => {
-    const [node, path] = entry;
+    const [node] = entry;
     if (isTableElement(node)) {
-      // Don't let Slate normalize away table elements
       return;
     }
     normalizeNode(entry);
@@ -220,9 +261,8 @@ const withTables = (editor: Editor): Editor => {
       });
       if (cell) {
         const [, cellPath] = cell;
-        const start = Editor.start(editor, cellPath);
         if (Editor.isStart(editor, selection.anchor, cellPath)) {
-          return; // Don't delete backward at start of cell
+          return;
         }
       }
     }
@@ -242,14 +282,14 @@ const withTables = (editor: Editor): Editor => {
       if (cell) {
         const [, cellPath] = cell;
         if (Editor.isEnd(editor, selection.anchor, cellPath)) {
-          return; // Don't delete forward at end of cell
+          return;
         }
       }
     }
     deleteForward(unit);
   };
 
-  // Tab between cells instead of inserting tab character
+  // In a table, Enter inserts a soft break (newline within cell)
   editor.insertBreak = () => {
     const { selection } = editor;
     if (selection) {
@@ -258,7 +298,6 @@ const withTables = (editor: Editor): Editor => {
           !Editor.isEditor(n) && 'type' in n && (n as any).type === 'table',
       });
       if (table) {
-        // In a table, insert a soft break (newline within cell)
         Transforms.insertText(editor, '\n');
         return;
       }
