@@ -36,9 +36,13 @@ const StyledTable = styled.table`
   }
 `;
 
+const TableWrapper = styled(Box)`
+  padding-top: 32px;
+`;
+
 const TableActions = styled(Flex)`
   position: absolute;
-  top: -32px;
+  top: 0;
   right: 0;
   z-index: 1;
 `;
@@ -126,7 +130,7 @@ const TableElement = ({
   };
 
   return (
-    <Box
+    <TableWrapper
       {...attributes}
       position="relative"
       onMouseEnter={() => setShowActions(true)}
@@ -163,7 +167,7 @@ const TableElement = ({
       <StyledTable>
         <tbody>{children}</tbody>
       </StyledTable>
-    </Box>
+    </TableWrapper>
   );
 };
 
