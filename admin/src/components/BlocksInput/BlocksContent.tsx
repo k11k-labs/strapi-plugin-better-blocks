@@ -451,12 +451,10 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
       const nodePath = ReactEditor.findPath(editor as ReactEditor, element);
 
       // Link is inline block so it cannot be dragged
-      // List items and nested list blocks i.e. lists with indent level higher than 0 are skipped from dragged items
+      // List items and nested list blocks (path depth > 1 means not a top-level editor child) are skipped from dragged items
       if (
         isLinkNode(element as any) ||
-        (isListNode(element as any) &&
-          (element as any).indentLevel &&
-          (element as any).indentLevel > 0) ||
+        (isListNode(element as any) && nodePath.length > 1) ||
         (element as any).type === 'list-item'
       ) {
         return block.renderElement(props);
@@ -558,7 +556,7 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
 
       if (selectedBlock.handleTab) {
         event.preventDefault();
-        selectedBlock.handleTab(editor);
+        selectedBlock.handleTab(editor, event);
       }
     },
     [editor, blocks]

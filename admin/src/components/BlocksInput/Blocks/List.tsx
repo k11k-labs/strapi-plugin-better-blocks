@@ -334,9 +334,84 @@ const handleConvertToList = (
 };
 
 /**
+ * Handler for Shift+Tab: outdent/un-nest a list item to the parent list level
+ */
+const handleShiftTabOnList = (editor: Editor) => {
+  const currentListItemEntry = Editor.above(editor, {
+    match: (node) =>
+      !Editor.isEditor(node) && 'type' in node && node.type === 'list-item',
+  });
+
+  if (!currentListItemEntry || !editor.selection) {
+    return;
+  }
+
+  const [, currentListItemPath] = currentListItemEntry;
+  const [currentList, currentListPath] = Editor.parent(
+    editor,
+    currentListItemPath
+  );
+
+  if (
+    !Editor.isEditor(currentList) &&
+    isListNode(currentList as CustomElement)
+  ) {
+    // Check if there's a parent list above the current list (i.e. we're nested)
+    const parentListEntry = Editor.above(editor, {
+      at: currentListPath,
+      match: (node) =>
+        !Editor.isEditor(node) && 'type' in node && node.type === 'list',
+    });
+
+    if (parentListEntry) {
+      // We're in a nested list: move the list-item out to the parent list
+      const targetPath = Path.next(currentListPath);
+
+      Transforms.moveNodes(editor, {
+        at: currentListItemPath,
+        to: targetPath,
+      });
+
+      // If the nested list is now empty, remove it
+      try {
+        const remainingList = Editor.node(editor, currentListPath);
+        if (remainingList) {
+          const [remainingNode] = remainingList;
+          if (
+            !Editor.isEditor(remainingNode) &&
+            'children' in remainingNode &&
+            (remainingNode as ListNode).children.length === 0
+          ) {
+            Transforms.removeNodes(editor, { at: currentListPath });
+          }
+        }
+      } catch {
+        // Node may have been removed already
+      }
+    } else {
+      // At top level: lift list-item out of list and convert to paragraph
+      Transforms.liftNodes(editor, {
+        at: currentListItemPath,
+      });
+      Transforms.setNodes(editor, { type: 'paragraph' } as Block<'paragraph'>, {
+        at: [currentListItemPath[0]],
+      });
+    }
+  }
+};
+
+/**
  * Common handler for the tab key on ordered and unordered lists
  */
-const handleTabOnList = (editor: Editor) => {
+const handleTabOnList = (
+  editor: Editor,
+  event: React.KeyboardEvent<HTMLElement>
+) => {
+  if (event.shiftKey) {
+    handleShiftTabOnList(editor);
+    return;
+  }
+
   const currentListItemEntry = Editor.above(editor, {
     match: (node) =>
       !Editor.isEditor(node) && 'type' in node && node.type === 'list-item',

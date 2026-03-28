@@ -45,7 +45,7 @@ interface BaseBlock {
     editor: Editor,
     event: React.KeyboardEvent<HTMLElement>
   ) => void;
-  handleTab?: (editor: Editor) => void;
+  handleTab?: (editor: Editor, event: React.KeyboardEvent<HTMLElement>) => void;
   snippets?: string[];
   dragHandleTopMargin?: CSSProperties['marginTop'];
 }
