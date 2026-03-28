@@ -107,32 +107,37 @@ const TableElement = ({
   const path = ReactEditor.findPath(editor as ReactEditor, element);
 
   const addRow = () => {
-    const tableNode = element as any;
-    const colCount = tableNode.children[0]?.children?.length || 3;
-    const newRow = createTableRow(colCount);
-    Transforms.insertNodes(editor, newRow as any, {
-      at: [...path, tableNode.children.length],
+    allowTableEdit(editor, () => {
+      const tableNode = element as any;
+      const colCount = tableNode.children[0]?.children?.length || 3;
+      const newRow = createTableRow(colCount);
+      Transforms.insertNodes(editor, newRow as any, {
+        at: [...path, tableNode.children.length],
+      });
     });
   };
 
   const addColumn = () => {
-    const tableNode = element as any;
-    const colCount = tableNode.children[0]?.children?.length || 0;
-    // Insert in reverse row order so path indices stay valid
-    for (
-      let rowIndex = tableNode.children.length - 1;
-      rowIndex >= 0;
-      rowIndex--
-    ) {
-      const isHeader = rowIndex === 0;
-      Transforms.insertNodes(editor, createTableCell(isHeader) as any, {
-        at: [...path, rowIndex, colCount],
-      });
-    }
+    allowTableEdit(editor, () => {
+      const tableNode = element as any;
+      const colCount = tableNode.children[0]?.children?.length || 0;
+      for (
+        let rowIndex = tableNode.children.length - 1;
+        rowIndex >= 0;
+        rowIndex--
+      ) {
+        const isHeader = rowIndex === 0;
+        Transforms.insertNodes(editor, createTableCell(isHeader) as any, {
+          at: [...path, rowIndex, colCount],
+        });
+      }
+    });
   };
 
   const removeTable = () => {
-    Transforms.removeNodes(editor, { at: path });
+    allowTableEdit(editor, () => {
+      Transforms.removeNodes(editor, { at: path });
+    });
   };
 
   return (
@@ -200,19 +205,35 @@ const TABLE_TYPES = ['table', 'table-row', 'table-cell', 'table-header-cell'];
 const isTableElement = (node: any): boolean =>
   node && 'type' in node && TABLE_TYPES.includes(node.type);
 
+/**
+ * Run a callback with table structure protection temporarily disabled.
+ * Used by toolbar action buttons (+ Row, + Col, Delete) that need to
+ * legitimately modify table structure.
+ */
+const allowTableEdit = (editor: Editor, fn: () => void) => {
+  (editor as any).__allowTableEdit = true;
+  fn();
+  (editor as any).__allowTableEdit = false;
+};
+
 const withTables = (editor: Editor): Editor => {
   const { deleteBackward, deleteForward, insertBreak, normalizeNode, apply } =
     editor;
 
   // Block any operation that would remove/merge/move table structure nodes
+  // unless explicitly allowed by allowTableEdit()
   editor.apply = (op) => {
+    if ((editor as any).__allowTableEdit) {
+      apply(op);
+      return;
+    }
+
     if (
       (op.type === 'remove_node' ||
         op.type === 'merge_node' ||
         op.type === 'move_node') &&
       op.path.length > 0
     ) {
-      // Check if the target node is a table structure element
       try {
         const node =
           op.type === 'remove_node'
@@ -235,7 +256,7 @@ const withTables = (editor: Editor): Editor => {
           (op as any).newProperties?.type &&
           !TABLE_TYPES.includes((op as any).newProperties.type)
         ) {
-          return; // Don't allow converting table elements to other types
+          return;
         }
       } catch {
         // Path may be invalid
