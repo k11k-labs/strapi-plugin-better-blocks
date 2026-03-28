@@ -148,21 +148,26 @@ const EMOJI_LIST = [
 
 const EmojiGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(10, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   gap: 2px;
-  max-height: 200px;
+  max-height: 220px;
   overflow-y: auto;
-  padding: ${({ theme }) => theme.spaces[1]};
+  overflow-x: hidden;
 `;
 
 const EmojiBtn = styled.button`
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 18px;
   padding: 4px;
   cursor: pointer;
   border-radius: 4px;
   line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   &:hover {
     background: ${({ theme }) => theme.colors.primary100};
@@ -228,7 +233,7 @@ const EmojiPicker = ({ disabled }: { disabled: boolean }) => {
         </Box>
       </Popover.Trigger>
       <Popover.Content onPointerDownOutside={() => setOpen(false)}>
-        <Flex direction="column" gap={2} padding={2} style={{ width: '280px' }}>
+        <Flex direction="column" gap={2} padding={2} style={{ width: '290px' }}>
           <Field.Root>
             <Field.Input
               name="emojiSearch"
