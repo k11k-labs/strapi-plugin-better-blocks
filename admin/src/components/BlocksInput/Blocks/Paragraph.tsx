@@ -20,6 +20,9 @@ const paragraphBlocks: Pick<BlocksStore, 'paragraph'> = {
       if (element.textAlign) {
         style.textAlign = element.textAlign as React.CSSProperties['textAlign'];
       }
+      if ((element as any).indent) {
+        style.marginLeft = `${(element as any).indent * 2}rem`;
+      }
 
       return (
         <Typography tag="p" variant="omega" {...props.attributes} style={style}>

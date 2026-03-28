@@ -15,7 +15,15 @@ import {
   Menu,
   IconButton,
 } from '@strapi/design-system';
-import { Link, Minus, PaintBrush, GridNine, Play } from '@strapi/icons';
+import {
+  Link,
+  Minus,
+  PaintBrush,
+  GridNine,
+  Play,
+  IndentIncrease,
+  IndentDecrease,
+} from '@strapi/icons';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import {
   Editor,
@@ -61,6 +69,8 @@ import {
   AlignRightIcon,
   AlignJustifyIcon,
 } from './FontModifiersIcons';
+import { EmojiPicker } from './EmojiPicker';
+import { FindReplace } from './FindReplace';
 import InlineColorPicker from './InlineColorPicker';
 
 const ToolbarSeparator = styled(Flex)`
@@ -1020,6 +1030,84 @@ const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
+const IndentButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('IndentButton');
+
+  const handleIndent = () => {
+    if (!editor.selection) return;
+    const entry = Editor.above(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        'type' in n &&
+        !['text', 'link'].includes((n as any).type),
+    });
+    if (entry) {
+      const [node, path] = entry;
+      const current = ((node as any).indent as number) || 0;
+      if (current < 6) {
+        Transforms.setNodes(editor, { indent: current + 1 } as any, {
+          at: path,
+        });
+      }
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <ToolbarButton
+      icon={IndentIncrease}
+      name="indent"
+      label={{
+        id: 'components.Blocks.indent',
+        defaultMessage: 'Increase indent',
+      }}
+      isActive={false}
+      disabled={disabled}
+      handleClick={handleIndent}
+    />
+  );
+};
+
+const OutdentButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('OutdentButton');
+
+  const handleOutdent = () => {
+    if (!editor.selection) return;
+    const entry = Editor.above(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        'type' in n &&
+        !['text', 'link'].includes((n as any).type),
+    });
+    if (entry) {
+      const [node, path] = entry;
+      const current = ((node as any).indent as number) || 0;
+      if (current > 0) {
+        Transforms.setNodes(
+          editor,
+          { indent: current - 1 || undefined } as any,
+          { at: path }
+        );
+      }
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <ToolbarButton
+      icon={IndentDecrease}
+      name="outdent"
+      label={{
+        id: 'components.Blocks.outdent',
+        defaultMessage: 'Decrease indent',
+      }}
+      isActive={false}
+      disabled={disabled}
+      handleClick={handleOutdent}
+    />
+  );
+};
+
 const HorizontalLineButton = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('HorizontalLineButton');
   const { formatMessage } = useIntl();
@@ -1215,12 +1303,20 @@ const BlocksToolbar = () => {
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
         <TextAlignButton disabled={isButtonDisabled} />
+        <Toolbar.ToggleGroup type="multiple" asChild>
+          <Flex direction="row" gap={1}>
+            <IndentButton disabled={isButtonDisabled} />
+            <OutdentButton disabled={isButtonDisabled} />
+          </Flex>
+        </Toolbar.ToggleGroup>
         <ToolbarSeparator />
         <Toolbar.ToggleGroup type="multiple" asChild>
           <Flex direction="row" gap={1}>
+            <EmojiPicker disabled={isButtonDisabled} />
             <InsertTableButton disabled={disabled} />
             <InsertMediaButton disabled={disabled} />
             <HorizontalLineButton disabled={disabled} />
+            <FindReplace disabled={disabled} />
             <RemoveFormattingButton disabled={isButtonDisabled} />
           </Flex>
         </Toolbar.ToggleGroup>
