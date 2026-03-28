@@ -12,7 +12,7 @@ import {
   Menu,
   IconButton,
 } from '@strapi/design-system';
-import { Link } from '@strapi/icons';
+import { Link, Minus, PaintBrush } from '@strapi/icons';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import {
   Editor,
@@ -20,8 +20,10 @@ import {
   Element as SlateElement,
   Node,
   Path,
+  Text,
   type Ancestor,
 } from 'slate';
+import { HistoryEditor } from 'slate-history';
 import { ReactEditor } from 'slate-react';
 import { css, styled } from 'styled-components';
 
@@ -44,6 +46,8 @@ import {
   getKeys,
   ListNode,
 } from './utils/types';
+import { insertHorizontalLine } from './Blocks/HorizontalLine';
+import { UndoIcon, RedoIcon } from './FontModifiersIcons';
 import InlineColorPicker from './InlineColorPicker';
 
 const ToolbarSeparator = styled(Flex)`
@@ -688,6 +692,121 @@ const StyledMenuItem = styled(Menu.Item)<{ $isActive: boolean }>`
   }
 `;
 
+const UndoButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('UndoButton');
+  const { formatMessage } = useIntl();
+
+  return (
+    <ToolbarButton
+      icon={UndoIcon}
+      name="undo"
+      label={{
+        id: 'components.Blocks.undo',
+        defaultMessage: 'Undo',
+      }}
+      isActive={false}
+      disabled={
+        disabled ||
+        (editor as unknown as HistoryEditor).history.undos.length === 0
+      }
+      handleClick={() => HistoryEditor.undo(editor as unknown as HistoryEditor)}
+    />
+  );
+};
+
+const RedoButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('RedoButton');
+  const { formatMessage } = useIntl();
+
+  return (
+    <ToolbarButton
+      icon={RedoIcon}
+      name="redo"
+      label={{
+        id: 'components.Blocks.redo',
+        defaultMessage: 'Redo',
+      }}
+      isActive={false}
+      disabled={
+        disabled ||
+        (editor as unknown as HistoryEditor).history.redos.length === 0
+      }
+      handleClick={() => HistoryEditor.redo(editor as unknown as HistoryEditor)}
+    />
+  );
+};
+
+const RemoveFormattingButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('RemoveFormattingButton');
+
+  const handleRemoveFormatting = () => {
+    if (!editor.selection) return;
+
+    const marks = Editor.marks(editor);
+    if (marks) {
+      Object.keys(marks).forEach((mark) => {
+        if (mark !== 'type' && mark !== 'text') {
+          Editor.removeMark(editor, mark);
+        }
+      });
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <ToolbarButton
+      icon={PaintBrush}
+      name="removeFormatting"
+      label={{
+        id: 'components.Blocks.removeFormatting',
+        defaultMessage: 'Remove formatting',
+      }}
+      isActive={false}
+      disabled={disabled}
+      handleClick={handleRemoveFormatting}
+    />
+  );
+};
+
+const HorizontalLineButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('HorizontalLineButton');
+  const { formatMessage } = useIntl();
+
+  const label = formatMessage({
+    id: 'components.Blocks.horizontalLine',
+    defaultMessage: 'Horizontal line',
+  });
+
+  return (
+    <Tooltip label={label}>
+      <Toolbar.ToggleItem
+        value="horizontalLine"
+        data-state="off"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          insertHorizontalLine(editor);
+          ReactEditor.focus(editor as ReactEditor);
+        }}
+        aria-disabled={disabled}
+        disabled={disabled}
+        aria-label={label}
+        asChild
+      >
+        <FlexButton
+          tag="button"
+          alignItems="center"
+          justifyContent="center"
+          width={7}
+          height={7}
+          hasRadius
+        >
+          <Minus fill={disabled ? 'neutral300' : 'neutral600'} />
+        </FlexButton>
+      </Toolbar.ToggleItem>
+    </Tooltip>
+  );
+};
+
 const BlocksToolbar = () => {
   const { editor, blocks, modifiers, disabled } =
     useBlocksEditorContext('BlocksToolbar');
@@ -710,7 +829,7 @@ const BlocksToolbar = () => {
       editor.selection.anchor.path[0]
     ] as CustomElement;
     if (!selectedNode) return true;
-    if (['code', 'image'].includes(selectedNode.type)) {
+    if (['code', 'image', 'horizontal-line'].includes(selectedNode.type)) {
       return true;
     }
 
@@ -816,6 +935,13 @@ const BlocksToolbar = () => {
   return (
     <Toolbar.Root aria-disabled={disabled} asChild>
       <ToolbarWrapper gap={2} padding={2} width="100%">
+        <Toolbar.ToggleGroup type="multiple" asChild>
+          <Flex direction="row" gap={1}>
+            <UndoButton disabled={disabled} />
+            <RedoButton disabled={disabled} />
+          </Flex>
+        </Toolbar.ToggleGroup>
+        <ToolbarSeparator />
         <BlocksDropdown />
         <ToolbarSeparator />
         <InlineColorPicker />
@@ -823,6 +949,13 @@ const BlocksToolbar = () => {
         <Toolbar.ToggleGroup type="multiple" asChild>
           <Flex direction="row" gap={1} grow={1} overflow="hidden">
             <EditorToolbarObserver observedComponents={observedComponents} />
+          </Flex>
+        </Toolbar.ToggleGroup>
+        <ToolbarSeparator />
+        <Toolbar.ToggleGroup type="multiple" asChild>
+          <Flex direction="row" gap={1}>
+            <HorizontalLineButton disabled={disabled} />
+            <RemoveFormattingButton disabled={isButtonDisabled} />
           </Flex>
         </Toolbar.ToggleGroup>
       </ToolbarWrapper>

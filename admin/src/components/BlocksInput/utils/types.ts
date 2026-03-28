@@ -53,6 +53,8 @@ export interface CustomText extends BaseText {
 export interface LinkNode extends CustomElement {
   type: 'link';
   url: string;
+  target?: '_blank' | '_self';
+  rel?: string;
   children: Descendant[];
 }
 

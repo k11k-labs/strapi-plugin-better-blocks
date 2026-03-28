@@ -213,7 +213,11 @@ const InlineColorPicker = () => {
       editor.selection.anchor.path[0]
     ] as any;
     if (!selectedNode) return true;
-    if (['image', 'code', 'separator'].includes(selectedNode.type)) {
+    if (
+      ['image', 'code', 'separator', 'horizontal-line'].includes(
+        selectedNode.type
+      )
+    ) {
       return true;
     }
     return false;
