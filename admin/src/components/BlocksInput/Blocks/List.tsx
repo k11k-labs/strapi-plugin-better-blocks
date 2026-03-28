@@ -1,9 +1,13 @@
 import * as React from 'react';
 
 import { Typography } from '@strapi/design-system';
-import { BulletList, NumberList } from '@strapi/icons';
+import { BulletList, Check, NumberList } from '@strapi/icons';
 import { type Text, Editor, Node, Transforms, Path } from 'slate';
-import { type RenderElementProps, ReactEditor } from 'slate-react';
+import {
+  type RenderElementProps,
+  ReactEditor,
+  useSlateStatic,
+} from 'slate-react';
 import { styled, type CSSProperties, css } from 'styled-components';
 
 import { type BlocksStore } from '../BlocksEditor';
@@ -72,10 +76,74 @@ const List = ({ attributes, children, element }: RenderElementProps) => {
     );
   }
 
+  if (listNode.format === 'todo') {
+    return <TodoListWrapper {...attributes}>{children}</TodoListWrapper>;
+  }
+
   return (
     <Unorderedlist $listStyleType={listStyleType} {...attributes}>
       {children}
     </Unorderedlist>
+  );
+};
+
+const TodoListWrapper = styled.ul`
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: ${({ theme }) => theme.spaces[2]};
+  margin-inline-start: ${({ theme }) => theme.spaces[0]};
+  margin-inline-end: ${({ theme }) => theme.spaces[0]};
+  padding-inline-start: ${({ theme }) => theme.spaces[2]};
+`;
+
+const TodoItemLi = styled.li<{ $checked: boolean }>`
+  display: flex;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spaces[2]};
+  list-style: none;
+  margin-inline-start: 0;
+
+  & > span:last-child {
+    flex: 1;
+    text-decoration: ${({ $checked }) => ($checked ? 'line-through' : 'none')};
+    opacity: ${({ $checked }) => ($checked ? 0.6 : 1)};
+  }
+`;
+
+const TodoCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  margin-top: 4px;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+`;
+
+const TodoListItem = ({
+  attributes,
+  children,
+  element,
+}: RenderElementProps) => {
+  const checked = Boolean((element as any).checked);
+  const editor = useSlateStatic();
+
+  const handleToggle = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const path = ReactEditor.findPath(
+      editor as unknown as ReactEditor,
+      element
+    );
+    Transforms.setNodes(editor, { checked: e.target.checked } as any, {
+      at: path,
+    });
+  };
+
+  return (
+    <TodoItemLi {...attributes} $checked={checked}>
+      <span contentEditable={false}>
+        <TodoCheckbox checked={checked} onChange={handleToggle} />
+      </span>
+      <span>{children}</span>
+    </TodoItemLi>
   );
 };
 
@@ -212,6 +280,17 @@ const handleEnterKeyOnList = (editor: Editor) => {
     editor,
     currentListItemPath
   );
+
+  // Check if parent list is a todo list — new items need `checked: false`
+  const isTodoList =
+    !Editor.isEditor(currentList) &&
+    'type' in currentList &&
+    currentList.type === 'list' &&
+    (currentList as any).format === 'todo';
+  const newListItemAttrs: any = { type: 'list-item' };
+  if (isTodoList) {
+    newListItemAttrs.checked = false;
+  }
   const isListEmpty =
     currentList.children.length === 1 &&
     isText(currentListItem.children[0]) &&
@@ -230,7 +309,7 @@ const handleEnterKeyOnList = (editor: Editor) => {
     // If the focus is at the beginning of a child node, shift below the list item and create a new list-item
     const currentNode = Editor.above(editor, { at: editor.selection.anchor });
     Transforms.insertNodes(editor, {
-      type: 'list-item',
+      ...newListItemAttrs,
       children: [{ type: 'text', text: '' }],
     } as Block<'list-item'>);
     if (currentNode) {
@@ -302,13 +381,20 @@ const handleEnterKeyOnList = (editor: Editor) => {
       // If there was nothing after the cursor, create a fresh new list item,
       // in order to avoid carrying over the modifiers from the previous list item
       Transforms.insertNodes(editor, {
-        type: 'list-item',
+        ...newListItemAttrs,
         children: [{ type: 'text', text: '' }],
       } as Block<'list-item'>);
     } else {
       // If there is something after the cursor, split the current list item,
       // so that we keep the content and the modifiers
       Transforms.splitNodes(editor);
+      // For todo lists, reset the new (split) item to unchecked
+      if (isTodoList) {
+        Transforms.setNodes(editor, { checked: false } as any, {
+          match: (n) =>
+            !Editor.isEditor(n) && 'type' in n && n.type === 'list-item',
+        });
+      }
     }
   }
 };
@@ -320,9 +406,15 @@ const handleConvertToList = (
   editor: Editor,
   format: Block<'list'>['format']
 ) => {
-  const convertedPath = baseHandleConvert<Block<'list-item'>>(editor, {
-    type: 'list-item',
-  } as Block<'list-item'>);
+  const listItemAttrs: any = { type: 'list-item' };
+  if (format === 'todo') {
+    listItemAttrs.checked = false;
+  }
+
+  const convertedPath = baseHandleConvert<Block<'list-item'>>(
+    editor,
+    listItemAttrs as Block<'list-item'>
+  );
 
   if (!convertedPath) return;
 
@@ -460,7 +552,7 @@ const handleTabOnList = (
 
 const listBlocks: Pick<
   BlocksStore,
-  'list-ordered' | 'list-unordered' | 'list-item'
+  'list-ordered' | 'list-unordered' | 'list-todo' | 'list-item'
 > = {
   'list-ordered': {
     renderElement: (props) => <List {...props} />,
@@ -493,12 +585,35 @@ const listBlocks: Pick<
     handleTab: handleTabOnList,
     snippets: ['-', '*', '+'],
   },
+  'list-todo': {
+    renderElement: (props) => <List {...props} />,
+    label: {
+      id: 'components.Blocks.blocks.todoList',
+      defaultMessage: 'To-do list',
+    },
+    icon: Check,
+    matchNode: (node) =>
+      node.type === 'list' && (node as any).format === 'todo',
+    isInBlocksSelector: true,
+    handleConvert: (editor) => handleConvertToList(editor, 'todo' as never),
+    handleEnterKey: handleEnterKeyOnList,
+    handleBackspaceKey: handleBackspaceKeyOnList,
+    handleTab: handleTabOnList,
+    snippets: ['[]', '[x]'],
+  },
   'list-item': {
-    renderElement: (props) => (
-      <Typography tag="li" {...props.attributes}>
-        {props.children}
-      </Typography>
-    ),
+    renderElement: (props) => {
+      const element = props.element as any;
+      // If the element has a 'checked' property, render as a todo item
+      if (typeof element.checked === 'boolean') {
+        return <TodoListItem {...props} />;
+      }
+      return (
+        <Typography tag="li" {...props.attributes}>
+          {props.children}
+        </Typography>
+      );
+    },
     // No handleConvert, list items are created when converting to the parent list
     matchNode: (node) => node.type === 'list-item',
     isInBlocksSelector: false,

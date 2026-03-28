@@ -38,7 +38,7 @@ import { DIRECTIONS } from '../../hooks/useDragAndDrop';
 import { getTranslation } from '../../utils/getTranslation';
 
 import { decorateCode } from './Blocks/Code';
-import { type BlocksStore, useBlocksEditorContext } from './BlocksEditor';
+import { useBlocksEditorContext } from './BlocksEditor';
 import { useConversionModal } from './BlocksToolbar';
 import {
   CustomElement,
@@ -452,10 +452,24 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
 
       // Link is inline block so it cannot be dragged
       // List items and nested list blocks (path depth > 1 means not a top-level editor child) are skipped from dragged items
+      const elType = (element as any).type;
+      const isTablePart =
+        elType === 'table-row' ||
+        elType === 'table-cell' ||
+        elType === 'table-header-cell';
+      // Check if this element is nested inside a table
+      const isInsideTable =
+        isTablePart ||
+        (nodePath.length > 1 &&
+          editor.children.some((child, i) => {
+            if (nodePath[0] !== i) return false;
+            return (child as any).type === 'table';
+          }));
       if (
         isLinkNode(element as any) ||
         (isListNode(element as any) && nodePath.length > 1) ||
-        (element as any).type === 'list-item'
+        elType === 'list-item' ||
+        isInsideTable
       ) {
         return block.renderElement(props);
       }

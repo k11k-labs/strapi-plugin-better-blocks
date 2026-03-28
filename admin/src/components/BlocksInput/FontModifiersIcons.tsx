@@ -134,6 +134,86 @@ export const RedoIcon = ({
   );
 };
 
+export const AlignLeftIcon = ({
+  fill,
+  ...props
+}: React.SVGProps<SVGSVGElement> & { fill?: string }) => {
+  const { colors } = useTheme();
+  const c = fill
+    ? colors[fill as keyof typeof colors] || fill
+    : colors.neutral600;
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" {...props} fill="none">
+      <path
+        d="M3 6h18M3 10h12M3 14h18M3 18h12"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
+export const AlignCenterIcon = ({
+  fill,
+  ...props
+}: React.SVGProps<SVGSVGElement> & { fill?: string }) => {
+  const { colors } = useTheme();
+  const c = fill
+    ? colors[fill as keyof typeof colors] || fill
+    : colors.neutral600;
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" {...props} fill="none">
+      <path
+        d="M3 6h18M6 10h12M3 14h18M6 18h12"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
+export const AlignRightIcon = ({
+  fill,
+  ...props
+}: React.SVGProps<SVGSVGElement> & { fill?: string }) => {
+  const { colors } = useTheme();
+  const c = fill
+    ? colors[fill as keyof typeof colors] || fill
+    : colors.neutral600;
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" {...props} fill="none">
+      <path
+        d="M3 6h18M9 10h12M3 14h18M9 18h12"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
+export const AlignJustifyIcon = ({
+  fill,
+  ...props
+}: React.SVGProps<SVGSVGElement> & { fill?: string }) => {
+  const { colors } = useTheme();
+  const c = fill
+    ? colors[fill as keyof typeof colors] || fill
+    : colors.neutral600;
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" {...props} fill="none">
+      <path
+        d="M3 6h18M3 10h18M3 14h18M3 18h18"
+        stroke={c}
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+};
+
 export const Subsscript = ({ fill }: FontModifierIconProps) => {
   const { colors } = useTheme();
 

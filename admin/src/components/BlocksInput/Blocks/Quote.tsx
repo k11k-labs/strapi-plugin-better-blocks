@@ -23,6 +23,9 @@ const quoteBlocks: Pick<BlocksStore, 'quote'> = {
       if (element.fontColor) {
         style.color = element.fontColor;
       }
+      if (element.textAlign) {
+        style.textAlign = element.textAlign as React.CSSProperties['textAlign'];
+      }
 
       return (
         // The div is needed to make sure the padding bottom from BlocksContent is applied properly

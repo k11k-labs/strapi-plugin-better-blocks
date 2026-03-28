@@ -30,11 +30,14 @@ export interface ImageSetting {
 }
 
 // Base element types
+export type TextAlign = 'left' | 'center' | 'right' | 'justify';
+
 export interface CustomElement extends BaseElement {
   type: string;
   fontFamily?: string;
   fontColor?: string;
   fontSettings?: FontSetting[];
+  textAlign?: TextAlign;
   separatorStyle?: string;
   separatorColor?: string;
   separatorSettings?: SeparatorSetting[];
@@ -60,7 +63,7 @@ export interface LinkNode extends CustomElement {
 
 export interface ListNode extends CustomElement {
   type: 'list';
-  format: 'ordered' | 'unordered';
+  format: 'ordered' | 'unordered' | 'todo';
   indentLevel: number;
   children: Descendant[];
 }

@@ -28,9 +28,10 @@
 4. [Configuration](#configuration)
 5. [Usage](#usage)
 6. [Custom Color Presets](#custom-color-presets)
-7. [Frontend Rendering](#frontend-rendering)
-8. [Contributing](#contributing)
-9. [License](#license)
+7. [Media Embeds (CSP Configuration)](#media-embeds-csp-configuration)
+8. [Frontend Rendering](#frontend-rendering)
+9. [Contributing](#contributing)
+10. [License](#license)
 
 ---
 
@@ -43,6 +44,15 @@
 - **Dark & Light Mode** &mdash; Fully compatible with both Strapi themes
 - **Drop-in Replacement** &mdash; Works as a custom field alongside the native Rich Text (Blocks) field
 - **Nested Lists** &mdash; Infinitely nestable ordered and unordered lists with per-level format switching (Tab to indent, Shift+Tab to outdent)
+- **To-do Lists** &mdash; Checkbox list items with click-to-toggle and strikethrough on checked items
+- **Tables** &mdash; Insert tables with header row, add/remove rows and columns via hover toolbar
+- **Media Embeds** &mdash; Insert YouTube and Vimeo videos with thumbnail preview in editor (iframe on frontend)
+- **Horizontal Line** &mdash; Insert `<hr>` dividers between content blocks
+- **Text Alignment** &mdash; Per-block left, center, right, and justify alignment
+- **Undo / Redo** &mdash; Toolbar buttons wired to Slate's built-in history
+- **Remove Formatting** &mdash; One-click button to strip all marks from selected text
+- **Link Decorators** &mdash; "Open in new tab" option with `target="_blank"` and `rel="noopener noreferrer"`
+- **Word & Character Count** &mdash; Live counter displayed at the bottom of the editor
 - **Full Blocks Editor** &mdash; Paragraphs, headings, lists, links, quotes, code blocks, and all standard text modifiers (bold, italic, underline, strikethrough, code, uppercase, superscript, subscript)
 
 ## Compatibility
@@ -161,6 +171,44 @@ Neutral:#EDF2F7
 **Text colors:** Teal, Dark, Gray, Light Gray, Silver, Medium Gray, White
 
 **Background colors:** Yellow, Green, Blue, Pink, Purple, Orange, Gray, Teal, Red, Cyan
+
+## Media Embeds (CSP Configuration)
+
+If you use the **media embed** feature (YouTube / Vimeo), you need to update your Strapi security middleware to allow loading thumbnails and video iframes.
+
+In `config/middlewares.ts`:
+
+```ts
+export default [
+  'strapi::logger',
+  'strapi::errors',
+  {
+    name: 'strapi::security',
+    config: {
+      contentSecurityPolicy: {
+        directives: {
+          'img-src': ["'self'", 'data:', 'blob:', 'https://img.youtube.com'],
+          'media-src': ["'self'", 'data:', 'blob:'],
+          'frame-src': [
+            "'self'",
+            'https://www.youtube.com',
+            'https://player.vimeo.com',
+          ],
+        },
+      },
+    },
+  },
+  'strapi::cors',
+  'strapi::poweredBy',
+  'strapi::query',
+  'strapi::body',
+  'strapi::session',
+  'strapi::favicon',
+  'strapi::public',
+];
+```
+
+Without this, YouTube thumbnails will be blocked by the Content Security Policy in the Strapi admin panel. The `frame-src` directive is needed if you render the embeds as iframes on your frontend while previewing in Strapi.
 
 ## Frontend Rendering
 

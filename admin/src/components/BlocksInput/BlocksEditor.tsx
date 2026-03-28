@@ -26,8 +26,10 @@ import {
 import { imageBlocks, withImages } from './Blocks/Image';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
+import { mediaEmbedBlocks, withMediaEmbed } from './Blocks/MediaEmbed';
 import { paragraphBlocks } from './Blocks/Paragraph';
 import { quoteBlocks } from './Blocks/Quote';
+import { tableBlocks, withTables } from './Blocks/Table';
 import { BlocksContent, type BlocksContentProps } from './BlocksContent';
 import { BlocksToolbar } from './BlocksToolbar';
 import { EditorLayout } from './EditorLayout';
@@ -65,7 +67,15 @@ interface SelectorBlock extends BaseBlock {
   label: MessageDescriptor;
 }
 
-type NonSelectorBlockKey = 'list-item' | 'link' | 'horizontal-line';
+type NonSelectorBlockKey =
+  | 'list-item'
+  | 'link'
+  | 'horizontal-line'
+  | 'table'
+  | 'table-row'
+  | 'table-cell'
+  | 'table-header-cell'
+  | 'media-embed';
 
 const selectorBlockKeys = [
   'paragraph',
@@ -77,6 +87,7 @@ const selectorBlockKeys = [
   'heading-six',
   'list-ordered',
   'list-unordered',
+  'list-todo',
   'image',
   'quote',
   'code',
@@ -226,7 +237,9 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withReact,
         withLinks,
         withImages,
-        withHorizontalLine
+        withHorizontalLine,
+        withTables,
+        withMediaEmbed
       )(createEditor())
     );
     const [liveText, setLiveText] = React.useState('');
@@ -312,6 +325,8 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...quoteBlocks,
         ...codeBlocks,
         ...horizontalLineBlocks,
+        ...tableBlocks,
+        ...mediaEmbedBlocks,
       }),
       []
     ) satisfies BlocksStore;

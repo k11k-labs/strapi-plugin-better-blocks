@@ -2,7 +2,10 @@ import * as React from 'react';
 import { useElementOnScreen } from '@strapi/admin/strapi-admin';
 import * as Toolbar from '@radix-ui/react-toolbar';
 import {
+  Button,
   Flex,
+  Field,
+  Popover,
   Tooltip,
   SingleSelect,
   SingleSelectOption,
@@ -12,7 +15,7 @@ import {
   Menu,
   IconButton,
 } from '@strapi/design-system';
-import { Link, Minus, PaintBrush } from '@strapi/icons';
+import { Link, Minus, PaintBrush, GridNine, Play } from '@strapi/icons';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import {
   Editor,
@@ -41,13 +44,23 @@ import {
 import { insertLink } from './utils/links';
 import {
   type Block,
+  type TextAlign,
   CustomElement,
   getEntries,
   getKeys,
   ListNode,
 } from './utils/types';
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
-import { UndoIcon, RedoIcon } from './FontModifiersIcons';
+import { insertTable } from './Blocks/Table';
+import { insertMediaEmbed, isMediaUrl } from './Blocks/MediaEmbed';
+import {
+  UndoIcon,
+  RedoIcon,
+  AlignLeftIcon,
+  AlignCenterIcon,
+  AlignRightIcon,
+  AlignJustifyIcon,
+} from './FontModifiersIcons';
 import InlineColorPicker from './InlineColorPicker';
 
 const ToolbarSeparator = styled(Flex)`
@@ -234,10 +247,15 @@ const BlocksDropdown = () => {
 
     if (
       currentListEntry &&
-      ['list-ordered', 'list-unordered'].includes(optionKey)
+      ['list-ordered', 'list-unordered', 'list-todo'].includes(optionKey)
     ) {
       const [currentList, currentListPath] = currentListEntry;
-      const format = optionKey === 'list-ordered' ? 'ordered' : 'unordered';
+      const format =
+        optionKey === 'list-ordered'
+          ? 'ordered'
+          : optionKey === 'list-todo'
+            ? 'todo'
+            : 'unordered';
 
       if (!Editor.isEditor(currentList) && isListNode(currentList)) {
         // Format is different, toggle list format
@@ -314,7 +332,12 @@ const BlocksDropdown = () => {
       );
 
       // Change the value selected in the dropdown if it doesn't match the anchor block key
-      if (anchorBlockKey && anchorBlockKey !== blockSelected) {
+      // Only update if it's a selector block (has icon/label), otherwise keep current selection
+      if (
+        anchorBlockKey &&
+        anchorBlockKey !== blockSelected &&
+        isSelectorBlockKey(anchorBlockKey)
+      ) {
         setBlockSelected(anchorBlockKey as SelectorBlockKey);
       }
     }
@@ -390,7 +413,10 @@ const isListNode = (node: unknown): node is Block<'list'> => {
 };
 
 interface ListButtonProps {
-  block: BlocksStore['list-ordered'] | BlocksStore['list-unordered'];
+  block:
+    | BlocksStore['list-ordered']
+    | BlocksStore['list-unordered']
+    | BlocksStore['list-todo'];
   format: Block<'list'>['format'];
   location?: 'toolbar' | 'menu';
 }
@@ -768,6 +794,232 @@ const RemoveFormattingButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
+const ALIGN_OPTIONS: {
+  value: TextAlign;
+  icon: React.ComponentType<any>;
+  label: string;
+}[] = [
+  { value: 'left', icon: AlignLeftIcon, label: 'Align left' },
+  { value: 'center', icon: AlignCenterIcon, label: 'Align center' },
+  { value: 'right', icon: AlignRightIcon, label: 'Align right' },
+  { value: 'justify', icon: AlignJustifyIcon, label: 'Justify' },
+];
+
+const TextAlignButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('TextAlignButton');
+  const { formatMessage } = useIntl();
+
+  const getCurrentAlign = (): TextAlign => {
+    if (!editor.selection) return 'left';
+    const [node] = Editor.parent(editor, editor.selection.anchor, {
+      edge: 'start',
+      depth: 2,
+    });
+    return ((node as CustomElement).textAlign as TextAlign) || 'left';
+  };
+
+  const currentAlign = getCurrentAlign();
+  const CurrentIcon =
+    ALIGN_OPTIONS.find((o) => o.value === currentAlign)?.icon || AlignLeftIcon;
+
+  const setAlignment = (align: TextAlign) => {
+    if (!editor.selection) return;
+
+    const entry = Editor.above(editor, {
+      match: (n) =>
+        !Editor.isEditor(n) &&
+        'type' in n &&
+        !['text', 'link', 'list-item'].includes((n as CustomElement).type),
+    });
+
+    if (entry) {
+      const [, path] = entry;
+      Transforms.setNodes(
+        editor,
+        {
+          textAlign: align === 'left' ? undefined : align,
+        } as Partial<CustomElement>,
+        { at: path }
+      );
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <Menu.Root>
+      <Menu.Trigger disabled={disabled}>
+        <Tooltip
+          label={formatMessage({
+            id: 'components.Blocks.textAlign',
+            defaultMessage: 'Text alignment',
+          })}
+        >
+          <FlexButton
+            tag="button"
+            alignItems="center"
+            justifyContent="center"
+            width={7}
+            height={7}
+            hasRadius
+            aria-disabled={disabled}
+          >
+            <CurrentIcon fill={disabled ? 'neutral300' : 'neutral600'} />
+          </FlexButton>
+        </Tooltip>
+      </Menu.Trigger>
+      <Menu.Content>
+        {ALIGN_OPTIONS.map((opt) => {
+          const Icon = opt.icon;
+          const isActive = currentAlign === opt.value;
+          return (
+            <StyledMenuItem
+              key={opt.value}
+              onSelect={() => setAlignment(opt.value)}
+              $isActive={isActive}
+            >
+              <Icon fill={isActive ? 'primary600' : 'neutral600'} />
+              {opt.label}
+            </StyledMenuItem>
+          );
+        })}
+      </Menu.Content>
+    </Menu.Root>
+  );
+};
+
+const InsertTableButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('InsertTableButton');
+  const { formatMessage } = useIntl();
+
+  const label = formatMessage({
+    id: 'components.Blocks.insertTable',
+    defaultMessage: 'Insert table',
+  });
+
+  return (
+    <Tooltip label={label}>
+      <Toolbar.ToggleItem
+        value="insertTable"
+        data-state="off"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          insertTable(editor);
+          ReactEditor.focus(editor as ReactEditor);
+        }}
+        aria-disabled={disabled}
+        disabled={disabled}
+        aria-label={label}
+        asChild
+      >
+        <FlexButton
+          tag="button"
+          alignItems="center"
+          justifyContent="center"
+          width={7}
+          height={7}
+          hasRadius
+        >
+          <GridNine fill={disabled ? 'neutral300' : 'neutral600'} />
+        </FlexButton>
+      </Toolbar.ToggleItem>
+    </Tooltip>
+  );
+};
+
+const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('InsertMediaButton');
+  const { formatMessage } = useIntl();
+  const [showInput, setShowInput] = React.useState(false);
+  const [mediaUrl, setMediaUrl] = React.useState('');
+  const inputRef = React.useRef<HTMLInputElement>(null);
+
+  const handleInsert = () => {
+    if (mediaUrl && isMediaUrl(mediaUrl)) {
+      insertMediaEmbed(editor, mediaUrl);
+      setMediaUrl('');
+      setShowInput(false);
+      ReactEditor.focus(editor as ReactEditor);
+    }
+  };
+
+  React.useEffect(() => {
+    if (showInput) inputRef.current?.focus();
+  }, [showInput]);
+
+  const label = formatMessage({
+    id: 'components.Blocks.insertMedia',
+    defaultMessage: 'Insert media',
+  });
+
+  return (
+    <Popover.Root open={showInput}>
+      <Popover.Trigger>
+        <FlexButton
+          tag="button"
+          alignItems="center"
+          justifyContent="center"
+          width={7}
+          height={7}
+          hasRadius
+          aria-disabled={disabled}
+          aria-label={label}
+          title={label}
+          onMouseDown={(e: React.MouseEvent) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!disabled) setShowInput((v) => !v);
+          }}
+        >
+          <Play fill={disabled ? 'neutral300' : 'neutral600'} />
+        </FlexButton>
+      </Popover.Trigger>
+      <Popover.Content onPointerDownOutside={() => setShowInput(false)}>
+        <Flex padding={3} direction="column" gap={3}>
+          <Field.Root width="300px">
+            <Flex direction="column" gap={1} alignItems="stretch">
+              <Field.Label>
+                {formatMessage({
+                  id: 'components.Blocks.mediaUrl',
+                  defaultMessage: 'Video URL',
+                })}
+              </Field.Label>
+              <Field.Input
+                ref={inputRef}
+                name="mediaUrl"
+                placeholder="https://youtube.com/watch?v=..."
+                value={mediaUrl}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setMediaUrl(e.target.value)
+                }
+                onKeyDown={(e: React.KeyboardEvent) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleInsert();
+                  }
+                }}
+              />
+            </Flex>
+          </Field.Root>
+          <Flex justifyContent="flex-end" gap={2}>
+            <Button variant="tertiary" onClick={() => setShowInput(false)}>
+              {formatMessage({ id: 'global.cancel', defaultMessage: 'Cancel' })}
+            </Button>
+            <Button
+              disabled={!mediaUrl || !isMediaUrl(mediaUrl)}
+              onClick={handleInsert}
+            >
+              {formatMessage({
+                id: 'components.Blocks.insert',
+                defaultMessage: 'Insert',
+              })}
+            </Button>
+          </Flex>
+        </Flex>
+      </Popover.Content>
+    </Popover.Root>
+  );
+};
+
 const HorizontalLineButton = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('HorizontalLineButton');
   const { formatMessage } = useIntl();
@@ -909,6 +1161,11 @@ const BlocksToolbar = () => {
                 format={'ordered' as never}
                 location="toolbar"
               />
+              <ListButton
+                block={blocks['list-todo']}
+                format={'todo' as never}
+                location="toolbar"
+              />
             </Flex>
           </Toolbar.ToggleGroup>
         </Flex>
@@ -924,6 +1181,11 @@ const BlocksToolbar = () => {
           <ListButton
             block={blocks['list-ordered']}
             format={'ordered' as never}
+            location="menu"
+          />
+          <ListButton
+            block={blocks['list-todo']}
+            format={'todo' as never}
             location="menu"
           />
         </>
@@ -952,8 +1214,12 @@ const BlocksToolbar = () => {
           </Flex>
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
+        <TextAlignButton disabled={isButtonDisabled} />
+        <ToolbarSeparator />
         <Toolbar.ToggleGroup type="multiple" asChild>
           <Flex direction="row" gap={1}>
+            <InsertTableButton disabled={disabled} />
+            <InsertMediaButton disabled={disabled} />
             <HorizontalLineButton disabled={disabled} />
             <RemoveFormattingButton disabled={isButtonDisabled} />
           </Flex>
