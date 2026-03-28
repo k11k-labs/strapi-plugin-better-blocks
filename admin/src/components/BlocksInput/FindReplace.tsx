@@ -98,9 +98,11 @@ const FindReplace = ({ disabled }: { disabled: boolean }) => {
     return matches;
   }, [editor, searchText]);
 
-  // Store search text on editor so decorate can highlight matches
+  // Store search text on editor and force Slate to re-decorate
   React.useEffect(() => {
     (editor as any).__findReplaceSearch = open ? searchText : '';
+    // Trigger a re-render of the editor so decorate picks up the new search
+    editor.onChange();
   }, [editor, searchText, open]);
 
   React.useEffect(() => {
