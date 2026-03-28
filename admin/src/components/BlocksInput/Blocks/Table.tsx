@@ -117,12 +117,18 @@ const TableElement = ({
 
   const addColumn = () => {
     const tableNode = element as any;
-    tableNode.children.forEach((_: any, rowIndex: number) => {
+    const colCount = tableNode.children[0]?.children?.length || 0;
+    // Insert in reverse row order so path indices stay valid
+    for (
+      let rowIndex = tableNode.children.length - 1;
+      rowIndex >= 0;
+      rowIndex--
+    ) {
       const isHeader = rowIndex === 0;
       Transforms.insertNodes(editor, createTableCell(isHeader) as any, {
-        at: [...path, rowIndex, tableNode.children[rowIndex].children.length],
+        at: [...path, rowIndex, colCount],
       });
-    });
+    }
   };
 
   const removeTable = () => {
