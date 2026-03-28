@@ -19,6 +19,7 @@ import {
   Transforms,
   Element as SlateElement,
   Node,
+  Path,
   type Ancestor,
 } from 'slate';
 import { ReactEditor } from 'slate-react';
@@ -489,8 +490,52 @@ const ListButton = ({
           at: currentListPath,
         });
       } else {
-        // Format is same, convert selected list-item to paragraph
-        blocks['paragraph'].handleConvert!(editor);
+        // Check if we're in a nested list
+        const parentListEntry = Editor.above(editor, {
+          at: currentListPath,
+          match: (node) =>
+            !Editor.isEditor(node) && 'type' in node && node.type === 'list',
+        });
+
+        if (parentListEntry) {
+          // Same format in nested list: un-nest one level
+          const currentListItemEntry = Editor.above(editor, {
+            match: (node) =>
+              !Editor.isEditor(node) &&
+              'type' in node &&
+              node.type === 'list-item',
+          });
+
+          if (currentListItemEntry) {
+            const [, currentListItemPath] = currentListItemEntry;
+            const targetPath = Path.next(currentListPath);
+
+            Transforms.moveNodes(editor, {
+              at: currentListItemPath,
+              to: targetPath,
+            });
+
+            // Remove nested list if empty
+            try {
+              const remainingList = Editor.node(editor, currentListPath);
+              if (remainingList) {
+                const [remainingNode] = remainingList;
+                if (
+                  !Editor.isEditor(remainingNode) &&
+                  'children' in remainingNode &&
+                  (remainingNode as ListNode).children.length === 0
+                ) {
+                  Transforms.removeNodes(editor, { at: currentListPath });
+                }
+              }
+            } catch {
+              // Node may have been removed already
+            }
+          }
+        } else {
+          // Format is same at top level, convert selected list-item to paragraph
+          blocks['paragraph'].handleConvert!(editor);
+        }
       }
     }
   };

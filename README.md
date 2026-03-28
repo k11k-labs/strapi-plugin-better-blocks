@@ -42,6 +42,7 @@
 - **Customizable Palettes** &mdash; Define custom color presets per field via Content-Type Builder
 - **Dark & Light Mode** &mdash; Fully compatible with both Strapi themes
 - **Drop-in Replacement** &mdash; Works as a custom field alongside the native Rich Text (Blocks) field
+- **Nested Lists** &mdash; Infinitely nestable ordered and unordered lists with per-level format switching (Tab to indent, Shift+Tab to outdent)
 - **Full Blocks Editor** &mdash; Paragraphs, headings, lists, links, quotes, code blocks, and all standard text modifiers (bold, italic, underline, strikethrough, code, uppercase, superscript, subscript)
 
 ## Compatibility
