@@ -1,13 +1,34 @@
 import * as React from 'react';
 import { useStrapiApp } from '@strapi/admin/strapi-admin';
-import { Flex, Box } from '@strapi/design-system';
+import { Flex, Box, Typography } from '@strapi/design-system';
 import { Image as ImageIcon } from '@strapi/icons';
 import { Transforms, Editor, type Element as SlateElement } from 'slate';
-import { type RenderElementProps, useFocused, useSelected } from 'slate-react';
+import {
+  type RenderElementProps,
+  useFocused,
+  useSelected,
+  useSlateStatic,
+  ReactEditor,
+} from 'slate-react';
 import { css, styled } from 'styled-components';
 
 import { type BlocksStore, useBlocksEditorContext } from '../BlocksEditor';
 import { type ImageElement } from '../utils/types';
+
+type ImageAlign = 'center' | 'left' | 'right';
+
+const ImageFigure = styled.figure<{ $align: ImageAlign }>`
+  margin: ${({ theme }) => theme.spaces[2]} 0;
+  text-align: ${({ $align }) => $align};
+  display: flex;
+  flex-direction: column;
+  align-items: ${({ $align }) =>
+    $align === 'left'
+      ? 'flex-start'
+      : $align === 'right'
+        ? 'flex-end'
+        : 'center'};
+`;
 
 const ImageWrapper = styled<typeof Flex>(Flex)<{ $isFocused: boolean }>`
   transition-property: box-shadow;
@@ -23,6 +44,54 @@ const ImageWrapper = styled<typeof Flex>(Flex)<{ $isFocused: boolean }>`
     max-height: calc(512px - 56px);
     max-width: 100%;
     object-fit: contain;
+  }
+`;
+
+const CaptionInput = styled.figcaption`
+  margin-top: ${({ theme }) => theme.spaces[2]};
+  font-size: ${({ theme }) => theme.fontSizes[1]};
+  color: ${({ theme }) => theme.colors.neutral600};
+  text-align: center;
+  width: 100%;
+  border: none;
+  outline: none;
+  padding: ${({ theme }) => theme.spaces[1]} ${({ theme }) => theme.spaces[2]};
+
+  &:empty::before {
+    content: 'Add a caption...';
+    color: ${({ theme }) => theme.colors.neutral400};
+  }
+`;
+
+const AlignBar = styled(Flex)`
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.2s;
+`;
+
+const AlignBtn = styled.button<{ $active: boolean }>`
+  background: ${({ theme, $active }) =>
+    $active ? theme.colors.primary600 : 'rgba(0,0,0,0.6)'};
+  border: none;
+  color: white;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-size: 11px;
+  border-radius: 3px;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary600};
+  }
+`;
+
+const ImageContainer = styled.div`
+  position: relative;
+
+  &:hover ${AlignBar} {
+    opacity: 1;
   }
 `;
 
@@ -69,25 +138,69 @@ const isImageElement = (element: SlateElement): element is ImageElement => {
 const ImageBlock = ({ attributes, children, element }: RenderElementProps) => {
   const editorIsFocused = useFocused();
   const imageIsSelected = useSelected();
+  const editor = useSlateStatic();
 
   if (!isImageElement(element)) {
     return null;
   }
 
   const { url, alternativeText, width, height } = element.image;
+  const caption = (element as any).caption || '';
+  const align: ImageAlign = (element as any).imageAlign || 'center';
+
+  const setAlign = (newAlign: ImageAlign) => {
+    const path = ReactEditor.findPath(editor as ReactEditor, element);
+    Transforms.setNodes(editor, { imageAlign: newAlign } as any, { at: path });
+  };
+
+  const setCaption = (newCaption: string) => {
+    const path = ReactEditor.findPath(editor as ReactEditor, element);
+    Transforms.setNodes(editor, { caption: newCaption } as any, { at: path });
+  };
 
   return (
     <Box {...attributes}>
       {children}
-      <ImageWrapper
-        background="neutral100"
-        contentEditable={false}
-        justifyContent="center"
-        $isFocused={editorIsFocused && imageIsSelected}
-        hasRadius
-      >
-        <img src={url} alt={alternativeText} width={width} height={height} />
-      </ImageWrapper>
+      <ImageFigure contentEditable={false} $align={align}>
+        <ImageContainer>
+          <AlignBar gap={1} contentEditable={false}>
+            {(['left', 'center', 'right'] as ImageAlign[]).map((a) => (
+              <AlignBtn
+                key={a}
+                $active={align === a}
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  setAlign(a);
+                }}
+              >
+                {a.charAt(0).toUpperCase() + a.slice(1)}
+              </AlignBtn>
+            ))}
+          </AlignBar>
+          <ImageWrapper
+            background="neutral100"
+            justifyContent="center"
+            $isFocused={editorIsFocused && imageIsSelected}
+            hasRadius
+          >
+            <img
+              src={url}
+              alt={alternativeText}
+              width={width}
+              height={height}
+            />
+          </ImageWrapper>
+        </ImageContainer>
+        <CaptionInput
+          contentEditable
+          suppressContentEditableWarning
+          onBlur={(e: React.FocusEvent<HTMLElement>) =>
+            setCaption(e.currentTarget.textContent || '')
+          }
+        >
+          {caption}
+        </CaptionInput>
+      </ImageFigure>
     </Box>
   );
 };
