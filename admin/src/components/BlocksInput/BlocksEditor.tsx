@@ -1,7 +1,12 @@
 import * as React from 'react';
 
 import { createContext, type FieldValue } from '@strapi/admin/strapi-admin';
-import { IconButton, Divider, VisuallyHidden } from '@strapi/design-system';
+import {
+  Box,
+  IconButton,
+  Divider,
+  VisuallyHidden,
+} from '@strapi/design-system';
 import { Expand } from '@strapi/icons';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import { Editor, type Descendant, createEditor, Transforms } from 'slate';
@@ -35,7 +40,9 @@ import { BlocksToolbar } from './BlocksToolbar';
 import { EditorLayout } from './EditorLayout';
 import { type ModifiersStore, modifiers } from './Modifiers';
 import { withLinks } from './plugins/withLinks';
+import { withAutoTransform } from './plugins/withAutoTransform';
 import { withStrapiSchema } from './plugins/withStrapiSchema';
+import { SlashCommandMenu } from './SlashCommands';
 import { WordCount } from './WordCount';
 import { type Schema } from '@strapi/types';
 
@@ -239,7 +246,8 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withImages,
         withHorizontalLine,
         withTables,
-        withMediaEmbed
+        withMediaEmbed,
+        withAutoTransform
       )(createEditor())
     );
     const [liveText, setLiveText] = React.useState('');
@@ -367,7 +375,10 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
             >
               <BlocksToolbar />
               <EditorDivider width="100%" />
-              <BlocksContent {...contentProps} />
+              <Box position="relative">
+                <BlocksContent {...contentProps} />
+                <SlashCommandMenu />
+              </Box>
               <WordCount />
               {!isExpandedMode && (
                 <ExpandIconButton

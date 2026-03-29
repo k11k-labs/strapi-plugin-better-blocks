@@ -346,7 +346,10 @@ const handleMoveBlocks = (
 
 const dragNoop = () => true;
 
-const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
+const BlocksContent = ({
+  placeholder = 'Start writing...',
+  ariaLabelId,
+}: BlocksContentProps) => {
   const { editor, disabled, blocks, modifiers, setLiveText, isExpandedMode } =
     useBlocksEditorContext('BlocksContent');
   const blocksRef = React.useRef<HTMLDivElement>(null);
@@ -418,14 +421,18 @@ const BlocksContent = ({ placeholder, ariaLabelId }: BlocksContentProps) => {
         props.children
       );
 
-      // Apply inline color and background color if present
+      // Apply inline styles: color, bg, font family, font size, search highlight
       const leafColor = (props.leaf as any).color;
       const leafBgColor = (props.leaf as any).backgroundColor;
+      const leafFontFamily = (props.leaf as any).fontFamily;
+      const leafFontSize = (props.leaf as any).fontSize;
       const isSearchHighlight = (props.leaf as any).searchHighlight;
       const isSearchActive = (props.leaf as any).searchHighlightActive;
       const style: React.CSSProperties = {
         ...(leafColor ? { color: leafColor } : {}),
         ...(leafBgColor ? { backgroundColor: leafBgColor } : {}),
+        ...(leafFontFamily ? { fontFamily: leafFontFamily } : {}),
+        ...(leafFontSize ? { fontSize: leafFontSize } : {}),
         ...(isSearchActive
           ? {
               backgroundColor: '#f97316',

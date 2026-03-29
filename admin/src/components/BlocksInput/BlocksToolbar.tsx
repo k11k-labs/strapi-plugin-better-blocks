@@ -1035,6 +1035,127 @@ const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
+const FONT_FAMILIES = [
+  'Default',
+  'Arial',
+  'Georgia',
+  'Times New Roman',
+  'Courier New',
+  'Verdana',
+  'Trebuchet MS',
+  'Tahoma',
+  'Palatino',
+  'Garamond',
+];
+
+const FONT_SIZES = [
+  'Default',
+  '10px',
+  '12px',
+  '14px',
+  '16px',
+  '18px',
+  '20px',
+  '24px',
+  '28px',
+  '32px',
+  '36px',
+  '48px',
+];
+
+const SmallSelectWrapper = styled<BoxComponent>(Box)`
+  div[role='combobox'] {
+    border: none;
+    min-height: unset;
+    padding: 4px 6px;
+    font-size: 12px;
+
+    &[aria-disabled='false']:hover {
+      cursor: pointer;
+      background: ${({ theme }) => theme.colors.primary100};
+    }
+
+    &[aria-disabled] {
+      background: transparent;
+      cursor: inherit;
+    }
+  }
+`;
+
+const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('FontFamilySelect');
+
+  const currentFont = (() => {
+    const marks = Editor.marks(editor) as any;
+    return marks?.fontFamily || 'Default';
+  })();
+
+  const handleChange = (val: unknown) => {
+    const font = val as string;
+    if (font === 'Default') {
+      Editor.removeMark(editor, 'fontFamily');
+    } else {
+      Editor.addMark(editor, 'fontFamily', font);
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <SmallSelectWrapper>
+      <SingleSelect
+        value={currentFont}
+        onChange={handleChange}
+        disabled={disabled}
+        size="S"
+      >
+        {FONT_FAMILIES.map((f) => (
+          <SingleSelectOption key={f} value={f}>
+            <span style={{ fontFamily: f === 'Default' ? 'inherit' : f }}>
+              {f}
+            </span>
+          </SingleSelectOption>
+        ))}
+      </SingleSelect>
+    </SmallSelectWrapper>
+  );
+};
+
+const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('FontSizeSelect');
+
+  const currentSize = (() => {
+    const marks = Editor.marks(editor) as any;
+    return marks?.fontSize || 'Default';
+  })();
+
+  const handleChange = (val: unknown) => {
+    const size = val as string;
+    if (size === 'Default') {
+      Editor.removeMark(editor, 'fontSize');
+    } else {
+      Editor.addMark(editor, 'fontSize', size);
+    }
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <SmallSelectWrapper>
+      <SingleSelect
+        value={currentSize}
+        onChange={handleChange}
+        disabled={disabled}
+        size="S"
+      >
+        {FONT_SIZES.map((s) => (
+          <SingleSelectOption key={s} value={s}>
+            {s}
+          </SingleSelectOption>
+        ))}
+      </SingleSelect>
+    </SmallSelectWrapper>
+  );
+};
+
 const LINE_HEIGHT_OPTIONS = [
   { value: undefined, label: 'Default' },
   { value: '1', label: '1' },
@@ -1375,6 +1496,9 @@ const BlocksToolbar = () => {
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
         <BlocksDropdown />
+        <ToolbarSeparator />
+        <FontFamilySelect disabled={isButtonDisabled} />
+        <FontSizeSelect disabled={isButtonDisabled} />
         <ToolbarSeparator />
         <InlineColorPicker />
         <ToolbarSeparator />
