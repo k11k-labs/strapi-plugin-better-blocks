@@ -29,6 +29,9 @@ const quoteBlocks: Pick<BlocksStore, 'quote'> = {
       if ((element as any).indent) {
         style.marginLeft = `${(element as any).indent * 2}rem`;
       }
+      if ((element as any).lineHeight) {
+        style.lineHeight = (element as any).lineHeight;
+      }
 
       return (
         // The div is needed to make sure the padding bottom from BlocksContent is applied properly
