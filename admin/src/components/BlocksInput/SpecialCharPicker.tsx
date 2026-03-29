@@ -127,12 +127,14 @@ const CharGrid = styled.div`
 `;
 
 const CharBtn = styled.button`
-  background: ${({ theme }) => theme.colors.neutral100};
+  background: ${({ theme }) => theme.colors.neutral0};
   border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  font-size: 15px;
+  color: ${({ theme }) => theme.colors.neutral800};
+  font-size: 18px;
   cursor: pointer;
   border-radius: ${({ theme }) => theme.borderRadius};
-  aspect-ratio: 1;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,7 +198,7 @@ const SpecialCharPicker = ({ disabled }: { disabled: boolean }) => {
         </Box>
       </Popover.Trigger>
       <Popover.Content onPointerDownOutside={() => setOpen(false)}>
-        <Flex direction="column" gap={2} padding={3} style={{ width: '290px' }}>
+        <Flex direction="column" gap={2} padding={3} style={{ width: '330px' }}>
           <Box width="100%">
             <SingleSelect
               value={category}
