@@ -119,11 +119,17 @@ const CATEGORIES: Record<string, string[]> = {
 
 const CharGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
-  gap: 2px;
-  max-height: 200px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+  max-height: 220px;
   overflow-y: auto;
   overflow-x: hidden;
+  padding: 4px;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
 `;
 
 const CharBtn = styled.button`
