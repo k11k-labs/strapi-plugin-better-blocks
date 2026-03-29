@@ -121,27 +121,32 @@ const CharGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   gap: 2px;
-  max-height: 180px;
+  max-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
 `;
 
 const CharBtn = styled.button`
-  background: none;
-  border: 1px solid transparent;
-  font-size: 16px;
-  padding: 4px;
+  background: ${({ theme }) => theme.colors.neutral100};
+  border: 1px solid ${({ theme }) => theme.colors.neutral200};
+  font-size: 15px;
   cursor: pointer;
-  border-radius: 3px;
-  width: 30px;
-  height: 30px;
+  border-radius: ${({ theme }) => theme.borderRadius};
+  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.15s;
 
   &:hover {
     background: ${({ theme }) => theme.colors.primary100};
-    border-color: ${({ theme }) => theme.colors.primary200};
+    border-color: ${({ theme }) => theme.colors.primary600};
+    color: ${({ theme }) => theme.colors.primary600};
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 `;
 
@@ -192,16 +197,18 @@ const SpecialCharPicker = ({ disabled }: { disabled: boolean }) => {
       </Popover.Trigger>
       <Popover.Content onPointerDownOutside={() => setOpen(false)}>
         <Flex direction="column" gap={2} padding={3} style={{ width: '290px' }}>
-          <SingleSelect
-            value={category}
-            onChange={(val: unknown) => setCategory(val as string)}
-          >
-            {Object.keys(CATEGORIES).map((cat) => (
-              <SingleSelectOption key={cat} value={cat}>
-                {cat}
-              </SingleSelectOption>
-            ))}
-          </SingleSelect>
+          <Box width="100%">
+            <SingleSelect
+              value={category}
+              onChange={(val: unknown) => setCategory(val as string)}
+            >
+              {Object.keys(CATEGORIES).map((cat) => (
+                <SingleSelectOption key={cat} value={cat}>
+                  {cat}
+                </SingleSelectOption>
+              ))}
+            </SingleSelect>
+          </Box>
           <CharGrid>
             {(CATEGORIES[category] || []).map((char, i) => (
               <CharBtn
