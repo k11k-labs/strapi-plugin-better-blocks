@@ -53,6 +53,14 @@
 - **Remove Formatting** &mdash; One-click button to strip all marks from selected text
 - **Link Decorators** &mdash; "Open in new tab" option with `target="_blank"` and `rel="noopener noreferrer"`
 - **Word & Character Count** &mdash; Live counter displayed at the bottom of the editor
+- **Line Height** &mdash; Per-block line spacing control (1, 1.15, 1.5, 2, 2.5, 3)
+- **Indent / Outdent** &mdash; Block-level indentation buttons (up to 6 levels)
+- **Image Captions** &mdash; Editable figcaption below images
+- **Image Alignment** &mdash; Left, center, and right alignment for images via hover buttons
+- **Emoji Picker** &mdash; Searchable popup grid with 130+ common emojis
+- **Special Characters** &mdash; Categorized picker for currency, math, arrows, Greek, legal symbols and more
+- **Find and Replace** &mdash; Search with real-time highlighting (yellow for all matches, orange for active), prev/next navigation, replace and replace all
+- **Responsive Toolbar** &mdash; Wraps to multiple rows on smaller screens so all buttons remain accessible
 - **Full Blocks Editor** &mdash; Paragraphs, headings, lists, links, quotes, code blocks, and all standard text modifiers (bold, italic, underline, strikethrough, code, uppercase, superscript, subscript)
 
 ## Compatibility
