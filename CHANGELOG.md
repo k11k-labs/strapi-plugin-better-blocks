@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.5.0
+
+### Minor Changes
+
+- [#22](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/22) [`367ca69`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/367ca69cb3c88a942bcfc1c74045fb8fcfefa393) Thanks [@kkukielka](https://github.com/kkukielka)! - Add Phase 4 editor improvements: line height control, special characters picker, image captions and alignment, emoji picker, find and replace with dual-color highlighting, indent/outdent, and responsive toolbar wrapping.
+
 ## 0.4.0
 
 ### Minor Changes
