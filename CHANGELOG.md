@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.6.0
+
+### Minor Changes
+
+- [#24](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/24) [`83c9e15`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/83c9e1549f7b1f269c3b0eccba91ec5639ab2650) Thanks [@kkukielka](https://github.com/kkukielka)! - Add Phase 5 editor improvements: font family and size selectors, slash commands (/ menu), auto text transformations ((c)→©, 1/2→½, etc.), and editor placeholder text.
+
 ## 0.5.0
 
 ### Minor Changes
