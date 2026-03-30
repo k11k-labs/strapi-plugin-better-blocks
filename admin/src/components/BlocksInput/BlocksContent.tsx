@@ -41,6 +41,7 @@ import { decorateCode } from './Blocks/Code';
 import { useBlocksEditorContext } from './BlocksEditor';
 import { useConversionModal } from './BlocksToolbar';
 import { decorateSearchMatches } from './FindReplace';
+import { SlashCommandMenu } from './SlashCommands';
 import {
   CustomElement,
   getEntries,
@@ -717,6 +718,7 @@ const BlocksContent = ({
       paddingRight={7}
       paddingTop={6}
       paddingBottom={3}
+      position="relative"
     >
       <DndContext
         sensors={sensors}
@@ -749,6 +751,7 @@ const BlocksContent = ({
         </SortableContext>
       </DndContext>
       {modalElement}
+      <SlashCommandMenu />
     </Box>
   );
 };
