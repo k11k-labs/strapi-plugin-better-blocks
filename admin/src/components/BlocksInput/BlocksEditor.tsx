@@ -375,7 +375,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
             >
               <BlocksToolbar />
               <EditorDivider width="100%" />
-              <Box position="relative">
+              <Box position="relative" flex="1" overflow="auto">
                 <BlocksContent {...contentProps} />
                 <SlashCommandMenu />
               </Box>

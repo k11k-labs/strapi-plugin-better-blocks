@@ -61,6 +61,12 @@ const StyledEditable = styled(Editable)<{ $isExpandedMode: boolean }>`
   > *:last-child {
     padding-bottom: ${({ theme }) => theme.spaces[3]};
   }
+
+  // Slate renders placeholder as a span with inline styles
+  [data-slate-placeholder] {
+    white-space: nowrap !important;
+    opacity: 0.33;
+  }
 `;
 
 const Wrapper = styled<BoxComponent>(Box)<{ $isOverDropTarget: boolean }>`
