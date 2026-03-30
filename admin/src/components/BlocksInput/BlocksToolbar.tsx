@@ -1097,7 +1097,6 @@ const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
     } else {
       Editor.addMark(editor, 'fontFamily', font);
     }
-    ReactEditor.focus(editor as ReactEditor);
   };
 
   return (
@@ -1105,6 +1104,7 @@ const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
       <SingleSelect
         value={currentFont}
         onChange={handleChange}
+        onCloseAutoFocus={(e: Event) => e.preventDefault()}
         disabled={disabled}
         size="S"
       >
@@ -1135,7 +1135,6 @@ const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
     } else {
       Editor.addMark(editor, 'fontSize', size);
     }
-    ReactEditor.focus(editor as ReactEditor);
   };
 
   return (
@@ -1143,6 +1142,7 @@ const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
       <SingleSelect
         value={currentSize}
         onChange={handleChange}
+        onCloseAutoFocus={(e: Event) => e.preventDefault()}
         disabled={disabled}
         size="S"
       >
