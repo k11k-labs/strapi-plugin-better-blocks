@@ -1079,6 +1079,11 @@ const SmallSelectWrapper = styled<BoxComponent>(Box)`
     padding: 4px 6px;
     font-size: 12px;
 
+    // Make inner text pass-through so clicks hit the combobox trigger
+    & > span {
+      pointer-events: none;
+    }
+
     &[aria-disabled='false']:hover {
       cursor: pointer;
       background: ${({ theme }) => theme.colors.primary100};
