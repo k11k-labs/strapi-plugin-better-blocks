@@ -60,6 +60,11 @@
 - **Emoji Picker** &mdash; Searchable popup grid with 130+ common emojis
 - **Special Characters** &mdash; Categorized picker for currency, math, arrows, Greek, legal symbols and more
 - **Find and Replace** &mdash; Search with real-time highlighting (yellow for all matches, orange for active), prev/next navigation, replace and replace all
+- **Font Family** &mdash; Inline font family selector (Arial, Georgia, Times New Roman, and more)
+- **Font Size** &mdash; Inline font size selector (10px to 48px)
+- **Slash Commands** &mdash; Type `/` to open a block insertion menu with search, arrow key navigation, and Enter to select
+- **Auto Text Transformations** &mdash; Automatic symbol replacement on space: `(c)` &rarr; &copy;, `1/2` &rarr; &frac12;, `--` &rarr; &mdash;, `->` &rarr; &rarr;, and more
+- **Editor Placeholder** &mdash; "Start writing..." placeholder shown when the editor is empty
 - **Responsive Toolbar** &mdash; Wraps to multiple rows on smaller screens so all buttons remain accessible
 - **Full Blocks Editor** &mdash; Paragraphs, headings, lists, links, quotes, code blocks, and all standard text modifiers (bold, italic, underline, strikethrough, code, uppercase, superscript, subscript)
 

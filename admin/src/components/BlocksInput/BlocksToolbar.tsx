@@ -93,6 +93,8 @@ const ToolbarWrapper = styled<FlexComponent>(Flex)`
 `;
 
 const FlexButton = styled<FlexComponent<'button'>>(Flex)`
+  user-select: none;
+
   // Inherit the not-allowed cursor from ToolbarWrapper when disabled
   &[aria-disabled] {
     cursor: not-allowed;
@@ -1035,6 +1037,171 @@ const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
+const FONT_FAMILIES = [
+  'Default',
+  'Arial',
+  'Georgia',
+  'Times New Roman',
+  'Courier New',
+  'Verdana',
+  'Trebuchet MS',
+  'Tahoma',
+  'Palatino',
+  'Garamond',
+];
+
+const FONT_SIZES = [
+  'Default',
+  '10px',
+  '12px',
+  '14px',
+  '16px',
+  '18px',
+  '20px',
+  '24px',
+  '28px',
+  '32px',
+  '36px',
+  '48px',
+];
+
+const ToolbarMenuButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 28px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: ${({ theme }) => theme.borderRadius};
+  background: transparent;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  color: inherit;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.colors.primary100};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
+const SmallSelectContainer = ({ children }: { children: React.ReactNode }) => (
+  <div
+    onMouseDown={(e) => e.stopPropagation()}
+    onClick={(e) => e.stopPropagation()}
+  >
+    {children}
+  </div>
+);
+
+const SmallSelectWrapper = styled<BoxComponent>(Box)`
+  div[role='combobox'] {
+    border: none;
+    min-height: unset;
+    padding: 4px 6px;
+    font-size: 12px;
+
+    // Make inner text pass-through so clicks hit the combobox trigger
+    & > span {
+      pointer-events: none;
+    }
+
+    &[aria-disabled='false']:hover {
+      cursor: pointer;
+      background: ${({ theme }) => theme.colors.primary100};
+    }
+
+    &[aria-disabled] {
+      background: transparent;
+      cursor: inherit;
+    }
+  }
+`;
+
+const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('FontFamilySelect');
+
+  const currentFont = (() => {
+    const marks = Editor.marks(editor) as any;
+    return marks?.fontFamily || undefined;
+  })();
+
+  const handleChange = (val: unknown) => {
+    const font = val as string;
+    if (font === 'Default') {
+      Editor.removeMark(editor, 'fontFamily');
+    } else {
+      Editor.addMark(editor, 'fontFamily', font);
+    }
+  };
+
+  return (
+    <SmallSelectContainer>
+      <SmallSelectWrapper>
+        <SingleSelect
+          value={currentFont}
+          onChange={handleChange}
+          onCloseAutoFocus={(e: Event) => e.preventDefault()}
+          disabled={disabled}
+          size="S"
+          placeholder="Font"
+        >
+          {FONT_FAMILIES.map((f) => (
+            <SingleSelectOption key={f} value={f}>
+              {f}
+            </SingleSelectOption>
+          ))}
+        </SingleSelect>
+      </SmallSelectWrapper>
+    </SmallSelectContainer>
+  );
+};
+
+const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('FontSizeSelect');
+
+  const currentSize = (() => {
+    const marks = Editor.marks(editor) as any;
+    return marks?.fontSize || undefined;
+  })();
+
+  const handleChange = (val: unknown) => {
+    const size = val as string;
+    if (size === 'Default') {
+      Editor.removeMark(editor, 'fontSize');
+    } else {
+      Editor.addMark(editor, 'fontSize', size);
+    }
+  };
+
+  return (
+    <SmallSelectContainer>
+      <SmallSelectWrapper>
+        <SingleSelect
+          value={currentSize}
+          onChange={handleChange}
+          onCloseAutoFocus={(e: Event) => e.preventDefault()}
+          disabled={disabled}
+          size="S"
+          placeholder="Size"
+        >
+          {FONT_SIZES.map((s) => (
+            <SingleSelectOption key={s} value={s}>
+              {s}
+            </SingleSelectOption>
+          ))}
+        </SingleSelect>
+      </SmallSelectWrapper>
+    </SmallSelectContainer>
+  );
+};
+
 const LINE_HEIGHT_OPTIONS = [
   { value: undefined, label: 'Default' },
   { value: '1', label: '1' },
@@ -1375,6 +1542,9 @@ const BlocksToolbar = () => {
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
         <BlocksDropdown />
+        <ToolbarSeparator />
+        <FontSizeSelect disabled={isButtonDisabled} />
+        <FontFamilySelect disabled={isButtonDisabled} />
         <ToolbarSeparator />
         <InlineColorPicker />
         <ToolbarSeparator />
