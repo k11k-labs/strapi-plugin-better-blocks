@@ -1150,6 +1150,7 @@ const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
           onCloseAutoFocus={(e: Event) => e.preventDefault()}
           disabled={disabled}
           size="S"
+          placeholder="Font"
         >
           {FONT_FAMILIES.map((f) => (
             <SingleSelectOption key={f} value={f}>
@@ -1188,6 +1189,7 @@ const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
           onCloseAutoFocus={(e: Event) => e.preventDefault()}
           disabled={disabled}
           size="S"
+          placeholder="Size"
         >
           {FONT_SIZES.map((s) => (
             <SingleSelectOption key={s} value={s}>
