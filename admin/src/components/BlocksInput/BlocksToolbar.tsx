@@ -1129,7 +1129,7 @@ const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
 
   const currentFont = (() => {
     const marks = Editor.marks(editor) as any;
-    return marks?.fontFamily || 'Default';
+    return marks?.fontFamily || undefined;
   })();
 
   const handleChange = (val: unknown) => {
@@ -1168,7 +1168,7 @@ const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
 
   const currentSize = (() => {
     const marks = Editor.marks(editor) as any;
-    return marks?.fontSize || 'Default';
+    return marks?.fontSize || undefined;
   })();
 
   const handleChange = (val: unknown) => {
