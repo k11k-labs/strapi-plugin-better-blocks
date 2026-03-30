@@ -93,6 +93,8 @@ const ToolbarWrapper = styled<FlexComponent>(Flex)`
 `;
 
 const FlexButton = styled<FlexComponent<'button'>>(Flex)`
+  user-select: none;
+
   // Inherit the not-allowed cursor from ToolbarWrapper when disabled
   &[aria-disabled] {
     cursor: not-allowed;
@@ -1063,6 +1065,32 @@ const FONT_SIZES = [
   '48px',
 ];
 
+const ToolbarMenuButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  height: 28px;
+  padding: 4px 8px;
+  border: none;
+  border-radius: ${({ theme }) => theme.borderRadius};
+  background: transparent;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  color: inherit;
+
+  &:hover:not(:disabled) {
+    background: ${({ theme }) => theme.colors.primary100};
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+`;
+
 const SmallSelectContainer = ({ children }: { children: React.ReactNode }) => (
   <div
     onMouseDown={(e) => e.stopPropagation()}
@@ -1125,9 +1153,7 @@ const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
         >
           {FONT_FAMILIES.map((f) => (
             <SingleSelectOption key={f} value={f}>
-              <span style={{ fontFamily: f === 'Default' ? 'inherit' : f }}>
-                {f}
-              </span>
+              {f}
             </SingleSelectOption>
           ))}
         </SingleSelect>
@@ -1515,8 +1541,8 @@ const BlocksToolbar = () => {
         <ToolbarSeparator />
         <BlocksDropdown />
         <ToolbarSeparator />
-        <FontFamilySelect disabled={isButtonDisabled} />
         <FontSizeSelect disabled={isButtonDisabled} />
+        <FontFamilySelect disabled={isButtonDisabled} />
         <ToolbarSeparator />
         <InlineColorPicker />
         <ToolbarSeparator />
