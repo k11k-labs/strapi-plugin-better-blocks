@@ -1063,7 +1063,9 @@ const FONT_SIZES = [
   '48px',
 ];
 
-const SmallSelectWrapper = styled<BoxComponent>(Box)`
+const SmallSelectWrapper = styled<BoxComponent>(Box).attrs({
+  onMouseDown: (e: React.MouseEvent) => e.stopPropagation(),
+})`
   div[role='combobox'] {
     border: none;
     min-height: unset;
