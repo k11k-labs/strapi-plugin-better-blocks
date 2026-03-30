@@ -1063,9 +1063,16 @@ const FONT_SIZES = [
   '48px',
 ];
 
-const SmallSelectWrapper = styled<BoxComponent>(Box).attrs({
-  onMouseDown: (e: React.MouseEvent) => e.stopPropagation(),
-})`
+const SmallSelectContainer = ({ children }: { children: React.ReactNode }) => (
+  <div
+    onMouseDown={(e) => e.stopPropagation()}
+    onClick={(e) => e.stopPropagation()}
+  >
+    {children}
+  </div>
+);
+
+const SmallSelectWrapper = styled<BoxComponent>(Box)`
   div[role='combobox'] {
     border: none;
     min-height: unset;
@@ -1102,23 +1109,25 @@ const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
   };
 
   return (
-    <SmallSelectWrapper>
-      <SingleSelect
-        value={currentFont}
-        onChange={handleChange}
-        onCloseAutoFocus={(e: Event) => e.preventDefault()}
-        disabled={disabled}
-        size="S"
-      >
-        {FONT_FAMILIES.map((f) => (
-          <SingleSelectOption key={f} value={f}>
-            <span style={{ fontFamily: f === 'Default' ? 'inherit' : f }}>
-              {f}
-            </span>
-          </SingleSelectOption>
-        ))}
-      </SingleSelect>
-    </SmallSelectWrapper>
+    <SmallSelectContainer>
+      <SmallSelectWrapper>
+        <SingleSelect
+          value={currentFont}
+          onChange={handleChange}
+          onCloseAutoFocus={(e: Event) => e.preventDefault()}
+          disabled={disabled}
+          size="S"
+        >
+          {FONT_FAMILIES.map((f) => (
+            <SingleSelectOption key={f} value={f}>
+              <span style={{ fontFamily: f === 'Default' ? 'inherit' : f }}>
+                {f}
+              </span>
+            </SingleSelectOption>
+          ))}
+        </SingleSelect>
+      </SmallSelectWrapper>
+    </SmallSelectContainer>
   );
 };
 
@@ -1140,21 +1149,23 @@ const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
   };
 
   return (
-    <SmallSelectWrapper>
-      <SingleSelect
-        value={currentSize}
-        onChange={handleChange}
-        onCloseAutoFocus={(e: Event) => e.preventDefault()}
-        disabled={disabled}
-        size="S"
-      >
-        {FONT_SIZES.map((s) => (
-          <SingleSelectOption key={s} value={s}>
-            {s}
-          </SingleSelectOption>
-        ))}
-      </SingleSelect>
-    </SmallSelectWrapper>
+    <SmallSelectContainer>
+      <SmallSelectWrapper>
+        <SingleSelect
+          value={currentSize}
+          onChange={handleChange}
+          onCloseAutoFocus={(e: Event) => e.preventDefault()}
+          disabled={disabled}
+          size="S"
+        >
+          {FONT_SIZES.map((s) => (
+            <SingleSelectOption key={s} value={s}>
+              {s}
+            </SingleSelectOption>
+          ))}
+        </SingleSelect>
+      </SmallSelectWrapper>
+    </SmallSelectContainer>
   );
 };
 
