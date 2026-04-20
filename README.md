@@ -35,6 +35,48 @@
 
 ---
 
+## Feature showcase
+
+### Text color & background highlight
+
+![Text color & highlight](./docs/features/feature-text-color-highlight.gif)
+
+### Tables
+
+![Tables](./docs/features/feature-tables.gif)
+
+### Nested lists
+
+![Nested lists](./docs/features/feature-nested-lists.gif)
+
+### Media embeds (YouTube / Vimeo)
+
+![Media embeds](./docs/features/feature-media-embeds.gif)
+
+### Text alignment
+
+![Text alignment](./docs/features/feature-text-alignment.gif)
+
+### Line height & indentation
+
+![Line height & indentation](./docs/features/feature-line-height-indent.gif)
+
+### Image captions & alignment
+
+![Image captions](./docs/features/feature-image-captions.gif)
+
+### Emoji & special character pickers
+
+![Emoji & special characters](./docs/features/feature-emoji-special-chars.gif)
+
+### Find & replace
+
+![Find and replace](./docs/features/feature-find-replace.gif)
+
+### Undo / redo, remove formatting & word count
+
+![Undo/redo, word count](./docs/features/feature-undo-redo-wordcount.gif)
+
 ## Features
 
 - **Inline Text Color** &mdash; Apply foreground color to selected text from a configurable palette

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useStrapiApp } from '@strapi/admin/strapi-admin';
-import { Flex, Box, Typography } from '@strapi/design-system';
+import { Flex, Box } from '@strapi/design-system';
 import { Image as ImageIcon } from '@strapi/icons';
 import { Transforms, Editor, type Element as SlateElement } from 'slate';
 import {
@@ -158,6 +158,19 @@ const ImageBlock = ({ attributes, children, element }: RenderElementProps) => {
     Transforms.setNodes(editor, { caption: newCaption } as any, { at: path });
   };
 
+  const captionRef = React.useRef<HTMLElement | null>(null);
+  React.useEffect(() => {
+    const node = captionRef.current;
+    if (!node) return;
+    const stop = (e: Event) => e.stopPropagation();
+    node.addEventListener('beforeinput', stop);
+    node.addEventListener('input', stop);
+    return () => {
+      node.removeEventListener('beforeinput', stop);
+      node.removeEventListener('input', stop);
+    };
+  }, []);
+
   return (
     <Box {...attributes}>
       {children}
@@ -192,8 +205,10 @@ const ImageBlock = ({ attributes, children, element }: RenderElementProps) => {
           </ImageWrapper>
         </ImageContainer>
         <CaptionInput
+          ref={captionRef as React.RefObject<HTMLElement>}
           contentEditable
           suppressContentEditableWarning
+          onKeyDown={(e) => e.stopPropagation()}
           onBlur={(e: React.FocusEvent<HTMLElement>) =>
             setCaption(e.currentTarget.textContent || '')
           }
