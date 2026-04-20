@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.6.1
+
+### Patch Changes
+
+- [#26](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/26) [`fc9ed7d`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/fc9ed7df36c2f0d9393a20d58683a30b65d98103) Thanks [@kkukielka](https://github.com/kkukielka)! - Fix image caption editing (native `beforeinput`/`input`/`keydown` events now stopPropagation past Slate's Editable, so typing, backspace and enter work inside the caption). Fix emoji picker search (filter now matches against per-emoji keywords instead of always returning true). Add per-feature demo GIFs to documentation.
+
 ## 0.6.0
 
 ### Minor Changes
