@@ -18,6 +18,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { styled } from 'styled-components';
 
 import { useBlocksEditorContext } from './BlocksEditor';
+import { insertCallout, VARIANTS, VARIANT_ORDER } from './Blocks/Callout';
 import { setBlockDiagram, DiagramIcon } from './Blocks/Diagram';
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
 import { setBlockMath, MathIcon } from './Blocks/Math';
@@ -137,6 +138,14 @@ const COMMANDS: SlashCommand[] = [
       setBlockDiagram(editor);
     },
   },
+  ...VARIANT_ORDER.map((variant) => ({
+    id: `callout-${variant}`,
+    label: `Callout: ${String(VARIANTS[variant].label.defaultMessage)}`,
+    icon: VARIANTS[variant].icon,
+    action: (editor: Editor) => {
+      insertCallout(editor, variant);
+    },
+  })),
   {
     id: 'horizontal-line',
     label: 'Horizontal line',
@@ -286,24 +295,32 @@ const SlashCommandMenu = () => {
     if (!show) return;
 
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Run in the capture phase and stop propagation so the editor's own
+      // Enter/Arrow handlers don't also fire (which would split the block and
+      // leave the "/command" text behind).
       if (e.key === 'ArrowDown') {
         e.preventDefault();
+        e.stopPropagation();
         setActiveIndex((i) => (i + 1) % filtered.length);
       } else if (e.key === 'ArrowUp') {
         e.preventDefault();
+        e.stopPropagation();
         setActiveIndex((i) => (i - 1 + filtered.length) % filtered.length);
       } else if (e.key === 'Enter') {
         e.preventDefault();
+        e.stopPropagation();
         if (filtered[activeIndex]) {
           executeCommand(filtered[activeIndex]);
         }
       } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
         setShow(false);
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handleKeyDown, true);
+    return () => document.removeEventListener('keydown', handleKeyDown, true);
   }, [show, filtered, activeIndex, executeCommand]);
 
   if (!show || filtered.length === 0) return null;
