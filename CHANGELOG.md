@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.7.1
+
+### Patch Changes
+
+- [#32](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/32) [`1a790ba`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/1a790bac5696d572014604d1f58a6b42cff4a89a) Thanks [@kkukielka](https://github.com/kkukielka)! - Document the inline and block math (LaTeX / KaTeX) feature in the README feature list.
+
 ## 0.7.0
 
 ### Minor Changes
