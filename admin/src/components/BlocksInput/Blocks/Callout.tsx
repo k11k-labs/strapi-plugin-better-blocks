@@ -12,7 +12,7 @@ import {
   Lightbulb,
   Bell,
   WarningCircle,
-  Stop,
+  CrossCircle,
 } from '@strapi/icons';
 import { useIntl, type MessageDescriptor } from 'react-intl';
 import { Editor, Element, Node, Path, Range, Text, Transforms } from 'slate';
@@ -66,7 +66,7 @@ const VARIANTS: Record<CalloutVariant, VariantMeta> = {
     },
   },
   caution: {
-    icon: Stop,
+    icon: CrossCircle,
     family: 'danger',
     label: {
       id: 'components.Blocks.callout.caution',
