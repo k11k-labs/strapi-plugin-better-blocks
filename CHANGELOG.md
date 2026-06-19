@@ -1,5 +1,18 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.8.0
+
+### Minor Changes
+
+- [#37](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/37) [`e54d8cc`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/e54d8cc1b84432fad0666686bc456b1e3c6a783d) Thanks [@kkukielka](https://github.com/kkukielka)! - Add block-level Mermaid diagram support. A new `diagram` block stores the raw
+  Mermaid definition (`{ type: 'diagram', format: 'mermaid', value }`) and renders
+  it to SVG with a live preview. Insert it from the blocks selector, the
+  `/mermaid` slash command, or by typing ` ```mermaid ` followed by a space. The
+  diagram theme follows Strapi's light/dark mode and Mermaid is loaded lazily so
+  it stays out of the main admin bundle.
+  </content>
+  </invoke>
+
 ## 0.7.1
 
 ### Patch Changes
