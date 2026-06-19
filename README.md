@@ -12,6 +12,9 @@
   <a href="https://github.com/k11k-labs/strapi-plugin-better-blocks/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/npm/l/@k11k/strapi-plugin-better-blocks.svg" />
   </a>
+  <a href="https://buymeacoffee.com/k11k">
+    <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" />
+  </a>
 </p>
 
 <p align="center">
@@ -341,6 +344,16 @@ cd playground/strapi && npm install && npm run develop
 
 - [GitHub Issues](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues) &mdash; Bug reports and feature requests
 - [GitHub Discussions](https://github.com/k11k-labs/strapi-plugin-better-blocks/discussions) &mdash; Questions and ideas
+
+## Support this project
+
+This plugin is built and maintained in my free time, and it's free for everyone. If it has saved you time on a project, you can help keep it caffeinated and actively developed:
+
+<a href="https://buymeacoffee.com/k11k">
+  <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black&style=for-the-badge" />
+</a>
+
+Every coffee goes toward fixing bugs, reviewing PRs, writing docs, and shipping the features you ask for. Thank you! ☕
 
 ## License
 
