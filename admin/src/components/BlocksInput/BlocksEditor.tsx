@@ -31,6 +31,7 @@ import {
 import { imageBlocks, withImages } from './Blocks/Image';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
+import { diagramBlocks, withDiagram } from './Blocks/Diagram';
 import { mathBlocks, withMath } from './Blocks/Math';
 import { mediaEmbedBlocks, withMediaEmbed } from './Blocks/MediaEmbed';
 import { paragraphBlocks } from './Blocks/Paragraph';
@@ -99,6 +100,7 @@ const selectorBlockKeys = [
   'quote',
   'code',
   'math',
+  'diagram',
 ] as const;
 
 type SelectorBlockKey = (typeof selectorBlockKeys)[number];
@@ -249,6 +251,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withTables,
         withMediaEmbed,
         withMath,
+        withDiagram,
         withAutoTransform
       )(createEditor())
     );
@@ -335,6 +338,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...quoteBlocks,
         ...codeBlocks,
         ...mathBlocks,
+        ...diagramBlocks,
         ...horizontalLineBlocks,
         ...tableBlocks,
         ...mediaEmbedBlocks,

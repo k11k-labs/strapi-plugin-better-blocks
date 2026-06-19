@@ -99,6 +99,13 @@ export interface MathElement extends CustomElement {
   children: CustomText[];
 }
 
+export interface DiagramElement extends CustomElement {
+  type: 'diagram';
+  format: 'mermaid';
+  value: string;
+  children: CustomText[];
+}
+
 export type Block<T extends string> = Extract<Node, { type: T }>;
 
 // Utility functions
@@ -118,4 +125,10 @@ export const isListNode = (element: CustomElement): element is ListNode => {
 
 export const isMathNode = (element: CustomElement): element is MathElement => {
   return element.type === 'math';
+};
+
+export const isDiagramNode = (
+  element: CustomElement
+): element is DiagramElement => {
+  return element.type === 'diagram';
 };

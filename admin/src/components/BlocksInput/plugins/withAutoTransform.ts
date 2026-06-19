@@ -1,5 +1,6 @@
 import { Editor, Range, Transforms } from 'slate';
 
+import { setBlockDiagram } from '../Blocks/Diagram';
 import { insertInlineMath, setBlockMath } from '../Blocks/Math';
 
 /**
@@ -65,6 +66,14 @@ const withAutoTransform = (editor: Editor): Editor => {
           Transforms.select(editor, { anchor, focus: start });
           Transforms.delete(editor);
           setBlockMath(editor);
+          return;
+        }
+
+        // Mermaid diagram: the whole block is exactly "```mermaid" -> diagram block
+        if (beforeText.trim() === '```mermaid') {
+          Transforms.select(editor, { anchor, focus: start });
+          Transforms.delete(editor);
+          setBlockDiagram(editor);
           return;
         }
 

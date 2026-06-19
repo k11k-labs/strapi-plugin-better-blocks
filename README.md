@@ -90,6 +90,7 @@
 - **Tables** &mdash; Insert tables with header row, add/remove rows and columns via hover toolbar
 - **Media Embeds** &mdash; Insert YouTube and Vimeo videos with thumbnail preview in editor (iframe on frontend)
 - **Math (LaTeX / KaTeX)** &mdash; Inline and block math rendered with KaTeX; insert from the toolbar, the `/math` slash command, the blocks selector, or by typing `$$ ` (block) / `$…$ ` (inline), then edit in a popover with live preview
+- **Diagrams (Mermaid)** &mdash; Block-level [Mermaid](https://mermaid.js.org/) diagrams (flowcharts, sequence, class, state, ER, pie, and more) rendered to SVG; insert from the blocks selector, the `/mermaid` slash command, or by typing ` ```mermaid ` then a space, then edit the definition in a popover with live preview. Theme follows Strapi's light/dark mode
 - **Horizontal Line** &mdash; Insert `<hr>` dividers between content blocks
 - **Text Alignment** &mdash; Per-block left, center, right, and justify alignment
 - **Undo / Redo** &mdash; Toolbar buttons wired to Slate's built-in history
