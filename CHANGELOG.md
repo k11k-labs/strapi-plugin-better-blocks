@@ -1,5 +1,11 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.7.0
+
+### Minor Changes
+
+- [#30](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/30) [`e689581`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/e68958134e30614501da8d544936f947e1cb7cae) Thanks [@kkukielka](https://github.com/kkukielka)! - Add inline and block math (LaTeX / KaTeX) to the editor. Math is stored as a void `math` node (`{ type: 'math', format: 'inline' | 'block', value }`) and rendered with KaTeX in the editor preview. Insert block math from the blocks selector, the `/math` slash command, or by typing `$$ `; insert inline math from the toolbar Σ button or by typing `$…$ `. Clicking a formula opens a popover with a LaTeX input and live preview.
+
 ## 0.6.1
 
 ### Patch Changes
