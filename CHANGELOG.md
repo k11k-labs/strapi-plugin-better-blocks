@@ -1,5 +1,17 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.9.0
+
+### Minor Changes
+
+- [#39](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/39) [`9608b68`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/9608b684a35f14895147221bf5e5d783480d35eb) Thanks [@kkukielka](https://github.com/kkukielka)! - Add GitHub-style callout / admonition blocks. A new `callout` block holds
+  nested rich-text content (`{ type: 'callout', variant, title?, children }`) in
+  five variants — note, tip, important, warning, and caution — with an optional
+  custom title. Insert it from the blocks selector or the `/note`, `/tip`,
+  `/important`, `/warning`, `/caution` slash commands, and switch variant, edit
+  the title, or dissolve the callout from the header popover. Variant colors use
+  Strapi's design tokens so they adapt to light and dark mode.
+
 ## 0.8.0
 
 ### Minor Changes
