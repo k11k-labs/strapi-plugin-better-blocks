@@ -106,6 +106,20 @@ export interface DiagramElement extends CustomElement {
   children: CustomText[];
 }
 
+export type CalloutVariant =
+  | 'note'
+  | 'tip'
+  | 'important'
+  | 'warning'
+  | 'caution';
+
+export interface CalloutElement extends CustomElement {
+  type: 'callout';
+  variant: CalloutVariant;
+  title?: string;
+  children: Descendant[];
+}
+
 export type Block<T extends string> = Extract<Node, { type: T }>;
 
 // Utility functions
@@ -131,4 +145,10 @@ export const isDiagramNode = (
   element: CustomElement
 ): element is DiagramElement => {
   return element.type === 'diagram';
+};
+
+export const isCalloutNode = (
+  element: CustomElement
+): element is CalloutElement => {
+  return element.type === 'callout';
 };
