@@ -31,6 +31,7 @@ import {
 import { imageBlocks, withImages } from './Blocks/Image';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
+import { mathBlocks, withMath } from './Blocks/Math';
 import { mediaEmbedBlocks, withMediaEmbed } from './Blocks/MediaEmbed';
 import { paragraphBlocks } from './Blocks/Paragraph';
 import { quoteBlocks } from './Blocks/Quote';
@@ -97,6 +98,7 @@ const selectorBlockKeys = [
   'image',
   'quote',
   'code',
+  'math',
 ] as const;
 
 type SelectorBlockKey = (typeof selectorBlockKeys)[number];
@@ -246,6 +248,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withHorizontalLine,
         withTables,
         withMediaEmbed,
+        withMath,
         withAutoTransform
       )(createEditor())
     );
@@ -331,6 +334,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...imageBlocks,
         ...quoteBlocks,
         ...codeBlocks,
+        ...mathBlocks,
         ...horizontalLineBlocks,
         ...tableBlocks,
         ...mediaEmbedBlocks,

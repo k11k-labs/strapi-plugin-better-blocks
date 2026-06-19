@@ -277,6 +277,42 @@
       "children": [{ "type": "text", "text": "" }]
     },
     {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Math (LaTeX / KaTeX)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Einstein's mass–energy equivalence " },
+        {
+          "type": "math",
+          "format": "inline",
+          "value": "E = mc^2",
+          "children": [{ "type": "text", "text": "" }]
+        },
+        {
+          "type": "text",
+          "text": " is one of the most famous equations in physics. Inline math sits right inside the text flow."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Block math is centered on its own line, e.g. the Gaussian integral:"
+        }
+      ]
+    },
+    {
+      "type": "math",
+      "format": "block",
+      "value": "\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
       "type": "paragraph",
       "children": [{ "type": "text", "text": "" }]
     },

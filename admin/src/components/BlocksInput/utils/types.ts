@@ -92,6 +92,13 @@ export interface ImageElement extends CustomElement {
   children: CustomText[];
 }
 
+export interface MathElement extends CustomElement {
+  type: 'math';
+  format: 'inline' | 'block';
+  value: string;
+  children: CustomText[];
+}
+
 export type Block<T extends string> = Extract<Node, { type: T }>;
 
 // Utility functions
@@ -107,4 +114,8 @@ export const isLinkNode = (element: CustomElement): element is LinkNode => {
 
 export const isListNode = (element: CustomElement): element is ListNode => {
   return element.type === 'list';
+};
+
+export const isMathNode = (element: CustomElement): element is MathElement => {
+  return element.type === 'math';
 };
