@@ -1,5 +1,7 @@
 import { Editor, Range, Transforms } from 'slate';
 
+import { insertInlineMath, setBlockMath } from '../Blocks/Math';
+
 /**
  * Auto text transformation rules.
  * When the user types the trigger followed by a space,
@@ -57,6 +59,29 @@ const withAutoTransform = (editor: Editor): Editor => {
         const start = Editor.start(editor, blockPath);
         const range = { anchor, focus: start };
         const beforeText = Editor.string(editor, range);
+
+        // Block math: the whole block is exactly "$$" -> convert to a math block
+        if (beforeText.trim() === '$$') {
+          Transforms.select(editor, { anchor, focus: start });
+          Transforms.delete(editor);
+          setBlockMath(editor);
+          return;
+        }
+
+        // Inline math: "$…$" ending at the cursor -> inline math node
+        const inlineMathMatch = beforeText.match(/\$([^$\n]+)\$$/);
+        if (inlineMathMatch) {
+          const latex = inlineMathMatch[1];
+          const triggerStart = {
+            ...anchor,
+            offset: anchor.offset - inlineMathMatch[0].length,
+          };
+          Transforms.select(editor, { anchor: triggerStart, focus: anchor });
+          Transforms.delete(editor);
+          insertInlineMath(editor, latex);
+          insertText(' ');
+          return;
+        }
 
         for (const [trigger, replacement] of TRANSFORMS) {
           if (beforeText.endsWith(trigger)) {

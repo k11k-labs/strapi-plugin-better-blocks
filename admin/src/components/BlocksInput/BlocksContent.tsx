@@ -483,6 +483,9 @@ const BlocksContent = ({
       // Link is inline block so it cannot be dragged
       // List items and nested list blocks (path depth > 1 means not a top-level editor child) are skipped from dragged items
       const elType = (element as any).type;
+      // Inline math is an inline void element, so it cannot be dragged
+      const isInlineMath =
+        elType === 'math' && (element as any).format === 'inline';
       const isTablePart =
         elType === 'table-row' ||
         elType === 'table-cell' ||
@@ -497,6 +500,7 @@ const BlocksContent = ({
           }));
       if (
         isLinkNode(element as any) ||
+        isInlineMath ||
         (isListNode(element as any) && nodePath.length > 1) ||
         elType === 'list-item' ||
         isInsideTable

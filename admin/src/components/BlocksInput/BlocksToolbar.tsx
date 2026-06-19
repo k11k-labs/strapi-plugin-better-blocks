@@ -59,6 +59,7 @@ import {
   ListNode,
 } from './utils/types';
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
+import { insertInlineMath, MathIcon } from './Blocks/Math';
 import { insertTable } from './Blocks/Table';
 import { insertMediaEmbed, isMediaUrl } from './Blocks/MediaEmbed';
 import {
@@ -1396,6 +1397,45 @@ const HorizontalLineButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
+const InlineMathButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor } = useBlocksEditorContext('InlineMathButton');
+  const { formatMessage } = useIntl();
+
+  const label = formatMessage({
+    id: 'components.Blocks.inlineMath',
+    defaultMessage: 'Inline math',
+  });
+
+  return (
+    <Tooltip label={label}>
+      <Toolbar.ToggleItem
+        value="inlineMath"
+        data-state="off"
+        onMouseDown={(e) => {
+          e.preventDefault();
+          insertInlineMath(editor);
+          ReactEditor.focus(editor as ReactEditor);
+        }}
+        aria-disabled={disabled}
+        disabled={disabled}
+        aria-label={label}
+        asChild
+      >
+        <FlexButton
+          tag="button"
+          alignItems="center"
+          justifyContent="center"
+          width={7}
+          height={7}
+          hasRadius
+        >
+          <MathIcon fill={disabled ? 'neutral300' : 'neutral600'} />
+        </FlexButton>
+      </Toolbar.ToggleItem>
+    </Tooltip>
+  );
+};
+
 const BlocksToolbar = () => {
   const { editor, blocks, modifiers, disabled } =
     useBlocksEditorContext('BlocksToolbar');
@@ -1569,6 +1609,7 @@ const BlocksToolbar = () => {
             <SpecialCharPicker disabled={isButtonDisabled} />
             <InsertTableButton disabled={disabled} />
             <InsertMediaButton disabled={disabled} />
+            <InlineMathButton disabled={isButtonDisabled} />
             <HorizontalLineButton disabled={disabled} />
             <FindReplace disabled={disabled} />
             <RemoveFormattingButton disabled={isButtonDisabled} />

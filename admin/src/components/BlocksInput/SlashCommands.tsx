@@ -19,6 +19,7 @@ import { styled } from 'styled-components';
 
 import { useBlocksEditorContext } from './BlocksEditor';
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
+import { setBlockMath, MathIcon } from './Blocks/Math';
 import { insertTable } from './Blocks/Table';
 
 interface SlashCommand {
@@ -117,6 +118,14 @@ const COMMANDS: SlashCommand[] = [
     icon: Code,
     action: (editor) => {
       Transforms.setNodes(editor, { type: 'code' } as any);
+    },
+  },
+  {
+    id: 'math',
+    label: 'Math block',
+    icon: MathIcon,
+    action: (editor) => {
+      setBlockMath(editor);
     },
   },
   {
