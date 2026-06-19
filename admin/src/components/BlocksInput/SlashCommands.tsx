@@ -18,6 +18,7 @@ import { ReactEditor, useSlate } from 'slate-react';
 import { styled } from 'styled-components';
 
 import { useBlocksEditorContext } from './BlocksEditor';
+import { setBlockDiagram, DiagramIcon } from './Blocks/Diagram';
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
 import { setBlockMath, MathIcon } from './Blocks/Math';
 import { insertTable } from './Blocks/Table';
@@ -126,6 +127,14 @@ const COMMANDS: SlashCommand[] = [
     icon: MathIcon,
     action: (editor) => {
       setBlockMath(editor);
+    },
+  },
+  {
+    id: 'mermaid',
+    label: 'Diagram (Mermaid)',
+    icon: DiagramIcon,
+    action: (editor) => {
+      setBlockDiagram(editor);
     },
   },
   {

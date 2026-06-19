@@ -317,6 +317,40 @@
       "children": [{ "type": "text", "text": "" }]
     },
     {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Diagrams (Mermaid)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Block-level Mermaid diagrams are rendered to SVG. Here is a simple flowchart:"
+        }
+      ]
+    },
+    {
+      "type": "diagram",
+      "format": "mermaid",
+      "value": "graph TD\n    A[Start] --> B{Is it working?}\n    B -->|Yes| C[Ship it]\n    B -->|No| D[Debug]\n    D --> B",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "And a sequence diagram:" }]
+    },
+    {
+      "type": "diagram",
+      "format": "mermaid",
+      "value": "sequenceDiagram\n    participant Author\n    participant Editor\n    participant Renderer\n    Author->>Editor: Type Mermaid definition\n    Editor->>Editor: Live preview (SVG)\n    Editor->>Renderer: Save JSON\n    Renderer-->>Author: Rendered diagram",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
       "type": "paragraph",
       "children": [
         {

@@ -63,7 +63,8 @@
     "*.{js,jsx,ts,tsx,json,md,yml,yaml,css}": "prettier --write"
   },
   "dependencies": {
-    "katex": "^0.16.11"
+    "katex": "^0.16.11",
+    "mermaid": "^11.15.0"
   },
   "devDependencies": {
     "@changesets/changelog-github": "^0.6.0",
