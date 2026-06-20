@@ -1,5 +1,17 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.12.0
+
+### Minor Changes
+
+- [#51](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/51) [`d8679f7`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/d8679f7fd82e8f64de266f879b62942ccab6c302) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: WordPress-style Button block with full styling, link & file-download modes
+
+  Adds a new **Button** block (insert from the blocks selector, the `+` menu, or by typing `[button]`). Two modes:
+  - **Link** — URL, open-in-new-tab (auto `rel="noopener noreferrer"`), ARIA label.
+  - **File** — pick any Media Library asset to render a download button with optional file size and type icon.
+
+  A full-screen editor with live preview controls alignment, background/text colors (incl. hover), border radius, font size/weight, padding presets, a structured border (toggle + thickness + style + color), and a custom CSS class. Admins can set default button colors via `config/plugins` or per field. Stored as `{ "type": "button", "buttonType": "link" | "file", "label": "…", … }`.
+
 ## 0.11.0
 
 ### Minor Changes
