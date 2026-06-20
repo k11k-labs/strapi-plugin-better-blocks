@@ -32,6 +32,7 @@ import { imageBlocks, withImages } from './Blocks/Image';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
 import { calloutBlocks, withCallout } from './Blocks/Callout';
+import { detailsBlocks, withDetails } from './Blocks/Details';
 import { diagramBlocks, withDiagram } from './Blocks/Diagram';
 import { mathBlocks, withMath } from './Blocks/Math';
 import { mediaEmbedBlocks, withMediaEmbed } from './Blocks/MediaEmbed';
@@ -103,6 +104,7 @@ const selectorBlockKeys = [
   'math',
   'diagram',
   'callout',
+  'details',
 ] as const;
 
 type SelectorBlockKey = (typeof selectorBlockKeys)[number];
@@ -255,9 +257,16 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withMath,
         withDiagram,
         withCallout,
+        withDetails,
         withAutoTransform
       )(createEditor())
     );
+    // Expose plugin options on the editor so block helpers (e.g. insertDetails)
+    // can read admin config when they only have access to the editor instance.
+    (
+      editor as unknown as { pluginOptions?: Record<string, any> }
+    ).pluginOptions = pluginOptions;
+
     const [liveText, setLiveText] = React.useState('');
     const ariaDescriptionId = React.useId();
     const [isExpandedMode, setIsExpandedMode] = React.useState(false);
@@ -343,6 +352,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...mathBlocks,
         ...diagramBlocks,
         ...calloutBlocks,
+        ...detailsBlocks,
         ...horizontalLineBlocks,
         ...tableBlocks,
         ...mediaEmbedBlocks,

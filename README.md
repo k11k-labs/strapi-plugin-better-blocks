@@ -95,6 +95,7 @@
 - **Math (LaTeX / KaTeX)** &mdash; Inline and block math rendered with KaTeX; insert from the toolbar, the `/math` slash command, the blocks selector, or by typing `$$ ` (block) / `$…$ ` (inline), then edit in a full-screen modal with a side-by-side source editor and live preview. Block math supports multi-line equations via `\\` and LaTeX environments such as `aligned` and `cases`
 - **Diagrams (Mermaid)** &mdash; Block-level [Mermaid](https://mermaid.js.org/) diagrams (flowcharts, sequence, class, state, ER, pie, and more) rendered to SVG; insert from the blocks selector, the `/mermaid` slash command, or by typing ` ```mermaid ` then a space, then edit the definition in a full-screen modal with live preview and zoom controls. Theme follows Strapi's light/dark mode
 - **Callouts / Admonitions** &mdash; GitHub-style callouts in five variants (`Note`, `Tip`, `Important`, `Warning`, `Caution`) with an optional custom title and nested rich-text content (paragraphs, lists, links). Insert from the blocks selector or the `/note`, `/tip`, `/important`, `/warning`, `/caution` slash commands; switch variant, edit the title, or remove from the header popover. Colors follow Strapi's design tokens and adapt to light/dark mode
+- **Details / Collapsible** &mdash; GitHub-style collapsible `<details>` / `<summary>` sections for managing content density. Insert from the blocks selector or the `/details` slash command; edit the summary label and toggle open/closed-by-default (`defaultOpen`) from the header. Holds full rich-text block content (paragraphs, lists, tables, images) and supports nesting. Admins can set the default summary text and choose a GitHub-minimal (default) or Custom (bordered + background) style. Stored as `{ "type": "details", "summary": "…", "defaultOpen": false, "children": [...] }`
 - **Horizontal Line** &mdash; Insert `<hr>` dividers between content blocks
 - **Text Alignment** &mdash; Per-block left, center, right, and justify alignment
 - **Undo / Redo** &mdash; Toolbar buttons wired to Slate's built-in history
@@ -151,6 +152,26 @@ Add the plugin to your Strapi configuration in `config/plugins.ts` (or `config/p
 export default () => ({
   'better-blocks': {
     enabled: true,
+  },
+});
+```
+
+#### Details / Collapsible defaults (optional)
+
+Set plugin-wide defaults for the collapsible **Details** block. These apply to every
+Better Blocks field, and can still be overridden per field in the Content-Type Builder.
+
+```ts
+// config/plugins.ts
+export default () => ({
+  'better-blocks': {
+    enabled: true,
+    config: {
+      details: {
+        defaultSummary: 'Show more', // summary label for newly inserted blocks
+        style: 'custom', // 'github' (minimal) | 'custom' (bordered + tinted background)
+      },
+    },
   },
 });
 ```

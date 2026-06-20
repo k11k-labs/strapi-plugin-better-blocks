@@ -498,12 +498,14 @@ const BlocksContent = ({
             if (nodePath[0] !== i) return false;
             return (child as any).type === 'table';
           }));
-      // Blocks nested inside a callout are managed by the callout, not draggable on their own
-      const isInsideCallout =
+      // Blocks nested inside a callout or details are managed by that container,
+      // not draggable on their own
+      const isInsideContainer =
         nodePath.length > 1 &&
         editor.children.some((child, i) => {
           if (nodePath[0] !== i) return false;
-          return (child as any).type === 'callout';
+          const childType = (child as any).type;
+          return childType === 'callout' || childType === 'details';
         });
       if (
         isLinkNode(element as any) ||
@@ -511,7 +513,7 @@ const BlocksContent = ({
         (isListNode(element as any) && nodePath.length > 1) ||
         elType === 'list-item' ||
         isInsideTable ||
-        isInsideCallout
+        isInsideContainer
       ) {
         return block.renderElement(props);
       }

@@ -102,3 +102,12 @@ playground/strapi/package-lock.json
 playground/strapi/.env
 playground/strapi/database
 playground/strapi/public/uploads
+
+############################
+# Compiled server output (TypeScript source lives alongside as .ts)
+############################
+
+server/src/**/*.js
+server/src/*.js
+server/src/**/*.js.map
+server/src/*.js.map
