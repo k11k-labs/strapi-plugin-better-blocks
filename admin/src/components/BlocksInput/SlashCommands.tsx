@@ -12,6 +12,7 @@ import {
   Check,
   Minus,
   GridNine,
+  CaretDown,
 } from '@strapi/icons';
 import { Editor, Range, Transforms } from 'slate';
 import { ReactEditor, useSlate } from 'slate-react';
@@ -19,6 +20,7 @@ import { styled } from 'styled-components';
 
 import { useBlocksEditorContext } from './BlocksEditor';
 import { insertCallout, VARIANTS, VARIANT_ORDER } from './Blocks/Callout';
+import { insertDetails } from './Blocks/Details';
 import { setBlockDiagram, DiagramIcon } from './Blocks/Diagram';
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
 import { setBlockMath, MathIcon } from './Blocks/Math';
@@ -146,6 +148,14 @@ const COMMANDS: SlashCommand[] = [
       insertCallout(editor, variant);
     },
   })),
+  {
+    id: 'details',
+    label: 'Details (collapsible)',
+    icon: CaretDown,
+    action: (editor) => {
+      insertDetails(editor);
+    },
+  },
   {
     id: 'horizontal-line',
     label: 'Horizontal line',

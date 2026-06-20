@@ -23,6 +23,7 @@ import {
   Play,
   IndentIncrease,
   IndentDecrease,
+  Plus,
 } from '@strapi/icons';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import {
@@ -212,6 +213,30 @@ const ToolbarButton = ({
   );
 };
 
+/**
+ * "Rich" blocks that are inserted (not conversions of the current block). They are
+ * surfaced from the dedicated "+" Insert menu instead of the block-type dropdown.
+ */
+const INSERT_BLOCK_KEYS: SelectorBlockKey[] = [
+  'image',
+  'callout',
+  'details',
+  'diagram',
+  'math',
+];
+
+/**
+ * Everything hidden from the block-type dropdown. On top of the insert blocks,
+ * lists are excluded too: they have their own dedicated toolbar buttons, so the
+ * type-conversion dropdown is left to text-level blocks (text, headings, quote, code).
+ */
+const DROPDOWN_EXCLUDED_KEYS: SelectorBlockKey[] = [
+  ...INSERT_BLOCK_KEYS,
+  'list-ordered',
+  'list-unordered',
+  'list-todo',
+];
+
 const BlocksDropdown = () => {
   const { editor, blocks, disabled } = useBlocksEditorContext('BlocksDropdown');
   const { formatMessage } = useIntl();
@@ -222,7 +247,10 @@ const BlocksDropdown = () => {
   >((currentKeys, entry) => {
     const [key, block] = entry;
 
-    return block.isInBlocksSelector ? [...currentKeys, key] : currentKeys;
+    return block.isInBlocksSelector &&
+      !DROPDOWN_EXCLUDED_KEYS.includes(key as SelectorBlockKey)
+      ? [...currentKeys, key]
+      : currentKeys;
   }, []);
 
   const [blockSelected, setBlockSelected] =
@@ -350,11 +378,13 @@ const BlocksDropdown = () => {
       );
 
       // Change the value selected in the dropdown if it doesn't match the anchor block key
-      // Only update if it's a selector block (has icon/label), otherwise keep current selection
+      // Only update if it's a selector block (has icon/label) that the dropdown actually
+      // lists — insert-only blocks (Details/Diagram/Math) live in the "+" menu instead.
       if (
         anchorBlockKey &&
         anchorBlockKey !== blockSelected &&
-        isSelectorBlockKey(anchorBlockKey)
+        isSelectorBlockKey(anchorBlockKey) &&
+        !DROPDOWN_EXCLUDED_KEYS.includes(anchorBlockKey as SelectorBlockKey)
       ) {
         setBlockSelected(anchorBlockKey as SelectorBlockKey);
       }
@@ -902,6 +932,61 @@ const TextAlignButton = ({ disabled }: { disabled: boolean }) => {
         })}
       </Menu.Content>
     </Menu.Root>
+  );
+};
+
+const InsertBlockButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor, blocks } = useBlocksEditorContext('InsertBlockButton');
+  const { formatMessage } = useIntl();
+  const { modalElement, handleConversionResult } = useConversionModal();
+
+  const handleInsert = (key: SelectorBlockKey) => {
+    const maybeRenderModal = blocks[key].handleConvert?.(editor);
+    handleConversionResult(maybeRenderModal);
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
+  return (
+    <>
+      <Menu.Root>
+        <Menu.Trigger disabled={disabled}>
+          <Tooltip
+            label={formatMessage({
+              id: 'components.Blocks.insertBlock',
+              defaultMessage: 'Insert',
+            })}
+          >
+            <FlexButton
+              tag="button"
+              alignItems="center"
+              justifyContent="center"
+              width={7}
+              height={7}
+              hasRadius
+              aria-disabled={disabled}
+            >
+              <Plus fill={disabled ? 'neutral300' : 'neutral600'} />
+            </FlexButton>
+          </Tooltip>
+        </Menu.Trigger>
+        <Menu.Content>
+          {INSERT_BLOCK_KEYS.map((key) => {
+            const Icon = blocks[key].icon;
+            return (
+              <StyledMenuItem
+                key={key}
+                onSelect={() => handleInsert(key)}
+                $isActive={false}
+              >
+                <Icon />
+                {formatMessage(blocks[key].label)}
+              </StyledMenuItem>
+            );
+          })}
+        </Menu.Content>
+      </Menu.Root>
+      {modalElement}
+    </>
   );
 };
 
@@ -1582,6 +1667,7 @@ const BlocksToolbar = () => {
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
         <BlocksDropdown />
+        <InsertBlockButton disabled={disabled} />
         <ToolbarSeparator />
         <FontSizeSelect disabled={isButtonDisabled} />
         <FontFamilySelect disabled={isButtonDisabled} />

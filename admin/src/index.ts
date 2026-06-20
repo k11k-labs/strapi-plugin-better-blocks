@@ -111,6 +111,67 @@ export default {
               },
             ],
           },
+          {
+            sectionTitle: {
+              id: `${PLUGIN_ID}.section.details-settings`,
+              defaultMessage: 'Details / Collapsible Settings',
+            },
+            items: [
+              {
+                name: 'options.detailsDefaultSummary',
+                type: 'text',
+                placeholder: {
+                  id: `${PLUGIN_ID}.detailsDefaultSummary.placeholder`,
+                  defaultMessage: 'Click to expand',
+                },
+                intlLabel: {
+                  id: `${PLUGIN_ID}.detailsDefaultSummary`,
+                  defaultMessage: 'Default summary text',
+                },
+                description: {
+                  id: `${PLUGIN_ID}.detailsDefaultSummary.description`,
+                  defaultMessage:
+                    'Summary label used when a new collapsible Details block is inserted.',
+                },
+              },
+              {
+                name: 'options.detailsStyle',
+                type: 'select',
+                defaultValue: 'github',
+                intlLabel: {
+                  id: `${PLUGIN_ID}.detailsStyle`,
+                  defaultMessage: 'Details style',
+                },
+                description: {
+                  id: `${PLUGIN_ID}.detailsStyle.description`,
+                  defaultMessage:
+                    'GitHub-style (minimal) or Custom (bordered container with a tinted header background) for Details blocks.',
+                },
+                options: [
+                  {
+                    key: 'github',
+                    value: 'github',
+                    metadatas: {
+                      intlLabel: {
+                        id: `${PLUGIN_ID}.detailsStyle.github`,
+                        defaultMessage: 'GitHub (minimal)',
+                      },
+                    },
+                  },
+                  {
+                    key: 'custom',
+                    value: 'custom',
+                    metadatas: {
+                      intlLabel: {
+                        id: `${PLUGIN_ID}.detailsStyle.custom`,
+                        defaultMessage: 'Custom (bordered + background)',
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+          },
         ],
         validator: (args: any) => {
           const {

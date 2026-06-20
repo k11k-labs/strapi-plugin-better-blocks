@@ -120,6 +120,18 @@ export interface CalloutElement extends CustomElement {
   children: Descendant[];
 }
 
+export interface DetailsElement extends CustomElement {
+  type: 'details';
+  /** Plain-text label shown in the disclosure header (the <summary>) */
+  summary: string;
+  /** When true the section is expanded by default (maps to the HTML `open` attribute) */
+  defaultOpen?: boolean;
+  /** Per-block style override; falls back to the field/global config when unset */
+  style?: 'github' | 'custom';
+  /** Block-level content shown when the section is expanded */
+  children: Descendant[];
+}
+
 export type Block<T extends string> = Extract<Node, { type: T }>;
 
 // Utility functions
@@ -151,4 +163,10 @@ export const isCalloutNode = (
   element: CustomElement
 ): element is CalloutElement => {
   return element.type === 'callout';
+};
+
+export const isDetailsNode = (
+  element: CustomElement
+): element is DetailsElement => {
+  return element.type === 'details';
 };

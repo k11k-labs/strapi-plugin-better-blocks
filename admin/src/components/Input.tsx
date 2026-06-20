@@ -1,7 +1,19 @@
 import * as React from 'react';
 import { BlocksEditor } from './BlocksInput/BlocksEditor';
 import { Field, Flex } from '@strapi/design-system';
+import { useFetchClient } from '@strapi/admin/strapi-admin';
 import * as Tooltip from '@radix-ui/react-tooltip';
+
+interface PluginConfig {
+  details?: { defaultSummary?: string; style?: 'github' | 'custom' };
+}
+
+/**
+ * Plugin config (from config/plugins.js merged with server defaults) is fetched
+ * once and cached across all Better Blocks fields on the page.
+ */
+let cachedConfig: PluginConfig | null = null;
+let configPromise: Promise<PluginConfig> | null = null;
 
 interface InputProps {
   attribute: {
@@ -16,6 +28,8 @@ interface InputProps {
       customColorsPresets?: string;
       disableDefaultBgColors?: boolean;
       customBgColorsPresets?: string;
+      detailsDefaultSummary?: string;
+      detailsStyle?: 'github' | 'custom';
     };
   };
   description?: { id: string; defaultMessage: string };
@@ -53,6 +67,45 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
 
   const [editorValue, setEditorValue] = React.useState(getInitialValue);
 
+  // Fetch the admin-level plugin config (config/plugins.js) once and cache it.
+  const { get } = useFetchClient();
+  const [globalConfig, setGlobalConfig] = React.useState<PluginConfig | null>(
+    cachedConfig
+  );
+
+  React.useEffect(() => {
+    if (cachedConfig) return;
+    if (!configPromise) {
+      configPromise = get('/better-blocks/config')
+        .then((res: { data: PluginConfig }) => {
+          cachedConfig = res.data ?? {};
+          return cachedConfig;
+        })
+        .catch(() => {
+          cachedConfig = {};
+          return cachedConfig;
+        });
+    }
+    let active = true;
+    configPromise.then((cfg) => {
+      if (active) setGlobalConfig(cfg);
+    });
+    return () => {
+      active = false;
+    };
+  }, [get]);
+
+  // Per-field options (set in the content-type builder) override the global
+  // config, which overrides the hardcoded defaults baked into the blocks.
+  const fieldOptions = props.attribute.options;
+  const pluginOptions = {
+    ...fieldOptions,
+    detailsDefaultSummary:
+      fieldOptions?.detailsDefaultSummary ||
+      globalConfig?.details?.defaultSummary,
+    detailsStyle: fieldOptions?.detailsStyle || globalConfig?.details?.style,
+  };
+
   const handleChange = (name: string, value: any) => {
     setEditorValue(value);
 
@@ -83,7 +136,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             value={editorValue}
             ariaLabelId={props.name}
             disabled={props.disabled}
-            pluginOptions={props.attribute.options}
+            pluginOptions={pluginOptions}
             onChange={(eventOrPath, value) => {
               if (typeof eventOrPath === 'string') {
                 handleChange(eventOrPath, value);
