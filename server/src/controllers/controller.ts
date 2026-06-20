@@ -19,6 +19,16 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         defaultSummary: 'Click to expand',
         style: 'github',
       }),
+      button: strapi.plugin('better-blocks').config('button', {
+        defaultStyle: {
+          backgroundColor: '#4945ff',
+          textColor: '#ffffff',
+          borderRadius: '4px',
+          padding: '12px 24px',
+          fontSize: '16px',
+          fontWeight: '600',
+        },
+      }),
     };
   },
 });

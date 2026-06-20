@@ -18,6 +18,20 @@ export default {
       defaultSummary: 'Click to expand',
       style: 'github',
     },
+    /**
+     * Defaults for the WordPress-style Button block. `defaultStyle` is applied to
+     * a freshly inserted button; authors can then override it per-button.
+     */
+    button: {
+      defaultStyle: {
+        backgroundColor: '#4945ff',
+        textColor: '#ffffff',
+        borderRadius: '4px',
+        padding: '12px 24px',
+        fontSize: '16px',
+        fontWeight: '600',
+      },
+    },
   },
   validator(config: { details?: { style?: string } } = {}) {
     const style = config?.details?.style;

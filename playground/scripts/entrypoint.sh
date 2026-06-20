@@ -27,13 +27,15 @@ rm -rf /app/node_modules/.strapi
 echo "==> Installing Strapi v5 dependencies..."
 yarn install --check-files
 
-echo "==> Verifying plugin installation..."
-if [ ! -d "/app/node_modules/@k11k/strapi-plugin-better-blocks/dist" ]; then
-  echo "==> Plugin not installed by yarn, copying manually..."
-  mkdir -p /app/node_modules/@k11k/strapi-plugin-better-blocks
-  cp -r /plugin-build/dist /app/node_modules/@k11k/strapi-plugin-better-blocks/
-  cp /plugin-build/package.json /app/node_modules/@k11k/strapi-plugin-better-blocks/
-fi
+echo "==> Force-syncing freshly built plugin dist..."
+# yarn caches the file: dependency by version, so a rebuild with the same
+# version is NOT re-linked. Always overwrite the installed dist with the fresh
+# build, and drop Vite's pre-bundled deps cache so the admin recompiles it.
+mkdir -p /app/node_modules/@k11k/strapi-plugin-better-blocks
+rm -rf /app/node_modules/@k11k/strapi-plugin-better-blocks/dist
+cp -r /plugin-build/dist /app/node_modules/@k11k/strapi-plugin-better-blocks/dist
+cp /plugin-build/package.json /app/node_modules/@k11k/strapi-plugin-better-blocks/package.json
+rm -rf /app/node_modules/.strapi /app/node_modules/.vite /app/.cache
 
 echo "==> Starting Strapi v5 (admin panel at http://localhost:1337/admin)..."
 mkdir -p /app/public/uploads

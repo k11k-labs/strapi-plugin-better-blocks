@@ -445,6 +445,82 @@
       "children": [{ "type": "text", "text": "" }]
     },
     {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Buttons (Call-to-Action)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "WordPress-style buttons come in two modes. Link mode renders a styled hyperlink:"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "buttonType": "link",
+      "label": "Get started",
+      "alignment": "center",
+      "link": {
+        "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "ariaLabel": "Get started with Better Blocks"
+      },
+      "style": {
+        "backgroundColor": "#4945ff",
+        "textColor": "#ffffff",
+        "borderRadius": "8px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "padding": "12px 24px",
+        "hoverBackgroundColor": "#3732c9",
+        "hoverTextColor": "#ffffff"
+      },
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "File mode turns a Media Library asset into a download button with an optional size and type icon:"
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "buttonType": "file",
+      "label": "Download the whitepaper",
+      "alignment": "center",
+      "file": {
+        "url": "https://example.com/better-blocks-whitepaper.pdf",
+        "name": "Better Blocks Whitepaper.pdf",
+        "size": 5242880,
+        "ext": ".pdf",
+        "mime": "application/pdf"
+      },
+      "showFileSize": true,
+      "showFileIcon": true,
+      "style": {
+        "backgroundColor": "#0f766e",
+        "textColor": "#ffffff",
+        "borderRadius": "8px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "padding": "12px 24px",
+        "hoverBackgroundColor": "#115e59",
+        "hoverTextColor": "#ffffff"
+      },
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
       "type": "paragraph",
       "children": [
         {

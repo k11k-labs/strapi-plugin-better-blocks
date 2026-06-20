@@ -172,6 +172,48 @@ export default {
               },
             ],
           },
+          {
+            sectionTitle: {
+              id: `${PLUGIN_ID}.section.button-settings`,
+              defaultMessage: 'Button Settings',
+            },
+            items: [
+              {
+                name: 'options.buttonDefaultBackgroundColor',
+                type: 'text',
+                placeholder: {
+                  id: `${PLUGIN_ID}.buttonDefaultBackgroundColor.placeholder`,
+                  defaultMessage: '#4945ff',
+                },
+                intlLabel: {
+                  id: `${PLUGIN_ID}.buttonDefaultBackgroundColor`,
+                  defaultMessage: 'Default button background color',
+                },
+                description: {
+                  id: `${PLUGIN_ID}.buttonDefaultBackgroundColor.description`,
+                  defaultMessage:
+                    'Background color applied to newly inserted buttons (hex, e.g. #4945ff).',
+                },
+              },
+              {
+                name: 'options.buttonDefaultTextColor',
+                type: 'text',
+                placeholder: {
+                  id: `${PLUGIN_ID}.buttonDefaultTextColor.placeholder`,
+                  defaultMessage: '#ffffff',
+                },
+                intlLabel: {
+                  id: `${PLUGIN_ID}.buttonDefaultTextColor`,
+                  defaultMessage: 'Default button text color',
+                },
+                description: {
+                  id: `${PLUGIN_ID}.buttonDefaultTextColor.description`,
+                  defaultMessage:
+                    'Text color applied to newly inserted buttons (hex, e.g. #ffffff).',
+                },
+              },
+            ],
+          },
         ],
         validator: (args: any) => {
           const {
