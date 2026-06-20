@@ -92,8 +92,8 @@
 - **To-do Lists** &mdash; Checkbox list items with click-to-toggle and strikethrough on checked items
 - **Tables** &mdash; Insert tables with header row, add/remove rows and columns via hover toolbar
 - **Media Embeds** &mdash; Insert YouTube and Vimeo videos with thumbnail preview in editor (iframe on frontend)
-- **Math (LaTeX / KaTeX)** &mdash; Inline and block math rendered with KaTeX; insert from the toolbar, the `/math` slash command, the blocks selector, or by typing `$$ ` (block) / `$…$ ` (inline), then edit in a popover with live preview
-- **Diagrams (Mermaid)** &mdash; Block-level [Mermaid](https://mermaid.js.org/) diagrams (flowcharts, sequence, class, state, ER, pie, and more) rendered to SVG; insert from the blocks selector, the `/mermaid` slash command, or by typing ` ```mermaid ` then a space, then edit the definition in a popover with live preview. Theme follows Strapi's light/dark mode
+- **Math (LaTeX / KaTeX)** &mdash; Inline and block math rendered with KaTeX; insert from the toolbar, the `/math` slash command, the blocks selector, or by typing `$$ ` (block) / `$…$ ` (inline), then edit in a full-screen modal with a side-by-side source editor and live preview. Block math supports multi-line equations via `\\` and LaTeX environments such as `aligned` and `cases`
+- **Diagrams (Mermaid)** &mdash; Block-level [Mermaid](https://mermaid.js.org/) diagrams (flowcharts, sequence, class, state, ER, pie, and more) rendered to SVG; insert from the blocks selector, the `/mermaid` slash command, or by typing ` ```mermaid ` then a space, then edit the definition in a full-screen modal with live preview and zoom controls. Theme follows Strapi's light/dark mode
 - **Callouts / Admonitions** &mdash; GitHub-style callouts in five variants (`Note`, `Tip`, `Important`, `Warning`, `Caution`) with an optional custom title and nested rich-text content (paragraphs, lists, links). Insert from the blocks selector or the `/note`, `/tip`, `/important`, `/warning`, `/caution` slash commands; switch variant, edit the title, or remove from the header popover. Colors follow Strapi's design tokens and adapt to light/dark mode
 - **Horizontal Line** &mdash; Insert `<hr>` dividers between content blocks
 - **Text Alignment** &mdash; Per-block left, center, right, and justify alignment
@@ -192,6 +192,28 @@ Once added to a content type, the Better Blocks field provides an enhanced Rich 
 5. Click **Remove highlight** to reset
 
 The toolbar button shows a live preview of the active colors &mdash; the icon color reflects the text color, and the button background reflects the highlight color.
+
+### Math (LaTeX)
+
+Insert a math block from the toolbar, the `/math` slash command, the blocks selector, or by typing `$$ ` (block) / `$…$ ` (inline). The editor opens in a full-screen modal with a source editor and live preview. Press <kbd>Cmd/Ctrl</kbd> + <kbd>Enter</kbd> to save.
+
+A single block can render **multi-line equations** &mdash; there is no need to create a separate block per line. Use the LaTeX line break `\\`, and an alignment environment when you want the lines to line up:
+
+```latex
+\begin{aligned}
+  2x + 3y &= 5 \\
+  x - y   &= 1
+\end{aligned}
+```
+
+Other supported environments include `cases` (piecewise), `gathered` (centered lines), and `matrix` / `pmatrix` / `bmatrix`. A bare `\\` outside an environment also breaks to a new (centered) line:
+
+```latex
+E = mc^2 \\
+a^2 + b^2 = c^2
+```
+
+> Pressing <kbd>Enter</kbd> in the source editor only adds a line break to your LaTeX source for readability &mdash; it does not create a new block. The rendered line break comes from the LaTeX `\\`.
 
 ## Custom Color Presets
 
