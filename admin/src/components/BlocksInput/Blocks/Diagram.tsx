@@ -1,12 +1,6 @@
 import * as React from 'react';
 
-import {
-  Button,
-  Field,
-  Flex,
-  Popover,
-  Typography,
-} from '@strapi/design-system';
+import { Typography } from '@strapi/design-system';
 import { useIntl } from 'react-intl';
 import { Editor, Path, Transforms } from 'slate';
 import { type RenderElementProps, ReactEditor } from 'slate-react';
@@ -19,6 +13,8 @@ import {
   type DiagramElement,
   isDiagramNode,
 } from '../utils/types';
+
+import { SourceEditorModal } from './SourceEditorModal';
 
 /* ---------------------------------------------------------------------------
  * Icon (no diagram glyph ships with @strapi/icons, so we provide our own).
@@ -219,44 +215,6 @@ const BlockDiagramWrapper = styled.div<{ $selected: boolean; $empty: boolean }>`
   }
 `;
 
-const SourceTextarea = styled.textarea`
-  width: 100%;
-  min-height: 120px;
-  resize: vertical;
-  font-family:
-    'SF Mono', SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
-  font-size: ${({ theme }) => theme.fontSizes[1]};
-  line-height: 1.5;
-  padding: ${({ theme }) => theme.spaces[2]};
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  background: ${({ theme }) => theme.colors.neutral0};
-  color: ${({ theme }) => theme.colors.neutral800};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary600};
-  }
-`;
-
-const PreviewBox = styled.div`
-  padding: ${({ theme }) => theme.spaces[3]};
-  border: 1px solid ${({ theme }) => theme.colors.neutral150};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  background: ${({ theme }) => theme.colors.neutral100};
-  text-align: center;
-  min-height: 80px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-x: auto;
-
-  svg {
-    max-width: 100%;
-    height: auto;
-  }
-`;
-
 /* ---------------------------------------------------------------------------
  * Element component (renders + edits block diagrams)
  * -------------------------------------------------------------------------*/
@@ -276,16 +234,6 @@ const DiagramElementComponent = ({
     diagram.value.trim() === '' && !disabled
   );
   const [source, setSource] = React.useState(diagram.value);
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-
-  React.useEffect(() => {
-    if (open) {
-      // Defer so the popover is mounted before focusing
-      const id = window.setTimeout(() => textareaRef.current?.focus(), 0);
-      return () => window.clearTimeout(id);
-    }
-    return undefined;
-  }, [open]);
 
   const getPath = (): Path | null => {
     try {
@@ -352,102 +300,39 @@ const DiagramElementComponent = ({
     <MermaidContent value={diagram.value} isDark={isDark} />
   );
 
-  const editorUi = (
-    <Popover.Content
-      onPointerDownOutside={handleClose}
-      onEscapeKeyDown={handleClose}
-    >
-      <Flex
-        direction="column"
-        gap={3}
-        padding={4}
-        width="480px"
-        alignItems="stretch"
-      >
-        <Field.Root>
-          <Flex direction="column" gap={1} alignItems="stretch">
-            <Field.Label>
-              {formatMessage({
-                id: 'components.Blocks.diagram.label',
-                defaultMessage: 'Mermaid',
-              })}
-            </Field.Label>
-            <SourceTextarea
-              ref={textareaRef}
-              value={source}
-              spellCheck={false}
-              placeholder={'graph TD\n    A[Start] --> B[End];'}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setSource(e.target.value)
-              }
-              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                // Cmd/Ctrl+Enter saves; plain Enter is allowed for multiline diagrams
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  handleSave();
-                }
-                if (e.key === 'Escape') {
-                  e.preventDefault();
-                  handleClose();
-                }
-              }}
-            />
-            <Field.Hint />
-          </Flex>
-        </Field.Root>
-
-        <Flex direction="column" gap={1} alignItems="stretch">
-          <Typography variant="pi" textColor="neutral600">
-            {formatMessage({
-              id: 'components.Blocks.diagram.preview',
-              defaultMessage: 'Preview',
-            })}
-          </Typography>
-          <PreviewBox>
-            {source.trim() ? (
-              <MermaidContent value={source} isDark={isDark} />
-            ) : (
-              <Typography variant="pi" textColor="neutral400">
-                —
-              </Typography>
-            )}
-          </PreviewBox>
-        </Flex>
-
-        <Flex justifyContent="space-between" width="100%">
-          <Button variant="danger-light" onClick={handleRemove}>
-            {formatMessage({
-              id: 'components.Blocks.popover.remove',
-              defaultMessage: 'Remove',
-            })}
-          </Button>
-          <Flex gap={2}>
-            <Button variant="tertiary" onClick={handleClose}>
-              {formatMessage({ id: 'global.cancel', defaultMessage: 'Cancel' })}
-            </Button>
-            <Button onClick={handleSave}>
-              {formatMessage({ id: 'global.save', defaultMessage: 'Save' })}
-            </Button>
-          </Flex>
-        </Flex>
-      </Flex>
-    </Popover.Content>
+  const editorModal = (
+    <SourceEditorModal
+      open={open && !disabled}
+      title={formatMessage({
+        id: 'components.Blocks.diagram.modal.title',
+        defaultMessage: 'Edit Mermaid diagram',
+      })}
+      label={formatMessage({
+        id: 'components.Blocks.diagram.label',
+        defaultMessage: 'Mermaid',
+      })}
+      placeholder={'graph TD\n    A[Start] --> B[End];'}
+      source={source}
+      onSourceChange={setSource}
+      renderPreview={(value) => (
+        <MermaidContent value={value} isDark={isDark} />
+      )}
+      onSave={handleSave}
+      onRemove={handleRemove}
+      onClose={handleClose}
+    />
   );
 
   return (
     <div {...attributes} contentEditable={false}>
-      <Popover.Root open={open && !disabled}>
-        <Popover.Trigger>
-          <BlockDiagramWrapper
-            $selected={open}
-            $empty={isEmpty}
-            onClick={() => !disabled && setOpen(true)}
-          >
-            {preview}
-          </BlockDiagramWrapper>
-        </Popover.Trigger>
-        {editorUi}
-      </Popover.Root>
+      <BlockDiagramWrapper
+        $selected={open}
+        $empty={isEmpty}
+        onClick={() => !disabled && setOpen(true)}
+      >
+        {preview}
+      </BlockDiagramWrapper>
+      {editorModal}
       <span style={{ display: 'none' }}>{children}</span>
     </div>
   );

@@ -1,12 +1,6 @@
 import * as React from 'react';
 
-import {
-  Button,
-  Field,
-  Flex,
-  Popover,
-  Typography,
-} from '@strapi/design-system';
+import { Typography } from '@strapi/design-system';
 import katex from 'katex';
 import { useIntl } from 'react-intl';
 import { Editor, Path, Transforms } from 'slate';
@@ -20,6 +14,8 @@ import {
   type MathElement,
   isMathNode,
 } from '../utils/types';
+
+import { SourceEditorModal } from './SourceEditorModal';
 
 import 'katex/dist/katex.min.css';
 
@@ -178,39 +174,6 @@ const InlineMathWrapper = styled.span<{ $selected: boolean; $empty: boolean }>`
   }
 `;
 
-const SourceTextarea = styled.textarea`
-  width: 100%;
-  min-height: 80px;
-  resize: vertical;
-  font-family:
-    'SF Mono', SFMono-Regular, ui-monospace, Menlo, Consolas, monospace;
-  font-size: ${({ theme }) => theme.fontSizes[1]};
-  line-height: 1.5;
-  padding: ${({ theme }) => theme.spaces[2]};
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  background: ${({ theme }) => theme.colors.neutral0};
-  color: ${({ theme }) => theme.colors.neutral800};
-
-  &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.colors.primary600};
-  }
-`;
-
-const PreviewBox = styled.div`
-  padding: ${({ theme }) => theme.spaces[3]};
-  border: 1px solid ${({ theme }) => theme.colors.neutral150};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  background: ${({ theme }) => theme.colors.neutral100};
-  text-align: center;
-  min-height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-x: auto;
-`;
-
 /* ---------------------------------------------------------------------------
  * Element component (renders + edits both inline and block math)
  * -------------------------------------------------------------------------*/
@@ -227,16 +190,6 @@ const MathElementComponent = ({
 
   const [open, setOpen] = React.useState(math.value.trim() === '' && !disabled);
   const [source, setSource] = React.useState(math.value);
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
-
-  React.useEffect(() => {
-    if (open) {
-      // Defer so the popover is mounted before focusing
-      const id = window.setTimeout(() => textareaRef.current?.focus(), 0);
-      return () => window.clearTimeout(id);
-    }
-    return undefined;
-  }, [open]);
 
   const getPath = (): Path | null => {
     try {
@@ -312,105 +265,40 @@ const MathElementComponent = ({
     <KatexContent value={math.value} displayMode={isBlock} />
   );
 
-  const editorUi = (
-    <Popover.Content
-      onPointerDownOutside={handleClose}
-      onEscapeKeyDown={handleClose}
-    >
-      <Flex
-        direction="column"
-        gap={3}
-        padding={4}
-        width="420px"
-        alignItems="stretch"
-      >
-        <Field.Root>
-          <Flex direction="column" gap={1} alignItems="stretch">
-            <Field.Label>
-              {formatMessage({
-                id: 'components.Blocks.math.label',
-                defaultMessage: 'LaTeX',
-              })}
-            </Field.Label>
-            <SourceTextarea
-              ref={textareaRef}
-              value={source}
-              spellCheck={false}
-              placeholder={
-                isBlock ? '\\int_0^\\infty e^{-x^2}\\,dx' : 'E = mc^2'
-              }
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setSource(e.target.value)
-              }
-              onKeyDown={(e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-                // Cmd/Ctrl+Enter saves; plain Enter is allowed for multiline block math
-                if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  handleSave();
-                }
-                if (e.key === 'Escape') {
-                  e.preventDefault();
-                  handleClose();
-                }
-              }}
-            />
-            <Field.Hint />
-          </Flex>
-        </Field.Root>
-
-        <Flex direction="column" gap={1} alignItems="stretch">
-          <Typography variant="pi" textColor="neutral600">
-            {formatMessage({
-              id: 'components.Blocks.math.preview',
-              defaultMessage: 'Preview',
-            })}
-          </Typography>
-          <PreviewBox>
-            {source.trim() ? (
-              <KatexContent value={source} displayMode={isBlock} />
-            ) : (
-              <Typography variant="pi" textColor="neutral400">
-                —
-              </Typography>
-            )}
-          </PreviewBox>
-        </Flex>
-
-        <Flex justifyContent="space-between" width="100%">
-          <Button variant="danger-light" onClick={handleRemove}>
-            {formatMessage({
-              id: 'components.Blocks.popover.remove',
-              defaultMessage: 'Remove',
-            })}
-          </Button>
-          <Flex gap={2}>
-            <Button variant="tertiary" onClick={handleClose}>
-              {formatMessage({ id: 'global.cancel', defaultMessage: 'Cancel' })}
-            </Button>
-            <Button onClick={handleSave}>
-              {formatMessage({ id: 'global.save', defaultMessage: 'Save' })}
-            </Button>
-          </Flex>
-        </Flex>
-      </Flex>
-    </Popover.Content>
+  const editorModal = (
+    <SourceEditorModal
+      open={open && !disabled}
+      title={formatMessage({
+        id: 'components.Blocks.math.modal.title',
+        defaultMessage: 'Edit LaTeX',
+      })}
+      label={formatMessage({
+        id: 'components.Blocks.math.label',
+        defaultMessage: 'LaTeX',
+      })}
+      placeholder={isBlock ? '\\int_0^\\infty e^{-x^2}\\,dx' : 'E = mc^2'}
+      source={source}
+      onSourceChange={setSource}
+      renderPreview={(value) => (
+        <KatexContent value={value} displayMode={isBlock} />
+      )}
+      onSave={handleSave}
+      onRemove={handleRemove}
+      onClose={handleClose}
+    />
   );
 
   if (isBlock) {
     return (
       <div {...attributes} contentEditable={false}>
-        <Popover.Root open={open && !disabled}>
-          <Popover.Trigger>
-            <BlockMathWrapper
-              $selected={open}
-              $empty={isEmpty}
-              onClick={() => !disabled && setOpen(true)}
-            >
-              {preview}
-            </BlockMathWrapper>
-          </Popover.Trigger>
-          {editorUi}
-        </Popover.Root>
+        <BlockMathWrapper
+          $selected={open}
+          $empty={isEmpty}
+          onClick={() => !disabled && setOpen(true)}
+        >
+          {preview}
+        </BlockMathWrapper>
+        {editorModal}
         <span style={{ display: 'none' }}>{children}</span>
       </div>
     );
@@ -418,18 +306,14 @@ const MathElementComponent = ({
 
   return (
     <span {...attributes} contentEditable={false}>
-      <Popover.Root open={open && !disabled}>
-        <Popover.Trigger>
-          <InlineMathWrapper
-            $selected={open}
-            $empty={isEmpty}
-            onClick={() => !disabled && setOpen(true)}
-          >
-            {preview}
-          </InlineMathWrapper>
-        </Popover.Trigger>
-        {editorUi}
-      </Popover.Root>
+      <InlineMathWrapper
+        $selected={open}
+        $empty={isEmpty}
+        onClick={() => !disabled && setOpen(true)}
+      >
+        {preview}
+      </InlineMathWrapper>
+      {editorModal}
       <span style={{ display: 'none' }}>{children}</span>
     </span>
   );
