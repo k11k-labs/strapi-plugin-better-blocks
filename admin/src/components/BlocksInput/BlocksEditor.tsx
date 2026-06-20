@@ -29,6 +29,7 @@ import {
   withHorizontalLine,
 } from './Blocks/HorizontalLine';
 import { imageBlocks, withImages } from './Blocks/Image';
+import { buttonBlocks, withButtons } from './Blocks/Button';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
 import { calloutBlocks, withCallout } from './Blocks/Callout';
@@ -105,6 +106,7 @@ const selectorBlockKeys = [
   'diagram',
   'callout',
   'details',
+  'button',
 ] as const;
 
 type SelectorBlockKey = (typeof selectorBlockKeys)[number];
@@ -251,6 +253,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withReact,
         withLinks,
         withImages,
+        withButtons,
         withHorizontalLine,
         withTables,
         withMediaEmbed,
@@ -347,6 +350,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...listBlocks,
         ...linkBlocks,
         ...imageBlocks,
+        ...buttonBlocks,
         ...quoteBlocks,
         ...codeBlocks,
         ...mathBlocks,

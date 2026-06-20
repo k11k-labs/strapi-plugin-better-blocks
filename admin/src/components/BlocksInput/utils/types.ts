@@ -132,6 +132,68 @@ export interface DetailsElement extends CustomElement {
   children: Descendant[];
 }
 
+export type ButtonAlignment = 'left' | 'center' | 'right';
+export type ButtonMode = 'link' | 'file';
+export type ButtonLinkTarget = '_self' | '_blank' | '_parent' | '_top';
+
+export interface ButtonStyle {
+  backgroundColor?: string;
+  textColor?: string;
+  borderRadius?: string;
+  fontSize?: string;
+  fontWeight?: string;
+  padding?: string;
+  border?: string;
+  hoverBackgroundColor?: string;
+  hoverTextColor?: string;
+}
+
+export interface ButtonLink {
+  url: string;
+  target?: ButtonLinkTarget;
+  /** Auto-set to "noopener noreferrer" when target is "_blank". */
+  rel?: string;
+  ariaLabel?: string;
+}
+
+export interface ButtonFile {
+  /** Strapi Media Library file id (when picked from the library). */
+  id?: number;
+  url: string;
+  name: string;
+  /** File size in bytes. */
+  size?: number;
+  /** File extension, e.g. ".pdf". */
+  ext?: string;
+  mime?: string;
+}
+
+/**
+ * WordPress-style call-to-action button. A void block: its visual form is the
+ * stored data (text + link/file + inline style), not editable rich text.
+ */
+export interface ButtonElement extends CustomElement {
+  type: 'button';
+  /** "link" → hyperlink, "file" → Media Library download. */
+  buttonType: ButtonMode;
+  /**
+   * Visible button label. NOTE: must not be named `text` — Slate treats any node
+   * with a string `text` property as a Text leaf, which would break this element.
+   */
+  label: string;
+  alignment: ButtonAlignment;
+  link?: ButtonLink;
+  file?: ButtonFile;
+  /** File mode: show the human-readable file size next to the label. */
+  showFileSize?: boolean;
+  /** File mode: show a file-type icon next to the label. */
+  showFileIcon?: boolean;
+  style?: ButtonStyle;
+  /** Optional custom CSS class for frontend theming. */
+  cssClass?: string;
+  children: CustomText[];
+}
+
 export type Block<T extends string> = Extract<Node, { type: T }>;
 
 // Utility functions
@@ -169,4 +231,10 @@ export const isDetailsNode = (
   element: CustomElement
 ): element is DetailsElement => {
   return element.type === 'details';
+};
+
+export const isButtonNode = (
+  element: CustomElement
+): element is ButtonElement => {
+  return element.type === 'button';
 };

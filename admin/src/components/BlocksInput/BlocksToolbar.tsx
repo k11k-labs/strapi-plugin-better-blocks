@@ -219,6 +219,7 @@ const ToolbarButton = ({
  */
 const INSERT_BLOCK_KEYS: SelectorBlockKey[] = [
   'image',
+  'button',
   'callout',
   'details',
   'diagram',
@@ -1543,7 +1544,9 @@ const BlocksToolbar = () => {
       editor.selection.anchor.path[0]
     ] as CustomElement;
     if (!selectedNode) return true;
-    if (['code', 'image', 'horizontal-line'].includes(selectedNode.type)) {
+    if (
+      ['code', 'image', 'button', 'horizontal-line'].includes(selectedNode.type)
+    ) {
       return true;
     }
 

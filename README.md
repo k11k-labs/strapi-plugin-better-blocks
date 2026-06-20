@@ -96,6 +96,7 @@
 - **Diagrams (Mermaid)** &mdash; Block-level [Mermaid](https://mermaid.js.org/) diagrams (flowcharts, sequence, class, state, ER, pie, and more) rendered to SVG; insert from the blocks selector, the `/mermaid` slash command, or by typing ` ```mermaid ` then a space, then edit the definition in a full-screen modal with live preview and zoom controls. Theme follows Strapi's light/dark mode
 - **Callouts / Admonitions** &mdash; GitHub-style callouts in five variants (`Note`, `Tip`, `Important`, `Warning`, `Caution`) with an optional custom title and nested rich-text content (paragraphs, lists, links). Insert from the blocks selector or the `/note`, `/tip`, `/important`, `/warning`, `/caution` slash commands; switch variant, edit the title, or remove from the header popover. Colors follow Strapi's design tokens and adapt to light/dark mode
 - **Details / Collapsible** &mdash; GitHub-style collapsible `<details>` / `<summary>` sections for managing content density. Insert from the blocks selector or the `/details` slash command; edit the summary label and toggle open/closed-by-default (`defaultOpen`) from the header. Holds full rich-text block content (paragraphs, lists, tables, images) and supports nesting. Admins can set the default summary text and choose a GitHub-minimal (default) or Custom (bordered + background) style. Stored as `{ "type": "details", "summary": "…", "defaultOpen": false, "children": [...] }`
+- **Button (WordPress-style CTA)** &mdash; Insert a styled call-to-action button from the blocks selector or by typing `[button]` then a space. Two modes: **Link** (URL + open-in-new-tab + ARIA label) and **File** (pick any asset from the Media Library to render a download button with optional file size and type icon). A full-screen editor with live preview controls alignment, background/text colors (including hover colors), border radius, font size/weight, padding presets, border, and a custom CSS class. Admins can set default button colors. Stored as `{ "type": "button", "buttonType": "link" | "file", "label": "…", "alignment": "center", "link": {…} | "file": {…}, "style": {…} }`
 - **Horizontal Line** &mdash; Insert `<hr>` dividers between content blocks
 - **Text Alignment** &mdash; Per-block left, center, right, and justify alignment
 - **Undo / Redo** &mdash; Toolbar buttons wired to Slate's built-in history
@@ -175,6 +176,79 @@ export default () => ({
   },
 });
 ```
+
+#### Button defaults (optional)
+
+Set plugin-wide default colors for newly inserted **Button** blocks. These apply to every
+Better Blocks field, and can still be overridden per field in the Content-Type Builder
+(and per button in the editor).
+
+```ts
+// config/plugins.ts
+export default () => ({
+  'better-blocks': {
+    enabled: true,
+    config: {
+      button: {
+        defaultStyle: {
+          backgroundColor: '#4945ff',
+          textColor: '#ffffff',
+        },
+      },
+    },
+  },
+});
+```
+
+#### Button JSON shape (for frontend renderers)
+
+A button is stored as a single block. `buttonType` selects the rendering mode:
+
+```jsonc
+{
+  "type": "button",
+  "buttonType": "link", // "link" | "file"
+  "label": "Get started",
+  "alignment": "center", // "left" | "center" | "right"
+
+  // Link mode
+  "link": {
+    "url": "https://example.com",
+    "target": "_blank", // "_self" | "_blank" | "_parent" | "_top"
+    "rel": "noopener noreferrer", // auto-added when target is "_blank"
+    "ariaLabel": "Get started",
+  },
+
+  // File mode (instead of `link`)
+  "file": {
+    "id": 123,
+    "url": "/uploads/whitepaper.pdf",
+    "name": "Product Whitepaper.pdf",
+    "size": 5242880, // bytes
+    "ext": ".pdf",
+    "mime": "application/pdf",
+  },
+  "showFileSize": true,
+  "showFileIcon": true,
+
+  "style": {
+    "backgroundColor": "#4945ff",
+    "textColor": "#ffffff",
+    "borderRadius": "4px",
+    "fontSize": "16px",
+    "fontWeight": "600",
+    "padding": "12px 24px",
+    "border": "none",
+    "hoverBackgroundColor": "#3732c9",
+    "hoverTextColor": "#ffffff",
+  },
+  "cssClass": "my-cta",
+}
+```
+
+Render link mode as `<a href={link.url} target={link.target} rel={link.rel}>`, and file
+mode as `<a href={file.url} download={file.name}>` (optionally prefixing `file.name`/size
+with `showFileIcon`/`showFileSize`). Only the keys for the active mode are present.
 
 ### 2. Restart Strapi
 

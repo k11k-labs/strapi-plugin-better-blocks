@@ -6,6 +6,9 @@ import * as Tooltip from '@radix-ui/react-tooltip';
 
 interface PluginConfig {
   details?: { defaultSummary?: string; style?: 'github' | 'custom' };
+  button?: {
+    defaultStyle?: { backgroundColor?: string; textColor?: string };
+  };
 }
 
 /**
@@ -30,6 +33,8 @@ interface InputProps {
       customBgColorsPresets?: string;
       detailsDefaultSummary?: string;
       detailsStyle?: 'github' | 'custom';
+      buttonDefaultBackgroundColor?: string;
+      buttonDefaultTextColor?: string;
     };
   };
   description?: { id: string; defaultMessage: string };
@@ -104,6 +109,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       fieldOptions?.detailsDefaultSummary ||
       globalConfig?.details?.defaultSummary,
     detailsStyle: fieldOptions?.detailsStyle || globalConfig?.details?.style,
+    buttonDefaultBackgroundColor:
+      fieldOptions?.buttonDefaultBackgroundColor ||
+      globalConfig?.button?.defaultStyle?.backgroundColor,
+    buttonDefaultTextColor:
+      fieldOptions?.buttonDefaultTextColor ||
+      globalConfig?.button?.defaultStyle?.textColor,
   };
 
   const handleChange = (name: string, value: any) => {
