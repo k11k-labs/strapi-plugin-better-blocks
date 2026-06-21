@@ -264,6 +264,7 @@ interface ButtonDraft {
   file?: ButtonFile;
   showFileSize: boolean;
   showFileIcon: boolean;
+  filePreview: boolean;
   /** Selected style preset; flips to "custom" once colors/border are edited. */
   variant: ButtonVariant;
   style: ButtonStyle;
@@ -336,6 +337,7 @@ const toDraft = (el: ButtonElement): ButtonDraft => {
     file: el.file,
     showFileSize: el.showFileSize ?? true,
     showFileIcon: el.showFileIcon ?? true,
+    filePreview: el.filePreview ?? false,
     variant: el.style?.variant ?? 'custom',
     style: { ...restStyle },
     cssClass: el.cssClass ?? '',
@@ -369,6 +371,7 @@ const draftToPatch = (draft: ButtonDraft): Partial<ButtonElement> => {
     },
     showFileSize: draft.showFileSize,
     showFileIcon: draft.showFileIcon,
+    filePreview: draft.filePreview,
     cssClass: draft.cssClass.trim() || undefined,
   };
 
@@ -451,19 +454,21 @@ const Field = ({
   hint,
   children,
 }: {
-  label: string;
+  label?: string;
   hint?: string;
   children: React.ReactNode;
 }) => (
   <Flex direction="column" gap={1} alignItems="stretch">
-    <Typography
-      variant="pi"
-      fontWeight="bold"
-      textColor="neutral700"
-      tag="label"
-    >
-      {label}
-    </Typography>
+    {label ? (
+      <Typography
+        variant="pi"
+        fontWeight="bold"
+        textColor="neutral700"
+        tag="label"
+      >
+        {label}
+      </Typography>
+    ) : null}
     {children}
     {hint ? (
       <Typography variant="pi" textColor="neutral500">
@@ -825,6 +830,25 @@ const ButtonEditorModal = ({
                         })}
                       </Checkbox>
                     </Flex>
+                    <Field
+                      hint={formatMessage({
+                        id: 'components.Blocks.button.filePreview.hint',
+                        defaultMessage:
+                          'On: open the file in a new tab (preview). Off: download it directly.',
+                      })}
+                    >
+                      <Checkbox
+                        checked={draft.filePreview}
+                        onCheckedChange={(checked: boolean) =>
+                          setDraft((d) => ({ ...d, filePreview: !!checked }))
+                        }
+                      >
+                        {formatMessage({
+                          id: 'components.Blocks.button.filePreview',
+                          defaultMessage: 'Preview file instead of downloading',
+                        })}
+                      </Checkbox>
+                    </Field>
                   </>
                 )}
 

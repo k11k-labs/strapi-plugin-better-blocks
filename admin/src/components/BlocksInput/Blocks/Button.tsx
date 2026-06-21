@@ -222,6 +222,7 @@ const ButtonElementComponent = ({
           'file',
           'showFileSize',
           'showFileIcon',
+          'filePreview',
           'style',
           'cssClass',
         ],
@@ -242,7 +243,7 @@ const ButtonElementComponent = ({
       Transforms.unsetNodes(
         editor,
         patch.buttonType === 'link'
-          ? ['file', 'showFileSize', 'showFileIcon']
+          ? ['file', 'showFileSize', 'showFileIcon', 'filePreview']
           : ['link'],
         { at: path }
       );
