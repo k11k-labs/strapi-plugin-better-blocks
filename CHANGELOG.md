@@ -1,5 +1,17 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.13.0
+
+### Minor Changes
+
+- [#55](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/55) [`c2d106c`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/c2d106cd479bdf1f0dfbec6b77f24e3ef5f28d4e) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: Button block style presets (Primary, Secondary, Outline, Filled)
+
+  Adds a **Style preset** picker to the Button editor so authors can apply on-brand
+  variants (Primary / Secondary / Outline / Filled) in one click. Editing any color
+  or the border switches the selection to **Custom**. Presets are configurable per
+  project via `config/plugins` (`better-blocks.button.presets`); the selected preset
+  is stored as `style.variant`. Closes [#54](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/54).
+
 ## 0.12.0
 
 ### Minor Changes
