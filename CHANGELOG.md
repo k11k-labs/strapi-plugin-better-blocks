@@ -1,5 +1,17 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.14.0
+
+### Minor Changes
+
+- [#58](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/58) [`ed21eac`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/ed21eac16ab221e9406d322d8b2e61c26fc48f6c) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: Button (file mode) preview-vs-download toggle
+
+  Adds a `filePreview` option to file-download buttons. When enabled the file
+  opens in a new tab (preview); when disabled it downloads directly. Exposed as a
+  "Preview file instead of downloading" checkbox in the button editor and stored as
+  `filePreview` on the block, so the frontend renderers can map it to
+  `target="_blank"` vs `download`. Closes [#57](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/57).
+
 ## 0.13.0
 
 ### Minor Changes
