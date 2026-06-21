@@ -135,8 +135,19 @@ export interface DetailsElement extends CustomElement {
 export type ButtonAlignment = 'left' | 'center' | 'right';
 export type ButtonMode = 'link' | 'file';
 export type ButtonLinkTarget = '_self' | '_blank' | '_parent' | '_top';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'outline'
+  | 'filled'
+  | 'custom';
 
 export interface ButtonStyle {
+  /**
+   * Selected style preset. Switches to "custom" once the author overrides the
+   * preset's colors or border. Frontend renderers can ignore this.
+   */
+  variant?: ButtonVariant;
   backgroundColor?: string;
   textColor?: string;
   borderRadius?: string;
@@ -147,6 +158,17 @@ export interface ButtonStyle {
   hoverBackgroundColor?: string;
   hoverTextColor?: string;
 }
+
+/** Color/border values a preset applies (the rest of the styling stays as-is). */
+export interface ButtonPreset {
+  backgroundColor?: string;
+  textColor?: string;
+  border?: string;
+}
+
+export type ButtonPresets = Partial<
+  Record<Exclude<ButtonVariant, 'custom'>, ButtonPreset>
+>;
 
 export interface ButtonLink {
   url: string;

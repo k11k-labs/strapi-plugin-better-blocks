@@ -28,6 +28,28 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           fontSize: '16px',
           fontWeight: '600',
         },
+        presets: {
+          primary: {
+            backgroundColor: '#4945ff',
+            textColor: '#ffffff',
+            border: 'none',
+          },
+          secondary: {
+            backgroundColor: '#dcdce4',
+            textColor: '#32324d',
+            border: 'none',
+          },
+          outline: {
+            backgroundColor: 'transparent',
+            textColor: '#4945ff',
+            border: '2px solid #4945ff',
+          },
+          filled: {
+            backgroundColor: '#32324d',
+            textColor: '#ffffff',
+            border: 'none',
+          },
+        },
       }),
     };
   },

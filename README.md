@@ -96,7 +96,7 @@
 - **Diagrams (Mermaid)** &mdash; Block-level [Mermaid](https://mermaid.js.org/) diagrams (flowcharts, sequence, class, state, ER, pie, and more) rendered to SVG; insert from the blocks selector, the `/mermaid` slash command, or by typing ` ```mermaid ` then a space, then edit the definition in a full-screen modal with live preview and zoom controls. Theme follows Strapi's light/dark mode
 - **Callouts / Admonitions** &mdash; GitHub-style callouts in five variants (`Note`, `Tip`, `Important`, `Warning`, `Caution`) with an optional custom title and nested rich-text content (paragraphs, lists, links). Insert from the blocks selector or the `/note`, `/tip`, `/important`, `/warning`, `/caution` slash commands; switch variant, edit the title, or remove from the header popover. Colors follow Strapi's design tokens and adapt to light/dark mode
 - **Details / Collapsible** &mdash; GitHub-style collapsible `<details>` / `<summary>` sections for managing content density. Insert from the blocks selector or the `/details` slash command; edit the summary label and toggle open/closed-by-default (`defaultOpen`) from the header. Holds full rich-text block content (paragraphs, lists, tables, images) and supports nesting. Admins can set the default summary text and choose a GitHub-minimal (default) or Custom (bordered + background) style. Stored as `{ "type": "details", "summary": "…", "defaultOpen": false, "children": [...] }`
-- **Button (WordPress-style CTA)** &mdash; Insert a styled call-to-action button from the blocks selector or by typing `[button]` then a space. Two modes: **Link** (URL + open-in-new-tab + ARIA label) and **File** (pick any asset from the Media Library to render a download button with optional file size and type icon). A full-screen editor with live preview controls alignment, background/text colors (including hover colors), border radius, font size/weight, padding presets, border, and a custom CSS class. Admins can set default button colors. Stored as `{ "type": "button", "buttonType": "link" | "file", "label": "…", "alignment": "center", "link": {…} | "file": {…}, "style": {…} }`
+- **Button (WordPress-style CTA)** &mdash; Insert a styled call-to-action button from the blocks selector or by typing `[button]` then a space. Two modes: **Link** (URL + open-in-new-tab + ARIA label) and **File** (pick any asset from the Media Library to render a download button with optional file size and type icon). A full-screen editor with live preview controls alignment, background/text colors (including hover colors), border radius, font size/weight, padding presets, border, and a custom CSS class. One-click **style presets** (Primary / Secondary / Outline / Filled) keep CTAs on-brand. Admins can set default button colors and customize the presets. Stored as `{ "type": "button", "buttonType": "link" | "file", "label": "…", "alignment": "center", "link": {…} | "file": {…}, "style": {…} }`
 - **Horizontal Line** &mdash; Insert `<hr>` dividers between content blocks
 - **Text Alignment** &mdash; Per-block left, center, right, and justify alignment
 - **Undo / Redo** &mdash; Toolbar buttons wired to Slate's built-in history
@@ -179,7 +179,9 @@ export default () => ({
 
 #### Button defaults (optional)
 
-Set plugin-wide default colors for newly inserted **Button** blocks. These apply to every
+Set plugin-wide default colors for newly inserted **Button** blocks, and customize the
+**Style presets** (Primary / Secondary / Outline / Filled) offered in the editor's
+"Style preset" picker so authors deploy on-brand CTAs in one click. These apply to every
 Better Blocks field, and can still be overridden per field in the Content-Type Builder
 (and per button in the editor).
 
@@ -193,6 +195,30 @@ export default () => ({
         defaultStyle: {
           backgroundColor: '#4945ff',
           textColor: '#ffffff',
+        },
+        // Brand variants for the "Style preset" picker (each applies
+        // background, text and border; the rest of the styling is untouched).
+        presets: {
+          primary: {
+            backgroundColor: '#4945ff',
+            textColor: '#ffffff',
+            border: 'none',
+          },
+          secondary: {
+            backgroundColor: '#dcdce4',
+            textColor: '#32324d',
+            border: 'none',
+          },
+          outline: {
+            backgroundColor: 'transparent',
+            textColor: '#4945ff',
+            border: '2px solid #4945ff',
+          },
+          filled: {
+            backgroundColor: '#32324d',
+            textColor: '#ffffff',
+            border: 'none',
+          },
         },
       },
     },
@@ -232,6 +258,7 @@ A button is stored as a single block. `buttonType` selects the rendering mode:
   "showFileIcon": true,
 
   "style": {
+    "variant": "custom", // "primary" | "secondary" | "outline" | "filled" | "custom"
     "backgroundColor": "#4945ff",
     "textColor": "#ffffff",
     "borderRadius": "4px",
@@ -249,6 +276,7 @@ A button is stored as a single block. `buttonType` selects the rendering mode:
 Render link mode as `<a href={link.url} target={link.target} rel={link.rel}>`, and file
 mode as `<a href={file.url} download={file.name}>` (optionally prefixing `file.name`/size
 with `showFileIcon`/`showFileSize`). Only the keys for the active mode are present.
+`style.variant` records the selected preset for the editor UI; renderers can ignore it.
 
 ### 2. Restart Strapi
 

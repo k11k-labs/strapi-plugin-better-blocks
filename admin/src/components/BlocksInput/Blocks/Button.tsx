@@ -10,6 +10,7 @@ import { type BlocksStore, useBlocksEditorContext } from '../BlocksEditor';
 import { baseHandleConvert } from '../utils/conversions';
 import {
   type ButtonElement,
+  type ButtonPresets,
   type ButtonStyle,
   type CustomElement,
   isButtonNode,
@@ -84,6 +85,16 @@ const getButtonDefaults = (editor: Editor): ButtonStyle => {
     fontSize: '16px',
     fontWeight: '600',
   };
+};
+
+const getButtonPresets = (editor: Editor): ButtonPresets | undefined => {
+  const options = (
+    editor as unknown as { pluginOptions?: Record<string, unknown> }
+  ).pluginOptions;
+  const presets = options?.buttonPresets;
+  return presets && typeof presets === 'object'
+    ? (presets as ButtonPresets)
+    : undefined;
 };
 
 /* ---------------------------------------------------------------------------
@@ -298,6 +309,7 @@ const ButtonElementComponent = ({
         <ButtonEditorModal
           open
           element={el}
+          presets={getButtonPresets(editor)}
           onSave={handleSave}
           onRemove={handleRemove}
           onClose={handleClose}

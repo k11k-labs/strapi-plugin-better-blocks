@@ -4,10 +4,22 @@ import { Field, Flex } from '@strapi/design-system';
 import { useFetchClient } from '@strapi/admin/strapi-admin';
 import * as Tooltip from '@radix-ui/react-tooltip';
 
+interface ButtonPresetConfig {
+  backgroundColor?: string;
+  textColor?: string;
+  border?: string;
+}
+
 interface PluginConfig {
   details?: { defaultSummary?: string; style?: 'github' | 'custom' };
   button?: {
     defaultStyle?: { backgroundColor?: string; textColor?: string };
+    presets?: {
+      primary?: ButtonPresetConfig;
+      secondary?: ButtonPresetConfig;
+      outline?: ButtonPresetConfig;
+      filled?: ButtonPresetConfig;
+    };
   };
 }
 
@@ -115,6 +127,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     buttonDefaultTextColor:
       fieldOptions?.buttonDefaultTextColor ||
       globalConfig?.button?.defaultStyle?.textColor,
+    buttonPresets: globalConfig?.button?.presets,
   };
 
   const handleChange = (name: string, value: any) => {

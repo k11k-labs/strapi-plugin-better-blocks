@@ -20,7 +20,9 @@ import {
   type ButtonFile,
   type ButtonLink,
   type ButtonMode,
+  type ButtonPresets,
   type ButtonStyle,
+  type ButtonVariant,
 } from '../utils/types';
 
 /* ---------------------------------------------------------------------------
@@ -262,6 +264,8 @@ interface ButtonDraft {
   file?: ButtonFile;
   showFileSize: boolean;
   showFileIcon: boolean;
+  /** Selected style preset; flips to "custom" once colors/border are edited. */
+  variant: ButtonVariant;
   style: ButtonStyle;
   cssClass: string;
   // Border is stored as a single `style.border` CSS shorthand, but edited here
@@ -319,8 +323,8 @@ const composeBorder = (draft: ButtonDraft): string =>
     : '';
 
 const toDraft = (el: ButtonElement): ButtonDraft => {
-  // Border is managed via discrete controls, so keep it out of the style draft.
-  const { border: _border, ...restStyle } = el.style ?? {};
+  // Border + variant are managed separately, so keep them out of the style draft.
+  const { border: _border, variant: _variant, ...restStyle } = el.style ?? {};
   const parsedBorder = parseBorder(el.style?.border);
   return {
     buttonType: el.buttonType ?? 'link',
@@ -332,6 +336,7 @@ const toDraft = (el: ButtonElement): ButtonDraft => {
     file: el.file,
     showFileSize: el.showFileSize ?? true,
     showFileIcon: el.showFileIcon ?? true,
+    variant: el.style?.variant ?? 'custom',
     style: { ...restStyle },
     cssClass: el.cssClass ?? '',
     borderEnabled: parsedBorder.enabled,
@@ -342,12 +347,12 @@ const toDraft = (el: ButtonElement): ButtonDraft => {
 };
 
 const pruneStyle = (style: ButtonStyle): ButtonStyle => {
-  const out: ButtonStyle = {};
+  const out: Record<string, string> = {};
   (Object.keys(style) as (keyof ButtonStyle)[]).forEach((key) => {
     const value = style[key];
     if (typeof value === 'string' && value.trim() !== '') out[key] = value;
   });
-  return out;
+  return out as ButtonStyle;
 };
 
 /** Build the (clean) element patch to persist; opposite-mode keys are omitted. */
@@ -357,7 +362,11 @@ const draftToPatch = (draft: ButtonDraft): Partial<ButtonElement> => {
     buttonType: draft.buttonType,
     label: draft.label.trim(),
     alignment: draft.alignment,
-    style: { ...pruneStyle(draft.style), ...(border ? { border } : {}) },
+    style: {
+      ...pruneStyle(draft.style),
+      variant: draft.variant,
+      ...(border ? { border } : {}),
+    },
     showFileSize: draft.showFileSize,
     showFileIcon: draft.showFileIcon,
     cssClass: draft.cssClass.trim() || undefined,
@@ -381,6 +390,42 @@ const draftToPatch = (draft: ButtonDraft): Partial<ButtonElement> => {
 /* ---------------------------------------------------------------------------
  * Presets
  * -------------------------------------------------------------------------*/
+
+/**
+ * Built-in style presets. Each applies a background/text/border; everything else
+ * (radius, font, padding) is left untouched. Overridable per project via
+ * `config/plugins` (`better-blocks.button.presets`).
+ */
+const DEFAULT_PRESETS: Required<ButtonPresets> = {
+  primary: {
+    backgroundColor: '#4945ff',
+    textColor: '#ffffff',
+    border: 'none',
+  },
+  secondary: {
+    backgroundColor: '#dcdce4',
+    textColor: '#32324d',
+    border: 'none',
+  },
+  outline: {
+    backgroundColor: 'transparent',
+    textColor: '#4945ff',
+    border: '2px solid #4945ff',
+  },
+  filled: {
+    backgroundColor: '#32324d',
+    textColor: '#ffffff',
+    border: 'none',
+  },
+};
+
+const VARIANTS: { value: ButtonVariant; label: string }[] = [
+  { value: 'primary', label: 'Primary' },
+  { value: 'secondary', label: 'Secondary' },
+  { value: 'outline', label: 'Outline' },
+  { value: 'filled', label: 'Filled' },
+  { value: 'custom', label: 'Custom' },
+];
 
 const PADDING_PRESETS = [
   { value: '8px 16px', labelId: 'small', label: 'Small' },
@@ -472,6 +517,8 @@ const ColorField = ({
 interface ButtonEditorModalProps {
   open: boolean;
   element: ButtonElement;
+  /** Per-project preset overrides (merged over the built-in presets). */
+  presets?: ButtonPresets;
   onSave: (patch: Partial<ButtonElement>) => void;
   onRemove: () => void;
   onClose: () => void;
@@ -480,6 +527,7 @@ interface ButtonEditorModalProps {
 const ButtonEditorModal = ({
   open,
   element,
+  presets,
   onSave,
   onRemove,
   onClose,
@@ -492,14 +540,55 @@ const ButtonEditorModal = ({
   const [draft, setDraft] = React.useState<ButtonDraft>(() => toDraft(element));
   const [pickerOpen, setPickerOpen] = React.useState(false);
 
+  const resolvedPresets: Required<ButtonPresets> = {
+    primary: { ...DEFAULT_PRESETS.primary, ...presets?.primary },
+    secondary: { ...DEFAULT_PRESETS.secondary, ...presets?.secondary },
+    outline: { ...DEFAULT_PRESETS.outline, ...presets?.outline },
+    filled: { ...DEFAULT_PRESETS.filled, ...presets?.filled },
+  };
+
   // Re-seed the draft whenever the modal (re)opens for this element.
   React.useEffect(() => {
     if (open) setDraft(toDraft(element));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
+  // Plain style edits keep the current variant; color/border edits below use
+  // `patchColor`/`markCustom` so the preset selector flips to "Custom".
   const patchStyle = (next: Partial<ButtonStyle>) =>
     setDraft((d) => ({ ...d, style: { ...d.style, ...next } }));
+
+  const patchColor = (next: Partial<ButtonStyle>) =>
+    setDraft((d) => ({
+      ...d,
+      variant: 'custom',
+      style: { ...d.style, ...next },
+    }));
+
+  const markCustom = (next: Partial<ButtonDraft>) =>
+    setDraft((d) => ({ ...d, variant: 'custom', ...next }));
+
+  const applyPreset = (variant: ButtonVariant) => {
+    if (variant === 'custom') {
+      setDraft((d) => ({ ...d, variant: 'custom' }));
+      return;
+    }
+    const preset = resolvedPresets[variant];
+    const pb = parseBorder(preset.border);
+    setDraft((d) => ({
+      ...d,
+      variant,
+      style: {
+        ...d.style,
+        backgroundColor: preset.backgroundColor ?? d.style.backgroundColor,
+        textColor: preset.textColor ?? d.style.textColor,
+      },
+      borderEnabled: pb.enabled,
+      borderWidth: pb.width,
+      borderStyle: pb.style,
+      borderColor: pb.color,
+    }));
+  };
 
   const MediaLibraryDialog = components?.['media-library'] as
     | React.ComponentType<{
@@ -779,6 +868,30 @@ const ButtonEditorModal = ({
                     defaultMessage: 'Colors',
                   })}
                 </SectionTitle>
+                <Field
+                  label={formatMessage({
+                    id: 'components.Blocks.button.preset',
+                    defaultMessage: 'Style preset',
+                  })}
+                  hint={formatMessage({
+                    id: 'components.Blocks.button.preset.hint',
+                    defaultMessage:
+                      'Apply a brand variant, then fine-tune below. Editing colors or the border switches to Custom.',
+                  })}
+                >
+                  <Segmented>
+                    {VARIANTS.map((v) => (
+                      <SegmentButton
+                        key={v.value}
+                        type="button"
+                        $active={draft.variant === v.value}
+                        onClick={() => applyPreset(v.value)}
+                      >
+                        {v.label}
+                      </SegmentButton>
+                    ))}
+                  </Segmented>
+                </Field>
                 <Flex gap={4} wrap="wrap" alignItems="flex-start">
                   <ColorField
                     label={formatMessage({
@@ -786,7 +899,7 @@ const ButtonEditorModal = ({
                       defaultMessage: 'Background',
                     })}
                     value={draft.style.backgroundColor}
-                    onChange={(v) => patchStyle({ backgroundColor: v })}
+                    onChange={(v) => patchColor({ backgroundColor: v })}
                   />
                   <ColorField
                     label={formatMessage({
@@ -794,7 +907,7 @@ const ButtonEditorModal = ({
                       defaultMessage: 'Text',
                     })}
                     value={draft.style.textColor}
-                    onChange={(v) => patchStyle({ textColor: v })}
+                    onChange={(v) => patchColor({ textColor: v })}
                   />
                   <ColorField
                     label={formatMessage({
@@ -802,7 +915,7 @@ const ButtonEditorModal = ({
                       defaultMessage: 'Hover background',
                     })}
                     value={draft.style.hoverBackgroundColor}
-                    onChange={(v) => patchStyle({ hoverBackgroundColor: v })}
+                    onChange={(v) => patchColor({ hoverBackgroundColor: v })}
                   />
                   <ColorField
                     label={formatMessage({
@@ -810,7 +923,7 @@ const ButtonEditorModal = ({
                       defaultMessage: 'Hover text',
                     })}
                     value={draft.style.hoverTextColor}
-                    onChange={(v) => patchStyle({ hoverTextColor: v })}
+                    onChange={(v) => patchColor({ hoverTextColor: v })}
                   />
                 </Flex>
 
@@ -925,7 +1038,7 @@ const ButtonEditorModal = ({
                     <Checkbox
                       checked={draft.borderEnabled}
                       onCheckedChange={(checked: boolean) =>
-                        setDraft((d) => ({ ...d, borderEnabled: !!checked }))
+                        markCustom({ borderEnabled: !!checked })
                       }
                     >
                       {formatMessage({
@@ -945,10 +1058,7 @@ const ButtonEditorModal = ({
                             value={draft.borderWidth}
                             placeholder="1px"
                             onChange={(e) =>
-                              setDraft((d) => ({
-                                ...d,
-                                borderWidth: e.target.value,
-                              }))
+                              markCustom({ borderWidth: e.target.value })
                             }
                           />
                         </Field>
@@ -961,10 +1071,7 @@ const ButtonEditorModal = ({
                           <SingleSelect
                             value={draft.borderStyle}
                             onChange={(v: string | number) =>
-                              setDraft((d) => ({
-                                ...d,
-                                borderStyle: String(v),
-                              }))
+                              markCustom({ borderStyle: String(v) })
                             }
                           >
                             {BORDER_STYLES.map((s) => (
@@ -980,9 +1087,7 @@ const ButtonEditorModal = ({
                             defaultMessage: 'Color',
                           })}
                           value={draft.borderColor}
-                          onChange={(v) =>
-                            setDraft((d) => ({ ...d, borderColor: v }))
-                          }
+                          onChange={(v) => markCustom({ borderColor: v })}
                         />
                       </Flex>
                     ) : null}

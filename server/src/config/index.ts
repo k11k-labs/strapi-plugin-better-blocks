@@ -21,6 +21,8 @@ export default {
     /**
      * Defaults for the WordPress-style Button block. `defaultStyle` is applied to
      * a freshly inserted button; authors can then override it per-button.
+     * `presets` are brand variants offered in the editor's "Style preset" picker;
+     * override any of them to match your design system.
      */
     button: {
       defaultStyle: {
@@ -30,6 +32,28 @@ export default {
         padding: '12px 24px',
         fontSize: '16px',
         fontWeight: '600',
+      },
+      presets: {
+        primary: {
+          backgroundColor: '#4945ff',
+          textColor: '#ffffff',
+          border: 'none',
+        },
+        secondary: {
+          backgroundColor: '#dcdce4',
+          textColor: '#32324d',
+          border: 'none',
+        },
+        outline: {
+          backgroundColor: 'transparent',
+          textColor: '#4945ff',
+          border: '2px solid #4945ff',
+        },
+        filled: {
+          backgroundColor: '#32324d',
+          textColor: '#ffffff',
+          border: 'none',
+        },
       },
     },
   },
