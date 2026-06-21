@@ -210,6 +210,11 @@ export interface ButtonElement extends CustomElement {
   showFileSize?: boolean;
   /** File mode: show a file-type icon next to the label. */
   showFileIcon?: boolean;
+  /**
+   * File mode: when true, open the file in a new tab (preview) instead of
+   * forcing a download. Renderers map this to `target="_blank"` vs `download`.
+   */
+  filePreview?: boolean;
   style?: ButtonStyle;
   /** Optional custom CSS class for frontend theming. */
   cssClass?: string;
