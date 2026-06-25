@@ -32,7 +32,7 @@ import {
   type RenderLeafProps,
   Editable,
 } from 'slate-react';
-import { styled, CSSProperties, css } from 'styled-components';
+import { styled, CSSProperties, css, useTheme } from 'styled-components';
 
 import { DIRECTIONS } from '../../hooks/useDragAndDrop';
 import { getTranslation } from '../../utils/getTranslation';
@@ -42,6 +42,7 @@ import { useBlocksEditorContext } from './BlocksEditor';
 import { useConversionModal } from './BlocksToolbar';
 import { decorateSearchMatches } from './FindReplace';
 import { SlashCommandMenu } from './SlashCommands';
+import { subscribeShiki } from './utils/shiki';
 import {
   CustomElement,
   getEntries,
@@ -353,6 +354,29 @@ const handleMoveBlocks = (
 
 const dragNoop = () => true;
 
+/**
+ * Whether a hex color (e.g. the theme's `neutral0`) reads as dark, using
+ * relative luminance. Defaults to `false` (light) when unparseable.
+ */
+const isColorDark = (hex?: string): boolean => {
+  if (!hex) return false;
+  const value = hex.replace('#', '');
+  const full =
+    value.length === 3
+      ? value
+          .split('')
+          .map((c) => c + c)
+          .join('')
+      : value;
+  if (full.length < 6) return false;
+  const r = parseInt(full.slice(0, 2), 16);
+  const g = parseInt(full.slice(2, 4), 16);
+  const b = parseInt(full.slice(4, 6), 16);
+  if ([r, g, b].some((n) => Number.isNaN(n))) return false;
+  // Perceived luminance (0–255); below the midpoint = dark.
+  return 0.299 * r + 0.587 * g + 0.114 * b < 128;
+};
+
 const BlocksContent = ({
   placeholder = 'Start writing...',
   ariaLabelId,
@@ -364,6 +388,20 @@ const BlocksContent = ({
   const [dragDirection, setDragDirection] =
     React.useState<DragDirection | null>(null);
   const { modalElement } = useConversionModal();
+
+  // Detect light/dark admin theme so code highlighting can pick the matching
+  // Shiki theme. `neutral0` is white in light mode and dark in dark mode; we
+  // re-derive on every render, so toggling the theme re-runs `decorate`.
+  const theme = useTheme();
+  const isDarkMode = React.useMemo(
+    () => isColorDark(theme?.colors?.neutral0),
+    [theme?.colors?.neutral0]
+  );
+
+  // Shiki loads asynchronously (highlighter + per-language grammars). Re-render
+  // when it signals readiness so `decorate` repaints with syntax colors.
+  const [, forceDecorate] = React.useReducer((x: number) => x + 1, 0);
+  React.useEffect(() => subscribeShiki(forceDecorate), []);
 
   // Set up sensors for drag detection
   const sensors = useSensors(
@@ -749,7 +787,7 @@ const BlocksContent = ({
             placeholder={placeholder}
             $isExpandedMode={isExpandedMode}
             decorate={(entry) => {
-              const codeRanges = decorateCode(entry) || [];
+              const codeRanges = decorateCode(editor, isDarkMode)(entry) || [];
               const searchDecorate = decorateSearchMatches(editor);
               const searchRanges = searchDecorate(entry as [any, number[]]);
               return [...codeRanges, ...searchRanges];
