@@ -56,6 +56,37 @@ export default {
         },
       },
     },
+    /**
+     * Social media embed block. The editor fetches each post's official embed
+     * via the server oEmbed proxy (`GET /better-blocks/oembed`), so no platform
+     * tokens ever reach the browser. Instagram and Facebook require a Facebook
+     * app access token; the other platforms work without one.
+     *
+     *   'better-blocks': {
+     *     config: {
+     *       social: {
+     *         platforms: ['twitter', 'tiktok', 'pinterest'],
+     *         instagram: { accessToken: env('FB_OEMBED_TOKEN') },
+     *         facebook: { accessToken: env('FB_OEMBED_TOKEN') },
+     *       },
+     *     },
+     *   }
+     */
+    social: {
+      enabled: true,
+      platforms: [
+        'twitter',
+        'instagram',
+        'facebook',
+        'tiktok',
+        'linkedin',
+        'pinterest',
+      ],
+      cache: true,
+      cacheTTL: 86400, // seconds (24h)
+      instagram: { accessToken: undefined },
+      facebook: { accessToken: undefined },
+    },
   },
   validator(config: { details?: { style?: string } } = {}) {
     const style = config?.details?.style;
