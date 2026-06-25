@@ -21,6 +21,12 @@ interface PluginConfig {
       filled?: ButtonPresetConfig;
     };
   };
+  social?: {
+    enabled?: boolean;
+    platforms?: string[];
+    instagramConfigured?: boolean;
+    facebookConfigured?: boolean;
+  };
 }
 
 /**
@@ -128,6 +134,10 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
       fieldOptions?.buttonDefaultTextColor ||
       globalConfig?.button?.defaultStyle?.textColor,
     buttonPresets: globalConfig?.button?.presets,
+    socialEnabled: globalConfig?.social?.enabled,
+    socialPlatforms: globalConfig?.social?.platforms,
+    socialInstagramConfigured: globalConfig?.social?.instagramConfigured,
+    socialFacebookConfigured: globalConfig?.social?.facebookConfigured,
   };
 
   const handleChange = (name: string, value: any) => {

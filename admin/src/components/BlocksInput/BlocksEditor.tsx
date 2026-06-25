@@ -37,6 +37,7 @@ import { detailsBlocks, withDetails } from './Blocks/Details';
 import { diagramBlocks, withDiagram } from './Blocks/Diagram';
 import { mathBlocks, withMath } from './Blocks/Math';
 import { mediaEmbedBlocks, withMediaEmbed } from './Blocks/MediaEmbed';
+import { socialEmbedBlocks, withSocialEmbed } from './Blocks/SocialEmbed';
 import { paragraphBlocks } from './Blocks/Paragraph';
 import { quoteBlocks } from './Blocks/Quote';
 import { tableBlocks, withTables } from './Blocks/Table';
@@ -107,6 +108,7 @@ const selectorBlockKeys = [
   'callout',
   'details',
   'button',
+  'social-embed',
 ] as const;
 
 type SelectorBlockKey = (typeof selectorBlockKeys)[number];
@@ -257,6 +259,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withHorizontalLine,
         withTables,
         withMediaEmbed,
+        withSocialEmbed,
         withMath,
         withDiagram,
         withCallout,
@@ -360,6 +363,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...horizontalLineBlocks,
         ...tableBlocks,
         ...mediaEmbedBlocks,
+        ...socialEmbedBlocks,
       }),
       []
     ) satisfies BlocksStore;

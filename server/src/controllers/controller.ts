@@ -51,6 +51,31 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           },
         },
       }),
+      social: (() => {
+        const social = strapi.plugin('better-blocks').config('social', {
+          enabled: true,
+          platforms: [
+            'twitter',
+            'instagram',
+            'facebook',
+            'tiktok',
+            'linkedin',
+            'pinterest',
+          ],
+        }) as {
+          enabled?: boolean;
+          platforms?: string[];
+          instagram?: { accessToken?: string };
+          facebook?: { accessToken?: string };
+        };
+        // Never leak tokens to the browser — only expose what the editor needs.
+        return {
+          enabled: social.enabled !== false,
+          platforms: social.platforms ?? [],
+          instagramConfigured: Boolean(social.instagram?.accessToken),
+          facebookConfigured: Boolean(social.facebook?.accessToken),
+        };
+      })(),
     };
   },
 });
