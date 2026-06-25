@@ -1,5 +1,17 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.15.0
+
+### Minor Changes
+
+- [#61](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/61) [`0656f70`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/0656f7003005a0d796176c66880b8fd016dda165) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: Shiki syntax highlighting in the editor code block
+
+  Code blocks in the editor now render with Shiki syntax highlighting that follows
+  the admin's light/dark theme. The language selector is no longer hidden — it is
+  an always-visible, colored pill in the top-right corner of the block — and the
+  code block has a distinct background so it stands out from surrounding text.
+  Grammars load on demand; `plaintext` renders without highlighting.
+
 ## 0.14.0
 
 ### Minor Changes
