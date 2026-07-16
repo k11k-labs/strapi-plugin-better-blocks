@@ -265,3 +265,57 @@ export const isButtonNode = (
 ): element is ButtonElement => {
   return element.type === 'button';
 };
+
+/** Social platforms supported by the social-embed block. */
+export type SocialPlatform =
+  | 'twitter'
+  | 'instagram'
+  | 'facebook'
+  | 'tiktok'
+  | 'linkedin'
+  | 'pinterest';
+
+export type SocialAlignment = 'left' | 'center' | 'right';
+
+/**
+ * Normalised oEmbed payload fetched from the platform via the plugin's server
+ * oEmbed proxy (`GET /better-blocks/oembed`). Stored on the node so the frontend
+ * renderer can render the embed without itself calling the platform at runtime.
+ */
+export interface SocialOEmbed {
+  /** Platform-provided embed HTML (blockquote / iframe). */
+  html?: string;
+  title?: string;
+  author?: string;
+  authorUrl?: string;
+  thumbnailUrl?: string;
+  providerName?: string;
+  width?: number;
+  height?: number;
+}
+
+/**
+ * Social media embed. A void block: it stores the post URL + platform plus the
+ * oEmbed payload fetched server-side at author time. The frontend renderer turns
+ * that into the platform's official embed widget. An optional `embedCode` lets
+ * authors paste a platform embed snippet to override URL-based rendering.
+ */
+export interface SocialEmbedElement extends CustomElement {
+  type: 'social-embed';
+  platform: SocialPlatform;
+  /** Canonical URL of the social post. */
+  url: string;
+  /** Optional pasted embed snippet (overrides URL-based rendering). */
+  embedCode?: string;
+  /** oEmbed metadata fetched from the platform via the server proxy. */
+  oembed?: SocialOEmbed;
+  alignment: SocialAlignment;
+  caption?: string;
+  children: CustomText[];
+}
+
+export const isSocialEmbedNode = (
+  element: CustomElement
+): element is SocialEmbedElement => {
+  return element.type === 'social-embed';
+};

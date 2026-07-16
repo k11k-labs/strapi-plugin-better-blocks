@@ -224,6 +224,7 @@ const INSERT_BLOCK_KEYS: SelectorBlockKey[] = [
   'details',
   'diagram',
   'math',
+  'social-embed',
 ];
 
 /**
