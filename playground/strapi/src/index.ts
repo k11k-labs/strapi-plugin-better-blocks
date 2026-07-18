@@ -129,6 +129,52 @@ export default {
         }
       }
 
+      // Upload the seed audio file to the Media Library and inject it into the
+      // audio block so the showcase ships with a playable example.
+      const audioPath = path.resolve(process.cwd(), 'src', 'sample-audio.mp3');
+
+      if (fs.existsSync(audioPath)) {
+        const stats = fs.statSync(audioPath);
+        const uploadService = strapi.plugin('upload').service('upload');
+
+        const [uploadedAudio] = await uploadService.upload({
+          data: {
+            fileInfo: {
+              name: 'sample-audio.mp3',
+              alternativeText: 'Better Blocks sample tune',
+              caption: 'A short arpeggio bundled with the playground',
+            },
+          },
+          files: {
+            filepath: audioPath,
+            originalFilename: 'sample-audio.mp3',
+            mimetype: 'audio/mpeg',
+            size: stats.size,
+          },
+        });
+
+        const audioBlock = articleData.content.find(
+          (block: any) => block.type === 'audio'
+        );
+        if (audioBlock && uploadedAudio) {
+          audioBlock.file = {
+            id: uploadedAudio.id,
+            url: uploadedAudio.url,
+            name: uploadedAudio.name,
+            ext: uploadedAudio.ext,
+            hash: uploadedAudio.hash,
+            mime: uploadedAudio.mime,
+            // Strapi stores media size in KB; the block schema uses bytes.
+            size:
+              typeof uploadedAudio.size === 'number'
+                ? Math.round(uploadedAudio.size * 1024)
+                : undefined,
+            provider: uploadedAudio.provider,
+          };
+        }
+        strapi.log.info('Uploaded seed audio: sample-audio.mp3');
+      }
+
       const article = await strapi.documents('api::article.article').create({
         data: articleData as any,
       });

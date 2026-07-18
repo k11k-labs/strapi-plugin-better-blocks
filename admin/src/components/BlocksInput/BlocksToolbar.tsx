@@ -190,6 +190,7 @@ const ToolbarButton = ({
  */
 const INSERT_BLOCK_KEYS: SelectorBlockKey[] = [
   'image',
+  'audio',
   'button',
   'callout',
   'details',
