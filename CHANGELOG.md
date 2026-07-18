@@ -1,5 +1,21 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.16.1
+
+### Patch Changes
+
+- [#66](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/66) [`77b96b3`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/77b96b33b958cd605d3a366ec6b95c5aaf37c9d3) Thanks [@kkukielka](https://github.com/kkukielka)! - fix: consistent, always-visible scrollbar on toolbar dropdowns
+
+  The toolbar's block-type ("Text"), font-size and font-family pickers were built
+  on the design-system `SingleSelect`, which wraps its options in a Radix
+  ScrollArea. That produced an inconsistent, sometimes doubled scrollbar compared
+  to the `Menu`-based dropdowns (insert "+", alignment, line height).
+
+  These three pickers are now built on the same `Menu` component as the other
+  dropdowns, so every toolbar menu shares one scroll container and renders a
+  single, always-visible, theme-aware scrollbar that makes it clear the list can
+  be scrolled up and down.
+
 ## 0.16.0
 
 ### Minor Changes
