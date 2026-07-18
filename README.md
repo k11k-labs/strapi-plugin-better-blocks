@@ -97,6 +97,7 @@
 - **Callouts / Admonitions** &mdash; GitHub-style callouts in five variants (`Note`, `Tip`, `Important`, `Warning`, `Caution`) with an optional custom title and nested rich-text content (paragraphs, lists, links). Insert from the blocks selector or the `/note`, `/tip`, `/important`, `/warning`, `/caution` slash commands; switch variant, edit the title, or remove from the header popover. Colors follow Strapi's design tokens and adapt to light/dark mode
 - **Details / Collapsible** &mdash; GitHub-style collapsible `<details>` / `<summary>` sections for managing content density. Insert from the blocks selector or the `/details` slash command; edit the summary label and toggle open/closed-by-default (`defaultOpen`) from the header. Holds full rich-text block content (paragraphs, lists, tables, images) and supports nesting. Admins can set the default summary text and choose a GitHub-minimal (default) or Custom (bordered + background) style. Stored as `{ "type": "details", "summary": "…", "defaultOpen": false, "children": [...] }`
 - **Button (WordPress-style CTA)** &mdash; Insert a styled call-to-action button from the blocks selector or by typing `[button]` then a space. Two modes: **Link** (URL + open-in-new-tab + ARIA label) and **File** (pick any asset from the Media Library to render a download button with optional file size and type icon, and choose direct download or preview-in-new-tab). A full-screen editor with live preview controls alignment, background/text colors (including hover colors), border radius, font size/weight, padding presets, border, and a custom CSS class. One-click **style presets** (Primary / Secondary / Outline / Filled) keep CTAs on-brand. Admins can set default button colors and customize the presets. Stored as `{ "type": "button", "buttonType": "link" | "file", "label": "…", "alignment": "center", "link": {…} | "file": {…}, "style": {…} }`
+- **Audio (HTML5 player)** &mdash; Insert an audio block from the `+` Insert menu, the `/audio` slash command, or by typing `[audio]` then a space. Pick a file from the Media Library (upload included) or paste a direct URL, with a live native `<audio>` preview in the editor. Set an optional title and caption, block alignment (left / center / right / none), and player behaviour: controls, autoplay, loop, and preload (none / metadata / auto). Stored as `{ "type": "audio", "file": {…}, "title": "…", "caption": "…", "player": {…}, "alignment": "center" }`
 - **Horizontal Line** &mdash; Insert `<hr>` dividers between content blocks
 - **Text Alignment** &mdash; Per-block left, center, right, and justify alignment
 - **Undo / Redo** &mdash; Toolbar buttons wired to Slate's built-in history
@@ -281,6 +282,42 @@ download (`<a href={file.url} download={file.name}>`) — optionally prefixing
 `file.name`/size with `showFileIcon`/`showFileSize`. Only the keys for the active mode are
 present. `style.variant` records the selected preset for the editor UI; renderers can
 ignore it.
+
+#### Audio JSON shape (for frontend renderers)
+
+An audio block is a void block referencing a Media Library asset (or an external URL) plus
+display and player settings:
+
+```jsonc
+{
+  "type": "audio",
+  "file": {
+    "id": 123, // Media Library file id (absent when inserted from a raw URL)
+    "url": "/uploads/episode.mp3", // direct URL (backend-prefixed for Media Library assets)
+    "name": "episode.mp3",
+    "ext": ".mp3",
+    "mime": "audio/mpeg",
+    "size": 5242880, // bytes
+    "provider": "local", // local | cloudinary | …
+  },
+  "title": "Episode 1: Introduction", // optional — key omitted when empty
+  "caption": "Our first podcast episode", // optional — key omitted when empty
+  "player": {
+    "autoplay": false,
+    "loop": false,
+    "controls": true,
+    "preload": "metadata", // "none" | "metadata" | "auto"
+  },
+  "alignment": "center", // "left" | "center" | "right" | "none"
+}
+```
+
+Render as a native HTML5 `<audio src={file.url} controls={player.controls} autoPlay={player.autoplay}
+loop={player.loop} preload={player.preload}>` wrapped in an alignment container (`left`/`center`/`right`
+map to `flex-start`/`center`/`flex-end`; `none` flows full-width). Include fallback text and a download
+link inside `<audio>` for unsupported browsers, and associate the `caption` via `aria-describedby`.
+`file.url` is already backend-prefixed for Media Library assets, and the `title`/`caption` keys are
+omitted when empty. See the full React/Astro renderer contract on [issue #43](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/43).
 
 ### 2. Restart Strapi
 

@@ -823,6 +823,46 @@
       "children": [
         {
           "type": "text",
+          "text": "Audio"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Embed audio straight from the Media Library (or a URL) with a native HTML5 player. Authors set the title, caption, alignment and player behaviour — autoplay, loop, controls and preload — right in the editor."
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "file": {
+        "url": ""
+      },
+      "title": "Better Blocks — sample tune",
+      "caption": "A short arpeggio bundled with the playground.",
+      "player": {
+        "autoplay": false,
+        "loop": false,
+        "controls": true,
+        "preload": "metadata"
+      },
+      "alignment": "center",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [
+        {
+          "type": "text",
           "text": "Social embeds"
         }
       ]

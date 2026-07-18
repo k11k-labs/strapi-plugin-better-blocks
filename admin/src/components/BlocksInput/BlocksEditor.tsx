@@ -29,6 +29,7 @@ import {
   withHorizontalLine,
 } from './Blocks/HorizontalLine';
 import { imageBlocks, withImages } from './Blocks/Image';
+import { audioBlocks, withAudio } from './Blocks/Audio';
 import { buttonBlocks, withButtons } from './Blocks/Button';
 import { linkBlocks } from './Blocks/Link';
 import { listBlocks } from './Blocks/List';
@@ -101,6 +102,7 @@ const selectorBlockKeys = [
   'list-unordered',
   'list-todo',
   'image',
+  'audio',
   'quote',
   'code',
   'math',
@@ -255,6 +257,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withReact,
         withLinks,
         withImages,
+        withAudio,
         withButtons,
         withHorizontalLine,
         withTables,
@@ -353,6 +356,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...listBlocks,
         ...linkBlocks,
         ...imageBlocks,
+        ...audioBlocks,
         ...buttonBlocks,
         ...quoteBlocks,
         ...codeBlocks,

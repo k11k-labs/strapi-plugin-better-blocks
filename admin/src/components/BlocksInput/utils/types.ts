@@ -92,6 +92,54 @@ export interface ImageElement extends CustomElement {
   children: CustomText[];
 }
 
+export type AudioAlignment = 'left' | 'center' | 'right' | 'none';
+export type AudioPreload = 'none' | 'metadata' | 'auto';
+
+/** Player behaviour flags, mirrored 1:1 onto the HTML5 `<audio>` element. */
+export interface AudioPlayerSettings {
+  autoplay: boolean;
+  loop: boolean;
+  controls: boolean;
+  preload: AudioPreload;
+}
+
+/**
+ * Audio block. A void block referencing a Strapi Media Library asset (or an
+ * external URL). Stores the file metadata plus a display title, caption, player
+ * behaviour flags and alignment. The frontend renderer turns this into a native
+ * HTML5 `<audio>` player — see issue #43 for the renderer contract.
+ */
+export interface AudioElement extends CustomElement {
+  type: 'audio';
+  file: {
+    /** Strapi Media Library file id (absent when inserted from a raw URL). */
+    id?: number;
+    /** Direct URL to the audio file (absolute, backend-prefixed when local). */
+    url: string;
+    name?: string;
+    ext?: string;
+    hash?: string;
+    mime?: string;
+    /** File size in bytes. */
+    size?: number;
+    /** Duration in seconds (optional; read from the player when available). */
+    duration?: number;
+    /** Upload provider: local | cloudinary | etc. */
+    provider?: string;
+  };
+  title?: string;
+  caption?: string;
+  player: AudioPlayerSettings;
+  alignment: AudioAlignment;
+  children: CustomText[];
+}
+
+export const isAudioNode = (
+  element: CustomElement
+): element is AudioElement => {
+  return element.type === 'audio';
+};
+
 export interface MathElement extends CustomElement {
   type: 'math';
   format: 'inline' | 'block';
