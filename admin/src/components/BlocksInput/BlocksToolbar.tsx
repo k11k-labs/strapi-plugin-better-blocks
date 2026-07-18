@@ -7,11 +7,7 @@ import {
   Field,
   Popover,
   Tooltip,
-  SingleSelect,
-  SingleSelectOption,
-  Box,
   FlexComponent,
-  BoxComponent,
   Menu,
   IconButton,
 } from '@strapi/design-system';
@@ -50,6 +46,7 @@ import {
   isSelectorBlockKey,
   useBlocksEditorContext,
 } from './BlocksEditor';
+import { MenuScrollbarStyles } from './MenuScrollbar';
 import { insertLink } from './utils/links';
 import {
   type Block,
@@ -108,32 +105,6 @@ const FlexButton = styled<FlexComponent<'button'>>(Flex)`
     // Only apply hover styles if the button is enabled
     &:hover {
       background: ${({ theme }) => theme.colors.primary100};
-    }
-  }
-`;
-
-const SelectWrapper = styled<BoxComponent>(Box)`
-  // Styling changes to SingleSelect component don't work, so adding wrapper to target SingleSelect
-  div[role='combobox'] {
-    border: none;
-    cursor: pointer;
-    min-height: unset;
-    padding-top: 6px;
-    padding-bottom: 6px;
-
-    &[aria-disabled='false']:hover {
-      cursor: pointer;
-      background: ${({ theme }) => theme.colors.primary100};
-    }
-
-    &[aria-disabled] {
-      background: transparent;
-      cursor: inherit;
-
-      // Select text and icons should also have disabled color
-      span {
-        color: ${({ theme }) => theme.colors.neutral600};
-      }
     }
   }
 `;
@@ -397,59 +368,35 @@ const BlocksDropdown = () => {
 
   return (
     <>
-      <SelectWrapper>
-        <SingleSelect
+      <Menu.Root>
+        <Menu.Trigger
+          disabled={disabled}
           startIcon={<Icon />}
-          onChange={handleSelect}
-          placeholder={formatMessage(blocks[blockSelected].label)}
-          value={blockSelected}
-          onCloseAutoFocus={preventSelectFocus}
           aria-label={formatMessage({
             id: 'components.Blocks.blocks.selectBlock',
             defaultMessage: 'Select a block',
           })}
-          disabled={disabled}
         >
-          {blockKeysToInclude.map((key) => (
-            <BlockOption
-              key={key}
-              value={key}
-              label={blocks[key].label}
-              icon={blocks[key].icon}
-              blockSelected={blockSelected}
-            />
-          ))}
-        </SingleSelect>
-      </SelectWrapper>
+          {formatMessage(blocks[blockSelected].label)}
+        </Menu.Trigger>
+        <Menu.Content onCloseAutoFocus={preventSelectFocus}>
+          {blockKeysToInclude.map((key) => {
+            const OptionIcon = blocks[key].icon;
+            return (
+              <StyledMenuItem
+                key={key}
+                onSelect={() => handleSelect(key)}
+                $isActive={key === blockSelected}
+              >
+                <OptionIcon />
+                {formatMessage(blocks[key].label)}
+              </StyledMenuItem>
+            );
+          })}
+        </Menu.Content>
+      </Menu.Root>
       {modalElement}
     </>
-  );
-};
-
-interface BlockOptionProps {
-  value: string;
-  icon: React.ComponentType<React.SVGProps<SVGElement>>;
-  label: MessageDescriptor;
-  blockSelected: string;
-}
-
-const BlockOption = ({
-  value,
-  icon: Icon,
-  label,
-  blockSelected,
-}: BlockOptionProps) => {
-  const { formatMessage } = useIntl();
-
-  const isSelected = value === blockSelected;
-
-  return (
-    <SingleSelectOption
-      startIcon={<Icon fill={isSelected ? 'primary600' : 'neutral600'} />}
-      value={value}
-    >
-      {formatMessage(label)}
-    </SingleSelectOption>
   );
 };
 
@@ -1153,65 +1100,6 @@ const FONT_SIZES = [
   '48px',
 ];
 
-const ToolbarMenuButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 2px;
-  height: 28px;
-  padding: 4px 8px;
-  border: none;
-  border-radius: ${({ theme }) => theme.borderRadius};
-  background: transparent;
-  font-size: 12px;
-  white-space: nowrap;
-  cursor: pointer;
-  user-select: none;
-  color: inherit;
-
-  &:hover:not(:disabled) {
-    background: ${({ theme }) => theme.colors.primary100};
-  }
-
-  &:disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-`;
-
-const SmallSelectContainer = ({ children }: { children: React.ReactNode }) => (
-  <div
-    onMouseDown={(e) => e.stopPropagation()}
-    onClick={(e) => e.stopPropagation()}
-  >
-    {children}
-  </div>
-);
-
-const SmallSelectWrapper = styled<BoxComponent>(Box)`
-  div[role='combobox'] {
-    border: none;
-    min-height: unset;
-    padding: 4px 6px;
-    font-size: 12px;
-
-    // Make inner text pass-through so clicks hit the combobox trigger
-    & > span {
-      pointer-events: none;
-    }
-
-    &[aria-disabled='false']:hover {
-      cursor: pointer;
-      background: ${({ theme }) => theme.colors.primary100};
-    }
-
-    &[aria-disabled] {
-      background: transparent;
-      cursor: inherit;
-    }
-  }
-`;
-
 const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('FontFamilySelect');
 
@@ -1220,34 +1108,32 @@ const FontFamilySelect = ({ disabled }: { disabled: boolean }) => {
     return marks?.fontFamily || undefined;
   })();
 
-  const handleChange = (val: unknown) => {
-    const font = val as string;
+  const handleSelect = (font: string) => {
     if (font === 'Default') {
       Editor.removeMark(editor, 'fontFamily');
     } else {
       Editor.addMark(editor, 'fontFamily', font);
     }
+    ReactEditor.focus(editor as ReactEditor);
   };
 
   return (
-    <SmallSelectContainer>
-      <SmallSelectWrapper>
-        <SingleSelect
-          value={currentFont}
-          onChange={handleChange}
-          onCloseAutoFocus={(e: Event) => e.preventDefault()}
-          disabled={disabled}
-          size="S"
-          placeholder="Font"
-        >
-          {FONT_FAMILIES.map((f) => (
-            <SingleSelectOption key={f} value={f}>
-              {f}
-            </SingleSelectOption>
-          ))}
-        </SingleSelect>
-      </SmallSelectWrapper>
-    </SmallSelectContainer>
+    <Menu.Root>
+      <Menu.Trigger disabled={disabled} size="S" aria-label="Font family">
+        {currentFont || 'Font'}
+      </Menu.Trigger>
+      <Menu.Content onCloseAutoFocus={(e: Event) => e.preventDefault()}>
+        {FONT_FAMILIES.map((f) => (
+          <StyledMenuItem
+            key={f}
+            onSelect={() => handleSelect(f)}
+            $isActive={currentFont === f || (!currentFont && f === 'Default')}
+          >
+            {f}
+          </StyledMenuItem>
+        ))}
+      </Menu.Content>
+    </Menu.Root>
   );
 };
 
@@ -1259,34 +1145,32 @@ const FontSizeSelect = ({ disabled }: { disabled: boolean }) => {
     return marks?.fontSize || undefined;
   })();
 
-  const handleChange = (val: unknown) => {
-    const size = val as string;
+  const handleSelect = (size: string) => {
     if (size === 'Default') {
       Editor.removeMark(editor, 'fontSize');
     } else {
       Editor.addMark(editor, 'fontSize', size);
     }
+    ReactEditor.focus(editor as ReactEditor);
   };
 
   return (
-    <SmallSelectContainer>
-      <SmallSelectWrapper>
-        <SingleSelect
-          value={currentSize}
-          onChange={handleChange}
-          onCloseAutoFocus={(e: Event) => e.preventDefault()}
-          disabled={disabled}
-          size="S"
-          placeholder="Size"
-        >
-          {FONT_SIZES.map((s) => (
-            <SingleSelectOption key={s} value={s}>
-              {s}
-            </SingleSelectOption>
-          ))}
-        </SingleSelect>
-      </SmallSelectWrapper>
-    </SmallSelectContainer>
+    <Menu.Root>
+      <Menu.Trigger disabled={disabled} size="S" aria-label="Font size">
+        {currentSize || 'Size'}
+      </Menu.Trigger>
+      <Menu.Content onCloseAutoFocus={(e: Event) => e.preventDefault()}>
+        {FONT_SIZES.map((s) => (
+          <StyledMenuItem
+            key={s}
+            onSelect={() => handleSelect(s)}
+            $isActive={currentSize === s || (!currentSize && s === 'Default')}
+          >
+            {s}
+          </StyledMenuItem>
+        ))}
+      </Menu.Content>
+    </Menu.Root>
   );
 };
 
@@ -1663,6 +1547,7 @@ const BlocksToolbar = () => {
   return (
     <Toolbar.Root aria-disabled={disabled} asChild>
       <ToolbarWrapper gap={2} padding={2} width="100%">
+        <MenuScrollbarStyles />
         <Toolbar.ToggleGroup type="multiple" asChild>
           <Flex direction="row" gap={1}>
             <UndoButton disabled={disabled} />
