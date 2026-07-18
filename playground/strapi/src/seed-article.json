@@ -1638,6 +1638,55 @@
       "children": [{ "type": "text", "text": "" }]
     },
     {
+      "type": "heading",
+      "level": 2,
+      "children": [
+        {
+          "type": "text",
+          "text": "Audio"
+        }
+      ]
+    },
+    {
+      "type": "audio",
+      "file": {
+        "id": 1,
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg",
+        "name": "Example.ogg",
+        "ext": ".ogg",
+        "hash": "example_abc123",
+        "mime": "audio/ogg",
+        "size": 116306,
+        "provider": "local"
+      },
+      "title": "Episode 1: Introduction",
+      "caption": "Our first podcast episode.",
+      "player": {
+        "autoplay": false,
+        "loop": false,
+        "controls": true,
+        "preload": "metadata"
+      },
+      "alignment": "center",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "audio",
+      "file": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg",
+        "name": "Example.ogg",
+        "mime": "audio/ogg"
+      },
+      "player": {
+        "autoplay": false,
+        "loop": false,
+        "controls": true,
+        "preload": "none"
+      },
+      "alignment": "none",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
       "type": "paragraph",
       "children": [
         {

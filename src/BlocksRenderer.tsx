@@ -12,6 +12,8 @@ import katex from 'katex';
 import { MermaidDiagram } from './MermaidDiagram';
 import { SocialEmbed } from './SocialEmbed';
 import type {
+  AudioAlignment,
+  AudioNode,
   BlockNode,
   BlocksRendererProps,
   ButtonElement,
@@ -394,6 +396,8 @@ function renderBlock(
       return renderButton(block, key, blocks);
     case 'social-embed':
       return renderSocialEmbed(block, key, blocks);
+    case 'audio':
+      return renderAudio(block, key, blocks);
     default:
       return null;
   }
@@ -595,6 +599,82 @@ function renderSocialEmbed(
       alignment={block.alignment}
       caption={block.caption}
     />
+  );
+}
+
+// ── Audio (HTML5 Player) Rendering ───────────────────────────────────
+
+// Alignment class → flexbox cross-axis placement of the player within the
+// figure. `none` stretches the player to fill the available width.
+const AUDIO_ALIGN_ITEMS: Record<AudioAlignment, CSSProperties['alignItems']> = {
+  left: 'flex-start',
+  center: 'center',
+  right: 'flex-end',
+  none: 'stretch',
+};
+
+function renderAudio(block: AudioNode, key: number, blocks?: CustomBlocksConfig): ReactNode {
+  const AudioComp = blocks?.audio;
+
+  if (AudioComp) {
+    return (
+      <AudioComp
+        key={key}
+        file={block.file}
+        title={block.title}
+        caption={block.caption}
+        player={block.player}
+        alignment={block.alignment}
+      />
+    );
+  }
+
+  const { file, title, caption, player } = block;
+  const alignment: AudioAlignment = block.alignment ?? 'center';
+  // Stable id linking the caption to the player via aria-describedby. Prefer the
+  // Media-Library id, fall back to the file hash, then the block index.
+  const capId = caption ? `bb-audio-cap-${file.id ?? file.hash ?? key}` : undefined;
+
+  return (
+    <figure
+      key={key}
+      className={`bb-audio align-${alignment}`}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
+        margin: '1rem 0',
+        alignItems: AUDIO_ALIGN_ITEMS[alignment],
+      }}
+    >
+      {title && (
+        <figcaption className="bb-audio-title" style={{ fontWeight: 600 }}>
+          {title}
+        </figcaption>
+      )}
+      <audio
+        className="bb-audio-player"
+        src={file.url}
+        controls={player.controls ?? true}
+        autoPlay={player.autoplay ?? false}
+        loop={player.loop ?? false}
+        preload={player.preload ?? 'metadata'}
+        aria-label={title || 'Audio player'}
+        aria-describedby={capId}
+        style={{ width: '100%', maxWidth: alignment === 'none' ? '100%' : '32rem' }}
+      >
+        Your browser does not support the audio element. <a href={file.url}>Download the audio</a>.
+      </audio>
+      {caption && (
+        <figcaption
+          id={capId}
+          className="bb-audio-caption"
+          style={{ fontSize: '0.875rem', color: '#6b7280' }}
+        >
+          {caption}
+        </figcaption>
+      )}
+    </figure>
   );
 }
 

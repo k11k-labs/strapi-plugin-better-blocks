@@ -1749,4 +1749,153 @@ describe('BlocksRenderer', () => {
     expect(el).toHaveAttribute('data-url', 'https://pinterest.com/pin/1');
     expect(el.textContent).toBe('Pinned');
   });
+
+  // ── Audio ────────────────────────────────────────────────────────
+
+  it('renders a native <audio> inside a figure, mapping the player flags 1:1', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { id: 123, url: '/uploads/episode.mp3', name: 'episode.mp3', hash: 'episode_abc' },
+        player: { autoplay: true, loop: true, controls: true, preload: 'auto' },
+        alignment: 'center',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const figure = container.querySelector('figure.bb-audio');
+    expect(figure).toBeInTheDocument();
+    expect(figure).toHaveClass('bb-audio', 'align-center');
+
+    const audio = container.querySelector('audio') as HTMLAudioElement;
+    expect(audio).toBeInTheDocument();
+    expect(audio.getAttribute('src')).toBe('/uploads/episode.mp3');
+    expect(audio.controls).toBe(true);
+    expect(audio.autoplay).toBe(true);
+    expect(audio.loop).toBe(true);
+    expect(audio.getAttribute('preload')).toBe('auto');
+    expect(audio).toHaveAttribute('aria-label', 'Audio player');
+  });
+
+  it('defaults controls to true, preload to metadata and alignment to center', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { url: '/uploads/clip.mp3' },
+        player: {},
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const audio = container.querySelector('audio') as HTMLAudioElement;
+    expect(audio.controls).toBe(true);
+    expect(audio.autoplay).toBe(false);
+    expect(audio.loop).toBe(false);
+    expect(audio.getAttribute('preload')).toBe('metadata');
+    expect(container.querySelector('figure')).toHaveClass('align-center');
+  });
+
+  it('renders the title above the player and uses it as the aria-label', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { url: '/uploads/ep1.mp3' },
+        title: 'Episode 1: Introduction',
+        player: { controls: true },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const titleEl = container.querySelector('figcaption.bb-audio-title');
+    expect(titleEl?.textContent).toBe('Episode 1: Introduction');
+    expect(container.querySelector('audio')).toHaveAttribute(
+      'aria-label',
+      'Episode 1: Introduction'
+    );
+  });
+
+  it('renders the caption below the player and wires aria-describedby to it', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { id: 7, url: '/uploads/ep1.mp3', hash: 'ep1_abc' },
+        caption: 'Our first podcast episode',
+        player: { controls: true },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const caption = container.querySelector('figcaption.bb-audio-caption');
+    expect(caption).toBeInTheDocument();
+    expect(caption?.textContent).toBe('Our first podcast episode');
+    const capId = caption?.getAttribute('id');
+    expect(capId).toBe('bb-audio-cap-7');
+    expect(container.querySelector('audio')).toHaveAttribute('aria-describedby', capId as string);
+  });
+
+  it('omits aria-describedby when there is no caption', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { url: '/uploads/ep1.mp3' },
+        player: { controls: true },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('figcaption')).toBeNull();
+    expect(container.querySelector('audio')).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('renders full-width for alignment "none"', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { url: '/uploads/ep1.mp3' },
+        player: { controls: true },
+        alignment: 'none',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('figure')).toHaveClass('align-none');
+    const audio = container.querySelector('audio') as HTMLAudioElement;
+    expect(audio.style.maxWidth).toBe('100%');
+  });
+
+  it('ships fallback text and a download link inside <audio>', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { url: '/uploads/ep1.mp3' },
+        player: { controls: true },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const audio = container.querySelector('audio') as HTMLAudioElement;
+    expect(audio.textContent).toContain('Your browser does not support the audio element.');
+    const download = audio.querySelector('a');
+    expect(download).toHaveAttribute('href', '/uploads/ep1.mp3');
+    expect(download?.textContent).toBe('Download the audio');
+  });
+
+  it('uses a custom audio renderer', () => {
+    const content: BlocksContent = [
+      {
+        type: 'audio',
+        file: { id: 9, url: '/uploads/ep1.mp3' },
+        title: 'My Episode',
+        player: { controls: true },
+      },
+    ];
+    render(
+      <BlocksRenderer
+        content={content}
+        blocks={{
+          audio: ({ file, title }) => (
+            <div data-testid="custom-audio" data-url={file.url}>
+              {title}
+            </div>
+          ),
+        }}
+      />
+    );
+    const el = screen.getByTestId('custom-audio');
+    expect(el).toHaveAttribute('data-url', '/uploads/ep1.mp3');
+    expect(el.textContent).toBe('My Episode');
+  });
 });

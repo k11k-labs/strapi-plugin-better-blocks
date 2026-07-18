@@ -171,6 +171,43 @@ export type SocialEmbedNode = {
   children?: [{ type: 'text'; text: '' }];
 };
 
+export type AudioAlignment = 'left' | 'center' | 'right' | 'none';
+
+export type AudioPreload = 'none' | 'metadata' | 'auto';
+
+export type AudioFile = {
+  /** Media Library file id — absent when inserted from a raw URL. */
+  id?: number;
+  /** Direct URL to render — already backend-prefixed for Media-Library assets. */
+  url: string;
+  name?: string;
+  ext?: string;
+  hash?: string;
+  mime?: string;
+  /** Size in bytes. */
+  size?: number;
+  provider?: string;
+  /** Optional duration in seconds — not populated by Strapi Upload today. */
+  duration?: number;
+};
+
+export type AudioPlayer = {
+  autoplay?: boolean;
+  loop?: boolean;
+  controls?: boolean;
+  preload?: AudioPreload;
+};
+
+export type AudioNode = {
+  type: 'audio';
+  file: AudioFile;
+  title?: string;
+  caption?: string;
+  player: AudioPlayer;
+  alignment?: AudioAlignment;
+  children?: [{ type: 'text'; text: '' }];
+};
+
 export type CalloutVariant = 'note' | 'tip' | 'important' | 'warning' | 'caution';
 
 export type CalloutNode = {
@@ -252,7 +289,8 @@ export type BlockNode =
   | CalloutNode
   | DetailsNode
   | ButtonElement
-  | SocialEmbedNode;
+  | SocialEmbedNode
+  | AudioNode;
 
 export type BlocksContent = BlockNode[];
 
@@ -327,6 +365,13 @@ export type CustomBlocksConfig = Partial<{
     oembed?: SocialEmbedOembed;
     alignment?: SocialEmbedAlignment;
     caption?: string;
+  }>;
+  audio: ComponentType<{
+    file: AudioFile;
+    title?: string;
+    caption?: string;
+    player: AudioPlayer;
+    alignment?: AudioAlignment;
   }>;
 }>;
 

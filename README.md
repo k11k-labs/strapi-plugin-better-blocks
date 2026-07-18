@@ -252,6 +252,76 @@ To fully control the markup, override the `social-embed` block. It receives `pla
 />
 ```
 
+### Audio
+
+Block-level `audio` nodes embed audio from the Strapi Media Library (or a raw URL) with a native HTML5 player. The player flags map 1:1 onto the `<audio>` element: `controls` (defaults to `true`), `autoplay`, `loop`, and `preload` (`none` / `metadata` / `auto`). `file.url` is rendered as-is &mdash; it is already backend-prefixed for Media-Library assets (same as the `image` and `button` blocks), so it is **not** re-prefixed.
+
+The player is wrapped in a `<figure className="bb-audio align-{alignment}">` (alignment defaults to `center`; `left` / `center` / `right` place the player via flexbox, `none` stretches it full-width). An optional `title` renders above the player in a `<figcaption className="bb-audio-title">` and an optional `caption` below it in a `<figcaption className="bb-audio-caption">`. For accessibility the `<audio>` gets an `aria-label` (the `title`, falling back to `"Audio player"`) and, when a caption is present, an `aria-describedby` pointing at it; native HTML5 controls are keyboard-accessible. Inside the element, fallback text and a download link render for browsers/formats that can't play it.
+
+Baseline appearance ships as inline styles (zero-config, no stylesheet import), and every element carries a stable `bb-audio*` class so you can restyle from your own CSS:
+
+```css
+.bb-audio {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+.bb-audio.align-left {
+  align-items: flex-start;
+}
+.bb-audio.align-center {
+  align-items: center;
+}
+.bb-audio.align-right {
+  align-items: flex-end;
+}
+.bb-audio.align-none {
+  align-items: stretch;
+}
+.bb-audio audio {
+  width: 100%;
+  max-width: 32rem;
+}
+.bb-audio.align-none audio {
+  max-width: 100%;
+}
+.bb-audio-title {
+  font-weight: 600;
+}
+.bb-audio-caption {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+```
+
+To fully control the markup, override the `audio` block. It receives `file`, `title`, `caption`, `player`, and `alignment`:
+
+```tsx
+<BlocksRenderer
+  content={blocks}
+  blocks={{
+    audio: ({ file, title, caption, player, alignment = 'center' }) => (
+      <figure className={`bb-audio align-${alignment}`}>
+        {title && <figcaption className="bb-audio-title">{title}</figcaption>}
+        <audio
+          src={file.url}
+          controls={player.controls}
+          autoPlay={player.autoplay}
+          loop={player.loop}
+          preload={player.preload}
+          aria-label={title || 'Audio player'}
+        >
+          Your browser does not support the audio element. <a href={file.url}>Download the audio</a>
+          .
+        </audio>
+        {caption && <figcaption className="bb-audio-caption">{caption}</figcaption>}
+      </figure>
+    ),
+  }}
+/>
+```
+
 ### Astro
 
 `BlocksRenderer` works in [Astro](https://astro.build/) via the [`@astrojs/react`](https://docs.astro.build/en/guides/integrations-guide/react/) integration. Because the renderer is purely presentational and KaTeX renders to a string on the server (see [Math (KaTeX)](#math-katex)), you can render it as a static [Astro island](https://docs.astro.build/en/concepts/islands/) with **no client directive** &mdash; Astro outputs plain HTML and ships zero JavaScript:
@@ -303,6 +373,7 @@ const { blocks } = Astro.props;
 | `details` (collapsible)         | `<details>`         | Better Blocks               |
 | `button` (CTA / file download)  | `<a>`               | Better Blocks               |
 | `social-embed`                  | `<figure>`          | Better Blocks               |
+| `audio`                         | `<figure><audio>`   | Better Blocks               |
 
 ### Block properties
 
@@ -342,6 +413,11 @@ const { blocks } = Astro.props;
 | `oembed`       | social-embed              | Fetched oEmbed payload `{ html, title, author, authorUrl, thumbnailUrl, providerName, width, height }` |
 | `alignment`    | social-embed              | `left`, `center` (default), or `right`                                                                 |
 | `caption`      | social-embed              | Optional caption rendered in a `<figcaption>`                                                          |
+| `file`         | audio                     | `{ url, name, ext, hash, mime, size, provider, duration }` &mdash; `url` is rendered as the `src`      |
+| `player`       | audio                     | `{ controls (default true), autoplay, loop, preload }` &mdash; mapped 1:1 onto `<audio>`               |
+| `title`        | audio                     | Optional title rendered above the player (also used as the `aria-label`)                               |
+| `caption`      | audio                     | Optional caption rendered below the player in a `<figcaption>`                                         |
+| `alignment`    | audio                     | `left`, `center` (default), `right`, or `none` (full-width)                                            |
 
 ## Supported Modifiers
 
@@ -466,6 +542,11 @@ import type {
   SocialPlatform,
   SocialEmbedAlignment,
   SocialEmbedOembed,
+  AudioNode,
+  AudioFile,
+  AudioPlayer,
+  AudioPreload,
+  AudioAlignment,
   TextAlign,
   CustomBlocksConfig,
   CustomModifiersConfig,
