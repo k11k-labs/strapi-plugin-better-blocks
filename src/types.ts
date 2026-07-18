@@ -137,6 +137,40 @@ export type DiagramNode = {
   children: [{ type: 'text'; text: '' }];
 };
 
+export type SocialPlatform =
+  | 'twitter'
+  | 'instagram'
+  | 'facebook'
+  | 'tiktok'
+  | 'linkedin'
+  | 'pinterest';
+
+export type SocialEmbedAlignment = 'left' | 'center' | 'right';
+
+export type SocialEmbedOembed = {
+  html?: string;
+  title?: string;
+  author?: string;
+  authorUrl?: string;
+  thumbnailUrl?: string;
+  providerName?: string;
+  width?: number;
+  height?: number;
+};
+
+export type SocialEmbedNode = {
+  type: 'social-embed';
+  platform: SocialPlatform;
+  url: string;
+  /** Author-pasted manual override, takes priority over `oembed.html`. */
+  embedCode?: string;
+  /** Fetched server-side by the plugin at author time. */
+  oembed?: SocialEmbedOembed;
+  alignment?: SocialEmbedAlignment;
+  caption?: string;
+  children?: [{ type: 'text'; text: '' }];
+};
+
 export type CalloutVariant = 'note' | 'tip' | 'important' | 'warning' | 'caution';
 
 export type CalloutNode = {
@@ -217,7 +251,8 @@ export type BlockNode =
   | DiagramNode
   | CalloutNode
   | DetailsNode
-  | ButtonElement;
+  | ButtonElement
+  | SocialEmbedNode;
 
 export type BlocksContent = BlockNode[];
 
@@ -284,6 +319,14 @@ export type CustomBlocksConfig = Partial<{
     filePreview?: boolean;
     style?: ButtonStyle;
     cssClass?: string;
+  }>;
+  'social-embed': ComponentType<{
+    platform: SocialPlatform;
+    url: string;
+    embedCode?: string;
+    oembed?: SocialEmbedOembed;
+    alignment?: SocialEmbedAlignment;
+    caption?: string;
   }>;
 }>;
 

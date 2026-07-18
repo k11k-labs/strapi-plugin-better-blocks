@@ -1592,4 +1592,161 @@ describe('BlocksRenderer', () => {
     expect(el.querySelector('a')).toHaveAttribute('href', 'https://example.com');
     expect(el.textContent).toBe('Custom');
   });
+
+  // ── Social Embed ─────────────────────────────────────────────────
+
+  it('renders oembed.html inside a figure with a11y label and alignment', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'twitter',
+        url: 'https://x.com/user/status/123',
+        oembed: {
+          html: '<blockquote class="twitter-tweet">Hello tweet</blockquote>',
+          author: 'Author Name',
+          providerName: 'Twitter',
+        },
+        alignment: 'center',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const figure = container.querySelector('figure.bb-social-embed');
+    expect(figure).toBeInTheDocument();
+    expect(figure).toHaveClass('bb-social-embed-twitter', 'social-embed', 'align-center');
+    expect(figure).toHaveAttribute('aria-label', 'Twitter post by Author Name');
+    expect(figure?.querySelector('.twitter-tweet')?.textContent).toBe('Hello tweet');
+  });
+
+  it('prioritizes embedCode over oembed.html', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'instagram',
+        url: 'https://instagram.com/p/abc',
+        embedCode: '<blockquote class="manual-override">Pasted</blockquote>',
+        oembed: { html: '<blockquote class="from-oembed">Fetched</blockquote>' },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('.manual-override')).toBeInTheDocument();
+    expect(container.querySelector('.from-oembed')).not.toBeInTheDocument();
+  });
+
+  it('renders a caption below the embed', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'tiktok',
+        url: 'https://tiktok.com/@user/video/1',
+        oembed: { html: '<blockquote>Clip</blockquote>' },
+        caption: 'A nice clip',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const caption = container.querySelector('figcaption.bb-social-embed-caption');
+    expect(caption).toBeInTheDocument();
+    expect(caption?.textContent).toBe('A nice clip');
+  });
+
+  it('defaults alignment to center when omitted', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'facebook',
+        url: 'https://facebook.com/post/1',
+        oembed: { html: '<div>fb</div>' },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('figure')).toHaveClass('align-center');
+  });
+
+  it('renders a fallback link card when no embedCode/oembed html is present', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'twitter',
+        url: 'https://x.com/user/status/999',
+        oembed: {
+          author: 'Jane Doe',
+          providerName: 'X',
+          thumbnailUrl: 'https://example.com/thumb.jpg',
+        },
+        alignment: 'left',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const link = container.querySelector('a.bb-social-embed-fallback');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveAttribute('href', 'https://x.com/user/status/999');
+    const thumb = link?.querySelector('img.bb-social-embed-fallback-thumb');
+    expect(thumb).toHaveAttribute('src', 'https://example.com/thumb.jpg');
+    expect(thumb).toHaveAttribute('loading', 'lazy');
+    expect(link?.textContent).toContain('X post by Jane Doe');
+  });
+
+  it('sets loading="lazy" on iframes shipped in the embed markup', async () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'linkedin',
+        url: 'https://linkedin.com/posts/1',
+        oembed: { html: '<iframe src="https://linkedin.com/embed/1"></iframe>' },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(container.querySelector('iframe')).toHaveAttribute('loading', 'lazy');
+    });
+  });
+
+  it('injects the platform widget script once, deduped by src', async () => {
+    const src = 'https://platform.twitter.com/widgets.js';
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'twitter',
+        url: 'https://x.com/user/status/1',
+        oembed: { html: '<blockquote class="twitter-tweet">One</blockquote>' },
+      },
+      {
+        type: 'social-embed',
+        platform: 'twitter',
+        url: 'https://x.com/user/status/2',
+        oembed: { html: '<blockquote class="twitter-tweet">Two</blockquote>' },
+      },
+    ];
+    render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(document.querySelectorAll(`script[src="${src}"]`).length).toBe(1);
+    });
+  });
+
+  it('uses a custom social-embed renderer', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'pinterest',
+        url: 'https://pinterest.com/pin/1',
+        oembed: { html: '<div>pin</div>' },
+        caption: 'Pinned',
+      },
+    ];
+    render(
+      <BlocksRenderer
+        content={content}
+        blocks={{
+          'social-embed': ({ platform, url, caption }) => (
+            <div data-testid="custom-social" data-platform={platform} data-url={url}>
+              {caption}
+            </div>
+          ),
+        }}
+      />
+    );
+    const el = screen.getByTestId('custom-social');
+    expect(el).toHaveAttribute('data-platform', 'pinterest');
+    expect(el).toHaveAttribute('data-url', 'https://pinterest.com/pin/1');
+    expect(el.textContent).toBe('Pinned');
+  });
 });

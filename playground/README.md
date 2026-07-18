@@ -9,8 +9,10 @@ cd playground
 docker compose up --build
 ```
 
-- Strapi: http://localhost:1337/admin
+- Strapi: http://localhost:1338/admin
 - React app: http://localhost:5173
+
+> The Docker stack publishes Strapi on host port **1338** (container port stays 1337) so it can run alongside other Better Blocks stacks that use :1337. Containers are named `better-blocks-react-renderer-strapi` / `better-blocks-react-renderer-react-app` under the `better-blocks-react-renderer` compose project.
 
 On first run, create an admin account in Strapi, then follow the "Strapi setup" steps below.
 

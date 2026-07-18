@@ -1,10 +1,17 @@
+# Named project so this stack coexists with other Better Blocks stacks (e.g. the
+# strapi-plugin-better-blocks playground, which publishes Strapi on host :1337).
+name: better-blocks-react-renderer
+
 services:
   strapi:
+    container_name: better-blocks-react-renderer-strapi
     build:
       context: ..
       dockerfile: playground/strapi/Dockerfile
     ports:
-      - "1337:1337"
+      # Host :1338 to avoid clashing with other Strapi stacks on :1337.
+      # Container port stays 1337, so the internal `strapi:1337` DNS is unchanged.
+      - "1338:1337"
     environment:
       HOST: 0.0.0.0
       PORT: 1337
@@ -18,6 +25,7 @@ services:
       DATABASE_FILENAME: .tmp/data.db
 
   react-app:
+    container_name: better-blocks-react-renderer-react-app
     build:
       context: ..
       dockerfile: playground/react-app/Dockerfile

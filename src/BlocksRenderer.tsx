@@ -10,6 +10,7 @@ import {
 import katex from 'katex';
 
 import { MermaidDiagram } from './MermaidDiagram';
+import { SocialEmbed } from './SocialEmbed';
 import type {
   BlockNode,
   BlocksRendererProps,
@@ -33,6 +34,7 @@ import type {
   MediaEmbedNode,
   ParagraphNode,
   QuoteNode,
+  SocialEmbedNode,
   TableNode,
   TextNode,
 } from './types';
@@ -390,6 +392,8 @@ function renderBlock(
       return renderDetails(block, key, blocks, modifiers);
     case 'button':
       return renderButton(block, key, blocks);
+    case 'social-embed':
+      return renderSocialEmbed(block, key, blocks);
     default:
       return null;
   }
@@ -555,6 +559,42 @@ function renderMediaEmbed(
         title="Embedded media"
       />
     </div>
+  );
+}
+
+// ── Social Embed Rendering ───────────────────────────────────────────
+
+function renderSocialEmbed(
+  block: SocialEmbedNode,
+  key: number,
+  blocks?: CustomBlocksConfig
+): ReactNode {
+  const SocialComp = blocks?.['social-embed'];
+
+  if (SocialComp) {
+    return (
+      <SocialComp
+        key={key}
+        platform={block.platform}
+        url={block.url}
+        embedCode={block.embedCode}
+        oembed={block.oembed}
+        alignment={block.alignment}
+        caption={block.caption}
+      />
+    );
+  }
+
+  return (
+    <SocialEmbed
+      key={key}
+      platform={block.platform}
+      url={block.url}
+      embedCode={block.embedCode}
+      oembed={block.oembed}
+      alignment={block.alignment}
+      caption={block.caption}
+    />
   );
 }
 

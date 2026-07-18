@@ -218,6 +218,40 @@ To fully control the markup, override the `button` block. It receives `label`, `
 />
 ```
 
+### Social Embeds
+
+Block-level `social-embed` nodes render a post from Twitter/X, Instagram, Facebook, TikTok, LinkedIn, or Pinterest. The renderer picks the embed HTML in priority order:
+
+1. **`embedCode`** &mdash; a manual override pasted by the author, if present.
+2. **`oembed.html`** &mdash; the markup the plugin fetched from the platform's oEmbed API at author time.
+3. **Fallback link card** &mdash; when neither is available, a plain `<a>` link to the original post, enriched with the oEmbed `thumbnailUrl`, `title`, and `author` when present, so the block always links somewhere useful.
+
+The embed is wrapped in a `<figure className="bb-social-embed bb-social-embed-{platform} social-embed align-{alignment}">` (alignment defaults to `center`) with an `aria-label` describing it (`"{providerName} post by {author}"`), and the optional `caption` renders below it in a `<figcaption>`. Any `<iframe>` in the embed markup (e.g. LinkedIn) is given `loading="lazy"`.
+
+**Widget scripts.** Twitter, Instagram, TikTok, Pinterest, and Facebook enhance their `<blockquote>`/`<div>` markup into a rich embed via a platform script (LinkedIn renders a self-contained `<iframe>` and needs none). The renderer loads the right script **once per platform** (deduped by URL, guarded against double-injection) on mount and re-runs the platform's processor (`twttr.widgets.load()`, `instgrm.Embeds.process()`, `FB.XFBML.parse()`, &hellip;) so freshly-mounted embeds get upgraded. This runs on the client only; on the server (and the first client render) the raw platform markup is emitted so SSR/hydration stay consistent.
+
+> **Trust boundary.** The embed HTML is injected verbatim via `dangerouslySetInnerHTML` and is **not** sanitized &mdash; social embeds rely on `<script>`/`<iframe>`/`<blockquote>` that a sanitizer would strip. This markup originates from the platform's oEmbed API or a manual override entered by a trusted editor, so treat your CMS content as trusted. If you accept `social-embed` blocks from untrusted authors, sanitize on the server before storing.
+
+To fully control the markup, override the `social-embed` block. It receives `platform`, `url`, `embedCode`, `oembed`, `alignment`, and `caption`:
+
+```tsx
+<BlocksRenderer
+  content={blocks}
+  blocks={{
+    'social-embed': ({ platform, url, oembed, caption }) => (
+      <figure className={`embed embed-${platform}`}>
+        {oembed?.html ? (
+          <div dangerouslySetInnerHTML={{ __html: oembed.html }} />
+        ) : (
+          <a href={url}>{oembed?.author ?? 'View post'}</a>
+        )}
+        {caption && <figcaption>{caption}</figcaption>}
+      </figure>
+    ),
+  }}
+/>
+```
+
 ### Astro
 
 `BlocksRenderer` works in [Astro](https://astro.build/) via the [`@astrojs/react`](https://docs.astro.build/en/guides/integrations-guide/react/) integration. Because the renderer is purely presentational and KaTeX renders to a string on the server (see [Math (KaTeX)](#math-katex)), you can render it as a static [Astro island](https://docs.astro.build/en/concepts/islands/) with **no client directive** &mdash; Astro outputs plain HTML and ships zero JavaScript:
@@ -268,39 +302,46 @@ const { blocks } = Astro.props;
 | `callout` (admonition)          | `<aside>`           | Better Blocks               |
 | `details` (collapsible)         | `<details>`         | Better Blocks               |
 | `button` (CTA / file download)  | `<a>`               | Better Blocks               |
+| `social-embed`                  | `<figure>`          | Better Blocks               |
 
 ### Block properties
 
-| Property       | Applies to                | Description                                               |
-| -------------- | ------------------------- | --------------------------------------------------------- |
-| `textAlign`    | paragraph, heading, quote | Text alignment (`left`, `center`, `right`, `justify`)     |
-| `lineHeight`   | paragraph, heading, quote | CSS line-height value (e.g. `1.5`, `2.0`)                 |
-| `indent`       | paragraph, heading, quote | Block indentation level (`marginLeft: N * 2rem`)          |
-| `indentLevel`  | list                      | Cycling list-style-type per nesting depth                 |
-| `format`       | list                      | `ordered`, `unordered`, or `todo`                         |
-| `checked`      | list-item (in todo lists) | Checkbox state (`true`/`false`)                           |
-| `target`       | link                      | `_blank` for new-tab links                                |
-| `rel`          | link                      | `noopener noreferrer` for new-tab links                   |
-| `caption`      | image                     | Text displayed below the image                            |
-| `imageAlign`   | image                     | Image alignment (`left`, `center`, `right`)               |
-| `url`          | media-embed               | Embed URL (YouTube/Vimeo iframe src)                      |
-| `originalUrl`  | media-embed               | Original user-provided URL                                |
-| `format`       | math                      | `inline` (`<span>`) or `block` (`<div>`)                  |
-| `value`        | math                      | LaTeX source rendered with KaTeX                          |
-| `format`       | diagram                   | `mermaid`                                                 |
-| `value`        | diagram                   | Mermaid source rendered to SVG                            |
-| `summary`      | details                   | Plain-text label for the `<summary>`                      |
-| `defaultOpen`  | details                   | Open on initial render (HTML `open` attribute)            |
-| `buttonType`   | button                    | `link` or `file` (download) mode                          |
-| `label`        | button                    | Visible button text                                       |
-| `alignment`    | button                    | `left`, `center`, `right`, or `none` (inline)             |
-| `link`         | button (link mode)        | `{ url, target, rel, ariaLabel }`                         |
-| `file`         | button (file mode)        | `{ url, name, size, ext, mime }` for download             |
-| `showFileIcon` | button (file mode)        | Prefix the label with a file-type icon                    |
-| `showFileSize` | button (file mode)        | Suffix the label with a human-readable size               |
-| `filePreview`  | button (file mode)        | `true` opens the file in a new tab instead of downloading |
-| `style`        | button                    | Inline CSS + hover custom properties                      |
-| `cssClass`     | button                    | Extra class appended to `bb-button`                       |
+| Property       | Applies to                | Description                                                                                            |
+| -------------- | ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `textAlign`    | paragraph, heading, quote | Text alignment (`left`, `center`, `right`, `justify`)                                                  |
+| `lineHeight`   | paragraph, heading, quote | CSS line-height value (e.g. `1.5`, `2.0`)                                                              |
+| `indent`       | paragraph, heading, quote | Block indentation level (`marginLeft: N * 2rem`)                                                       |
+| `indentLevel`  | list                      | Cycling list-style-type per nesting depth                                                              |
+| `format`       | list                      | `ordered`, `unordered`, or `todo`                                                                      |
+| `checked`      | list-item (in todo lists) | Checkbox state (`true`/`false`)                                                                        |
+| `target`       | link                      | `_blank` for new-tab links                                                                             |
+| `rel`          | link                      | `noopener noreferrer` for new-tab links                                                                |
+| `caption`      | image                     | Text displayed below the image                                                                         |
+| `imageAlign`   | image                     | Image alignment (`left`, `center`, `right`)                                                            |
+| `url`          | media-embed               | Embed URL (YouTube/Vimeo iframe src)                                                                   |
+| `originalUrl`  | media-embed               | Original user-provided URL                                                                             |
+| `format`       | math                      | `inline` (`<span>`) or `block` (`<div>`)                                                               |
+| `value`        | math                      | LaTeX source rendered with KaTeX                                                                       |
+| `format`       | diagram                   | `mermaid`                                                                                              |
+| `value`        | diagram                   | Mermaid source rendered to SVG                                                                         |
+| `summary`      | details                   | Plain-text label for the `<summary>`                                                                   |
+| `defaultOpen`  | details                   | Open on initial render (HTML `open` attribute)                                                         |
+| `buttonType`   | button                    | `link` or `file` (download) mode                                                                       |
+| `label`        | button                    | Visible button text                                                                                    |
+| `alignment`    | button                    | `left`, `center`, `right`, or `none` (inline)                                                          |
+| `link`         | button (link mode)        | `{ url, target, rel, ariaLabel }`                                                                      |
+| `file`         | button (file mode)        | `{ url, name, size, ext, mime }` for download                                                          |
+| `showFileIcon` | button (file mode)        | Prefix the label with a file-type icon                                                                 |
+| `showFileSize` | button (file mode)        | Suffix the label with a human-readable size                                                            |
+| `filePreview`  | button (file mode)        | `true` opens the file in a new tab instead of downloading                                              |
+| `style`        | button                    | Inline CSS + hover custom properties                                                                   |
+| `cssClass`     | button                    | Extra class appended to `bb-button`                                                                    |
+| `platform`     | social-embed              | `twitter`, `instagram`, `facebook`, `tiktok`, `linkedin`, `pinterest`                                  |
+| `url`          | social-embed              | Original post URL (used by the fallback link card)                                                     |
+| `embedCode`    | social-embed              | Optional manual HTML override (highest priority)                                                       |
+| `oembed`       | social-embed              | Fetched oEmbed payload `{ html, title, author, authorUrl, thumbnailUrl, providerName, width, height }` |
+| `alignment`    | social-embed              | `left`, `center` (default), or `right`                                                                 |
+| `caption`      | social-embed              | Optional caption rendered in a `<figcaption>`                                                          |
 
 ## Supported Modifiers
 
@@ -371,6 +412,9 @@ Override any block type with your own component:
       inline ? <MyInlineMath formula={formula} /> : <MyBlockMath formula={formula} />,
     // Bring your own diagram engine instead of the built-in Mermaid
     diagram: ({ code, format }) => <MyDiagram code={code} format={format} />,
+    'social-embed': ({ platform, url, oembed, caption }) => (
+      <MySocialEmbed platform={platform} url={url} oembed={oembed} caption={caption} />
+    ),
   }}
 />
 ```
@@ -418,6 +462,10 @@ import type {
   MediaEmbedNode,
   MathNode,
   DiagramNode,
+  SocialEmbedNode,
+  SocialPlatform,
+  SocialEmbedAlignment,
+  SocialEmbedOembed,
   TextAlign,
   CustomBlocksConfig,
   CustomModifiersConfig,

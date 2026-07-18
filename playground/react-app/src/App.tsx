@@ -214,20 +214,20 @@ function App() {
       <style>{playgroundCss}</style>
       <h1>Better Blocks Renderer Playground</h1>
       <p style={{ color: '#666', marginBottom: 32 }}>
-        Fetching articles from Strapi at <code>localhost:1337</code> and rendering with{' '}
+        Fetching articles from Strapi at <code>localhost:1338</code> and rendering with{' '}
         <code>@k11k/better-blocks-react-renderer</code>
       </p>
 
       {loading && <p>Loading articles...</p>}
       {error && (
         <p style={{ color: 'red' }}>
-          Error: {error}. Make sure Strapi is running on port 1337.
+          Error: {error}. Make sure Strapi is running on port 1338.
         </p>
       )}
       {!loading && !error && articles.length === 0 && (
         <p>
           No published articles found. Create one in{' '}
-          <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">
+          <a href="http://localhost:1338/admin" target="_blank" rel="noopener noreferrer">
             Strapi admin
           </a>{' '}
           and publish it.
