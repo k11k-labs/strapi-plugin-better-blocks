@@ -158,10 +158,12 @@ const SocialEmbedElementComponent = ({
   const { editor, disabled } = useBlocksEditorContext('SocialEmbed');
   const selected = useSelected();
 
-  // A freshly inserted embed (no URL) opens its editor immediately.
-  const [open, setOpen] = React.useState(
-    (el.url ?? '').trim() === '' && !disabled
-  );
+  // An embed is complete once it has a URL *or* a pasted embed code.
+  const hasSource =
+    (el.url ?? '').trim() !== '' || (el.embedCode ?? '').trim() !== '';
+
+  // A freshly inserted embed (no source yet) opens its editor immediately.
+  const [open, setOpen] = React.useState(!hasSource && !disabled);
 
   const meta = PLATFORM_META[el.platform] ?? PLATFORM_META.twitter;
   const align = el.alignment ?? 'center';
@@ -215,8 +217,8 @@ const SocialEmbedElementComponent = ({
   };
 
   const handleClose = () => {
-    // Discard an embed that was never given a URL.
-    if ((el.url ?? '').trim() === '') removeNode();
+    // Discard an embed that was never given a URL or an embed code.
+    if (!hasSource) removeNode();
     setOpen(false);
   };
 
@@ -249,7 +251,11 @@ const SocialEmbedElementComponent = ({
               {el.oembed.title}
             </Typography>
           ) : null}
-          {el.url ? <UrlText>{el.url}</UrlText> : null}
+          {el.url ? (
+            <UrlText>{el.url}</UrlText>
+          ) : el.embedCode ? (
+            <UrlText>Custom embed code</UrlText>
+          ) : null}
           {el.caption ? (
             <Typography
               variant="pi"

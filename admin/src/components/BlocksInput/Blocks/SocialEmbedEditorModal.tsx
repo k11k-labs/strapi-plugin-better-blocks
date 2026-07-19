@@ -51,6 +51,37 @@ export const detectPlatform = (url: string): SocialPlatform | null => {
   return null;
 };
 
+/**
+ * Widget scripts pasted along with an embed snippet are inert once injected via
+ * `innerHTML`, and their leftover tags make renderers think the widget is
+ * already loaded. Renderers load those scripts themselves, so keep markup only.
+ */
+export const stripScripts = (html: string): string =>
+  html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').trim();
+
+/**
+ * Pull the canonical post URL out of a pasted embed snippet, so an embed-code-only
+ * embed still carries a link for fallbacks and analytics. Covers Instagram's
+ * `data-instgrm-permalink`, blockquote `cite`, and iframe `src`.
+ */
+export const extractUrlFromEmbedCode = (code: string): string | null => {
+  // `dropQuery` is set for permalinks, whose query string is only tracking
+  // params — an iframe `src` needs its query to stay intact.
+  const patterns: Array<{ re: RegExp; dropQuery?: boolean }> = [
+    { re: /data-instgrm-permalink=["']([^"']+)["']/i, dropQuery: true },
+    { re: /\bcite=["'](https?:\/\/[^"']+)["']/i, dropQuery: true },
+    { re: /<iframe[^>]+src=["'](https?:\/\/[^"']+)["']/i },
+    { re: /<a[^>]+href=["'](https?:\/\/[^"']+)["']/i, dropQuery: true },
+  ];
+  for (const { re, dropQuery } of patterns) {
+    const match = code.match(re);
+    if (!match) continue;
+    const url = match[1].replace(/&amp;/g, '&');
+    return dropQuery ? url.split('?')[0] : url;
+  }
+  return null;
+};
+
 /* ---------------------------------------------------------------------------
  * Styled
  * -------------------------------------------------------------------------*/
@@ -246,6 +277,23 @@ export const SocialEmbedEditorModal = ({
     setError(null);
   };
 
+  const handleEmbedCodeChange = (raw: string) => {
+    const embedCode = raw.trim() === '' ? '' : raw;
+    // An embed snippet alone is enough to render a post, but recovering the
+    // permalink from it keeps the node linkable when the widget can't load.
+    if (embedCode && !draft.url.trim()) {
+      const found = extractUrlFromEmbedCode(embedCode);
+      const detected = found ? detectPlatform(found) : null;
+      patch({
+        embedCode,
+        ...(found ? { url: found } : {}),
+        ...(detected ? { platform: detected } : {}),
+      });
+      return;
+    }
+    patch({ embedCode });
+  };
+
   const handleFetch = async () => {
     if (!draft.url.trim()) return;
     setLoading(true);
@@ -282,6 +330,8 @@ export const SocialEmbedEditorModal = ({
 
   const oembed = draft.oembed;
   const meta = PLATFORM_META[draft.platform];
+  // Either source renders a post: a URL we can fetch/link, or a pasted snippet.
+  const canSave = Boolean(draft.url.trim() || draft.embedCode?.trim());
 
   return (
     <Modal.Root
@@ -428,8 +478,15 @@ export const SocialEmbedEditorModal = ({
             <TextArea
               placeholder="<blockquote …>…</blockquote>"
               value={draft.embedCode ?? ''}
-              onChange={(e) => patch({ embedCode: e.target.value })}
+              onChange={(e) => handleEmbedCodeChange(e.target.value)}
             />
+            <Typography variant="pi" textColor="neutral600">
+              {formatMessage({
+                id: 'components.Blocks.social.field.embedCode.hint',
+                defaultMessage:
+                  'Pasting an embed code is enough on its own — the post URL is optional.',
+              })}
+            </Typography>
           </Flex>
         </ModalBody>
         <Modal.Footer>
@@ -445,8 +502,16 @@ export const SocialEmbedEditorModal = ({
             </Button>
             <Button
               type="button"
-              disabled={!draft.url.trim()}
-              onClick={() => onSave(draft)}
+              disabled={!canSave}
+              onClick={() =>
+                onSave({
+                  ...draft,
+                  url: draft.url.trim(),
+                  embedCode: draft.embedCode
+                    ? stripScripts(draft.embedCode) || undefined
+                    : undefined,
+                })
+              }
             >
               {formatMessage({ id: 'global.save', defaultMessage: 'Save' })}
             </Button>

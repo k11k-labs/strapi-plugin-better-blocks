@@ -872,7 +872,7 @@
       "children": [
         {
           "type": "text",
-          "text": "Embed posts from social platforms by URL. The plugin fetches each post’s official embed server-side via the oEmbed proxy — no platform tokens reach the browser."
+          "text": "Embed posts from social platforms by URL, or by pasting a platform embed code. The plugin fetches each post’s official embed server-side via the oEmbed proxy — no platform tokens reach the browser — and strips the widget script tags, which the renderers inject themselves."
         }
       ]
     },
@@ -901,7 +901,7 @@
       "platform": "tiktok",
       "url": "https://www.tiktok.com/@scout2015/video/6718335390845095173",
       "oembed": {
-        "html": "<blockquote class=\"tiktok-embed\" cite=\"https://www.tiktok.com/@scout2015/video/6718335390845095173\" data-video-id=\"6718335390845095173\" data-embed-from=\"oembed\" style=\"max-width:605px; min-width:325px;\"> <section> <a target=\"_blank\" title=\"@scout2015\" href=\"https://www.tiktok.com/@scout2015?refer=embed\">@scout2015</a> <p>Scramble up ur name & I’ll try to guess it😍❤️ <a title=\"foryoupage\" target=\"_blank\" href=\"https://www.tiktok.com/tag/foryoupage?refer=embed\">#foryoupage</a> <a title=\"petsoftiktok\" target=\"_blank\" href=\"https://www.tiktok.com/tag/petsoftiktok?refer=embed\">#petsoftiktok</a> <a title=\"aesthetic\" target=\"_blank\" href=\"https://www.tiktok.com/tag/aesthetic?refer=embed\">#aesthetic</a></p> <a target=\"_blank\" title=\"♬ original sound - tiff\" href=\"https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed\">♬ original sound - tiff</a> </section> </blockquote> <script async src=\"https://www.tiktok.com/embed.js\"></script>",
+        "html": "<blockquote class=\"tiktok-embed\" cite=\"https://www.tiktok.com/@scout2015/video/6718335390845095173\" data-video-id=\"6718335390845095173\" data-embed-from=\"oembed\" style=\"max-width:605px; min-width:325px;\"> <section> <a target=\"_blank\" title=\"@scout2015\" href=\"https://www.tiktok.com/@scout2015?refer=embed\">@scout2015</a> <p>Scramble up ur name & I’ll try to guess it😍❤️ <a title=\"foryoupage\" target=\"_blank\" href=\"https://www.tiktok.com/tag/foryoupage?refer=embed\">#foryoupage</a> <a title=\"petsoftiktok\" target=\"_blank\" href=\"https://www.tiktok.com/tag/petsoftiktok?refer=embed\">#petsoftiktok</a> <a title=\"aesthetic\" target=\"_blank\" href=\"https://www.tiktok.com/tag/aesthetic?refer=embed\">#aesthetic</a></p> <a target=\"_blank\" title=\"♬ original sound - tiff\" href=\"https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed\">♬ original sound - tiff</a> </section> </blockquote>",
         "title": "Scramble up ur name & I’ll try to guess it😍❤️ #foryoupage #petsoftiktok #aesthetic",
         "author": "Scout, Suki & Stella",
         "authorUrl": "https://www.tiktok.com/@scout2015",
@@ -915,7 +915,7 @@
           "text": ""
         }
       ],
-      "caption": "A public TikTok video rendered via TikTok’s tokenless oEmbed."
+      "caption": "A public TikTok video rendered via TikTok’s tokenless oEmbed. Note the stored markup carries no widget script tag — the renderer loads embed.js itself."
     },
     {
       "type": "social-embed",
@@ -939,6 +939,47 @@
         }
       ],
       "caption": "A public Pinterest pin — tokenless oEmbed returns an iframe + thumbnail."
+    },
+    {
+      "type": "social-embed",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/p/CxYzAbCdEfG/",
+      "embedCode": "<blockquote class=\"instagram-media\" data-instgrm-captioned data-instgrm-permalink=\"https://www.instagram.com/p/CxYzAbCdEfG/\" data-instgrm-version=\"14\" style=\"background:#FFF; border:0; border-radius:3px; box-shadow:0 0 1px 0 rgba(0,0,0,0.5),0 1px 10px 0 rgba(0,0,0,0.15); margin:1px; max-width:540px; min-width:326px; padding:0; width:99.375%;\"><div style=\"padding:16px;\"><a href=\"https://www.instagram.com/p/CxYzAbCdEfG/\" target=\"_blank\" rel=\"noopener noreferrer\">View this post on Instagram</a></div></blockquote>",
+      "alignment": "center",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
+      "caption": "Instagram has no tokenless oEmbed — this one was authored by pasting the post’s embed code. The permalink was recovered from the snippet."
+    },
+    {
+      "type": "social-embed",
+      "platform": "facebook",
+      "url": "",
+      "embedCode": "<iframe src=\"https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2F20531316728%2Fposts%2F10154009990506729%2F&show_text=true&width=500\" width=\"500\" height=\"498\" style=\"border:none;overflow:hidden\" scrolling=\"no\" frameborder=\"0\" allowfullscreen=\"true\" allow=\"autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share\"></iframe>",
+      "alignment": "center",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
+      "caption": "Embed code only, no post URL at all — the renderers must not fall back to an empty link."
+    },
+    {
+      "type": "social-embed",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/feed/update/urn:li:activity:7000000000000000000/",
+      "alignment": "center",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
+      "caption": "No embed markup stored — this is the graceful fallback link card."
     },
     {
       "type": "paragraph",
