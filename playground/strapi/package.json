@@ -23,6 +23,7 @@
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.0.0",
     "styled-components": "^6.0.0",
+    "strapi-plugin-mux-video-uploader": "^3.0.2",
     "@k11k/strapi-plugin-better-blocks": "file:../../"
   },
   "devDependencies": {

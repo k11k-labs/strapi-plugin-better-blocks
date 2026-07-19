@@ -37,8 +37,10 @@ import { calloutBlocks, withCallout } from './Blocks/Callout';
 import { detailsBlocks, withDetails } from './Blocks/Details';
 import { diagramBlocks, withDiagram } from './Blocks/Diagram';
 import { mathBlocks, withMath } from './Blocks/Math';
+import { embedBlocks, withEmbed } from './Blocks/Embed';
 import { mediaEmbedBlocks, withMediaEmbed } from './Blocks/MediaEmbed';
 import { socialEmbedBlocks, withSocialEmbed } from './Blocks/SocialEmbed';
+import { videoBlocks, withVideo } from './Blocks/Video';
 import { paragraphBlocks } from './Blocks/Paragraph';
 import { quoteBlocks } from './Blocks/Quote';
 import { tableBlocks, withTables } from './Blocks/Table';
@@ -103,6 +105,8 @@ const selectorBlockKeys = [
   'list-todo',
   'image',
   'audio',
+  'video',
+  'embed',
   'quote',
   'code',
   'math',
@@ -262,6 +266,8 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withHorizontalLine,
         withTables,
         withMediaEmbed,
+        withEmbed,
+        withVideo,
         withSocialEmbed,
         withMath,
         withDiagram,
@@ -367,6 +373,8 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...horizontalLineBlocks,
         ...tableBlocks,
         ...mediaEmbedBlocks,
+        ...embedBlocks,
+        ...videoBlocks,
         ...socialEmbedBlocks,
       }),
       []

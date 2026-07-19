@@ -11,6 +11,15 @@ import { styled } from 'styled-components';
 
 import { type BlocksStore } from '../BlocksEditor';
 
+/**
+ * @deprecated Superseded by the `embed` block (./Embed.tsx), which handles the
+ * same YouTube/Vimeo URLs plus arbitrary providers and pasted iframes, and adds
+ * caption/title/alignment/aspect-ratio.
+ *
+ * Nothing inserts `media-embed` any more — this file exists so documents
+ * authored before the `embed` block keep rendering. Do not add features here.
+ */
+
 /* ---------------------------------------------------------------------------
  * URL parsing helpers
  * -------------------------------------------------------------------------*/

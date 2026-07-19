@@ -91,7 +91,8 @@
 - **Nested Lists** &mdash; Infinitely nestable ordered and unordered lists with per-level format switching (Tab to indent, Shift+Tab to outdent)
 - **To-do Lists** &mdash; Checkbox list items with click-to-toggle and strikethrough on checked items
 - **Tables** &mdash; Insert tables with header row, add/remove rows and columns via hover toolbar
-- **Media Embeds** &mdash; Insert YouTube and Vimeo videos with thumbnail preview in editor (iframe on frontend)
+- **Embeds (generic iframe / URL)** &mdash; Insert any third-party embed from the `+` Insert menu, the `/embed` slash command, or the toolbar's media button. Two modes: **URL** (YouTube, Vimeo, Loom, Wistia, Dailymotion and api.video are converted to an iframe automatically) and **Embed code** (paste any platform's `<iframe>` snippet). The pasted markup is never stored verbatim &mdash; the iframe is _rebuilt_ from an attribute allowlist over an https-only `src`, so scripts, event handlers and unknown attributes cannot survive into your frontend. Live preview in the editor, plus aspect ratio (16:9 / 21:9 / 4:3 / 1:1 / custom), alignment, caption and an accessible title. Supersedes the older YouTube/Vimeo-only **media embed** block, which still renders existing content but is no longer inserted
+- **Video (provider-aware)** &mdash; Insert a video from the `+` Insert menu or the `/video` slash command. Source it from the **Media Library**, a **direct URL**, or a hosting provider &mdash; Mux, api.video and Cloudinary URLs are detected automatically, and a bare **Mux playback ID** fills in the stream URL and poster frame for you. When [`strapi-plugin-mux-video-uploader`](https://github.com/muxinc/strapi-plugin-mux-video-uploader) is installed and configured, a **Mux** button lists and searches your Mux assets inline with thumbnails. Set a poster image, title, caption, WebVTT captions/transcript, alignment, aspect ratio, and player behaviour (controls, autoplay, muted, loop)
 - **Math (LaTeX / KaTeX)** &mdash; Inline and block math rendered with KaTeX; insert from the toolbar, the `/math` slash command, the blocks selector, or by typing `$$ ` (block) / `$…$ ` (inline), then edit in a full-screen modal with a side-by-side source editor and live preview. Block math supports multi-line equations via `\\` and LaTeX environments such as `aligned` and `cases`
 - **Diagrams (Mermaid)** &mdash; Block-level [Mermaid](https://mermaid.js.org/) diagrams (flowcharts, sequence, class, state, ER, pie, and more) rendered to SVG; insert from the blocks selector, the `/mermaid` slash command, or by typing ` ```mermaid ` then a space, then edit the definition in a full-screen modal with live preview and zoom controls. Theme follows Strapi's light/dark mode
 - **Callouts / Admonitions** &mdash; GitHub-style callouts in five variants (`Note`, `Tip`, `Important`, `Warning`, `Caution`) with an optional custom title and nested rich-text content (paragraphs, lists, links). Insert from the blocks selector or the `/note`, `/tip`, `/important`, `/warning`, `/caution` slash commands; switch variant, edit the title, or remove from the header popover. Colors follow Strapi's design tokens and adapt to light/dark mode
@@ -177,6 +178,45 @@ export default () => ({
   },
 });
 ```
+
+#### Mux video hosting (optional)
+
+The **Video** block works out of the box with the Media Library and direct URLs.
+To also browse your Mux library from inside the editor, install the community
+Mux plugin alongside Better Blocks:
+
+```bash
+yarn add strapi-plugin-mux-video-uploader
+```
+
+```ts
+// config/plugins.ts
+export default ({ env }) => ({
+  'better-blocks': { enabled: true },
+  'mux-video-uploader': {
+    enabled: true,
+    config: {
+      accessTokenId: env('MUX_ACCESS_TOKEN_ID'),
+      secretKey: env('MUX_SECRET_KEY'),
+    },
+  },
+});
+```
+
+Create the credentials in the Mux dashboard under **Settings → Access Tokens**
+with **Full Access**. Once they are set, the video block's source picker grows a
+**Mux** button that lists and searches your Mux assets with thumbnails.
+
+Notes:
+
+- Only assets **uploaded through the Mux plugin** appear — the plugin lists its
+  own `mux-asset` records, not everything in your Mux account.
+- Assets with a **signed** playback policy are shown but not selectable: signed
+  playback needs a short-lived JWT minted per request, and a token stored in the
+  document body would expire.
+- Better Blocks detects the plugin by calling its asset-list route, not its
+  `mux-settings` route — the latter reports "not configured" unless a webhook
+  signing secret is also set, which listing assets does not require.
 
 #### Button defaults (optional)
 
@@ -319,6 +359,98 @@ link inside `<audio>` for unsupported browsers, and associate the `caption` via 
 `file.url` is already backend-prefixed for Media Library assets, and the `title`/`caption` keys are
 omitted when empty. See the full React/Astro renderer contract on [issue #43](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/43).
 
+#### Embed JSON shape (for frontend renderers)
+
+A generic embed is a void block. `embedHtml` is the **only** field a renderer
+needs — it is already sanitized (rebuilt from an attribute allowlist, https-only
+`src`), so render it as-is and ignore `url` / `iframe`, which exist to
+round-trip the editor UI:
+
+```jsonc
+{
+  "type": "embed",
+  "source": "url", // "url" | "iframe" — which input the author used
+  "url": "https://www.youtube.com/watch?v=abc12345678", // source: "url" only
+  "iframe": "<iframe src=…>", // source: "iframe" only — the raw paste
+  "embedHtml": "<iframe src=\"https://www.youtube.com/embed/abc12345678\" …></iframe>",
+  "embedSrc": "https://www.youtube.com/embed/abc12345678", // hoisted for host checks
+  "provider": "youtube", // youtube | vimeo | loom | wistia | dailymotion | api-video | generic
+  "thumbnail": "https://img.youtube.com/vi/abc12345678/hqdefault.jpg", // when derivable
+  "aspectRatio": "16:9", // "16:9" | "21:9" | "4:3" | "1:1" | "custom"
+  "customAspectRatio": "3 / 2", // only when aspectRatio is "custom"
+  "alignment": "center", // "left" | "center" | "right" | "none"
+  "caption": "A video explaining the feature", // optional
+  "title": "Product Demo", // optional — becomes the iframe's accessible name
+}
+```
+
+Wrap `embedHtml` in an alignment container (`left`/`center`/`right` map to
+`flex-start`/`center`/`flex-end`; `none` flows full-width) and a box with CSS
+`aspect-ratio`. Convert `aspectRatio` for CSS by replacing `:` with `/`
+(`"16:9"` → `16 / 9`); when it is `"custom"`, use `customAspectRatio` verbatim.
+Render `caption` as a `<figcaption>`. Optional keys are omitted when empty.
+
+> **Deprecated:** the older `media-embed` block (`{ type: "media-embed", url,
+originalUrl }`) is no longer inserted by the editor, but renderers should keep
+> handling it so content authored before the `embed` block still displays.
+
+#### Video JSON shape (for frontend renderers)
+
+```jsonc
+{
+  "type": "video",
+  "provider": "mux", // "local" | "mux" | "api-video" | "cloudinary" | "custom"
+  "url": "https://stream.mux.com/def456.m3u8", // playback URL or direct file URL
+  "assetId": "abc123", // provider asset id, when known
+  "playbackId": "def456", // provider playback id, when known
+  "file": {
+    // present when sourced from the Media Library (provider: "local")
+    "id": 123,
+    "name": "demo.mp4",
+    "ext": ".mp4",
+    "mime": "video/mp4",
+    "size": 5242880, // bytes
+    "duration": 132.4, // seconds, when reported
+    "provider": "local",
+  },
+  "poster": "https://image.mux.com/def456/thumbnail.jpg", // optional
+  "title": "Introduction Video", // optional
+  "caption": "Watch this to get started", // optional
+  "transcript": "https://example.com/captions.vtt", // optional WebVTT
+  "player": {
+    "autoplay": false,
+    "loop": false,
+    "muted": false,
+    "controls": true,
+  },
+  "alignment": "center", // "left" | "center" | "right" | "none"
+  "aspectRatio": "16:9",
+  "customAspectRatio": "3 / 2", // only when aspectRatio is "custom"
+}
+```
+
+Note `player` is nested rather than flattened onto the node, matching the
+sibling `audio` block so renderers only learn one shape.
+
+Rendering rules:
+
+- **`provider: "local"` / `"custom"` with a direct file URL** — a native
+  `<video src={url} poster={poster} controls={player.controls}
+autoPlay={player.autoplay} loop={player.loop} muted={player.muted}>`. Add
+  `<track kind="captions" src={transcript}>` when `transcript` is set, and
+  associate `caption` via `aria-describedby`.
+- **HLS/DASH sources** (`url` ending in `.m3u8` / `.mpd`, i.e. most Mux assets)
+  — a bare `<video>` only plays these in Safari. Use the provider's player
+  (`<mux-player playback-id={playbackId}>` for Mux) or attach `hls.js`.
+- **`provider: "mux"`** — `playbackId` alone is enough for a **public** playback
+  policy; no credentials are needed on the frontend. Assets with a **signed**
+  policy are intentionally not selectable in the editor, because they need a
+  short-lived JWT minted per request and a token baked into the document body
+  would expire.
+
+Apply `alignment` and `aspectRatio` exactly as for the embed block. Optional
+keys are omitted when empty.
+
 ### 2. Restart Strapi
 
 ```bash
@@ -421,7 +553,7 @@ Neutral:#EDF2F7
 
 ## Media Embeds (CSP Configuration)
 
-If you use the **media embed** feature (YouTube / Vimeo), you need to update your Strapi security middleware to allow loading thumbnails and video iframes.
+If you use the **embed** or **video** blocks, you need to update your Strapi security middleware so the editor can load thumbnails, posters and embed iframes.
 
 In `config/middlewares.ts`:
 
@@ -434,12 +566,23 @@ export default [
     config: {
       contentSecurityPolicy: {
         directives: {
-          'img-src': ["'self'", 'data:', 'blob:', 'https://img.youtube.com'],
-          'media-src': ["'self'", 'data:', 'blob:'],
+          'img-src': [
+            "'self'",
+            'data:',
+            'blob:',
+            'https://img.youtube.com',
+            'https://image.mux.com',
+            'https://res.cloudinary.com',
+          ],
+          'media-src': ["'self'", 'data:', 'blob:', 'https://stream.mux.com'],
           'frame-src': [
             "'self'",
             'https://www.youtube.com',
             'https://player.vimeo.com',
+            'https://www.loom.com',
+            'https://fast.wistia.net',
+            'https://www.dailymotion.com',
+            'https://embed.api.video',
           ],
         },
       },
@@ -455,7 +598,13 @@ export default [
 ];
 ```
 
-Without this, YouTube thumbnails will be blocked by the Content Security Policy in the Strapi admin panel. The `frame-src` directive is needed if you render the embeds as iframes on your frontend while previewing in Strapi.
+Without this, thumbnails and in-editor embed previews are blocked by the Content
+Security Policy in the Strapi admin panel. Add only the hosts you actually use.
+
+If you paste an embed code from a provider not in that list, add its iframe host
+to `frame-src` too &mdash; the editor tells you which provider it detected, and an
+embed whose host is missing simply renders as an empty frame in the admin. The
+saved content is unaffected and still renders on your frontend.
 
 ### Live social-embed previews
 

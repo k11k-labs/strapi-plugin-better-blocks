@@ -367,3 +367,126 @@ export const isSocialEmbedNode = (
 ): element is SocialEmbedElement => {
   return element.type === 'social-embed';
 };
+
+/* ---------------------------------------------------------------------------
+ * Embed & video blocks
+ * -------------------------------------------------------------------------*/
+
+/** Shared by the embed and video blocks; maps to CSS `aspect-ratio`. */
+export type AspectRatio = '16:9' | '21:9' | '4:3' | '1:1' | 'custom';
+
+export type MediaAlignment = 'left' | 'center' | 'right' | 'none';
+
+/**
+ * Providers the embed block can derive an iframe for from a share URL.
+ * `generic` covers anything pasted as raw embed code.
+ */
+export type EmbedProvider =
+  | 'youtube'
+  | 'vimeo'
+  | 'loom'
+  | 'wistia'
+  | 'dailymotion'
+  | 'api-video'
+  | 'generic';
+
+/**
+ * Generic embed. A void block holding either a share URL the plugin knows how
+ * to turn into an iframe, or a raw embed snippet the author pasted. In both
+ * cases `embedHtml` is the sanitized, ready-to-render iframe markup, so a
+ * frontend renderer never has to re-derive or re-sanitize anything.
+ *
+ * Supersedes the legacy `media-embed` block (YouTube/Vimeo only).
+ */
+export interface EmbedElement extends CustomElement {
+  type: 'embed';
+  /** Which input the author used. Drives which of `url`/`iframe` is set. */
+  source: 'url' | 'iframe';
+  /** Original share URL (source: 'url'). */
+  url?: string;
+  /** Raw snippet exactly as pasted, kept for round-tripping the editor UI. */
+  iframe?: string;
+  /**
+   * Sanitized iframe markup to render. Always present once the block has a
+   * source — renderers should output this and ignore `url`/`iframe`.
+   */
+  embedHtml?: string;
+  /** The `src` of `embedHtml`, hoisted so renderers can check the host. */
+  embedSrc?: string;
+  /** Auto-detected from the URL; `generic` for pasted embed codes. */
+  provider?: EmbedProvider;
+  /** Poster image, when the provider exposes one without an API call. */
+  thumbnail?: string;
+  aspectRatio: AspectRatio;
+  /** Free-form `width / height` used when `aspectRatio` is 'custom'. */
+  customAspectRatio?: string;
+  alignment: MediaAlignment;
+  caption?: string;
+  /** Accessible name applied to the iframe's `title` attribute. */
+  title?: string;
+  children: CustomText[];
+}
+
+export const isEmbedNode = (element: CustomElement): element is EmbedElement =>
+  element.type === 'embed';
+
+/** Video hosting providers the video block understands. */
+export type VideoProvider =
+  | 'local'
+  | 'mux'
+  | 'api-video'
+  | 'cloudinary'
+  | 'custom';
+
+/** Player behaviour flags, mirrored onto the HTML5 `<video>` element. */
+export interface VideoPlayerSettings {
+  autoplay: boolean;
+  loop: boolean;
+  muted: boolean;
+  controls: boolean;
+}
+
+/**
+ * Provider-aware video block. Holds a playable source (a Media Library asset,
+ * a provider playback id, or a direct URL) plus display and player settings.
+ *
+ * NOTE: player flags are nested under `player` rather than sitting at the top
+ * level as issue #44 proposed, to match the sibling `audio` block — one shape
+ * for renderers to learn, not two.
+ */
+export interface VideoElement extends CustomElement {
+  type: 'video';
+  provider: VideoProvider;
+  /** Provider's asset identifier (Mux asset id, api.video video id, …). */
+  assetId?: string;
+  /** Provider's playback identifier (Mux playback id). */
+  playbackId?: string;
+  /** Playback URL: HLS/DASH manifest, or a direct file URL for `local`. */
+  url: string;
+  /** Media Library metadata, present when the source is an uploaded asset. */
+  file?: {
+    id?: number;
+    name?: string;
+    ext?: string;
+    mime?: string;
+    /** File size in bytes. */
+    size?: number;
+    /** Duration in seconds, when the provider reports it. */
+    duration?: number;
+    provider?: string;
+  };
+  /** Thumbnail shown before playback. */
+  poster?: string;
+  title?: string;
+  caption?: string;
+  /** URL of a WebVTT track for captions/transcript. */
+  transcript?: string;
+  player: VideoPlayerSettings;
+  alignment: MediaAlignment;
+  aspectRatio: AspectRatio;
+  customAspectRatio?: string;
+  children: CustomText[];
+}
+
+export const isVideoNode = (element: CustomElement): element is VideoElement =>
+  element.type === 'video';

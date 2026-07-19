@@ -12,6 +12,7 @@ import {
   Check,
   Minus,
   GridNine,
+  Play,
   CaretDown,
 } from '@strapi/icons';
 import { Editor, Range, Transforms } from 'slate';
@@ -21,10 +22,12 @@ import { styled } from 'styled-components';
 import { useBlocksEditorContext } from './BlocksEditor';
 import { insertCallout, VARIANTS, VARIANT_ORDER } from './Blocks/Callout';
 import { insertDetails } from './Blocks/Details';
+import { insertEmbed } from './Blocks/Embed';
 import { setBlockDiagram, DiagramIcon } from './Blocks/Diagram';
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
 import { setBlockMath, MathIcon } from './Blocks/Math';
 import { insertTable } from './Blocks/Table';
+import { insertVideo } from './Blocks/Video';
 
 interface SlashCommand {
   id: string;
@@ -122,6 +125,22 @@ const COMMANDS: SlashCommand[] = [
     icon: Code,
     action: (editor) => {
       Transforms.setNodes(editor, { type: 'code' } as any);
+    },
+  },
+  {
+    id: 'video',
+    label: 'Video',
+    icon: Play,
+    action: (editor) => {
+      insertVideo(editor);
+    },
+  },
+  {
+    id: 'embed',
+    label: 'Embed (iframe / URL)',
+    icon: Code,
+    action: (editor) => {
+      insertEmbed(editor);
     },
   },
   {
