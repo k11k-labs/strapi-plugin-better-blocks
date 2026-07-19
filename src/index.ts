@@ -19,6 +19,8 @@ export type {
   TableRowNode,
   TableCellNode,
   TableHeaderCellNode,
+  TableCellAlign,
+  TableCellRenderProps,
   MediaEmbedNode,
   MathNode,
   DiagramNode,

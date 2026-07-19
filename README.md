@@ -410,6 +410,131 @@ import MuxPlayer from '@mux/mux-player-react';
 
 > **Deprecated:** the older `media-embed` block (`{ type: "media-embed", url, originalUrl }`) is no longer inserted by the editor &mdash; the toolbar's media button now creates an `embed` node &mdash; but the renderer keeps handling it so content authored before the `embed` block still displays.
 
+### Tables
+
+Tables render as semantic HTML. Every **leading row whose cells are all `table-header-cell`** is a header row: those rows render inside `<thead>` with each cell as `<th scope="col">`, and the rest go in `<tbody>`. A row of any other shape ends the header, so a table that doesn't start with header cells stays entirely in `<tbody>`. A `table-header-cell` that appears in a body row is a row header and gets `scope="row"`.
+
+Cells carry three optional properties, each with a "cheapest" default the editor omits:
+
+| Property  | Values                    | Absent means        |
+| --------- | ------------------------- | ------------------- |
+| `align`   | `left`, `center`, `right` | `left` (no `style`) |
+| `colSpan` | integer ≥ 1               | `1` (no attribute)  |
+| `rowSpan` | integer ≥ 1               | `1` (no attribute)  |
+
+`align` is applied as inline `text-align`; the spans map straight onto the HTML attributes of the same name. Merged cells follow hand-written HTML rules &mdash; a spanned-over slot has no node at all, so rows and cells render in document order with no grid reconstruction.
+
+A merged header with a `rowSpan` grouping in the body &mdash; `Region` and `Team` span both header rows, `Half-year totals` spans its two sub-columns, and `North` spans the two rows below it:
+
+```json
+{
+  "type": "table",
+  "children": [
+    {
+      "type": "table-row",
+      "children": [
+        {
+          "type": "table-header-cell",
+          "rowSpan": 2,
+          "children": [{ "type": "text", "text": "Region" }]
+        },
+        {
+          "type": "table-header-cell",
+          "rowSpan": 2,
+          "children": [{ "type": "text", "text": "Team" }]
+        },
+        {
+          "type": "table-header-cell",
+          "colSpan": 2,
+          "align": "center",
+          "children": [{ "type": "text", "text": "Half-year totals" }]
+        }
+      ]
+    },
+    {
+      "type": "table-row",
+      "children": [
+        {
+          "type": "table-header-cell",
+          "align": "center",
+          "children": [{ "type": "text", "text": "Q3" }]
+        },
+        {
+          "type": "table-header-cell",
+          "align": "center",
+          "children": [{ "type": "text", "text": "Q4" }]
+        }
+      ]
+    },
+    {
+      "type": "table-row",
+      "children": [
+        { "type": "table-cell", "rowSpan": 2, "children": [{ "type": "text", "text": "North" }] },
+        { "type": "table-cell", "children": [{ "type": "text", "text": "Alpha" }] },
+        { "type": "table-cell", "align": "center", "children": [{ "type": "text", "text": "12" }] },
+        { "type": "table-cell", "align": "center", "children": [{ "type": "text", "text": "18" }] }
+      ]
+    },
+    {
+      "type": "table-row",
+      "children": [
+        { "type": "table-cell", "children": [{ "type": "text", "text": "Beta" }] },
+        { "type": "table-cell", "align": "center", "children": [{ "type": "text", "text": "9" }] },
+        { "type": "table-cell", "align": "center", "children": [{ "type": "text", "text": "14" }] }
+      ]
+    }
+  ]
+}
+```
+
+renders as:
+
+```html
+<table>
+  <thead>
+    <tr>
+      <th scope="col" rowspan="2">Region</th>
+      <th scope="col" rowspan="2">Team</th>
+      <th scope="col" colspan="2" style="text-align: center">Half-year totals</th>
+    </tr>
+    <tr>
+      <th scope="col" style="text-align: center">Q3</th>
+      <th scope="col" style="text-align: center">Q4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td rowspan="2">North</td>
+      <td>Alpha</td>
+      <td style="text-align: center">12</td>
+      <td style="text-align: center">18</td>
+    </tr>
+    <tr>
+      <td>Beta</td>
+      <td style="text-align: center">9</td>
+      <td style="text-align: center">14</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+Note that the second header row holds only two cells and the `Beta` row only three &mdash; the slots covered by a `rowSpan` above them carry no node.
+
+Cell `children` go through the same inline renderer as paragraphs, so marks (`bold`, `italic`, `underline`, `strikethrough`, `code`, `color`, `backgroundColor`), links, and inline math all work inside cells.
+
+```jsx
+<BlocksRenderer
+  content={content}
+  blocks={{
+    'table-cell': ({ children, align, colSpan, rowSpan, style }) => (
+      <td className="my-td" colSpan={colSpan} rowSpan={rowSpan} style={style} data-align={align}>
+        {children}
+      </td>
+    ),
+  }}
+/>
+```
+
 ### Astro
 
 `BlocksRenderer` works in [Astro](https://astro.build/) via the [`@astrojs/react`](https://docs.astro.build/en/guides/integrations-guide/react/) integration. Because the renderer is purely presentational and KaTeX renders to a string on the server (see [Math (KaTeX)](#math-katex)), you can render it as a static [Astro island](https://docs.astro.build/en/concepts/islands/) with **no client directive** &mdash; Astro outputs plain HTML and ships zero JavaScript:
@@ -442,89 +567,94 @@ const { blocks } = Astro.props;
 
 ## Supported Blocks
 
-| Block                           | Default element     | Source                      |
-| ------------------------------- | ------------------- | --------------------------- |
-| `paragraph`                     | `<p>`               | Strapi core                 |
-| `heading` (1&ndash;6)           | `<h1>`&ndash;`<h6>` | Strapi core                 |
-| `list` (ordered/unordered/todo) | `<ol>` / `<ul>`     | Strapi core + Better Blocks |
-| `list-item`                     | `<li>`              | Strapi core                 |
-| `link`                          | `<a>`               | Strapi core                 |
-| `quote`                         | `<blockquote>`      | Strapi core                 |
-| `code`                          | `<pre><code>`       | Strapi core                 |
-| `image`                         | `<figure><img>`     | Strapi core                 |
-| `horizontal-line`               | `<hr>`              | Better Blocks               |
-| `table`                         | `<table>`           | Better Blocks               |
-| `media-embed` (deprecated)      | `<iframe>` (16:9)   | Better Blocks               |
-| `embed` (iframe)                | `<figure><iframe>`  | Better Blocks               |
-| `video`                         | `<figure><video>`   | Better Blocks               |
-| `math` (inline/block)           | `<span>` / `<div>`  | Better Blocks               |
-| `diagram` (mermaid)             | `<div>` (SVG)       | Better Blocks               |
-| `callout` (admonition)          | `<aside>`           | Better Blocks               |
-| `details` (collapsible)         | `<details>`         | Better Blocks               |
-| `button` (CTA / file download)  | `<a>`               | Better Blocks               |
-| `social-embed`                  | `<figure>`          | Better Blocks               |
-| `audio`                         | `<figure><audio>`   | Better Blocks               |
+| Block                           | Default element                   | Source                      |
+| ------------------------------- | --------------------------------- | --------------------------- |
+| `paragraph`                     | `<p>`                             | Strapi core                 |
+| `heading` (1&ndash;6)           | `<h1>`&ndash;`<h6>`               | Strapi core                 |
+| `list` (ordered/unordered/todo) | `<ol>` / `<ul>`                   | Strapi core + Better Blocks |
+| `list-item`                     | `<li>`                            | Strapi core                 |
+| `link`                          | `<a>`                             | Strapi core                 |
+| `quote`                         | `<blockquote>`                    | Strapi core                 |
+| `code`                          | `<pre><code>`                     | Strapi core                 |
+| `image`                         | `<figure><img>`                   | Strapi core                 |
+| `horizontal-line`               | `<hr>`                            | Better Blocks               |
+| `table`                         | `<table>` (`<thead>` / `<tbody>`) | Better Blocks               |
+| `table-header-cell`             | `<th scope="col">`                | Better Blocks               |
+| `table-cell`                    | `<td>`                            | Better Blocks               |
+| `media-embed` (deprecated)      | `<iframe>` (16:9)                 | Better Blocks               |
+| `embed` (iframe)                | `<figure><iframe>`                | Better Blocks               |
+| `video`                         | `<figure><video>`                 | Better Blocks               |
+| `math` (inline/block)           | `<span>` / `<div>`                | Better Blocks               |
+| `diagram` (mermaid)             | `<div>` (SVG)                     | Better Blocks               |
+| `callout` (admonition)          | `<aside>`                         | Better Blocks               |
+| `details` (collapsible)         | `<details>`                       | Better Blocks               |
+| `button` (CTA / file download)  | `<a>`                             | Better Blocks               |
+| `social-embed`                  | `<figure>`                        | Better Blocks               |
+| `audio`                         | `<figure><audio>`                 | Better Blocks               |
 
 ### Block properties
 
-| Property            | Applies to                | Description                                                                                            |
-| ------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `textAlign`         | paragraph, heading, quote | Text alignment (`left`, `center`, `right`, `justify`)                                                  |
-| `lineHeight`        | paragraph, heading, quote | CSS line-height value (e.g. `1.5`, `2.0`)                                                              |
-| `indent`            | paragraph, heading, quote | Block indentation level (`marginLeft: N * 2rem`)                                                       |
-| `indentLevel`       | list                      | Cycling list-style-type per nesting depth                                                              |
-| `format`            | list                      | `ordered`, `unordered`, or `todo`                                                                      |
-| `checked`           | list-item (in todo lists) | Checkbox state (`true`/`false`)                                                                        |
-| `target`            | link                      | `_blank` for new-tab links                                                                             |
-| `rel`               | link                      | `noopener noreferrer` for new-tab links                                                                |
-| `caption`           | image                     | Text displayed below the image                                                                         |
-| `imageAlign`        | image                     | Image alignment (`left`, `center`, `right`)                                                            |
-| `url`               | media-embed               | Embed URL (YouTube/Vimeo iframe src)                                                                   |
-| `originalUrl`       | media-embed               | Original user-provided URL                                                                             |
-| `format`            | math                      | `inline` (`<span>`) or `block` (`<div>`)                                                               |
-| `value`             | math                      | LaTeX source rendered with KaTeX                                                                       |
-| `format`            | diagram                   | `mermaid`                                                                                              |
-| `value`             | diagram                   | Mermaid source rendered to SVG                                                                         |
-| `summary`           | details                   | Plain-text label for the `<summary>`                                                                   |
-| `defaultOpen`       | details                   | Open on initial render (HTML `open` attribute)                                                         |
-| `buttonType`        | button                    | `link` or `file` (download) mode                                                                       |
-| `label`             | button                    | Visible button text                                                                                    |
-| `alignment`         | button                    | `left`, `center`, `right`, or `none` (inline)                                                          |
-| `link`              | button (link mode)        | `{ url, target, rel, ariaLabel }`                                                                      |
-| `file`              | button (file mode)        | `{ url, name, size, ext, mime }` for download                                                          |
-| `showFileIcon`      | button (file mode)        | Prefix the label with a file-type icon                                                                 |
-| `showFileSize`      | button (file mode)        | Suffix the label with a human-readable size                                                            |
-| `filePreview`       | button (file mode)        | `true` opens the file in a new tab instead of downloading                                              |
-| `style`             | button                    | Inline CSS + hover custom properties                                                                   |
-| `cssClass`          | button                    | Extra class appended to `bb-button`                                                                    |
-| `platform`          | social-embed              | `twitter`, `instagram`, `facebook`, `tiktok`, `linkedin`, `pinterest`                                  |
-| `url`               | social-embed              | Original post URL, optional (used by the fallback link card)                                           |
-| `embedCode`         | social-embed              | Optional manual HTML override (highest priority)                                                       |
-| `oembed`            | social-embed              | Fetched oEmbed payload `{ html, title, author, authorUrl, thumbnailUrl, providerName, width, height }` |
-| `alignment`         | social-embed              | `left`, `center` (default), or `right`                                                                 |
-| `caption`           | social-embed              | Optional caption rendered in a `<figcaption>`                                                          |
-| `file`              | audio                     | `{ url, name, ext, hash, mime, size, provider, duration }` &mdash; `url` is rendered as the `src`      |
-| `player`            | audio                     | `{ controls (default true), autoplay, loop, preload }` &mdash; mapped 1:1 onto `<audio>`               |
-| `title`             | audio                     | Optional title rendered above the player (also used as the `aria-label`)                               |
-| `caption`           | audio                     | Optional caption rendered below the player in a `<figcaption>`                                         |
-| `alignment`         | audio                     | `left`, `center` (default), `right`, or `none` (full-width)                                            |
-| `embedHtml`         | embed                     | Plugin-sanitized iframe markup &mdash; the only field needed to render                                 |
-| `embedSrc`          | embed                     | The iframe's `src`, hoisted for host/CSP checks                                                        |
-| `provider`          | embed                     | `youtube`, `vimeo`, `loom`, `wistia`, `dailymotion`, `api-video`, or `generic`                         |
-| `thumbnail`         | embed                     | Poster image, when the provider exposes one (used by custom renderers)                                 |
-| `source`            | embed                     | `url` or `iframe` &mdash; which input the author used                                                  |
-| `url`               | embed                     | Original share URL, also the fallback link when `embedHtml` is absent                                  |
-| `title`             | embed                     | Accessible name (already baked into `embedHtml` for URL-derived embeds)                                |
-| `provider`          | video                     | `local`, `mux`, `api-video`, `cloudinary`, or `custom`                                                 |
-| `url`               | video                     | Playback URL &mdash; a direct file, or an HLS/DASH manifest                                            |
-| `playbackId`        | video                     | Provider playback id (`<mux-player playback-id>` for Mux)                                              |
-| `poster`            | video                     | Thumbnail shown before playback                                                                        |
-| `transcript`        | video                     | WebVTT URL rendered as `<track kind="captions">`                                                       |
-| `player`            | video                     | `{ controls (default true), autoplay, loop, muted }` &mdash; mapped 1:1 onto `<video>`                 |
-| `alignment`         | embed, video              | `left`, `center` (default), `right`, or `none` (full-width)                                            |
-| `aspectRatio`       | embed, video              | `16:9`, `21:9`, `4:3`, `1:1`, or `custom` &mdash; CSS `aspect-ratio` on the frame                      |
-| `customAspectRatio` | embed, video              | Free-form `width / height`, used when `aspectRatio` is `custom`                                        |
-| `caption`           | embed, video              | Optional caption rendered in a `<figcaption>`                                                          |
+| Property            | Applies to                    | Description                                                                                            |
+| ------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------ |
+| `textAlign`         | paragraph, heading, quote     | Text alignment (`left`, `center`, `right`, `justify`)                                                  |
+| `lineHeight`        | paragraph, heading, quote     | CSS line-height value (e.g. `1.5`, `2.0`)                                                              |
+| `indent`            | paragraph, heading, quote     | Block indentation level (`marginLeft: N * 2rem`)                                                       |
+| `indentLevel`       | list                          | Cycling list-style-type per nesting depth                                                              |
+| `format`            | list                          | `ordered`, `unordered`, or `todo`                                                                      |
+| `checked`           | list-item (in todo lists)     | Checkbox state (`true`/`false`)                                                                        |
+| `target`            | link                          | `_blank` for new-tab links                                                                             |
+| `rel`               | link                          | `noopener noreferrer` for new-tab links                                                                |
+| `caption`           | image                         | Text displayed below the image                                                                         |
+| `imageAlign`        | image                         | Image alignment (`left`, `center`, `right`)                                                            |
+| `align`             | table-cell, table-header-cell | Cell text alignment (`left` when absent, `center`, `right`)                                            |
+| `colSpan`           | table-cell, table-header-cell | HTML `colspan` (`1` when absent)                                                                       |
+| `rowSpan`           | table-cell, table-header-cell | HTML `rowspan` (`1` when absent)                                                                       |
+| `url`               | media-embed                   | Embed URL (YouTube/Vimeo iframe src)                                                                   |
+| `originalUrl`       | media-embed                   | Original user-provided URL                                                                             |
+| `format`            | math                          | `inline` (`<span>`) or `block` (`<div>`)                                                               |
+| `value`             | math                          | LaTeX source rendered with KaTeX                                                                       |
+| `format`            | diagram                       | `mermaid`                                                                                              |
+| `value`             | diagram                       | Mermaid source rendered to SVG                                                                         |
+| `summary`           | details                       | Plain-text label for the `<summary>`                                                                   |
+| `defaultOpen`       | details                       | Open on initial render (HTML `open` attribute)                                                         |
+| `buttonType`        | button                        | `link` or `file` (download) mode                                                                       |
+| `label`             | button                        | Visible button text                                                                                    |
+| `alignment`         | button                        | `left`, `center`, `right`, or `none` (inline)                                                          |
+| `link`              | button (link mode)            | `{ url, target, rel, ariaLabel }`                                                                      |
+| `file`              | button (file mode)            | `{ url, name, size, ext, mime }` for download                                                          |
+| `showFileIcon`      | button (file mode)            | Prefix the label with a file-type icon                                                                 |
+| `showFileSize`      | button (file mode)            | Suffix the label with a human-readable size                                                            |
+| `filePreview`       | button (file mode)            | `true` opens the file in a new tab instead of downloading                                              |
+| `style`             | button                        | Inline CSS + hover custom properties                                                                   |
+| `cssClass`          | button                        | Extra class appended to `bb-button`                                                                    |
+| `platform`          | social-embed                  | `twitter`, `instagram`, `facebook`, `tiktok`, `linkedin`, `pinterest`                                  |
+| `url`               | social-embed                  | Original post URL, optional (used by the fallback link card)                                           |
+| `embedCode`         | social-embed                  | Optional manual HTML override (highest priority)                                                       |
+| `oembed`            | social-embed                  | Fetched oEmbed payload `{ html, title, author, authorUrl, thumbnailUrl, providerName, width, height }` |
+| `alignment`         | social-embed                  | `left`, `center` (default), or `right`                                                                 |
+| `caption`           | social-embed                  | Optional caption rendered in a `<figcaption>`                                                          |
+| `file`              | audio                         | `{ url, name, ext, hash, mime, size, provider, duration }` &mdash; `url` is rendered as the `src`      |
+| `player`            | audio                         | `{ controls (default true), autoplay, loop, preload }` &mdash; mapped 1:1 onto `<audio>`               |
+| `title`             | audio                         | Optional title rendered above the player (also used as the `aria-label`)                               |
+| `caption`           | audio                         | Optional caption rendered below the player in a `<figcaption>`                                         |
+| `alignment`         | audio                         | `left`, `center` (default), `right`, or `none` (full-width)                                            |
+| `embedHtml`         | embed                         | Plugin-sanitized iframe markup &mdash; the only field needed to render                                 |
+| `embedSrc`          | embed                         | The iframe's `src`, hoisted for host/CSP checks                                                        |
+| `provider`          | embed                         | `youtube`, `vimeo`, `loom`, `wistia`, `dailymotion`, `api-video`, or `generic`                         |
+| `thumbnail`         | embed                         | Poster image, when the provider exposes one (used by custom renderers)                                 |
+| `source`            | embed                         | `url` or `iframe` &mdash; which input the author used                                                  |
+| `url`               | embed                         | Original share URL, also the fallback link when `embedHtml` is absent                                  |
+| `title`             | embed                         | Accessible name (already baked into `embedHtml` for URL-derived embeds)                                |
+| `provider`          | video                         | `local`, `mux`, `api-video`, `cloudinary`, or `custom`                                                 |
+| `url`               | video                         | Playback URL &mdash; a direct file, or an HLS/DASH manifest                                            |
+| `playbackId`        | video                         | Provider playback id (`<mux-player playback-id>` for Mux)                                              |
+| `poster`            | video                         | Thumbnail shown before playback                                                                        |
+| `transcript`        | video                         | WebVTT URL rendered as `<track kind="captions">`                                                       |
+| `player`            | video                         | `{ controls (default true), autoplay, loop, muted }` &mdash; mapped 1:1 onto `<video>`                 |
+| `alignment`         | embed, video                  | `left`, `center` (default), `right`, or `none` (full-width)                                            |
+| `aspectRatio`       | embed, video                  | `16:9`, `21:9`, `4:3`, `1:1`, or `custom` &mdash; CSS `aspect-ratio` on the frame                      |
+| `customAspectRatio` | embed, video                  | Free-form `width / height`, used when `aspectRatio` is `custom`                                        |
+| `caption`           | embed, video                  | Optional caption rendered in a `<figcaption>`                                                          |
 
 ## Supported Modifiers
 
@@ -583,8 +713,16 @@ Override any block type with your own component:
       ),
     'horizontal-line': () => <hr className="my-divider" />,
     table: ({ children }) => <table className="my-table">{children}</table>,
-    'table-header-cell': ({ children }) => <th className="my-th">{children}</th>,
-    'table-cell': ({ children }) => <td className="my-td">{children}</td>,
+    'table-header-cell': ({ children, colSpan, rowSpan, style }) => (
+      <th className="my-th" scope="col" colSpan={colSpan} rowSpan={rowSpan} style={style}>
+        {children}
+      </th>
+    ),
+    'table-cell': ({ children, colSpan, rowSpan, style }) => (
+      <td className="my-td" colSpan={colSpan} rowSpan={rowSpan} style={style}>
+        {children}
+      </td>
+    ),
     'media-embed': ({ url }) => (
       <div className="video-wrapper">
         <iframe src={url} allowFullScreen title="Embedded media" />
@@ -650,6 +788,7 @@ import type {
   TableRowNode,
   TableCellNode,
   TableHeaderCellNode,
+  TableCellAlign,
   MediaEmbedNode,
   MathNode,
   DiagramNode,

@@ -891,7 +891,8 @@
                   "type": "text",
                   "text": "Phase"
                 }
-              ]
+              ],
+              "align": "center"
             }
           ]
         },
@@ -924,7 +925,8 @@
                   "type": "text",
                   "text": "1"
                 }
-              ]
+              ],
+              "align": "center"
             }
           ]
         },
@@ -957,7 +959,8 @@
                   "type": "text",
                   "text": "2"
                 }
-              ]
+              ],
+              "align": "center"
             }
           ]
         },
@@ -990,7 +993,8 @@
                   "type": "text",
                   "text": "2"
                 }
-              ]
+              ],
+              "align": "center"
             }
           ]
         },
@@ -1023,7 +1027,8 @@
                   "type": "text",
                   "text": "2"
                 }
-              ]
+              ],
+              "align": "center"
             }
           ]
         },
@@ -1056,7 +1061,8 @@
                   "type": "text",
                   "text": "2"
                 }
-              ]
+              ],
+              "align": "center"
             }
           ]
         },
@@ -1088,6 +1094,213 @@
                 {
                   "type": "text",
                   "text": "3"
+                }
+              ],
+              "align": "center"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [
+        {
+          "type": "text",
+          "text": "Merged cells (colSpan / rowSpan)"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "A spanned-over slot carries no node — cells are emitted in document order and the span attributes reconstruct the grid, exactly like hand-written HTML."
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "children": [
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-header-cell",
+              "rowSpan": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Region"
+                }
+              ]
+            },
+            {
+              "type": "table-header-cell",
+              "rowSpan": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Team"
+                }
+              ]
+            },
+            {
+              "type": "table-header-cell",
+              "colSpan": 2,
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Half-year totals"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-header-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Q3"
+                }
+              ]
+            },
+            {
+              "type": "table-header-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Q4"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "rowSpan": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "text": "North"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Alpha"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "12"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "18"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Beta"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "9"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "14"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "South"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Gamma"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "11"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "20"
                 }
               ]
             }

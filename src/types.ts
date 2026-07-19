@@ -103,12 +103,22 @@ export type HorizontalLineNode = {
   children: [{ type: 'text'; text: '' }];
 };
 
-export type TableCellNode = {
+/** Cell alignment. Omitted by the editor when the cell is left-aligned. */
+export type TableCellAlign = 'left' | 'center' | 'right';
+
+/** Properties shared by both cell types. Absent `align` means left, absent spans mean 1. */
+type TableCellAttributes = {
+  align?: TableCellAlign;
+  colSpan?: number;
+  rowSpan?: number;
+};
+
+export type TableCellNode = TableCellAttributes & {
   type: 'table-cell';
   children: InlineNode[];
 };
 
-export type TableHeaderCellNode = {
+export type TableHeaderCellNode = TableCellAttributes & {
   type: 'table-header-cell';
   children: InlineNode[];
 };
@@ -412,6 +422,15 @@ export type BlockComponentProps<T = Record<string, unknown>> = T & {
   children: ReactNode;
 };
 
+/** Props handed to custom `table-cell` / `table-header-cell` components. */
+export type TableCellRenderProps = {
+  align?: TableCellAlign;
+  colSpan?: number;
+  rowSpan?: number;
+  /** `text-align` derived from `align`; undefined when the cell is left-aligned. */
+  style?: CSSProperties;
+};
+
 // ── Custom Renderers Config ──────────────────────────────────────────
 
 export type CustomBlocksConfig = Partial<{
@@ -435,8 +454,8 @@ export type CustomBlocksConfig = Partial<{
   'horizontal-line': ComponentType<Record<string, unknown>>;
   table: ComponentType<BlockComponentProps>;
   'table-row': ComponentType<BlockComponentProps>;
-  'table-cell': ComponentType<BlockComponentProps>;
-  'table-header-cell': ComponentType<BlockComponentProps>;
+  'table-cell': ComponentType<BlockComponentProps<TableCellRenderProps>>;
+  'table-header-cell': ComponentType<BlockComponentProps<TableCellRenderProps>>;
   'media-embed': ComponentType<{ url: string; originalUrl?: string }>;
   math: ComponentType<{ formula: string; inline: boolean }>;
   diagram: ComponentType<{ code: string; format: 'mermaid' }>;

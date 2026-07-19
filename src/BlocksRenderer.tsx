@@ -47,6 +47,7 @@ import type {
   QuoteNode,
   SocialEmbedNode,
   TableNode,
+  TableRowNode,
   TextNode,
   VideoNode,
 } from './types';
@@ -329,31 +330,79 @@ function renderTable(
   const CellComp = blocks?.['table-cell'];
   const HeaderCellComp = blocks?.['table-header-cell'];
 
+  // Leading rows made up entirely of header cells are the table's header; they go
+  // in <thead> so screen readers announce them. A merged header (a `rowSpan` label
+  // above a split sub-header) spans several such rows, so count them all.
+  let headerRowCount = 0;
+  while (isHeaderRow(block.children[headerRowCount])) headerRowCount++;
+
   const rows = block.children.map((row, rowIndex) => {
+    const inHeader = rowIndex < headerRowCount;
+
     const cells = row.children.map((cell, cellIndex) => {
       const cellChildren = renderInlineContent(cell.children, blocks, modifiers);
       const isHeader = cell.type === 'table-header-cell';
+      // Absent means left / 1 — omit rather than emit a redundant attribute.
+      const style = cell.align ? { textAlign: cell.align } : undefined;
+      const cellProps = {
+        align: cell.align,
+        colSpan: cell.colSpan,
+        rowSpan: cell.rowSpan,
+        style,
+      };
 
       if (isHeader && HeaderCellComp) {
-        return <HeaderCellComp key={cellIndex}>{cellChildren}</HeaderCellComp>;
+        return (
+          <HeaderCellComp key={cellIndex} {...cellProps}>
+            {cellChildren}
+          </HeaderCellComp>
+        );
       }
       if (!isHeader && CellComp) {
-        return <CellComp key={cellIndex}>{cellChildren}</CellComp>;
+        return (
+          <CellComp key={cellIndex} {...cellProps}>
+            {cellChildren}
+          </CellComp>
+        );
       }
 
-      const CellTag = isHeader ? 'th' : 'td';
-      return <CellTag key={cellIndex}>{cellChildren}</CellTag>;
+      return isHeader ? (
+        <th
+          key={cellIndex}
+          // A header cell in the <thead> labels a column; one that appears in a
+          // body row is a row header instead.
+          scope={inHeader ? 'col' : 'row'}
+          colSpan={cell.colSpan}
+          rowSpan={cell.rowSpan}
+          style={style}
+        >
+          {cellChildren}
+        </th>
+      ) : (
+        <td key={cellIndex} colSpan={cell.colSpan} rowSpan={cell.rowSpan} style={style}>
+          {cellChildren}
+        </td>
+      );
     });
 
     return RowComp ? <RowComp key={rowIndex}>{cells}</RowComp> : <tr key={rowIndex}>{cells}</tr>;
   });
 
-  return TableComp ? (
-    <TableComp key={key}>{rows}</TableComp>
-  ) : (
+  if (TableComp) {
+    return <TableComp key={key}>{rows}</TableComp>;
+  }
+
+  return (
     <table key={key}>
-      <tbody>{rows}</tbody>
+      {headerRowCount > 0 && <thead>{rows.slice(0, headerRowCount)}</thead>}
+      {rows.length > headerRowCount && <tbody>{rows.slice(headerRowCount)}</tbody>}
     </table>
+  );
+}
+
+function isHeaderRow(row: TableRowNode | undefined): boolean {
+  return (
+    !!row && row.children.length > 0 && row.children.every((c) => c.type === 'table-header-cell')
   );
 }
 

@@ -645,6 +645,192 @@ describe('BlocksRenderer', () => {
     expect(container.querySelector('tbody')).toBeInTheDocument();
   });
 
+  it('wraps a leading all-header row in thead and the rest in tbody', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [{ type: 'table-header-cell', children: [{ type: 'text', text: 'Name' }] }],
+          },
+          {
+            type: 'table-row',
+            children: [{ type: 'table-cell', children: [{ type: 'text', text: 'Alice' }] }],
+          },
+        ],
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelectorAll('thead tr')).toHaveLength(1);
+    expect(container.querySelectorAll('tbody tr')).toHaveLength(1);
+    expect(screen.getByText('Name')).toHaveAttribute('scope', 'col');
+  });
+
+  it('wraps every leading header row in thead (merged multi-row header)', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [
+              {
+                type: 'table-header-cell',
+                rowSpan: 2,
+                children: [{ type: 'text', text: 'Region' }],
+              },
+              { type: 'table-header-cell', colSpan: 2, children: [{ type: 'text', text: '2026' }] },
+            ],
+          },
+          {
+            type: 'table-row',
+            children: [
+              { type: 'table-header-cell', children: [{ type: 'text', text: 'H1' }] },
+              { type: 'table-header-cell', children: [{ type: 'text', text: 'H2' }] },
+            ],
+          },
+          {
+            type: 'table-row',
+            children: [
+              { type: 'table-header-cell', children: [{ type: 'text', text: 'EMEA' }] },
+              { type: 'table-cell', children: [{ type: 'text', text: '12' }] },
+              { type: 'table-cell', children: [{ type: 'text', text: '18' }] },
+            ],
+          },
+        ],
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelectorAll('thead tr')).toHaveLength(2);
+    expect(container.querySelectorAll('tbody tr')).toHaveLength(1);
+    expect(screen.getByText('Region')).toHaveAttribute('rowspan', '2');
+    expect(screen.getByText('2026')).toHaveAttribute('colspan', '2');
+    // Column headers in the <thead>, row header in the body.
+    expect(screen.getByText('H1')).toHaveAttribute('scope', 'col');
+    expect(screen.getByText('EMEA')).toHaveAttribute('scope', 'row');
+  });
+
+  it('keeps a mixed first row in tbody', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [
+              { type: 'table-header-cell', children: [{ type: 'text', text: 'Name' }] },
+              { type: 'table-cell', children: [{ type: 'text', text: 'Alice' }] },
+            ],
+          },
+        ],
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('thead')).not.toBeInTheDocument();
+    expect(container.querySelectorAll('tbody tr')).toHaveLength(1);
+  });
+
+  it('omits tbody when the table is only a header row', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [{ type: 'table-header-cell', children: [{ type: 'text', text: 'Only' }] }],
+          },
+        ],
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('thead')).toBeInTheDocument();
+    expect(container.querySelector('tbody')).not.toBeInTheDocument();
+  });
+
+  it('applies cell alignment, defaulting to none when absent', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [
+              { type: 'table-cell', align: 'center', children: [{ type: 'text', text: 'Mid' }] },
+              { type: 'table-cell', align: 'right', children: [{ type: 'text', text: 'End' }] },
+              { type: 'table-cell', children: [{ type: 'text', text: 'Start' }] },
+            ],
+          },
+        ],
+      },
+    ];
+    render(<BlocksRenderer content={content} />);
+    expect(screen.getByText('Mid')).toHaveStyle({ textAlign: 'center' });
+    expect(screen.getByText('End')).toHaveStyle({ textAlign: 'right' });
+    expect(screen.getByText('Start').getAttribute('style')).toBeNull();
+  });
+
+  it('maps colSpan and rowSpan onto the cell attributes', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [
+              {
+                type: 'table-header-cell',
+                colSpan: 2,
+                rowSpan: 2,
+                children: [{ type: 'text', text: 'Merged' }],
+              },
+            ],
+          },
+          {
+            type: 'table-row',
+            children: [{ type: 'table-cell', children: [{ type: 'text', text: 'Plain' }] }],
+          },
+        ],
+      },
+    ];
+    render(<BlocksRenderer content={content} />);
+    const merged = screen.getByText('Merged');
+    expect(merged).toHaveAttribute('colspan', '2');
+    expect(merged).toHaveAttribute('rowspan', '2');
+    const plain = screen.getByText('Plain');
+    expect(plain).not.toHaveAttribute('colspan');
+    expect(plain).not.toHaveAttribute('rowspan');
+  });
+
+  it('renders marks and links inside table cells', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [
+              {
+                type: 'table-cell',
+                children: [
+                  { type: 'text', text: 'Bold', bold: true },
+                  {
+                    type: 'link',
+                    url: 'https://example.com',
+                    children: [{ type: 'text', text: 'Link' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    ];
+    render(<BlocksRenderer content={content} />);
+    expect(screen.getByText('Bold').tagName).toBe('STRONG');
+    expect(screen.getByText('Link').closest('a')).toHaveAttribute('href', 'https://example.com');
+  });
+
   // ── Media Embed ──────────────────────────────────────────────────
 
   it('renders media embed as responsive iframe', () => {
@@ -1010,7 +1196,14 @@ describe('BlocksRenderer', () => {
           },
           {
             type: 'table-row',
-            children: [{ type: 'table-cell', children: [{ type: 'text', text: 'Data' }] }],
+            children: [
+              {
+                type: 'table-cell',
+                align: 'right',
+                colSpan: 3,
+                children: [{ type: 'text', text: 'Data' }],
+              },
+            ],
           },
         ],
       },
@@ -1022,14 +1215,21 @@ describe('BlocksRenderer', () => {
           table: ({ children }) => <div data-testid="custom-table">{children}</div>,
           'table-row': ({ children }) => <div data-testid="custom-row">{children}</div>,
           'table-header-cell': ({ children }) => <div data-testid="custom-th">{children}</div>,
-          'table-cell': ({ children }) => <div data-testid="custom-td">{children}</div>,
+          'table-cell': ({ children, align, colSpan, style }) => (
+            <div data-testid="custom-td" data-align={align} data-colspan={colSpan} style={style}>
+              {children}
+            </div>
+          ),
         }}
       />
     );
     expect(screen.getByTestId('custom-table')).toBeInTheDocument();
     expect(screen.getAllByTestId('custom-row')).toHaveLength(2);
     expect(screen.getByTestId('custom-th')).toBeInTheDocument();
-    expect(screen.getByTestId('custom-td')).toBeInTheDocument();
+    const td = screen.getByTestId('custom-td');
+    expect(td).toHaveAttribute('data-align', 'right');
+    expect(td).toHaveAttribute('data-colspan', '3');
+    expect(td).toHaveStyle({ textAlign: 'right' });
   });
 
   it('uses custom image renderer with caption and alignment', () => {
