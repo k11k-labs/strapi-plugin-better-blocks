@@ -1,6 +1,6 @@
 {
   "name": "@k11k/better-blocks-react-renderer",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "React renderer for Strapi v5 Blocks content with full Better Blocks plugin support — colors, tables, to-do lists, media embeds, alignment, and more",
   "type": "commonjs",
   "main": "dist/index.js",
