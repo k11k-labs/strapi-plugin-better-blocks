@@ -1,5 +1,20 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.17.1
+
+### Patch Changes
+
+- [#72](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/72) [`59d2da7`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/59d2da704d257ba4c449fb0065d721b9000ca070) Thanks [@kkukielka](https://github.com/kkukielka)! - fix: typing in the audio editor no longer deletes the audio block
+
+  The audio editor was a hand-rolled overlay rendered inline inside the Slate
+  `Editable` tree, so every keystroke in its Title/Caption inputs also bubbled to
+  the editor's key handlers — which acted on the selected void node and removed
+  the block, taking the popup with it. The editor now uses the Strapi
+  `Modal` primitive (portalled out of the editable, like the Button and Social
+  embed editors), so form input stays in the form.
+
+  Fixes [#70](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/70).
+
 ## 0.17.0
 
 ### Minor Changes
