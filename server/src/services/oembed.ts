@@ -126,7 +126,9 @@ const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
   // The URN type matters: LinkedIn 404s an activity id addressed as a share.
   // Share URLs (…-activity-<id>-<hash>) carry their own type — keep it.
   const type =
-    urnMatch[1].toLowerCase() === 'ugcpost' ? 'ugcPost' : urnMatch[1];
+    urnMatch[1].toLowerCase() === 'ugcpost'
+      ? 'ugcPost'
+      : urnMatch[1].toLowerCase();
   const urn = `urn:li:${type}:${urnMatch[2]}`;
   const src = `https://www.linkedin.com/embed/feed/update/${encodeURIComponent(urn)}`;
   return {
