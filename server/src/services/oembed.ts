@@ -98,14 +98,38 @@ const buildEndpoint = (
   }
 };
 
+/**
+ * `pin.it` short links are 30x redirects that Pinterest's oEmbed endpoint
+ * rejects outright, so expand them to the canonical `/pin/<id>/` URL first.
+ * Returns the original URL when it isn't a short link or can't be resolved.
+ */
+const resolveShortUrl = async (url: string): Promise<string> => {
+  if (!/^https?:\/\/pin\.it\//i.test(url)) return url;
+  try {
+    const res = await fetch(url, { redirect: 'follow' });
+    const resolved = res.url || url;
+    // Pinterest bounces short links through api.pinterest.com; only accept a
+    // final URL that actually looks like a pin.
+    return /pinterest\.[a-z.]+\/pin\//i.test(resolved) ? resolved : url;
+  } catch {
+    return url;
+  }
+};
+
 /** LinkedIn has no oEmbed API but exposes a stable iframe embed by URN. */
 const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
   // Activity URN appears in share URLs, e.g. .../urn:li:activity:7000000000000000000
   const urnMatch = url.match(
-    /(?:urn:li:)?(?:ugcPost|activity|share)[:-](\d{10,})/i
+    /(?:urn:li:)?(ugcPost|activity|share)[:-](\d{10,})/i
   );
   if (!urnMatch) return null;
-  const urn = `urn:li:share:${urnMatch[1]}`;
+  // The URN type matters: LinkedIn 404s an activity id addressed as a share.
+  // Share URLs (…-activity-<id>-<hash>) carry their own type — keep it.
+  const type =
+    urnMatch[1].toLowerCase() === 'ugcpost'
+      ? 'ugcPost'
+      : urnMatch[1].toLowerCase();
+  const urn = `urn:li:${type}:${urnMatch[2]}`;
   const src = `https://www.linkedin.com/embed/feed/update/${encodeURIComponent(urn)}`;
   return {
     platform: 'linkedin',
@@ -119,6 +143,16 @@ const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
 
 /* --- Normalisation ---------------------------------------------------------*/
 
+/**
+ * Platform oEmbed markup often ships the widget script inline (TikTok always
+ * does; Twitter/Instagram only when `omit_script` isn't honoured). Renderers
+ * inject that script themselves, and a `<script>` added through `innerHTML`
+ * never executes anyway — worse, its inert tag makes a renderer believe the
+ * widget is already loaded. Strip it so the stored html is markup only.
+ */
+const stripScripts = (html: string): string =>
+  html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').trim();
+
 const normalise = (
   platform: SocialPlatform,
   url: string,
@@ -126,7 +160,7 @@ const normalise = (
 ): NormalisedOEmbed => ({
   platform,
   url,
-  html: typeof raw.html === 'string' ? raw.html : null,
+  html: typeof raw.html === 'string' ? stripScripts(raw.html) || null : null,
   title: typeof raw.title === 'string' ? raw.title : undefined,
   author: typeof raw.author_name === 'string' ? raw.author_name : undefined,
   authorUrl: typeof raw.author_url === 'string' ? raw.author_url : undefined,
@@ -195,7 +229,8 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
           );
         }
       } else {
-        const endpoint = buildEndpoint(resolved, url, config);
+        const target = await resolveShortUrl(url);
+        const endpoint = buildEndpoint(resolved, target, config);
         if (!endpoint) {
           throw new Error(
             `oEmbed for "${resolved}" requires an access token. Configure config.social.${resolved}.accessToken, or paste the embed code instead.`
@@ -211,7 +246,21 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
           );
         }
         const raw = (await res.json()) as Record<string, unknown>;
-        data = normalise(resolved, url, raw);
+
+        // Some providers (Pinterest notably) answer HTTP 200 with an error
+        // payload. Surfacing that beats silently storing an empty embed that
+        // degrades to a bare link on the frontend.
+        if (typeof raw.error === 'string') {
+          throw new Error(`${resolved} could not embed this URL: ${raw.error}`);
+        }
+
+        data = normalise(resolved, target, raw);
+
+        if (!data.html) {
+          throw new Error(
+            `${resolved} returned no embed markup for this URL. Check the post is public, or paste the embed code instead.`
+          );
+        }
       }
 
       if (useCache && ttl > 0) {

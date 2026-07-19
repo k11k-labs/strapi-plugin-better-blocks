@@ -20,6 +20,7 @@ import {
   type SocialEmbedDraft,
   SocialEmbedEditorModal,
 } from './SocialEmbedEditorModal';
+import { SOCIAL_FRAME_HOSTS, getSocialFrame } from './socialFrame';
 
 /* ---------------------------------------------------------------------------
  * Icon
@@ -115,6 +116,34 @@ const Thumb = styled.img`
   border-radius: ${({ theme }) => theme.borderRadius};
 `;
 
+const PreviewFrame = styled.iframe`
+  width: 100%;
+  border: 0;
+  border-radius: ${({ theme }) => theme.borderRadius};
+  background: ${({ theme }) => theme.colors.neutral150};
+`;
+
+const FrameHint = styled.div`
+  font-size: 11px;
+  color: ${({ theme }) => theme.colors.neutral500};
+`;
+
+const ToggleButton = styled.button`
+  align-self: flex-start;
+  padding: 2px 8px;
+  border-radius: ${({ theme }) => theme.borderRadius};
+  border: 1px solid ${({ theme }) => theme.colors.neutral200};
+  background: ${({ theme }) => theme.colors.neutral100};
+  color: ${({ theme }) => theme.colors.neutral700};
+  font-size: 11px;
+  cursor: pointer;
+
+  &:hover {
+    border-color: ${({ theme }) => theme.colors.primary600};
+    color: ${({ theme }) => theme.colors.primary600};
+  }
+`;
+
 const UrlText = styled.div`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.neutral500};
@@ -158,10 +187,21 @@ const SocialEmbedElementComponent = ({
   const { editor, disabled } = useBlocksEditorContext('SocialEmbed');
   const selected = useSelected();
 
-  // A freshly inserted embed (no URL) opens its editor immediately.
-  const [open, setOpen] = React.useState(
-    (el.url ?? '').trim() === '' && !disabled
-  );
+  // An embed is complete once it has a URL *or* a pasted embed code.
+  const hasSource =
+    (el.url ?? '').trim() !== '' || (el.embedCode ?? '').trim() !== '';
+
+  // A freshly inserted embed (no source yet) opens its editor immediately.
+  const [open, setOpen] = React.useState(!hasSource && !disabled);
+
+  // Live preview is opt-in per card and never persisted: third-party frames
+  // only load when the author asks for them.
+  const [live, setLive] = React.useState(false);
+  const frame = getSocialFrame(el);
+  React.useEffect(() => {
+    // A different post → drop back to the card rather than show a stale frame.
+    setLive(false);
+  }, [frame?.src]);
 
   const meta = PLATFORM_META[el.platform] ?? PLATFORM_META.twitter;
   const align = el.alignment ?? 'center';
@@ -215,8 +255,8 @@ const SocialEmbedElementComponent = ({
   };
 
   const handleClose = () => {
-    // Discard an embed that was never given a URL.
-    if ((el.url ?? '').trim() === '') removeNode();
+    // Discard an embed that was never given a URL or an embed code.
+    if (!hasSource) removeNode();
     setOpen(false);
   };
 
@@ -241,7 +281,36 @@ const SocialEmbedElementComponent = ({
               {el.oembed?.author || el.oembed?.providerName || meta.label}
             </Typography>
           </Header>
-          {el.oembed?.thumbnailUrl ? (
+          {frame ? (
+            <ToggleButton
+              type="button"
+              // The card opens the editor on mousedown — keep the toggle local.
+              onMouseDown={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setLive((prev) => !prev);
+              }}
+            >
+              {live ? 'Hide live post' : 'Show live post'}
+            </ToggleButton>
+          ) : null}
+          {frame && live ? (
+            <>
+              <PreviewFrame
+                src={frame.src}
+                height={frame.height}
+                title={`${meta.label} post preview`}
+                loading="lazy"
+                referrerPolicy="strict-origin-when-cross-origin"
+                sandbox="allow-scripts allow-same-origin allow-popups allow-presentation"
+              />
+              <FrameHint>
+                Blank? Add {SOCIAL_FRAME_HOSTS[el.platform]} to `frame-src` in
+                config/middlewares.ts.
+              </FrameHint>
+            </>
+          ) : null}
+          {!live && el.oembed?.thumbnailUrl ? (
             <Thumb src={el.oembed.thumbnailUrl} alt="" />
           ) : null}
           {el.oembed?.title ? (
@@ -249,7 +318,11 @@ const SocialEmbedElementComponent = ({
               {el.oembed.title}
             </Typography>
           ) : null}
-          {el.url ? <UrlText>{el.url}</UrlText> : null}
+          {el.url ? (
+            <UrlText>{el.url}</UrlText>
+          ) : el.embedCode ? (
+            <UrlText>Custom embed code</UrlText>
+          ) : null}
           {el.caption ? (
             <Typography
               variant="pi"
