@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import { useStrapiApp } from '@strapi/admin/strapi-admin';
-import { Button, Flex, Typography } from '@strapi/design-system';
+import { Button, Flex, Modal, Typography } from '@strapi/design-system';
 import { useIntl } from 'react-intl';
 import { styled } from 'styled-components';
 
@@ -49,7 +49,7 @@ export const DEFAULT_PLAYER: AudioPlayerSettings = {
  * Styled
  * -------------------------------------------------------------------------*/
 
-const ModalContent = styled.div`
+const ModalContent = styled(Modal.Content)`
   max-width: 640px;
   width: 90vw;
 `;
@@ -175,35 +175,6 @@ const FieldLabel = ({ children }: { children: React.ReactNode }) => (
   </Typography>
 );
 
-const Overlay = styled.div`
-  position: fixed;
-  inset: 0;
-  z-index: 40;
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding-top: 6vh;
-  background: rgba(0, 0, 0, 0.4);
-`;
-
-const Panel = styled.div`
-  background: ${({ theme }) => theme.colors.neutral0};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  box-shadow: ${({ theme }) => theme.shadows.popupShadow};
-  overflow: hidden;
-`;
-
-const PanelHeader = styled.div`
-  padding: ${({ theme }) => theme.spaces[4]} ${({ theme }) => theme.spaces[6]};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.neutral150};
-`;
-
-const PanelFooter = styled.div`
-  display: flex;
-  padding: ${({ theme }) => theme.spaces[4]} ${({ theme }) => theme.spaces[6]};
-  border-top: 1px solid ${({ theme }) => theme.colors.neutral150};
-`;
-
 /* ---------------------------------------------------------------------------
  * Modal
  * -------------------------------------------------------------------------*/
@@ -287,8 +258,6 @@ export const AudioEditorModal = ({
 
   const hasSource = !!draft.file?.url?.trim();
 
-  if (!open) return null;
-
   // The Strapi Media Library dialog is its own full-screen modal; render it
   // in place of ours while the author browses/uploads.
   if (pickerOpen && MediaLibraryDialog) {
@@ -302,266 +271,257 @@ export const AudioEditorModal = ({
   }
 
   return (
-    <Overlay
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
+    <Modal.Root
+      open={open}
+      onOpenChange={(isOpen: boolean) => {
+        if (!isOpen) onClose();
       }}
     >
-      <ModalContent onMouseDown={(e) => e.stopPropagation()}>
-        <Panel>
-          <PanelHeader>
-            <Typography variant="beta">
+      <ModalContent>
+        <Modal.Header>
+          <Modal.Title>
+            {formatMessage({
+              id: 'components.Blocks.audio.modal.title',
+              defaultMessage: 'Audio',
+            })}
+          </Modal.Title>
+        </Modal.Header>
+
+        <ModalBody>
+          {/* Source: Media Library + URL */}
+          <Flex direction="column" gap={2} alignItems="stretch">
+            <FieldLabel>
               {formatMessage({
-                id: 'components.Blocks.audio.modal.title',
-                defaultMessage: 'Audio',
+                id: 'components.Blocks.audio.field.source',
+                defaultMessage: 'Audio source',
               })}
-            </Typography>
-          </PanelHeader>
-
-          <ModalBody>
-            {/* Source: Media Library + URL */}
-            <Flex direction="column" gap={2} alignItems="stretch">
-              <FieldLabel>
-                {formatMessage({
-                  id: 'components.Blocks.audio.field.source',
-                  defaultMessage: 'Audio source',
-                })}
-              </FieldLabel>
-              <SourceCard>
-                <Flex
-                  gap={2}
-                  alignItems="center"
-                  justifyContent="space-between"
-                >
-                  <Flex direction="column" gap={1} alignItems="flex-start">
-                    {hasSource ? (
-                      <>
-                        <Typography fontWeight="bold" variant="pi">
-                          {draft.file.name || draft.file.url}
-                        </Typography>
-                        {draft.file.size ? (
-                          <Typography variant="pi" textColor="neutral500">
-                            {formatBytes(draft.file.size)}
-                            {draft.file.mime ? ` · ${draft.file.mime}` : ''}
-                          </Typography>
-                        ) : null}
-                      </>
-                    ) : (
-                      <Typography variant="pi" textColor="neutral500">
-                        {formatMessage({
-                          id: 'components.Blocks.audio.source.empty',
-                          defaultMessage: 'No audio selected yet.',
-                        })}
+            </FieldLabel>
+            <SourceCard>
+              <Flex gap={2} alignItems="center" justifyContent="space-between">
+                <Flex direction="column" gap={1} alignItems="flex-start">
+                  {hasSource ? (
+                    <>
+                      <Typography fontWeight="bold" variant="pi">
+                        {draft.file.name || draft.file.url}
                       </Typography>
-                    )}
-                  </Flex>
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    disabled={!MediaLibraryDialog}
-                    onClick={() => setPickerOpen(true)}
-                  >
-                    {formatMessage({
-                      id: 'components.Blocks.audio.action.browse',
-                      defaultMessage: 'Media Library',
-                    })}
-                  </Button>
+                      {draft.file.size ? (
+                        <Typography variant="pi" textColor="neutral500">
+                          {formatBytes(draft.file.size)}
+                          {draft.file.mime ? ` · ${draft.file.mime}` : ''}
+                        </Typography>
+                      ) : null}
+                    </>
+                  ) : (
+                    <Typography variant="pi" textColor="neutral500">
+                      {formatMessage({
+                        id: 'components.Blocks.audio.source.empty',
+                        defaultMessage: 'No audio selected yet.',
+                      })}
+                    </Typography>
+                  )}
                 </Flex>
-
-                <Divider>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  disabled={!MediaLibraryDialog}
+                  onClick={() => setPickerOpen(true)}
+                >
                   {formatMessage({
-                    id: 'components.Blocks.audio.source.or',
-                    defaultMessage: 'or',
+                    id: 'components.Blocks.audio.action.browse',
+                    defaultMessage: 'Media Library',
                   })}
-                </Divider>
-
-                <TextField
-                  type="url"
-                  placeholder="https://example.com/episode.mp3"
-                  value={draft.file?.id ? '' : (draft.file?.url ?? '')}
-                  onChange={(e) =>
-                    patch({
-                      file: {
-                        url: e.target.value,
-                      },
-                    })
-                  }
-                />
-              </SourceCard>
-            </Flex>
-
-            {/* Live preview */}
-            {hasSource ? (
-              <Flex direction="column" gap={2} alignItems="stretch">
-                <FieldLabel>
-                  {formatMessage({
-                    id: 'components.Blocks.audio.field.preview',
-                    defaultMessage: 'Preview',
-                  })}
-                </FieldLabel>
-                <PreviewAudio
-                  key={draft.file.url}
-                  src={draft.file.url}
-                  controls
-                  preload="metadata"
-                />
+                </Button>
               </Flex>
-            ) : null}
 
-            {/* Title */}
+              <Divider>
+                {formatMessage({
+                  id: 'components.Blocks.audio.source.or',
+                  defaultMessage: 'or',
+                })}
+              </Divider>
+
+              <TextField
+                type="url"
+                placeholder="https://example.com/episode.mp3"
+                value={draft.file?.id ? '' : (draft.file?.url ?? '')}
+                onChange={(e) =>
+                  patch({
+                    file: {
+                      url: e.target.value,
+                    },
+                  })
+                }
+              />
+            </SourceCard>
+          </Flex>
+
+          {/* Live preview */}
+          {hasSource ? (
             <Flex direction="column" gap={2} alignItems="stretch">
               <FieldLabel>
                 {formatMessage({
-                  id: 'components.Blocks.audio.field.title',
-                  defaultMessage: 'Title (optional)',
+                  id: 'components.Blocks.audio.field.preview',
+                  defaultMessage: 'Preview',
                 })}
               </FieldLabel>
-              <TextField
-                type="text"
-                value={draft.title ?? ''}
-                onChange={(e) => patch({ title: e.target.value })}
+              <PreviewAudio
+                key={draft.file.url}
+                src={draft.file.url}
+                controls
+                preload="metadata"
               />
             </Flex>
+          ) : null}
 
-            {/* Caption */}
-            <Flex direction="column" gap={2} alignItems="stretch">
-              <FieldLabel>
-                {formatMessage({
-                  id: 'components.Blocks.audio.field.caption',
-                  defaultMessage: 'Caption (optional)',
-                })}
-              </FieldLabel>
-              <TextField
-                type="text"
-                value={draft.caption ?? ''}
-                onChange={(e) => patch({ caption: e.target.value })}
-              />
-            </Flex>
+          {/* Title */}
+          <Flex direction="column" gap={2} alignItems="stretch">
+            <FieldLabel>
+              {formatMessage({
+                id: 'components.Blocks.audio.field.title',
+                defaultMessage: 'Title (optional)',
+              })}
+            </FieldLabel>
+            <TextField
+              type="text"
+              value={draft.title ?? ''}
+              onChange={(e) => patch({ title: e.target.value })}
+            />
+          </Flex>
 
-            {/* Player settings */}
-            <Flex direction="column" gap={2} alignItems="stretch">
-              <FieldLabel>
-                {formatMessage({
-                  id: 'components.Blocks.audio.field.player',
-                  defaultMessage: 'Player settings',
-                })}
-              </FieldLabel>
-              <Flex gap={4} wrap="wrap">
-                <ToggleRow>
-                  <input
-                    type="checkbox"
-                    checked={draft.player.controls}
-                    onChange={(e) =>
-                      patchPlayer({ controls: e.target.checked })
-                    }
-                  />
-                  <Typography variant="pi">
-                    {formatMessage({
-                      id: 'components.Blocks.audio.player.controls',
-                      defaultMessage: 'Show controls',
-                    })}
-                  </Typography>
-                </ToggleRow>
-                <ToggleRow>
-                  <input
-                    type="checkbox"
-                    checked={draft.player.autoplay}
-                    onChange={(e) =>
-                      patchPlayer({ autoplay: e.target.checked })
-                    }
-                  />
-                  <Typography variant="pi">
-                    {formatMessage({
-                      id: 'components.Blocks.audio.player.autoplay',
-                      defaultMessage: 'Autoplay',
-                    })}
-                  </Typography>
-                </ToggleRow>
-                <ToggleRow>
-                  <input
-                    type="checkbox"
-                    checked={draft.player.loop}
-                    onChange={(e) => patchPlayer({ loop: e.target.checked })}
-                  />
-                  <Typography variant="pi">
-                    {formatMessage({
-                      id: 'components.Blocks.audio.player.loop',
-                      defaultMessage: 'Loop',
-                    })}
-                  </Typography>
-                </ToggleRow>
-              </Flex>
-              <Flex direction="column" gap={1} alignItems="flex-start">
-                <Typography variant="pi" textColor="neutral600">
+          {/* Caption */}
+          <Flex direction="column" gap={2} alignItems="stretch">
+            <FieldLabel>
+              {formatMessage({
+                id: 'components.Blocks.audio.field.caption',
+                defaultMessage: 'Caption (optional)',
+              })}
+            </FieldLabel>
+            <TextField
+              type="text"
+              value={draft.caption ?? ''}
+              onChange={(e) => patch({ caption: e.target.value })}
+            />
+          </Flex>
+
+          {/* Player settings */}
+          <Flex direction="column" gap={2} alignItems="stretch">
+            <FieldLabel>
+              {formatMessage({
+                id: 'components.Blocks.audio.field.player',
+                defaultMessage: 'Player settings',
+              })}
+            </FieldLabel>
+            <Flex gap={4} wrap="wrap">
+              <ToggleRow>
+                <input
+                  type="checkbox"
+                  checked={draft.player.controls}
+                  onChange={(e) => patchPlayer({ controls: e.target.checked })}
+                />
+                <Typography variant="pi">
                   {formatMessage({
-                    id: 'components.Blocks.audio.player.preload',
-                    defaultMessage: 'Preload',
+                    id: 'components.Blocks.audio.player.controls',
+                    defaultMessage: 'Show controls',
                   })}
                 </Typography>
-                <Select
-                  value={draft.player.preload}
-                  onChange={(e) =>
-                    patchPlayer({ preload: e.target.value as AudioPreload })
-                  }
-                >
-                  {PRELOADS.map((p) => (
-                    <option key={p} value={p}>
-                      {p}
-                    </option>
-                  ))}
-                </Select>
-              </Flex>
+              </ToggleRow>
+              <ToggleRow>
+                <input
+                  type="checkbox"
+                  checked={draft.player.autoplay}
+                  onChange={(e) => patchPlayer({ autoplay: e.target.checked })}
+                />
+                <Typography variant="pi">
+                  {formatMessage({
+                    id: 'components.Blocks.audio.player.autoplay',
+                    defaultMessage: 'Autoplay',
+                  })}
+                </Typography>
+              </ToggleRow>
+              <ToggleRow>
+                <input
+                  type="checkbox"
+                  checked={draft.player.loop}
+                  onChange={(e) => patchPlayer({ loop: e.target.checked })}
+                />
+                <Typography variant="pi">
+                  {formatMessage({
+                    id: 'components.Blocks.audio.player.loop',
+                    defaultMessage: 'Loop',
+                  })}
+                </Typography>
+              </ToggleRow>
             </Flex>
-
-            {/* Alignment */}
-            <Flex direction="column" gap={2} alignItems="stretch">
-              <FieldLabel>
+            <Flex direction="column" gap={1} alignItems="flex-start">
+              <Typography variant="pi" textColor="neutral600">
                 {formatMessage({
-                  id: 'components.Blocks.audio.field.alignment',
-                  defaultMessage: 'Alignment',
+                  id: 'components.Blocks.audio.player.preload',
+                  defaultMessage: 'Preload',
                 })}
-              </FieldLabel>
-              <AlignRow>
-                {ALIGNMENTS.map((a) => (
-                  <AlignButton
-                    key={a}
-                    type="button"
-                    $active={draft.alignment === a}
-                    onClick={() => patch({ alignment: a })}
-                  >
-                    {a}
-                  </AlignButton>
+              </Typography>
+              <Select
+                value={draft.player.preload}
+                onChange={(e) =>
+                  patchPlayer({ preload: e.target.value as AudioPreload })
+                }
+              >
+                {PRELOADS.map((p) => (
+                  <option key={p} value={p}>
+                    {p}
+                  </option>
                 ))}
-              </AlignRow>
+              </Select>
             </Flex>
-          </ModalBody>
+          </Flex>
 
-          <PanelFooter>
-            <Button variant="danger-light" type="button" onClick={onRemove}>
+          {/* Alignment */}
+          <Flex direction="column" gap={2} alignItems="stretch">
+            <FieldLabel>
               {formatMessage({
-                id: 'components.Blocks.popover.remove',
-                defaultMessage: 'Remove',
+                id: 'components.Blocks.audio.field.alignment',
+                defaultMessage: 'Alignment',
+              })}
+            </FieldLabel>
+            <AlignRow>
+              {ALIGNMENTS.map((a) => (
+                <AlignButton
+                  key={a}
+                  type="button"
+                  $active={draft.alignment === a}
+                  onClick={() => patch({ alignment: a })}
+                >
+                  {a}
+                </AlignButton>
+              ))}
+            </AlignRow>
+          </Flex>
+        </ModalBody>
+
+        <Modal.Footer>
+          <Button variant="danger-light" type="button" onClick={onRemove}>
+            {formatMessage({
+              id: 'components.Blocks.popover.remove',
+              defaultMessage: 'Remove',
+            })}
+          </Button>
+          <Flex gap={2} marginLeft="auto">
+            <Button variant="tertiary" type="button" onClick={onClose}>
+              {formatMessage({
+                id: 'global.cancel',
+                defaultMessage: 'Cancel',
               })}
             </Button>
-            <Flex gap={2} marginLeft="auto">
-              <Button variant="tertiary" type="button" onClick={onClose}>
-                {formatMessage({
-                  id: 'global.cancel',
-                  defaultMessage: 'Cancel',
-                })}
-              </Button>
-              <Button
-                type="button"
-                disabled={!hasSource}
-                onClick={() => onSave(draft)}
-              >
-                {formatMessage({ id: 'global.save', defaultMessage: 'Save' })}
-              </Button>
-            </Flex>
-          </PanelFooter>
-        </Panel>
+            <Button
+              type="button"
+              disabled={!hasSource}
+              onClick={() => onSave(draft)}
+            >
+              {formatMessage({ id: 'global.save', defaultMessage: 'Save' })}
+            </Button>
+          </Flex>
+        </Modal.Footer>
       </ModalContent>
-    </Overlay>
+    </Modal.Root>
   );
 };
 
