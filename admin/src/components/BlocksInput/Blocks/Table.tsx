@@ -22,6 +22,7 @@ import {
   buildTableGrid,
   covers,
   findCellByPath,
+  nodeIndexForColumn,
 } from './tableGrid';
 import {
   TABLE_TYPES,
@@ -30,6 +31,7 @@ import {
   createTableRow,
   getTableLocation,
   insertTable,
+  isHeaderRowAt,
   isTableElement,
 } from './tableOperations';
 
@@ -228,9 +230,33 @@ const TableCellElementComponent = ({
  * -------------------------------------------------------------------------*/
 
 /**
- * Trims any `rowSpan` that reaches past the last row, or `colSpan` past the
- * widest row. Returns true when something was changed, so the caller can let
- * Slate re-run normalization on the repaired table.
+ * How far a cell may extend downwards before it would cross from the header
+ * into the body (or the reverse). A `rowSpan` can't span `<thead>`/`<tbody>` in
+ * HTML, so one that does would render differently from what the editor shows.
+ */
+const rowSpanLimitAtHeaderBoundary = (
+  table: CustomElement,
+  grid: ReturnType<typeof buildTableGrid>,
+  cell: { row: number; rowSpan: number }
+): number => {
+  const originIsHeader = isHeaderRowAt(table, cell.row);
+  const last = Math.min(cell.row + cell.rowSpan, grid.rowCount);
+
+  for (let row = cell.row + 1; row < last; row++) {
+    if (isHeaderRowAt(table, row) !== originIsHeader) return row - cell.row;
+  }
+
+  return cell.rowSpan;
+};
+
+/**
+ * Repairs spans that can't be rendered as written: ones reaching past the last
+ * row or widest column, and ones crossing the header/body divide. The editor's
+ * own operations never produce these, but hand-edited or imported JSON can, and
+ * a bad span throws off every grid calculation.
+ *
+ * Every repair strictly decreases a span, so this always terminates. Returns
+ * true when something changed, so the caller can let Slate re-normalize.
  */
 const clampOversizedSpans = (
   editor: Editor,
@@ -241,7 +267,10 @@ const clampOversizedSpans = (
   let repaired = false;
 
   for (const cell of grid.cells) {
-    const maxRowSpan = Math.max(grid.rowCount - cell.row, 1);
+    const maxRowSpan = Math.min(
+      Math.max(grid.rowCount - cell.row, 1),
+      rowSpanLimitAtHeaderBoundary(table, grid, cell)
+    );
     const maxColSpan = Math.max(grid.colCount - cell.col, 1);
     const next: Record<string, number | undefined> = {};
 
@@ -260,6 +289,48 @@ const clampOversizedSpans = (
       });
       repaired = true;
     }
+  }
+
+  return repaired;
+};
+
+/**
+ * Fills any grid slot that no cell covers with an empty one, squaring the table
+ * off again.
+ *
+ * Ragged rows arrive from imported JSON, and clamping a span leaves the slots it
+ * used to cover empty — a clamp on its own would be a half-repair. Filling never
+ * widens the table (it only fills below `colCount`) and clamping only ever
+ * shrinks spans, so the two can't ping-pong.
+ */
+const fillUncoveredSlots = (
+  editor: Editor,
+  table: CustomElement,
+  tablePath: Path
+): boolean => {
+  const grid = buildTableGrid(table, tablePath);
+  let repaired = false;
+
+  for (let row = 0; row < grid.rowCount; row++) {
+    const missing: number[] = [];
+    for (let col = 0; col < grid.colCount; col++) {
+      if (!grid.matrix[row]?.[col]) missing.push(col);
+    }
+    if (missing.length === 0) continue;
+
+    const isHeader = isHeaderRowAt(table, row);
+    allowTableEdit(editor, () => {
+      missing.forEach((col, alreadyInserted) => {
+        Transforms.insertNodes(editor, createTableCell(isHeader) as never, {
+          at: [
+            ...tablePath,
+            row,
+            nodeIndexForColumn(grid, row, col) + alreadyInserted,
+          ],
+        });
+      });
+    });
+    repaired = true;
   }
 
   return repaired;
@@ -336,6 +407,7 @@ const withTables = (editor: Editor): Editor => {
       // Clamping strictly decreases the spans, so this always terminates.
       if ((node as CustomElement).type === 'table') {
         if (clampOversizedSpans(editor, node as CustomElement, path)) return;
+        if (fillUncoveredSlots(editor, node as CustomElement, path)) return;
       }
       return;
     }

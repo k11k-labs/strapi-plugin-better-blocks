@@ -34,6 +34,7 @@ import {
   insertColumn,
   insertRow,
   mergeCells,
+  rangeCrossesHeaderBoundary,
   setCellAlign,
   splitCell,
   toggleHeaderRow,
@@ -176,6 +177,9 @@ const TableToolbar = ({ location, disabled }: TableToolbarProps) => {
 
   const currentAlign = getCellAlign(location);
   const headerRowOn = hasHeaderRow(location);
+  const crossesHeader = Boolean(
+    location.range && rangeCrossesHeaderBoundary(location.table, location.range)
+  );
   const t = (id: string, defaultMessage: string) =>
     formatMessage({ id, defaultMessage });
 
@@ -232,10 +236,19 @@ const TableToolbar = ({ location, disabled }: TableToolbarProps) => {
       <Separator />
 
       <Action
-        label={t('components.Blocks.table.mergeCells', 'Merge cells')}
+        // A greyed-out button with no explanation is a dead end, so the reason
+        // it can't be used goes in the tooltip.
+        label={
+          crossesHeader
+            ? t(
+                'components.Blocks.table.mergeAcrossHeader',
+                "Header and body cells can't be merged"
+              )
+            : t('components.Blocks.table.mergeCells', 'Merge cells')
+        }
         icon={MergeCellsIcon}
         // Merging needs a selection covering more than one cell — drag across
-        // cells, or extend with Shift+arrow.
+        // cells, or click one and Shift+click another.
         disabled={disabled || !canMergeCells(location)}
         onAction={() => mergeCells(editor, location)}
       />

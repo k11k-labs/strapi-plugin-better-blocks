@@ -433,9 +433,33 @@ const deleteTable = (editor: Editor, location: TableLocation) => {
  * Merge & split
  * -------------------------------------------------------------------------*/
 
+/**
+ * Whether a range straddles the header/body divide.
+ *
+ * A header cell labels a column; one that runs from the header down into the
+ * body labels nothing and belongs to neither. HTML agrees — a `rowSpan` may not
+ * cross the `<thead>`/`<tbody>` boundary, so a browser would clamp it and render
+ * something different from what the editor shows. Merging is therefore confined
+ * to one side of the divide. Merging *within* the header (a heading spanning two
+ * columns) is perfectly fine and stays allowed.
+ */
+const rangeCrossesHeaderBoundary = (
+  table: CustomElement,
+  range: GridRange
+): boolean => {
+  const topIsHeader = isHeaderRowAt(table, range.top);
+
+  for (let row = range.top + 1; row <= range.bottom; row++) {
+    if (isHeaderRowAt(table, row) !== topIsHeader) return true;
+  }
+
+  return false;
+};
+
 /** Whether the selection covers enough distinct cells to merge. */
 const canMergeCells = (location: TableLocation): boolean => {
   if (!location.range) return false;
+  if (rangeCrossesHeaderBoundary(location.table, location.range)) return false;
   return cellsInRange(location.grid, location.range).length > 1;
 };
 
@@ -452,8 +476,11 @@ const canSplitCell = (location: TableLocation): boolean =>
  * operation would be unforgivable.
  */
 const mergeCells = (editor: Editor, location: TableLocation) => {
-  const { grid, range, tablePath } = location;
+  const { grid, range, tablePath, table } = location;
   if (!range) return;
+  // Guarded in the toolbar too; repeated here so the operation is safe to call
+  // from anywhere.
+  if (rangeCrossesHeaderBoundary(table, range)) return;
 
   const anchor = grid.matrix[range.top]?.[range.left];
   if (!anchor) return;
@@ -618,8 +645,10 @@ export {
   insertTable,
   isCellType,
   isHeaderRow,
+  isHeaderRowAt,
   isTableElement,
   mergeCells,
+  rangeCrossesHeaderBoundary,
   setCellAlign,
   splitCell,
   toggleHeaderRow,

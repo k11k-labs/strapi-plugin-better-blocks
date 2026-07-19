@@ -503,6 +503,10 @@ Rendering rules:
   When the first row consists entirely of header cells, wrap it in `<thead>` and
   the rest in `<tbody>`. Authors toggle this per table, so don't assume a header
   row exists.
+- **A `rowSpan` never crosses the header/body divide.** The editor won't merge
+  across it and normalizes away any span that does, because HTML doesn't allow a
+  cell to span `<thead>` into `<tbody>` — so `<thead>` is always exactly the
+  leading header rows, and no cell straddles the two groups.
 
 ### 2. Restart Strapi
 

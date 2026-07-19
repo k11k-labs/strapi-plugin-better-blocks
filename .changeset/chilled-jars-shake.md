@@ -18,6 +18,13 @@ absorbed cells is appended to the anchor rather than discarded.
 **Splitting.** **Split cell** resets the cell to 1×1 and refills every slot it
 vacates with an empty cell. Content stays where it was.
 
+**Header cells stay in the header.** A merge can't cross the header/body divide,
+because HTML doesn't let a `rowSpan` span `<thead>` into `<tbody>` — a browser
+would clamp it and render something other than what the editor showed, and
+`scope="col"` on a cell sitting in body rows labels nothing. The button explains
+itself in that state rather than just greying out. Merging _within_ the header —
+one heading across two columns — is unaffected.
+
 **The grid model underneath.** Once cells can span, a cell's index within its row
 is no longer its visual column: a row of three cells can cover four columns, and
 a `rowSpan` cell occupies a slot in the row below without having a node there.
@@ -38,8 +45,10 @@ any table containing a merge.
 **JSON shape.** `colSpan` / `rowSpan` on `table-cell` and `table-header-cell`,
 **absent meaning 1** — the same convention as `align`, so unmerged cells store
 neither key and existing tables need no migration. The full table contract is now
-documented in the README for renderer authors. A normalizer clamps spans that
-reach past the table's bounds, guarding against hand-edited or imported JSON.
+documented in the README for renderer authors. A normalizer repairs spans that
+can't be rendered as written — ones reaching past the table's bounds and ones
+crossing the header/body divide — and refills any slot left uncovered, so
+hand-edited or imported JSON is squared off rather than left ragged.
 
 Renderers need `colSpan` / `rowSpan` support to match — tracked in
 k11k-labs/better-blocks-react-renderer#50 and
