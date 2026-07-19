@@ -20,3 +20,7 @@ posts from degrading to a bare link on the frontend.
   "View on Pinterest" fallback card.
 - **`pin.it` short links are resolved** to their canonical `/pin/<id>/` URL
   before the Pinterest oEmbed request, which rejects short links.
+- **LinkedIn embeds keep their URN type.** Every id was rewritten to
+  `urn:li:share:<id>`, which LinkedIn 404s for the activity ids that appear in
+  share URLs, so no LinkedIn post ever loaded. The type from the URL
+  (`activity` / `ugcPost` / `share`) is now preserved.

@@ -120,10 +120,14 @@ const resolveShortUrl = async (url: string): Promise<string> => {
 const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
   // Activity URN appears in share URLs, e.g. .../urn:li:activity:7000000000000000000
   const urnMatch = url.match(
-    /(?:urn:li:)?(?:ugcPost|activity|share)[:-](\d{10,})/i
+    /(?:urn:li:)?(ugcPost|activity|share)[:-](\d{10,})/i
   );
   if (!urnMatch) return null;
-  const urn = `urn:li:share:${urnMatch[1]}`;
+  // The URN type matters: LinkedIn 404s an activity id addressed as a share.
+  // Share URLs (…-activity-<id>-<hash>) carry their own type — keep it.
+  const type =
+    urnMatch[1].toLowerCase() === 'ugcpost' ? 'ugcPost' : urnMatch[1];
+  const urn = `urn:li:${type}:${urnMatch[2]}`;
   const src = `https://www.linkedin.com/embed/feed/update/${encodeURIComponent(urn)}`;
   return {
     platform: 'linkedin',

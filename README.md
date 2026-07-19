@@ -457,6 +457,29 @@ export default [
 
 Without this, YouTube thumbnails will be blocked by the Content Security Policy in the Strapi admin panel. The `frame-src` directive is needed if you render the embeds as iframes on your frontend while previewing in Strapi.
 
+### Live social-embed previews
+
+A **social embed** shows a compact card in the editor, with a **Show live post**
+button that swaps in the real post. The preview uses each platform's script-free
+iframe embed (no widget JavaScript runs in the admin), so it only needs those
+hosts added to `frame-src`:
+
+```ts
+'frame-src': [
+  "'self'",
+  'https://platform.twitter.com', // X / Twitter
+  'https://www.instagram.com',
+  'https://www.facebook.com',
+  'https://www.tiktok.com',
+  'https://www.linkedin.com',
+  'https://assets.pinterest.com',
+],
+```
+
+Add only the platforms you enable. Without them the card still works — clicking
+**Show live post** just renders an empty frame, since the admin CSP blocks it.
+Third-party frames load only after that click, never on page load.
+
 ## Frontend Rendering
 
 To render Better Blocks content in your React frontend, use the companion renderer:
