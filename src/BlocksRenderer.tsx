@@ -9,8 +9,15 @@ import {
 } from 'react';
 import katex from 'katex';
 
+import {
+  MEDIA_CAPTION_STYLE,
+  getAspectRatio,
+  getMediaFigureStyle,
+  getMediaFrameStyle,
+} from './media';
 import { MermaidDiagram } from './MermaidDiagram';
 import { SocialEmbed } from './SocialEmbed';
+import { Video } from './Video';
 import type {
   AudioAlignment,
   AudioNode,
@@ -26,6 +33,7 @@ import type {
   CustomModifiersConfig,
   DetailsNode,
   DiagramNode,
+  EmbedNode,
   HeadingNode,
   HorizontalLineNode,
   ImageNode,
@@ -33,12 +41,14 @@ import type {
   ListItemNode,
   ListNode,
   MathNode,
+  MediaAlignment,
   MediaEmbedNode,
   ParagraphNode,
   QuoteNode,
   SocialEmbedNode,
   TableNode,
   TextNode,
+  VideoNode,
 } from './types';
 
 // ── Text / Modifier Rendering ────────────────────────────────────────
@@ -384,6 +394,10 @@ function renderBlock(
       return renderTable(block, key, blocks, modifiers);
     case 'media-embed':
       return renderMediaEmbed(block, key, blocks);
+    case 'embed':
+      return renderEmbed(block, key, blocks);
+    case 'video':
+      return renderVideo(block, key, blocks);
     case 'math':
       return renderMath(block, key, blocks);
     case 'diagram':
@@ -563,6 +577,129 @@ function renderMediaEmbed(
         title="Embedded media"
       />
     </div>
+  );
+}
+
+// ── Embed (Generic iframe) Rendering ─────────────────────────────────
+
+// The sanitized `embedHtml` carries the provider's own width/height, so make
+// the iframe fill the aspect-ratio box instead. Inline styles can't reach into
+// `dangerouslySetInnerHTML` markup, so this ships as a stylesheet — injected
+// only when the content actually renders a default embed.
+const EMBED_FRAME_CSS =
+  '.bb-embed-frame{overflow:hidden}' +
+  '.bb-embed-frame iframe{width:100%;height:100%;border:0;display:block}';
+
+/**
+ * Renders an `embed` node from its plugin-sanitized `embedHtml` — rebuilt from
+ * an attribute allowlist over an https-only `src`, with scripts, event handlers
+ * and inline styles stripped. `url` / `iframe` only round-trip the editor UI and
+ * are deliberately ignored. Override the `embed` block to render the parsed
+ * parts yourself instead of injecting the stored HTML.
+ */
+function renderEmbed(block: EmbedNode, key: number, blocks?: CustomBlocksConfig): ReactNode {
+  const EmbedComp = blocks?.embed;
+
+  if (EmbedComp) {
+    return (
+      <EmbedComp
+        key={key}
+        source={block.source}
+        url={block.url}
+        iframe={block.iframe}
+        embedHtml={block.embedHtml}
+        embedSrc={block.embedSrc}
+        provider={block.provider}
+        thumbnail={block.thumbnail}
+        aspectRatio={block.aspectRatio}
+        customAspectRatio={block.customAspectRatio}
+        alignment={block.alignment}
+        caption={block.caption}
+        title={block.title}
+      />
+    );
+  }
+
+  const alignment: MediaAlignment = block.alignment ?? 'center';
+  const ratio = getAspectRatio(block.aspectRatio, block.customAspectRatio);
+
+  // An embed whose source was cleared has no markup to inject. Fall back to a
+  // plain link when there's still a URL, so the block isn't silently lost.
+  const body = block.embedHtml ? (
+    <div
+      className="bb-embed-frame"
+      style={getMediaFrameStyle(alignment, ratio)}
+      dangerouslySetInnerHTML={{ __html: block.embedHtml }}
+    />
+  ) : block.url ? (
+    <a className="bb-embed-fallback" href={block.url} target="_blank" rel="noopener noreferrer">
+      {block.title || block.url}
+    </a>
+  ) : null;
+
+  if (!body) return null;
+
+  return (
+    <figure
+      key={key}
+      className={`bb-embed align-${alignment}`}
+      style={getMediaFigureStyle(alignment)}
+      aria-label={block.title}
+    >
+      {body}
+      {block.caption && (
+        <figcaption className="bb-embed-caption" style={MEDIA_CAPTION_STYLE}>
+          {block.caption}
+        </figcaption>
+      )}
+    </figure>
+  );
+}
+
+// ── Video (Provider-aware Player) Rendering ──────────────────────────
+
+function renderVideo(block: VideoNode, key: number, blocks?: CustomBlocksConfig): ReactNode {
+  const VideoComp = blocks?.video;
+
+  if (VideoComp) {
+    return (
+      <VideoComp
+        key={key}
+        provider={block.provider}
+        url={block.url}
+        assetId={block.assetId}
+        playbackId={block.playbackId}
+        file={block.file}
+        poster={block.poster}
+        title={block.title}
+        caption={block.caption}
+        transcript={block.transcript}
+        player={block.player}
+        alignment={block.alignment}
+        aspectRatio={block.aspectRatio}
+        customAspectRatio={block.customAspectRatio}
+      />
+    );
+  }
+
+  return (
+    <Video
+      key={key}
+      provider={block.provider}
+      url={block.url}
+      assetId={block.assetId}
+      playbackId={block.playbackId}
+      file={block.file}
+      poster={block.poster}
+      title={block.title}
+      caption={block.caption}
+      transcript={block.transcript}
+      player={block.player}
+      alignment={block.alignment}
+      aspectRatio={block.aspectRatio}
+      customAspectRatio={block.customAspectRatio}
+      instanceId={block.file?.id ?? key}
+    />
   );
 }
 
@@ -843,14 +980,14 @@ const BUTTON_HOVER_CSS =
   'color:var(--bb-button-hover-color,var(--bb-button-color))!important}' +
   '.bb-button:focus-visible{outline:2px solid currentColor;outline-offset:2px}';
 
-// True if any block in the tree renders a default (non-overridden) button, so we
-// only inject the style when it's actually needed. Recurses into child arrays
-// (e.g. buttons nested inside a details block).
-function contentHasButton(nodes: BlockNode[]): boolean {
+// True if any block in the tree has the given type, so the styles that block
+// needs are only injected when it's actually rendered. Recurses into child
+// arrays (e.g. a button nested inside a details block).
+function contentHasBlock(nodes: BlockNode[], type: BlockNode['type']): boolean {
   for (const node of nodes) {
-    if (node.type === 'button') return true;
+    if (node.type === type) return true;
     const children = (node as { children?: unknown }).children;
-    if (Array.isArray(children) && contentHasButton(children as BlockNode[])) return true;
+    if (Array.isArray(children) && contentHasBlock(children as BlockNode[], type)) return true;
   }
   return false;
 }
@@ -1099,14 +1236,16 @@ export function BlocksRenderer({ content, blocks, modifiers }: BlocksRendererPro
     return null;
   }
 
-  // Ship the default button hover/focus styles inline when the content renders
-  // a built-in button (skipped when the consumer overrides the `button` block,
-  // since their markup won't use the `.bb-button` class).
-  const needsButtonCss = !blocks?.button && contentHasButton(content);
+  // Ship the styles the built-in blocks need inline, so there's no stylesheet to
+  // import. Skipped when the consumer overrides the block, since their markup
+  // won't carry the `.bb-*` classes these rules target.
+  const needsButtonCss = !blocks?.button && contentHasBlock(content, 'button');
+  const needsEmbedCss = !blocks?.embed && contentHasBlock(content, 'embed');
 
   return (
     <>
       {needsButtonCss && <style>{BUTTON_HOVER_CSS}</style>}
+      {needsEmbedCss && <style>{EMBED_FRAME_CSS}</style>}
       {content.map((block, index) => renderBlock(block, index, blocks, modifiers))}
     </>
   );

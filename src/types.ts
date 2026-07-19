@@ -209,6 +209,99 @@ export type AudioNode = {
   children?: [{ type: 'text'; text: '' }];
 };
 
+// ── Embed & Video (shared) ───────────────────────────────────────────
+
+/** Alignment shared by the `embed` and `video` blocks. `none` flows full-width. */
+export type MediaAlignment = 'left' | 'center' | 'right' | 'none';
+
+/** Maps to CSS `aspect-ratio`; `custom` defers to `customAspectRatio`. */
+export type AspectRatio = '16:9' | '21:9' | '4:3' | '1:1' | 'custom';
+
+export type EmbedProvider =
+  | 'youtube'
+  | 'vimeo'
+  | 'loom'
+  | 'wistia'
+  | 'dailymotion'
+  | 'api-video'
+  | 'generic';
+
+/**
+ * Generic embed — a share URL the plugin turned into an iframe, or a raw
+ * snippet the author pasted. Either way `embedHtml` is the sanitized,
+ * ready-to-render markup; `url` / `iframe` only round-trip the editor UI.
+ */
+export type EmbedNode = {
+  type: 'embed';
+  /** Which input the author used. Drives which of `url` / `iframe` is set. */
+  source?: 'url' | 'iframe';
+  /** Original share URL (`source: 'url'`). */
+  url?: string;
+  /** Raw snippet exactly as pasted (`source: 'iframe'`). */
+  iframe?: string;
+  /** Sanitized iframe markup — the only field needed to render. */
+  embedHtml?: string;
+  /** The `src` of `embedHtml`, hoisted so renderers can check the host. */
+  embedSrc?: string;
+  provider?: EmbedProvider;
+  /** Poster image, when the provider exposes one without an API call. */
+  thumbnail?: string;
+  aspectRatio?: AspectRatio;
+  /** Free-form `width / height`, used when `aspectRatio` is `custom`. */
+  customAspectRatio?: string;
+  alignment?: MediaAlignment;
+  caption?: string;
+  /** Accessible name — already baked into `embedHtml` for URL-derived embeds. */
+  title?: string;
+  children?: [{ type: 'text'; text: '' }];
+};
+
+export type VideoProvider = 'local' | 'mux' | 'api-video' | 'cloudinary' | 'custom';
+
+/** Player behaviour flags, mirrored onto the HTML5 `<video>` element. */
+export type VideoPlayer = {
+  autoplay?: boolean;
+  loop?: boolean;
+  muted?: boolean;
+  controls?: boolean;
+};
+
+/** Media Library metadata, present when the source is an uploaded asset. */
+export type VideoFile = {
+  id?: number;
+  name?: string;
+  ext?: string;
+  mime?: string;
+  /** Size in bytes. */
+  size?: number;
+  /** Duration in seconds, when the provider reports it. */
+  duration?: number;
+  provider?: string;
+};
+
+export type VideoNode = {
+  type: 'video';
+  provider?: VideoProvider;
+  /** Playback URL: an HLS/DASH manifest, or a direct file URL for `local`. */
+  url: string;
+  /** Provider's asset identifier (Mux asset id, api.video video id, …). */
+  assetId?: string;
+  /** Provider's playback identifier (Mux playback id). */
+  playbackId?: string;
+  file?: VideoFile;
+  /** Thumbnail shown before playback. */
+  poster?: string;
+  title?: string;
+  caption?: string;
+  /** URL of a WebVTT track for captions/transcript. */
+  transcript?: string;
+  player?: VideoPlayer;
+  alignment?: MediaAlignment;
+  aspectRatio?: AspectRatio;
+  customAspectRatio?: string;
+  children?: [{ type: 'text'; text: '' }];
+};
+
 export type CalloutVariant = 'note' | 'tip' | 'important' | 'warning' | 'caution';
 
 export type CalloutNode = {
@@ -291,7 +384,9 @@ export type BlockNode =
   | DetailsNode
   | ButtonElement
   | SocialEmbedNode
-  | AudioNode;
+  | AudioNode
+  | EmbedNode
+  | VideoNode;
 
 export type BlocksContent = BlockNode[];
 
@@ -373,6 +468,35 @@ export type CustomBlocksConfig = Partial<{
     caption?: string;
     player: AudioPlayer;
     alignment?: AudioAlignment;
+  }>;
+  embed: ComponentType<{
+    source?: 'url' | 'iframe';
+    url?: string;
+    iframe?: string;
+    embedHtml?: string;
+    embedSrc?: string;
+    provider?: EmbedProvider;
+    thumbnail?: string;
+    aspectRatio?: AspectRatio;
+    customAspectRatio?: string;
+    alignment?: MediaAlignment;
+    caption?: string;
+    title?: string;
+  }>;
+  video: ComponentType<{
+    provider?: VideoProvider;
+    url: string;
+    assetId?: string;
+    playbackId?: string;
+    file?: VideoFile;
+    poster?: string;
+    title?: string;
+    caption?: string;
+    transcript?: string;
+    player?: VideoPlayer;
+    alignment?: MediaAlignment;
+    aspectRatio?: AspectRatio;
+    customAspectRatio?: string;
   }>;
 }>;
 

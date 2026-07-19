@@ -2001,4 +2001,401 @@ describe('BlocksRenderer', () => {
     expect(el).toHaveAttribute('data-url', '/uploads/ep1.mp3');
     expect(el.textContent).toBe('My Episode');
   });
+
+  // ── Embed (generic iframe) ───────────────────────────────────────
+
+  const EMBED_HTML =
+    '<iframe src="https://www.youtube.com/embed/abc12345678" title="Product Demo" allowfullscreen loading="lazy"></iframe>';
+
+  it('renders the sanitized embedHtml inside an aspect-ratio box', () => {
+    const content: BlocksContent = [
+      {
+        type: 'embed',
+        source: 'url',
+        url: 'https://www.youtube.com/watch?v=abc12345678',
+        embedHtml: EMBED_HTML,
+        embedSrc: 'https://www.youtube.com/embed/abc12345678',
+        provider: 'youtube',
+        aspectRatio: '16:9',
+        alignment: 'center',
+        title: 'Product Demo',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+
+    const figure = container.querySelector('figure.bb-embed');
+    expect(figure).toHaveClass('bb-embed', 'align-center');
+    expect(figure).toHaveAttribute('aria-label', 'Product Demo');
+
+    const frame = container.querySelector('.bb-embed-frame') as HTMLElement;
+    expect(frame.style.aspectRatio).toBe('16 / 9');
+    expect(frame.style.maxWidth).toBe('48rem');
+
+    const iframe = frame.querySelector('iframe') as HTMLIFrameElement;
+    expect(iframe.getAttribute('src')).toBe('https://www.youtube.com/embed/abc12345678');
+    expect(iframe.getAttribute('title')).toBe('Product Demo');
+  });
+
+  it('ships the embed frame stylesheet only when a default embed renders', () => {
+    const embed: BlocksContent = [{ type: 'embed', embedHtml: EMBED_HTML }];
+    const { container } = render(<BlocksRenderer content={embed} />);
+    expect(container.querySelector('style')?.textContent).toContain('.bb-embed-frame iframe');
+
+    const paragraph: BlocksContent = [
+      { type: 'paragraph', children: [{ type: 'text', text: 'Hi' }] },
+    ];
+    const { container: plain } = render(<BlocksRenderer content={paragraph} />);
+    expect(plain.querySelector('style')).toBeNull();
+
+    const { container: overridden } = render(
+      <BlocksRenderer content={embed} blocks={{ embed: () => <div /> }} />
+    );
+    expect(overridden.querySelector('style')).toBeNull();
+  });
+
+  it('converts each aspect ratio to a CSS value', () => {
+    const ratios: Array<[BlocksContent[number], string]> = [
+      [{ type: 'embed', embedHtml: EMBED_HTML, aspectRatio: '21:9' }, '21 / 9'],
+      [{ type: 'embed', embedHtml: EMBED_HTML, aspectRatio: '4:3' }, '4 / 3'],
+      [{ type: 'embed', embedHtml: EMBED_HTML, aspectRatio: '1:1' }, '1 / 1'],
+      [
+        { type: 'embed', embedHtml: EMBED_HTML, aspectRatio: 'custom', customAspectRatio: '3 / 2' },
+        '3 / 2',
+      ],
+      // Missing (or an empty custom value) falls back to 16:9.
+      [{ type: 'embed', embedHtml: EMBED_HTML }, '16 / 9'],
+      [{ type: 'embed', embedHtml: EMBED_HTML, aspectRatio: 'custom' }, '16 / 9'],
+    ];
+
+    for (const [block, expected] of ratios) {
+      const { container } = render(<BlocksRenderer content={[block]} />);
+      const frame = container.querySelector('.bb-embed-frame') as HTMLElement;
+      expect(frame.style.aspectRatio).toBe(expected);
+    }
+  });
+
+  it('stretches an embed with alignment "none" and caps the aligned ones', () => {
+    const { container } = render(
+      <BlocksRenderer content={[{ type: 'embed', embedHtml: EMBED_HTML, alignment: 'none' }]} />
+    );
+    const figure = container.querySelector('figure.bb-embed') as HTMLElement;
+    expect(figure).toHaveClass('align-none');
+    expect(figure.style.alignItems).toBe('stretch');
+    expect((container.querySelector('.bb-embed-frame') as HTMLElement).style.maxWidth).toBe('100%');
+
+    const { container: right } = render(
+      <BlocksRenderer content={[{ type: 'embed', embedHtml: EMBED_HTML, alignment: 'right' }]} />
+    );
+    expect((right.querySelector('figure.bb-embed') as HTMLElement).style.alignItems).toBe(
+      'flex-end'
+    );
+  });
+
+  it('renders an embed caption in a figcaption', () => {
+    const { container } = render(
+      <BlocksRenderer
+        content={[{ type: 'embed', embedHtml: EMBED_HTML, caption: 'A video explaining it' }]}
+      />
+    );
+    expect(container.querySelector('figcaption.bb-embed-caption')?.textContent).toBe(
+      'A video explaining it'
+    );
+  });
+
+  it('falls back to a link when an embed has no embedHtml', () => {
+    const { container } = render(
+      <BlocksRenderer
+        content={[{ type: 'embed', url: 'https://example.com/watch', title: 'Demo' }]}
+      />
+    );
+    const link = container.querySelector('a.bb-embed-fallback') as HTMLAnchorElement;
+    expect(link).toHaveAttribute('href', 'https://example.com/watch');
+    expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(link.textContent).toBe('Demo');
+
+    // No markup and no URL — nothing to render at all.
+    const { container: empty } = render(<BlocksRenderer content={[{ type: 'embed' }]} />);
+    expect(empty.querySelector('figure.bb-embed')).toBeNull();
+  });
+
+  it('uses a custom embed renderer with the parsed parts', () => {
+    render(
+      <BlocksRenderer
+        content={[
+          {
+            type: 'embed',
+            source: 'url',
+            url: 'https://vimeo.com/12345',
+            embedHtml: EMBED_HTML,
+            embedSrc: 'https://player.vimeo.com/video/12345',
+            provider: 'vimeo',
+          },
+        ]}
+        blocks={{
+          embed: ({ provider, embedSrc, source }) => (
+            <div data-testid="custom-embed" data-provider={provider} data-source={source}>
+              {embedSrc}
+            </div>
+          ),
+        }}
+      />
+    );
+    const el = screen.getByTestId('custom-embed');
+    expect(el).toHaveAttribute('data-provider', 'vimeo');
+    expect(el).toHaveAttribute('data-source', 'url');
+    expect(el.textContent).toBe('https://player.vimeo.com/video/12345');
+  });
+
+  // ── Video ────────────────────────────────────────────────────────
+
+  it('renders a native <video>, mapping the player flags 1:1', () => {
+    const content: BlocksContent = [
+      {
+        type: 'video',
+        provider: 'local',
+        url: '/uploads/demo.mp4',
+        poster: '/uploads/demo.jpg',
+        file: { id: 12, name: 'demo.mp4', mime: 'video/mp4' },
+        player: { autoplay: true, loop: true, muted: true, controls: true },
+        aspectRatio: '16:9',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+
+    const figure = container.querySelector('figure.bb-video');
+    expect(figure).toHaveClass('bb-video', 'align-center');
+
+    const video = container.querySelector('video') as HTMLVideoElement;
+    expect(video.getAttribute('src')).toBe('/uploads/demo.mp4');
+    expect(video.getAttribute('poster')).toBe('/uploads/demo.jpg');
+    expect(video.controls).toBe(true);
+    expect(video.autoplay).toBe(true);
+    expect(video.loop).toBe(true);
+    expect(video.muted).toBe(true);
+    // A direct file can be prefetched; a streaming manifest can't (see below).
+    expect(video.getAttribute('preload')).toBe('metadata');
+    expect(video).toHaveAttribute('aria-label', 'Video player');
+    expect((container.querySelector('.bb-video-frame') as HTMLElement).style.aspectRatio).toBe(
+      '16 / 9'
+    );
+  });
+
+  it('defaults the video player flags to controls-only playback', () => {
+    const { container } = render(
+      <BlocksRenderer content={[{ type: 'video', provider: 'local', url: '/uploads/demo.mp4' }]} />
+    );
+    const video = container.querySelector('video') as HTMLVideoElement;
+    expect(video.controls).toBe(true);
+    expect(video.autoplay).toBe(false);
+    expect(video.loop).toBe(false);
+    expect(video.muted).toBe(false);
+  });
+
+  it('renders the video title, caption and transcript track', () => {
+    const content: BlocksContent = [
+      {
+        type: 'video',
+        provider: 'local',
+        url: '/uploads/demo.mp4',
+        file: { id: 12 },
+        title: 'Introduction Video',
+        caption: 'Watch this to get started',
+        transcript: 'https://example.com/captions.vtt',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+
+    expect(container.querySelector('figcaption.bb-video-title')?.textContent).toBe(
+      'Introduction Video'
+    );
+    const video = container.querySelector('video') as HTMLVideoElement;
+    expect(video).toHaveAttribute('aria-label', 'Introduction Video');
+
+    const caption = container.querySelector('figcaption.bb-video-caption') as HTMLElement;
+    expect(caption.textContent).toBe('Watch this to get started');
+    expect(caption.id).toBe('bb-video-cap-12');
+    expect(video).toHaveAttribute('aria-describedby', 'bb-video-cap-12');
+
+    const track = video.querySelector('track') as HTMLTrackElement;
+    expect(track).toHaveAttribute('kind', 'captions');
+    expect(track).toHaveAttribute('src', 'https://example.com/captions.vtt');
+  });
+
+  it('omits aria-describedby on a video with no caption', () => {
+    const { container } = render(
+      <BlocksRenderer content={[{ type: 'video', provider: 'local', url: '/uploads/demo.mp4' }]} />
+    );
+    expect(container.querySelector('video')).not.toHaveAttribute('aria-describedby');
+  });
+
+  it('ships fallback text and a download link inside <video>', () => {
+    const { container } = render(
+      <BlocksRenderer content={[{ type: 'video', provider: 'local', url: '/uploads/demo.mp4' }]} />
+    );
+    const video = container.querySelector('video') as HTMLVideoElement;
+    expect(video.textContent).toContain('Your browser does not support the video element.');
+    expect(video.querySelector('a')).toHaveAttribute('href', '/uploads/demo.mp4');
+  });
+
+  it('does not prefetch an HLS manifest the browser may not parse', () => {
+    const { container } = render(
+      <BlocksRenderer
+        content={[
+          {
+            type: 'video',
+            provider: 'mux',
+            url: 'https://stream.mux.com/def456.m3u8',
+            playbackId: 'def456',
+            poster: 'https://image.mux.com/def456/thumbnail.jpg',
+          },
+        ]}
+      />
+    );
+    const video = container.querySelector('video') as HTMLVideoElement;
+    expect(video.getAttribute('preload')).toBe('none');
+    // No mux-player registered and no window.Hls — the poster carries the block.
+    expect(video.getAttribute('poster')).toBe('https://image.mux.com/def456/thumbnail.jpg');
+  });
+
+  it('attaches window.Hls to an HLS source when the consumer provides it', () => {
+    const loadSource = vi.fn();
+    const attachMedia = vi.fn();
+    const destroy = vi.fn();
+    class FakeHls {
+      static isSupported = () => true;
+      loadSource = loadSource;
+      attachMedia = attachMedia;
+      destroy = destroy;
+    }
+    (window as unknown as { Hls?: unknown }).Hls = FakeHls;
+
+    try {
+      const { container, unmount } = render(
+        <BlocksRenderer
+          content={[
+            {
+              type: 'video',
+              provider: 'mux',
+              url: 'https://stream.mux.com/def456.m3u8',
+              playbackId: 'def456',
+            },
+          ]}
+        />
+      );
+
+      expect(loadSource).toHaveBeenCalledWith('https://stream.mux.com/def456.m3u8');
+      expect(attachMedia).toHaveBeenCalledWith(container.querySelector('video'));
+
+      unmount();
+      expect(destroy).toHaveBeenCalled();
+    } finally {
+      delete (window as unknown as { Hls?: unknown }).Hls;
+    }
+  });
+
+  it('prefers hls.js over a browser that only claims to play HLS', () => {
+    // Chrome answers "maybe" for application/vnd.apple.mpegurl and then plays
+    // nothing, so canPlayType must not win over an available hls.js.
+    const canPlayType = vi
+      .spyOn(window.HTMLMediaElement.prototype, 'canPlayType')
+      .mockReturnValue('maybe');
+    const attachMedia = vi.fn();
+    class FakeHls {
+      static isSupported = () => true;
+      loadSource = vi.fn();
+      attachMedia = attachMedia;
+      destroy = vi.fn();
+    }
+    (window as unknown as { Hls?: unknown }).Hls = FakeHls;
+
+    try {
+      render(
+        <BlocksRenderer
+          content={[{ type: 'video', provider: 'mux', url: 'https://stream.mux.com/x.m3u8' }]}
+        />
+      );
+      expect(attachMedia).toHaveBeenCalled();
+    } finally {
+      delete (window as unknown as { Hls?: unknown }).Hls;
+      canPlayType.mockRestore();
+    }
+  });
+
+  it('leaves a direct file URL alone even when hls.js is available', () => {
+    const loadSource = vi.fn();
+    class FakeHls {
+      static isSupported = () => true;
+      loadSource = loadSource;
+      attachMedia = vi.fn();
+      destroy = vi.fn();
+    }
+    (window as unknown as { Hls?: unknown }).Hls = FakeHls;
+
+    try {
+      render(
+        <BlocksRenderer
+          content={[{ type: 'video', provider: 'local', url: '/uploads/demo.mp4' }]}
+        />
+      );
+      expect(loadSource).not.toHaveBeenCalled();
+    } finally {
+      delete (window as unknown as { Hls?: unknown }).Hls;
+    }
+  });
+
+  it('renders <mux-player> once the custom element is registered', async () => {
+    const content: BlocksContent = [
+      {
+        type: 'video',
+        provider: 'mux',
+        url: 'https://stream.mux.com/def456.m3u8',
+        playbackId: 'def456',
+        poster: 'https://image.mux.com/def456/thumbnail.jpg',
+        title: 'Introduction Video',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+
+    // Not registered yet — the native element holds the place.
+    expect(container.querySelector('mux-player')).toBeNull();
+    expect(container.querySelector('video')).toBeInTheDocument();
+
+    customElements.define('mux-player', class extends HTMLElement {});
+
+    await waitFor(() => {
+      const mux = container.querySelector('mux-player');
+      expect(mux).toBeInTheDocument();
+      expect(mux).toHaveAttribute('playback-id', 'def456');
+      expect(mux).toHaveAttribute('poster', 'https://image.mux.com/def456/thumbnail.jpg');
+      expect(mux).toHaveAttribute('metadata-video-title', 'Introduction Video');
+    });
+    expect(container.querySelector('video')).toBeNull();
+  });
+
+  it('uses a custom video renderer', () => {
+    render(
+      <BlocksRenderer
+        content={[
+          {
+            type: 'video',
+            provider: 'mux',
+            url: 'https://stream.mux.com/def456.m3u8',
+            playbackId: 'def456',
+            title: 'Intro',
+          },
+        ]}
+        blocks={{
+          video: ({ provider, playbackId, title }) => (
+            <div data-testid="custom-video" data-provider={provider} data-playback-id={playbackId}>
+              {title}
+            </div>
+          ),
+        }}
+      />
+    );
+    const el = screen.getByTestId('custom-video');
+    expect(el).toHaveAttribute('data-provider', 'mux');
+    expect(el).toHaveAttribute('data-playback-id', 'def456');
+    expect(el.textContent).toBe('Intro');
+  });
 });

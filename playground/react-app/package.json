@@ -13,6 +13,7 @@
     "react-dom": "^19.0.0",
     "katex": "^0.16.11",
     "mermaid": "^11.4.0",
+    "hls.js": "^1.5.0",
     "@k11k/better-blocks-react-renderer": "file:../../"
   },
   "devDependencies": {

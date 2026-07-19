@@ -1312,7 +1312,12 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Callouts (Admonitions)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Callouts (Admonitions)"
+        }
+      ]
     },
     {
       "type": "callout",
@@ -1337,9 +1342,19 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "Callouts support a " },
-            { "type": "text", "text": "custom title", "bold": true },
-            { "type": "text", "text": " and nested content, including lists:" }
+            {
+              "type": "text",
+              "text": "Callouts support a "
+            },
+            {
+              "type": "text",
+              "text": "custom title",
+              "bold": true
+            },
+            {
+              "type": "text",
+              "text": " and nested content, including lists:"
+            }
           ]
         },
         {
@@ -1348,17 +1363,34 @@
           "children": [
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Paragraphs" }]
-            },
-            {
-              "type": "list-item",
-              "children": [{ "type": "text", "text": "Lists" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Paragraphs"
+                }
+              ]
             },
             {
               "type": "list-item",
               "children": [
-                { "type": "text", "text": "Links and " },
-                { "type": "text", "text": "inline formatting", "italic": true }
+                {
+                  "type": "text",
+                  "text": "Lists"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Links and "
+                },
+                {
+                  "type": "text",
+                  "text": "inline formatting",
+                  "italic": true
+                }
               ]
             }
           ]
@@ -1372,7 +1404,10 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "Key information users need to know." }
+            {
+              "type": "text",
+              "text": "Key information users need to know."
+            }
           ]
         }
       ]
@@ -1384,7 +1419,10 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "Pay attention to this potentially risky step." }
+            {
+              "type": "text",
+              "text": "Pay attention to this potentially risky step."
+            }
           ]
         }
       ]
@@ -1396,7 +1434,10 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "Negative consequences can result from this action." }
+            {
+              "type": "text",
+              "text": "Negative consequences can result from this action."
+            }
           ]
         }
       ]
@@ -1413,7 +1454,12 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Details / Summary (Collapsible)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Details / Summary (Collapsible)"
+        }
+      ]
     },
     {
       "type": "details",
@@ -1427,10 +1473,24 @@
               "type": "text",
               "text": "This content is hidden until you open the disclosure. It renders as native, accessible "
             },
-            { "type": "text", "text": "<details>", "code": true },
-            { "type": "text", "text": " / " },
-            { "type": "text", "text": "<summary>", "code": true },
-            { "type": "text", "text": " HTML." }
+            {
+              "type": "text",
+              "text": "<details>",
+              "code": true
+            },
+            {
+              "type": "text",
+              "text": " / "
+            },
+            {
+              "type": "text",
+              "text": "<summary>",
+              "code": true
+            },
+            {
+              "type": "text",
+              "text": " HTML."
+            }
           ]
         }
       ]
@@ -1443,9 +1503,19 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "This block uses " },
-            { "type": "text", "text": "defaultOpen", "code": true },
-            { "type": "text", "text": " and can hold any block-level content, including lists:" }
+            {
+              "type": "text",
+              "text": "This block uses "
+            },
+            {
+              "type": "text",
+              "text": "defaultOpen",
+              "code": true
+            },
+            {
+              "type": "text",
+              "text": " and can hold any block-level content, including lists:"
+            }
           ]
         },
         {
@@ -1454,15 +1524,30 @@
           "children": [
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Paragraphs" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Paragraphs"
+                }
+              ]
             },
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Lists" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Lists"
+                }
+              ]
             },
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Even nested disclosures" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Even nested disclosures"
+                }
+              ]
             }
           ]
         },
@@ -1474,7 +1559,10 @@
             {
               "type": "paragraph",
               "children": [
-                { "type": "text", "text": "Details blocks can be arbitrarily nested." }
+                {
+                  "type": "text",
+                  "text": "Details blocks can be arbitrarily nested."
+                }
               ]
             }
           ]
@@ -1484,11 +1572,21 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Buttons (CTA & File Download)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Buttons (CTA & File Download)"
+        }
+      ]
     },
     {
       "type": "button",
-      "children": [{ "type": "text", "text": "" }],
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
       "buttonType": "link",
       "label": "Get started",
       "alignment": "center",
@@ -1521,7 +1619,12 @@
     },
     {
       "type": "button",
-      "children": [{ "type": "text", "text": "" }],
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
       "buttonType": "file",
       "label": "Download PDF",
       "alignment": "center",
@@ -1549,7 +1652,12 @@
     },
     {
       "type": "button",
-      "children": [{ "type": "text", "text": "" }],
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
       "buttonType": "file",
       "label": "Preview PDF",
       "alignment": "center",
@@ -1577,7 +1685,12 @@
     },
     {
       "type": "button",
-      "children": [{ "type": "text", "text": "" }],
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
       "buttonType": "file",
       "label": "Download DOCX",
       "alignment": "center",
@@ -1854,7 +1967,12 @@
         "preload": "metadata"
       },
       "alignment": "center",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "audio",
@@ -1870,7 +1988,133 @@
         "preload": "none"
       },
       "alignment": "none",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [
+        {
+          "type": "text",
+          "text": "Embed"
+        }
+      ]
+    },
+    {
+      "type": "embed",
+      "source": "url",
+      "url": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "embedHtml": "<iframe src=\"https://www.youtube.com/embed/dQw4w9WgXcQ\" title=\"Never Gonna Give You Up\" frameborder=\"0\" allow=\"accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share\" allowfullscreen loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"></iframe>",
+      "embedSrc": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "provider": "youtube",
+      "thumbnail": "https://img.youtube.com/vi/dQw4w9WgXcQ/hqdefault.jpg",
+      "aspectRatio": "16:9",
+      "alignment": "center",
+      "title": "Never Gonna Give You Up",
+      "caption": "YouTube share URL, 16:9, centered.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "embed",
+      "source": "iframe",
+      "iframe": "<iframe src=\"https://player.vimeo.com/video/76979871\"></iframe>",
+      "embedHtml": "<iframe src=\"https://player.vimeo.com/video/76979871\" title=\"Vimeo staff pick\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"></iframe>",
+      "embedSrc": "https://player.vimeo.com/video/76979871",
+      "provider": "generic",
+      "aspectRatio": "custom",
+      "customAspectRatio": "21 / 9",
+      "alignment": "none",
+      "caption": "Pasted iframe, custom 21 / 9 ratio, full-width (alignment: none).",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [
+        {
+          "type": "text",
+          "text": "Video"
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "provider": "local",
+      "url": "https://mdn.github.io/shared-assets/videos/flower.mp4",
+      "file": {
+        "id": 2,
+        "name": "flower.mp4",
+        "ext": ".mp4",
+        "mime": "video/mp4",
+        "size": 2094650,
+        "duration": 15.0,
+        "provider": "local"
+      },
+      "title": "Time-lapse: a flower opening",
+      "caption": "Media Library asset — native HTML5 player, with a WebVTT captions track.",
+      "player": {
+        "autoplay": false,
+        "loop": false,
+        "muted": false,
+        "controls": true
+      },
+      "alignment": "center",
+      "aspectRatio": "16:9",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ],
+      "transcript": "https://mdn.github.io/shared-assets/misc/friday.vtt"
+    },
+    {
+      "type": "video",
+      "provider": "mux",
+      "url": "https://stream.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe.m3u8",
+      "assetId": "sample-asset",
+      "playbackId": "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe",
+      "poster": "https://image.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/thumbnail.jpg",
+      "title": "Mux sample (HLS)",
+      "caption": "HLS manifest — plays natively in Safari, via hls.js elsewhere, poster otherwise.",
+      "player": {
+        "autoplay": false,
+        "loop": false,
+        "muted": false,
+        "controls": true
+      },
+      "alignment": "center",
+      "aspectRatio": "16:9",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "The deprecated media-embed block above still renders, so older documents keep working."
+        }
+      ]
     },
     {
       "type": "paragraph",
