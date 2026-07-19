@@ -1618,24 +1618,210 @@
       "platform": "twitter",
       "url": "https://twitter.com/Interior/status/463440424141459456",
       "alignment": "center",
-      "caption": "A tweet embedded from X (Twitter).",
       "oembed": {
-        "html": "<blockquote class=\"twitter-tweet\"><p lang=\"en\" dir=\"ltr\">Sunsets don't get much better than this one over <a href=\"https://twitter.com/GrandTetonNPS\">@GrandTetonNPS</a>. <a href=\"https://t.co/YuKy2rcjyU\">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Department of the Interior (@Interior) <a href=\"https://twitter.com/Interior/status/463440424141459456\">May 5, 2014</a></blockquote>",
+        "html": "<blockquote class=\"twitter-tweet\" data-dnt=\"true\"><p lang=\"en\" dir=\"ltr\">Sunsets don&#39;t get much better than this one over <a href=\"https://x.com/GrandTetonNPS?ref_src=twsrc%5Etfw\">@GrandTetonNPS</a>. <a href=\"https://x.com/hashtag/nature?src=hash&amp;ref_src=twsrc%5Etfw\">#nature</a> <a href=\"https://x.com/hashtag/sunset?src=hash&amp;ref_src=twsrc%5Etfw\">#sunset</a> <a href=\"http://t.co/YuKy2rcjyU\">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Department of the Interior (@Interior) <a href=\"https://x.com/Interior/status/463440424141459456?ref_src=twsrc%5Etfw\">May 5, 2014</a></blockquote>\n\n",
         "author": "US Department of the Interior",
-        "authorUrl": "https://twitter.com/Interior",
-        "providerName": "Twitter",
+        "authorUrl": "https://x.com/Interior",
+        "providerName": "X",
         "width": 550,
+        "height": null
+      },
+      "caption": "Twitter/X — oEmbed html, already script-free (omit_script=true). Needs widgets.js, which X serves only to allowed referrers.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "tiktok",
+      "url": "https://www.tiktok.com/@scout2015/video/6718335390845095173",
+      "alignment": "center",
+      "oembed": {
+        "html": "<blockquote class=\"tiktok-embed\" cite=\"https://www.tiktok.com/@scout2015/video/6718335390845095173\" data-video-id=\"6718335390845095173\" data-embed-from=\"oembed\" style=\"max-width:605px; min-width:325px;\"> <section> <a target=\"_blank\" title=\"@scout2015\" href=\"https://www.tiktok.com/@scout2015?refer=embed\">@scout2015</a> <p>Scramble up ur name & I’ll try to guess it😍❤️ <a title=\"foryoupage\" target=\"_blank\" href=\"https://www.tiktok.com/tag/foryoupage?refer=embed\">#foryoupage</a> <a title=\"petsoftiktok\" target=\"_blank\" href=\"https://www.tiktok.com/tag/petsoftiktok?refer=embed\">#petsoftiktok</a> <a title=\"aesthetic\" target=\"_blank\" href=\"https://www.tiktok.com/tag/aesthetic?refer=embed\">#aesthetic</a></p> <a target=\"_blank\" title=\"♬ original sound - tiff\" href=\"https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed\">♬ original sound - tiff</a> </section> </blockquote> <script async src=\"https://www.tiktok.com/embed.js\"></script>",
+        "title": "Scramble up ur name & I’ll try to guess it😍❤️ #foryoupage #petsoftiktok #aesthetic",
+        "author": "Scout, Suki & Stella",
+        "authorUrl": "https://www.tiktok.com/@scout2015",
+        "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-maliva-p-0068/2367c7d45cf54a1397abd0e72bf22eac~tplv-tiktokx-origin.image?dr=10395&x-expires=1784635200&x-signature=1PKIeFApi7zsMmfl32NBJbCj9jg%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
+        "providerName": "TikTok"
+      },
+      "caption": "TikTok — oEmbed html always ships an inline <script>; it is stripped and embed.js is injected instead. This is the bug from issue #45.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "pinterest",
+      "url": "https://www.pinterest.com/pin/99360735500167749/",
+      "alignment": "right",
+      "oembed": {
+        "html": "<iframe src=\"https://assets.pinterest.com/ext/embed.html?id=99360735500167749&src=oembed\" height=\"436\" width=\"450\" frameborder=\"0\" scrolling=\"no\" ></iframe>",
+        "title": "Love my Pinterest t-shirt!",
+        "author": "Kent Brewster",
+        "authorUrl": "https://www.pinterest.com/kentbrew/",
+        "thumbnailUrl": "https://i.pinimg.com/236x/a7/66/56/a76656e966b1958f568d63c3f1c05aec.jpg",
+        "providerName": "Pinterest",
+        "width": 450,
+        "height": 436
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "pinterest",
+      "url": "https://www.pinterest.com/pin/99360735500167749/",
+      "alignment": "center",
+      "embedCode": "<a data-pin-do=\"embedPin\" data-pin-width=\"large\" href=\"https://www.pinterest.com/pin/99360735500167749/\"></a><script async defer src=\"https://assets.pinterest.com/js/pinit.js\"></script>",
+      "oembed": {
+        "html": "<blockquote>oembed.html — must NOT render</blockquote>",
+        "providerName": "Pinterest"
+      },
+      "caption": "embedCode wins over oembed.html — the pin below comes from the pasted snippet, not from the (deliberately broken) oEmbed html.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "pinterest",
+      "alignment": "center",
+      "embedCode": "<a data-pin-do=\"embedPin\" data-pin-width=\"medium\" href=\"https://www.pinterest.com/pin/99360735500167749/\"></a><script async defer src=\"https://assets.pinterest.com/js/pinit.js\"></script>",
+      "caption": "Pinterest — pasted embedCode with no url at all: PinUtils.build() upgrades the anchor, and the fallback card would render as a <div>, never an empty <a>.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "linkedin",
+      "url": "https://www.linkedin.com/posts/alicjasmin_activity-7282719529426636800-tlhy",
+      "alignment": "center",
+      "oembed": {
+        "html": "<iframe src=\"https://www.linkedin.com/embed/feed/update/urn%3Ali%3Aactivity%3A7282719529426636800\" height=\"600\" width=\"100%\" frameborder=\"0\" allowfullscreen title=\"Embedded LinkedIn post\"></iframe>",
+        "providerName": "LinkedIn",
+        "width": 504,
         "height": 600
       },
-      "children": [{ "type": "text", "text": "" }]
+      "caption": "LinkedIn — self-contained iframe, the one platform with no widget script; the iframe keeps loading=\"lazy\". Renders only for posts LinkedIn serves publicly.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/p/C/",
+      "alignment": "center",
+      "embedCode": "<blockquote class=\"instagram-media\" data-instgrm-captioned data-instgrm-permalink=\"https://www.instagram.com/p/C/\" data-instgrm-version=\"14\"></blockquote><script async src=\"//www.instagram.com/embed.js\"></script>",
+      "caption": "Instagram — pasted embedCode carrying the inline embed.js tag (stripped, then injected). Instagram serves embeds only for public posts.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "facebook",
+      "url": "https://www.facebook.com/20531316728/posts/10154009990506729/",
+      "alignment": "center",
+      "embedCode": "<div class=\"fb-post\" data-href=\"https://www.facebook.com/20531316728/posts/10154009990506729/\" data-width=\"500\"></div><script async defer crossorigin=\"anonymous\" src=\"https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0\"></script>",
+      "caption": "Facebook — fb-post markup driven by FB.XFBML.parse(). Facebook renders it only for apps it recognises, so without an app id it stays blank.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "social-embed",
       "platform": "twitter",
       "url": "https://twitter.com/Interior/status/463440424141459456",
       "alignment": "left",
-      "caption": "Fallback link card (no oembed/embedCode).",
-      "children": [{ "type": "text", "text": "" }]
+      "caption": "Fallback — nothing but a url: a single \"View on X\" line, with no provider line repeating it.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/p/C/",
+      "alignment": "center",
+      "oembed": {
+        "author": "kevin",
+        "authorUrl": "https://www.instagram.com/kevin/",
+        "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Example.jpg/120px-Example.jpg",
+        "providerName": "Instagram"
+      },
+      "caption": "Fallback — author + thumbnail, no title.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "tiktok",
+      "url": "https://www.tiktok.com/@scout2015/video/6718335390845095173",
+      "alignment": "right",
+      "oembed": {
+        "title": "Scramble up ur name & I'll try to guess it",
+        "author": "Scout, Suki & Stella",
+        "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Example.jpg/120px-Example.jpg",
+        "providerName": "TikTok"
+      },
+      "caption": "Fallback — title + author + thumbnail.",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "social-embed",
+      "platform": "facebook",
+      "url": "https://www.facebook.com/20531316728/posts/10154009990506729/",
+      "alignment": "left",
+      "oembed": {
+        "author": "Facebook",
+        "providerName": "Facebook"
+      },
+      "caption": "Fallback — author only, no thumbnail (Facebook oEmbed needs an access token).",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",

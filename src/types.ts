@@ -161,7 +161,8 @@ export type SocialEmbedOembed = {
 export type SocialEmbedNode = {
   type: 'social-embed';
   platform: SocialPlatform;
-  url: string;
+  /** Absent when the author saved a manual `embedCode` without a source URL. */
+  url?: string;
   /** Author-pasted manual override, takes priority over `oembed.html`. */
   embedCode?: string;
   /** Fetched server-side by the plugin at author time. */
@@ -360,7 +361,7 @@ export type CustomBlocksConfig = Partial<{
   }>;
   'social-embed': ComponentType<{
     platform: SocialPlatform;
-    url: string;
+    url?: string;
     embedCode?: string;
     oembed?: SocialEmbedOembed;
     alignment?: SocialEmbedAlignment;

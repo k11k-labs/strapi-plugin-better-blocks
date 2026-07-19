@@ -1682,7 +1682,24 @@ describe('BlocksRenderer', () => {
     const thumb = link?.querySelector('img.bb-social-embed-fallback-thumb');
     expect(thumb).toHaveAttribute('src', 'https://example.com/thumb.jpg');
     expect(thumb).toHaveAttribute('loading', 'lazy');
-    expect(link?.textContent).toContain('X post by Jane Doe');
+    expect(link?.querySelector('.bb-social-embed-fallback-title')?.textContent).toBe(
+      'Post by Jane Doe'
+    );
+    expect(link?.querySelector('.bb-social-embed-fallback-provider')?.textContent).toBe('X');
+  });
+
+  it('omits the provider line when it would just repeat the fallback title', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'twitter',
+        url: 'https://x.com/user/status/999',
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const link = container.querySelector('a.bb-social-embed-fallback');
+    expect(link?.querySelector('.bb-social-embed-fallback-title')?.textContent).toBe('View on X');
+    expect(link?.querySelector('.bb-social-embed-fallback-provider')).not.toBeInTheDocument();
   });
 
   it('sets loading="lazy" on iframes shipped in the embed markup', async () => {
@@ -1720,6 +1737,92 @@ describe('BlocksRenderer', () => {
     await waitFor(() => {
       expect(document.querySelectorAll(`script[src="${src}"]`).length).toBe(1);
     });
+  });
+
+  it('strips the inline widget script shipped in the embed markup', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'tiktok',
+        url: 'https://tiktok.com/@user/video/1',
+        oembed: {
+          html: '<blockquote class="tiktok-embed">Clip</blockquote><script async src="https://www.tiktok.com/embed.js"></script>',
+        },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const embedHtml = container.querySelector('.bb-social-embed-html');
+    expect(embedHtml?.querySelector('.tiktok-embed')).toBeInTheDocument();
+    expect(embedHtml?.querySelector('script')).not.toBeInTheDocument();
+  });
+
+  it('injects the widget script even when the markup shipped an inert copy of it', async () => {
+    const src = 'https://www.tiktok.com/embed.js';
+    // An inert `<script>` already in the DOM — the shape a previously-rendered
+    // embed (or another library) leaves behind. It must not defeat the loader.
+    const inert = document.createElement('script');
+    inert.setAttribute('src', src);
+    document.body.appendChild(inert);
+
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'tiktok',
+        url: 'https://tiktok.com/@user/video/2',
+        oembed: { html: '<blockquote class="tiktok-embed">Clip</blockquote>' },
+      },
+    ];
+    render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(document.querySelector('script[data-bb-social-script="tiktok"]')).toBeInTheDocument();
+    });
+  });
+
+  it('re-processes an embed mounted after the widget script has loaded', async () => {
+    const render_ = vi.fn();
+    (window as unknown as { tiktokEmbed?: unknown }).tiktokEmbed = { lib: { render: render_ } };
+
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'tiktok',
+        url: 'https://tiktok.com/@user/video/3',
+        oembed: { html: '<blockquote class="tiktok-embed">Clip</blockquote>' },
+      },
+    ];
+    const { unmount } = render(<BlocksRenderer content={content} />);
+    // jsdom never fetches the injected script, so fake the load that unblocks
+    // the loader promise.
+    const selector = 'script[data-bb-social-script="tiktok"]';
+    await waitFor(() => expect(document.querySelector(selector)).toBeInTheDocument());
+    document.querySelectorAll(selector).forEach((s) => s.dispatchEvent(new Event('load')));
+    await waitFor(() => expect(render_).toHaveBeenCalled());
+    unmount();
+
+    // Second mount (SPA navigation): the script is cached, so hydration depends
+    // entirely on the platform processor being re-run.
+    render_.mockClear();
+    render(<BlocksRenderer content={content} />);
+    await waitFor(() => expect(render_).toHaveBeenCalled());
+    expect(render_.mock.calls[0][0]).toHaveLength(1);
+
+    delete (window as unknown as { tiktokEmbed?: unknown }).tiktokEmbed;
+  });
+
+  it('renders the fallback card without an anchor when the embed has no url', () => {
+    const content: BlocksContent = [
+      {
+        type: 'social-embed',
+        platform: 'pinterest',
+        url: '',
+        oembed: { providerName: 'Pinterest' },
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    const card = container.querySelector('.bb-social-embed-fallback');
+    expect(card).toBeInTheDocument();
+    expect(card?.tagName).toBe('DIV');
+    expect(container.querySelector('a')).not.toBeInTheDocument();
   });
 
   it('uses a custom social-embed renderer', () => {
