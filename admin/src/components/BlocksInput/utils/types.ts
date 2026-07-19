@@ -282,6 +282,13 @@ export type TableCellAlign = 'left' | 'center' | 'right';
 export interface TableCellElement extends CustomElement {
   type: 'table-cell' | 'table-header-cell';
   align?: TableCellAlign;
+  /**
+   * Columns this cell covers, from merging. Absent means 1, so unmerged cells
+   * — the overwhelming majority — store nothing and existing tables stay valid.
+   */
+  colSpan?: number;
+  /** Rows this cell covers. Absent means 1. */
+  rowSpan?: number;
   /** Inline content: text leaves, links, inline math, … */
   children: Descendant[];
 }

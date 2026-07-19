@@ -1,6 +1,21 @@
-import { Editor, Path, Transforms, Node } from 'slate';
+import { Editor, Node, Path, Transforms } from 'slate';
 
-import type { CustomElement, TableCellAlign } from '../utils/types';
+import type {
+  CustomElement,
+  TableCellAlign,
+  TableCellElement,
+} from '../utils/types';
+import {
+  type GridCell,
+  type GridRange,
+  type TableGrid,
+  buildTableGrid,
+  cellsInRange,
+  cellsOriginatingInRow,
+  findCellByPath,
+  getSelectedRange,
+  nodeIndexForColumn,
+} from './tableGrid';
 
 /* ---------------------------------------------------------------------------
  * Node factories
@@ -77,6 +92,15 @@ const allowTableEdit = (editor: Editor, fn: () => void) => {
   }
 };
 
+/** Moves the caret to the start of a path, ignoring paths that no longer exist. */
+const selectStartOf = (editor: Editor, path: Path) => {
+  try {
+    Transforms.select(editor, Editor.start(editor, path));
+  } catch {
+    // The operation may have removed whatever we hoped to land on
+  }
+};
+
 /* ---------------------------------------------------------------------------
  * Locating the caret within a table
  * -------------------------------------------------------------------------*/
@@ -104,19 +128,26 @@ const isTableElement = (node: unknown): boolean =>
 interface TableLocation {
   tablePath: Path;
   table: CustomElement;
-  /** Index of the row holding the caret. */
+  /** Span-aware layout of the whole table. */
+  grid: TableGrid;
+  /** The cell holding the caret, with its grid coordinates. */
+  focused: GridCell;
+  /** Rectangle of cells the selection covers, or null within a single cell. */
+  range: GridRange | null;
+  /** Row the caret's cell lives in. */
   rowIndex: number;
-  /** Index of the cell holding the caret, within its row. */
+  /** Leftmost grid column the caret's cell covers. */
   colIndex: number;
   rowCount: number;
+  /** Total grid columns, spans included. */
   colCount: number;
   cell: CustomElement;
   cellPath: Path;
 }
 
 /**
- * Resolves the table cell the caret currently sits in, together with its
- * coordinates. Returns null when the selection is outside any table.
+ * Resolves the table cell the caret currently sits in, together with the grid
+ * it belongs to. Returns null when the selection is outside any table.
  */
 const getTableLocation = (editor: Editor): TableLocation | null => {
   const { selection } = editor;
@@ -129,7 +160,7 @@ const getTableLocation = (editor: Editor): TableLocation | null => {
   if (!cellEntry) return null;
 
   const [cell, cellPath] = cellEntry;
-  // A cell always lives at [...tablePath, rowIndex, colIndex]
+  // A cell always lives at [...tablePath, rowIndex, indexInRow]
   if (cellPath.length < 3) return null;
 
   const tablePath = cellPath.slice(0, -2);
@@ -142,15 +173,20 @@ const getTableLocation = (editor: Editor): TableLocation | null => {
     return null;
   }
 
-  const rows = (table as CustomElement).children as CustomElement[];
+  const grid = buildTableGrid(table as CustomElement, tablePath);
+  const focused = findCellByPath(grid, cellPath);
+  if (!focused) return null;
 
   return {
     tablePath,
     table: table as CustomElement,
-    rowIndex: cellPath[cellPath.length - 2],
-    colIndex: cellPath[cellPath.length - 1],
-    rowCount: rows.length,
-    colCount: (rows[0]?.children as CustomElement[] | undefined)?.length ?? 0,
+    grid,
+    focused,
+    range: getSelectedRange(editor, grid),
+    rowIndex: focused.row,
+    colIndex: focused.col,
+    rowCount: grid.rowCount,
+    colCount: grid.colCount,
     cell: cell as CustomElement,
     cellPath,
   };
@@ -162,106 +198,373 @@ const isHeaderRow = (row: CustomElement): boolean => {
   return cells.length > 0 && cells.every((c) => c.type === 'table-header-cell');
 };
 
-/* ---------------------------------------------------------------------------
- * Row / column operations
- * -------------------------------------------------------------------------*/
-
-const insertRow = (
-  editor: Editor,
-  location: TableLocation,
-  position: 'above' | 'below'
-) => {
-  const { tablePath, rowIndex, colCount } = location;
-  const at = position === 'above' ? rowIndex : rowIndex + 1;
-
-  allowTableEdit(editor, () => {
-    Transforms.insertNodes(editor, createTableRow(colCount) as never, {
-      at: [...tablePath, at],
-    });
-  });
-
-  // Put the caret in the first cell of the row we just created
-  Transforms.select(editor, Editor.start(editor, [...tablePath, at, 0]));
+const isHeaderRowAt = (table: CustomElement, rowIndex: number): boolean => {
+  const row = (table.children as CustomElement[])[rowIndex];
+  return Boolean(row && isHeaderRow(row));
 };
 
+/** Span value to store: 1 becomes absent, so unmerged cells stay clean. */
+const spanProp = (value: number): number | undefined =>
+  value > 1 ? value : undefined;
+
+/* ---------------------------------------------------------------------------
+ * Column operations
+ * -------------------------------------------------------------------------*/
+
+/**
+ * Inserts a column beside the caret's cell.
+ *
+ * A cell that straddles the insertion boundary is widened rather than given a
+ * new neighbour — otherwise the merge would visually break apart. Every other
+ * row gets a fresh cell, placed at the child index that lands it in the new
+ * grid column (which is not the same as the column number once spans exist).
+ */
 const insertColumn = (
   editor: Editor,
   location: TableLocation,
   position: 'left' | 'right'
 ) => {
-  const { tablePath, table, colIndex, rowIndex } = location;
-  const at = position === 'left' ? colIndex : colIndex + 1;
-  const rows = table.children as CustomElement[];
+  const { grid, focused, tablePath, table } = location;
+  const boundary =
+    position === 'left' ? focused.col : focused.col + focused.colSpan;
+
+  const straddling = grid.cells.filter(
+    (cell) => cell.col < boundary && cell.col + cell.colSpan > boundary
+  );
+  const straddlingSet = new Set(straddling);
+
+  const insertions: { path: Path; isHeader: boolean }[] = [];
+  for (let row = 0; row < grid.rowCount; row++) {
+    const occupant = grid.matrix[row]?.[boundary];
+    // A straddling cell already reaches into the new column
+    if (occupant && straddlingSet.has(occupant)) continue;
+
+    insertions.push({
+      path: [...tablePath, row, nodeIndexForColumn(grid, row, boundary)],
+      isHeader: isHeaderRowAt(table, row),
+    });
+  }
 
   allowTableEdit(editor, () => {
-    // Reverse order keeps the paths of the rows we haven't touched yet valid
-    for (let r = rows.length - 1; r >= 0; r--) {
-      Transforms.insertNodes(
+    // Widen first: these paths come from the pre-insert grid
+    straddling.forEach((cell) => {
+      Transforms.setNodes(
         editor,
-        createTableCell(isHeaderRow(rows[r])) as never,
-        { at: [...tablePath, r, at] }
+        { colSpan: cell.colSpan + 1 } as Partial<Node>,
+        { at: cell.path }
+      );
+    });
+
+    insertions.forEach(({ path, isHeader }) => {
+      Transforms.insertNodes(editor, createTableCell(isHeader) as never, {
+        at: path,
+      });
+    });
+  });
+
+  const landing = insertions.find(
+    (insertion) => insertion.path[insertion.path.length - 2] === focused.row
+  );
+  if (landing) selectStartOf(editor, landing.path);
+};
+
+/**
+ * Deletes the grid column the caret's cell starts in. Cells that span across it
+ * shrink by one instead of disappearing.
+ */
+const deleteColumn = (editor: Editor, location: TableLocation) => {
+  const { grid, focused } = location;
+  if (grid.colCount <= 1) return;
+
+  const target = focused.col;
+  const affected = new Set<GridCell>();
+  for (let row = 0; row < grid.rowCount; row++) {
+    const cell = grid.matrix[row]?.[target];
+    if (cell) affected.add(cell);
+  }
+
+  const shrinking = [...affected].filter((cell) => cell.colSpan > 1);
+  const removing = [...affected].filter((cell) => cell.colSpan === 1);
+
+  allowTableEdit(editor, () => {
+    shrinking.forEach((cell) => {
+      Transforms.setNodes(
+        editor,
+        { colSpan: spanProp(cell.colSpan - 1) } as Partial<Node>,
+        { at: cell.path }
+      );
+    });
+
+    // Descending order keeps the not-yet-removed paths valid
+    removing
+      .map((cell) => cell.path)
+      .sort((a, b) => Path.compare(b, a))
+      .forEach((path) => Transforms.removeNodes(editor, { at: path }));
+  });
+
+  selectStartOf(editor, [
+    ...location.tablePath,
+    focused.row,
+    Math.max(nodeIndexForColumn(grid, focused.row, target) - 1, 0),
+  ]);
+};
+
+/* ---------------------------------------------------------------------------
+ * Row operations
+ * -------------------------------------------------------------------------*/
+
+/**
+ * Inserts a row above or below the caret's cell. Cells whose rowSpan straddles
+ * the boundary are stretched instead of being split by the new row, and the new
+ * row only gets cells for the columns those stretched cells don't already cover.
+ */
+const insertRow = (
+  editor: Editor,
+  location: TableLocation,
+  position: 'above' | 'below'
+) => {
+  const { grid, focused, tablePath } = location;
+  const boundary =
+    position === 'above' ? focused.row : focused.row + focused.rowSpan;
+
+  const straddling = grid.cells.filter(
+    (cell) => cell.row < boundary && cell.row + cell.rowSpan > boundary
+  );
+  const straddlingSet = new Set(straddling);
+
+  let newCellCount = 0;
+  for (let col = 0; col < grid.colCount; col++) {
+    const occupant = grid.matrix[boundary]?.[col];
+    if (occupant && straddlingSet.has(occupant)) continue;
+    newCellCount++;
+  }
+
+  allowTableEdit(editor, () => {
+    straddling.forEach((cell) => {
+      Transforms.setNodes(
+        editor,
+        { rowSpan: cell.rowSpan + 1 } as Partial<Node>,
+        { at: cell.path }
+      );
+    });
+
+    Transforms.insertNodes(editor, createTableRow(newCellCount) as never, {
+      at: [...tablePath, boundary],
+    });
+  });
+
+  selectStartOf(editor, [...tablePath, boundary, 0]);
+};
+
+/**
+ * Deletes the row the caret sits in.
+ *
+ * Cells reaching into the row from above simply shrink. Cells that *start* in
+ * the row but continue below it can't just be removed — they're re-inserted
+ * into the following row, one row shorter, so the merge survives.
+ */
+const deleteRow = (editor: Editor, location: TableLocation) => {
+  const { grid, focused, tablePath, table } = location;
+  if (grid.rowCount <= 1) return;
+
+  const target = focused.row;
+  const wasHeader = isHeaderRowAt(table, target);
+
+  const shrinking = grid.cells.filter(
+    (cell) => cell.row < target && cell.row + cell.rowSpan > target
+  );
+  const migrating = grid.cells
+    .filter((cell) => cell.row === target && cell.rowSpan > 1)
+    .sort((a, b) => a.col - b.col);
+
+  allowTableEdit(editor, () => {
+    shrinking.forEach((cell) => {
+      Transforms.setNodes(
+        editor,
+        { rowSpan: spanProp(cell.rowSpan - 1) } as Partial<Node>,
+        { at: cell.path }
+      );
+    });
+
+    // Re-home cells that continue past this row into the next one
+    migrating.forEach((cell, migratedSoFar) => {
+      const clone = {
+        ...(JSON.parse(JSON.stringify(cell.node)) as TableCellElement),
+        rowSpan: spanProp(cell.rowSpan - 1),
+      };
+
+      Transforms.insertNodes(editor, clone as never, {
+        at: [
+          ...tablePath,
+          target + 1,
+          nodeIndexForColumn(grid, target + 1, cell.col) + migratedSoFar,
+        ],
+      });
+    });
+
+    Transforms.removeNodes(editor, { at: [...tablePath, target] });
+
+    // Deleting the header row promotes its successor, so the table never ends
+    // up header-less by accident.
+    if (wasHeader && target === 0) {
+      const [promoted] = Editor.node(editor, [...tablePath, 0]);
+      ((promoted as CustomElement).children as CustomElement[]).forEach(
+        (_, index) => {
+          Transforms.setNodes(
+            editor,
+            { type: 'table-header-cell' } as Partial<Node>,
+            { at: [...tablePath, 0, index] }
+          );
+        }
       );
     }
   });
 
-  Transforms.select(editor, Editor.start(editor, [...tablePath, rowIndex, at]));
-};
-
-const deleteRow = (editor: Editor, location: TableLocation) => {
-  const { tablePath, table, rowIndex, rowCount } = location;
-  // Never leave a table without rows
-  if (rowCount <= 1) return;
-
-  const rows = table.children as CustomElement[];
-  const wasHeader = isHeaderRow(rows[rowIndex]);
-
-  allowTableEdit(editor, () => {
-    Transforms.removeNodes(editor, { at: [...tablePath, rowIndex] });
-
-    // Deleting the header row promotes the row that takes its place, so the
-    // table never ends up header-less by accident.
-    if (wasHeader && rowIndex === 0) {
-      const promoted = rows[1];
-      if (promoted) {
-        (promoted.children as CustomElement[]).forEach((_, c) => {
-          Transforms.setNodes(
-            editor,
-            { type: 'table-header-cell' } as Partial<Node>,
-            { at: [...tablePath, 0, c] }
-          );
-        });
-      }
-    }
-  });
-
-  const nextRow = Math.min(rowIndex, rowCount - 2);
-  Transforms.select(editor, Editor.start(editor, [...tablePath, nextRow, 0]));
-};
-
-const deleteColumn = (editor: Editor, location: TableLocation) => {
-  const { tablePath, table, colIndex, colCount, rowIndex } = location;
-  // Never leave a table without columns
-  if (colCount <= 1) return;
-
-  const rows = table.children as CustomElement[];
-
-  allowTableEdit(editor, () => {
-    for (let r = rows.length - 1; r >= 0; r--) {
-      Transforms.removeNodes(editor, { at: [...tablePath, r, colIndex] });
-    }
-  });
-
-  const nextCol = Math.min(colIndex, colCount - 2);
-  Transforms.select(
-    editor,
-    Editor.start(editor, [...tablePath, rowIndex, nextCol])
-  );
+  selectStartOf(editor, [...tablePath, Math.min(target, grid.rowCount - 2), 0]);
 };
 
 const deleteTable = (editor: Editor, location: TableLocation) => {
   allowTableEdit(editor, () => {
     Transforms.removeNodes(editor, { at: location.tablePath });
   });
+};
+
+/* ---------------------------------------------------------------------------
+ * Merge & split
+ * -------------------------------------------------------------------------*/
+
+/**
+ * Whether a range straddles the header/body divide.
+ *
+ * A header cell labels a column; one that runs from the header down into the
+ * body labels nothing and belongs to neither. HTML agrees — a `rowSpan` may not
+ * cross the `<thead>`/`<tbody>` boundary, so a browser would clamp it and render
+ * something different from what the editor shows. Merging is therefore confined
+ * to one side of the divide. Merging *within* the header (a heading spanning two
+ * columns) is perfectly fine and stays allowed.
+ */
+const rangeCrossesHeaderBoundary = (
+  table: CustomElement,
+  range: GridRange
+): boolean => {
+  const topIsHeader = isHeaderRowAt(table, range.top);
+
+  for (let row = range.top + 1; row <= range.bottom; row++) {
+    if (isHeaderRowAt(table, row) !== topIsHeader) return true;
+  }
+
+  return false;
+};
+
+/** Whether the selection covers enough distinct cells to merge. */
+const canMergeCells = (location: TableLocation): boolean => {
+  if (!location.range) return false;
+  if (rangeCrossesHeaderBoundary(location.table, location.range)) return false;
+  return cellsInRange(location.grid, location.range).length > 1;
+};
+
+/** Whether the caret's cell is the result of a merge. */
+const canSplitCell = (location: TableLocation): boolean =>
+  location.focused.colSpan > 1 || location.focused.rowSpan > 1;
+
+/**
+ * Merges the selected rectangle into its top-left cell.
+ *
+ * The range arrives already squared off (see expandRangeToRectangle), so the
+ * result always tiles the grid. Content from the absorbed cells is appended to
+ * the anchor rather than discarded — losing an author's text to a layout
+ * operation would be unforgivable.
+ */
+const mergeCells = (editor: Editor, location: TableLocation) => {
+  const { grid, range, tablePath, table } = location;
+  if (!range) return;
+  // Guarded in the toolbar too; repeated here so the operation is safe to call
+  // from anywhere.
+  if (rangeCrossesHeaderBoundary(table, range)) return;
+
+  const anchor = grid.matrix[range.top]?.[range.left];
+  if (!anchor) return;
+
+  const absorbed = cellsInRange(grid, range).filter((cell) => cell !== anchor);
+  if (absorbed.length === 0) return;
+
+  // Snapshot the content before anything moves
+  const carriedOver = absorbed
+    .filter((cell) => Node.string(cell.node).trim() !== '')
+    .flatMap(
+      (cell) => JSON.parse(JSON.stringify(cell.node.children)) as Node[]
+    );
+
+  const anchorHasContent = Node.string(anchor.node).trim() !== '';
+
+  allowTableEdit(editor, () => {
+    if (carriedOver.length > 0) {
+      const at = [...anchor.path, anchor.node.children.length];
+      Transforms.insertNodes(
+        editor,
+        (anchorHasContent
+          ? [{ type: 'text', text: ' ' } as unknown as Node, ...carriedOver]
+          : carriedOver) as never,
+        { at }
+      );
+    }
+
+    Transforms.setNodes(
+      editor,
+      {
+        colSpan: spanProp(range.right - range.left + 1),
+        rowSpan: spanProp(range.bottom - range.top + 1),
+      } as Partial<Node>,
+      { at: anchor.path }
+    );
+
+    absorbed
+      .map((cell) => cell.path)
+      .sort((a, b) => Path.compare(b, a))
+      .forEach((path) => Transforms.removeNodes(editor, { at: path }));
+  });
+
+  selectStartOf(editor, [...tablePath, anchor.row, anchor.indexInRow]);
+};
+
+/**
+ * Undoes a merge: the cell shrinks back to 1x1 and every slot it vacates is
+ * refilled with an empty cell. The content stays in the original cell.
+ */
+const splitCell = (editor: Editor, location: TableLocation) => {
+  const { grid, focused, table, tablePath } = location;
+  if (focused.colSpan === 1 && focused.rowSpan === 1) return;
+
+  // Vacated slots, grouped per row and left to right
+  const vacated: { row: number; col: number }[] = [];
+  for (let row = focused.row; row < focused.row + focused.rowSpan; row++) {
+    for (let col = focused.col; col < focused.col + focused.colSpan; col++) {
+      if (row === focused.row && col === focused.col) continue;
+      vacated.push({ row, col });
+    }
+  }
+
+  allowTableEdit(editor, () => {
+    Transforms.setNodes(
+      editor,
+      { colSpan: undefined, rowSpan: undefined } as Partial<Node>,
+      { at: focused.path }
+    );
+
+    const insertedPerRow = new Map<number, number>();
+
+    vacated.forEach(({ row, col }) => {
+      const offset = insertedPerRow.get(row) ?? 0;
+      Transforms.insertNodes(
+        editor,
+        createTableCell(isHeaderRowAt(table, row)) as never,
+        { at: [...tablePath, row, nodeIndexForColumn(grid, row, col) + offset] }
+      );
+      insertedPerRow.set(row, offset + 1);
+    });
+  });
+
+  selectStartOf(editor, focused.path);
 };
 
 /* ---------------------------------------------------------------------------
@@ -300,17 +603,17 @@ const getCellAlign = (location: TableLocation): TableCellAlign =>
  * Header cells render as `<th scope="col">` for screen readers.
  */
 const toggleHeaderRow = (editor: Editor, location: TableLocation) => {
-  const { tablePath, table } = location;
-  const rows = table.children as CustomElement[];
-  const firstRow = rows[0];
+  const { tablePath, table, grid } = location;
+  const firstRow = (table.children as CustomElement[])[0];
   if (!firstRow) return;
 
   const nextType = isHeaderRow(firstRow) ? 'table-cell' : 'table-header-cell';
+  const paths = cellsOriginatingInRow(grid, 0).map((cell) => cell.path);
 
   allowTableEdit(editor, () => {
-    (firstRow.children as CustomElement[]).forEach((_, c) => {
+    paths.forEach((path) => {
       Transforms.setNodes(editor, { type: nextType } as Partial<Node>, {
-        at: [...tablePath, 0, c],
+        at: path,
       });
     });
   });
@@ -326,6 +629,8 @@ export {
   CELL_TYPES,
   TABLE_TYPES,
   allowTableEdit,
+  canMergeCells,
+  canSplitCell,
   createTable,
   createTableCell,
   createTableRow,
@@ -340,7 +645,11 @@ export {
   insertTable,
   isCellType,
   isHeaderRow,
+  isHeaderRowAt,
   isTableElement,
+  mergeCells,
+  rangeCrossesHeaderBoundary,
   setCellAlign,
+  splitCell,
   toggleHeaderRow,
 };

@@ -176,3 +176,42 @@ export const HeaderRowIcon = ({ fill }: TableIconProps) => {
     </Svg>
   );
 };
+
+/**
+ * Merge: the top-left 2x2 block reads as one tinted cell, with arrows pointing
+ * inward to say "these become one".
+ */
+export const MergeCellsIcon = ({ fill }: TableIconProps) => {
+  const color = useIconColor(fill);
+  return (
+    <Svg>
+      <Band color={color} x={3} y={3} width={12} height={12} />
+      <g stroke={color} strokeWidth="1.4" strokeLinecap="round">
+        <rect x="3" y="3" width="18" height="18" rx="1.5" />
+        <line x1="15" y1="3" x2="15" y2="21" />
+        <line x1="3" y1="15" x2="21" y2="15" />
+        {/* Inward arrows across the dissolved divide */}
+        <line x1="6" y1="9" x2="12" y2="9" />
+        <polyline points="10,7 12,9 10,11" fill="none" />
+      </g>
+    </Svg>
+  );
+};
+
+/** Split: one cell with a dashed divider appearing down the middle. */
+export const SplitCellIcon = ({ fill }: TableIconProps) => {
+  const color = useIconColor(fill);
+  return (
+    <Svg>
+      <g stroke={color} strokeWidth="1.4" strokeLinecap="round">
+        <rect x="3" y="3" width="18" height="18" rx="1.5" />
+        <line x1="12" y1="3" x2="12" y2="21" strokeDasharray="2.5 2.5" />
+        {/* Outward arrows either side of the new divide */}
+        <line x1="5" y1="12" x2="9" y2="12" />
+        <polyline points="7,10 5,12 7,14" fill="none" />
+        <line x1="15" y1="12" x2="19" y2="12" />
+        <polyline points="17,10 19,12 17,14" fill="none" />
+      </g>
+    </Svg>
+  );
+};

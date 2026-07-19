@@ -19,9 +19,13 @@ import {
   InsertColumnRightIcon,
   InsertRowAboveIcon,
   InsertRowBelowIcon,
+  MergeCellsIcon,
+  SplitCellIcon,
 } from './TableIcons';
 import {
   type TableLocation,
+  canMergeCells,
+  canSplitCell,
   deleteColumn,
   deleteRow,
   deleteTable,
@@ -29,7 +33,10 @@ import {
   hasHeaderRow,
   insertColumn,
   insertRow,
+  mergeCells,
+  rangeCrossesHeaderBoundary,
   setCellAlign,
+  splitCell,
   toggleHeaderRow,
 } from './tableOperations';
 
@@ -170,6 +177,9 @@ const TableToolbar = ({ location, disabled }: TableToolbarProps) => {
 
   const currentAlign = getCellAlign(location);
   const headerRowOn = hasHeaderRow(location);
+  const crossesHeader = Boolean(
+    location.range && rangeCrossesHeaderBoundary(location.table, location.range)
+  );
   const t = (id: string, defaultMessage: string) =>
     formatMessage({ id, defaultMessage });
 
@@ -221,6 +231,32 @@ const TableToolbar = ({ location, disabled }: TableToolbarProps) => {
         isDanger
         disabled={disabled || location.colCount <= 1}
         onAction={() => deleteColumn(editor, location)}
+      />
+
+      <Separator />
+
+      <Action
+        // A greyed-out button with no explanation is a dead end, so the reason
+        // it can't be used goes in the tooltip.
+        label={
+          crossesHeader
+            ? t(
+                'components.Blocks.table.mergeAcrossHeader',
+                "Header and body cells can't be merged"
+              )
+            : t('components.Blocks.table.mergeCells', 'Merge cells')
+        }
+        icon={MergeCellsIcon}
+        // Merging needs a selection covering more than one cell — drag across
+        // cells, or click one and Shift+click another.
+        disabled={disabled || !canMergeCells(location)}
+        onAction={() => mergeCells(editor, location)}
+      />
+      <Action
+        label={t('components.Blocks.table.splitCell', 'Split cell')}
+        icon={SplitCellIcon}
+        disabled={disabled || !canSplitCell(location)}
+        onAction={() => splitCell(editor, location)}
       />
 
       <Separator />

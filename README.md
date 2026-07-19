@@ -451,6 +451,63 @@ autoPlay={player.autoplay} loop={player.loop} muted={player.muted}>`. Add
 Apply `alignment` and `aspectRatio` exactly as for the embed block. Optional
 keys are omitted when empty.
 
+#### Table JSON shape (for frontend renderers)
+
+A table is a `table` block holding `table-row` children, each holding
+`table-cell` or `table-header-cell` children. Cells contain **inline** content —
+text leaves with marks, links, inline math — so render their `children` through
+the same inline renderer used for paragraphs, never as plain text.
+
+```jsonc
+{
+  "type": "table",
+  "children": [
+    {
+      "type": "table-row",
+      "children": [
+        {
+          "type": "table-header-cell",
+          "colSpan": 2, // absent means 1
+          "children": [{ "type": "text", "text": "Spans two columns" }],
+        },
+        {
+          "type": "table-header-cell",
+          "children": [{ "type": "text", "text": "Plain header" }],
+        },
+      ],
+    },
+    {
+      "type": "table-row",
+      "children": [
+        {
+          "type": "table-cell",
+          "align": "center", // absent means "left"
+          "children": [{ "type": "text", "text": "Centered", "bold": true }],
+        },
+        // ...two more cells; the first row's colSpan:2 cell covers two columns
+      ],
+    },
+  ],
+}
+```
+
+Rendering rules:
+
+- **`align`** maps to `text-align`. **Absent means `left`** — left-aligned cells
+  store nothing, so documents authored before alignment existed stay valid.
+- **`colSpan` / `rowSpan`** map to the HTML attributes of the same name.
+  **Absent means 1**, so unmerged cells — the overwhelming majority — carry
+  neither key. A spanned-over slot has no node at all: the cell that covers it
+  simply carries the span, exactly like hand-written HTML.
+- **`table-header-cell`** renders as `<th scope="col">`, `table-cell` as `<td>`.
+  When the first row consists entirely of header cells, wrap it in `<thead>` and
+  the rest in `<tbody>`. Authors toggle this per table, so don't assume a header
+  row exists.
+- **A `rowSpan` never crosses the header/body divide.** The editor won't merge
+  across it and normalizes away any span that does, because HTML doesn't allow a
+  cell to span `<thead>` into `<tbody>` — so `<thead>` is always exactly the
+  leading header rows, and no cell straddles the two groups.
+
 ### 2. Restart Strapi
 
 ```bash
