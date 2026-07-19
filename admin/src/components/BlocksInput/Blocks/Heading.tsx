@@ -66,6 +66,26 @@ const H6 = styled<TypographyComponent<'h6'>>(Typography).attrs({ tag: 'h6' })`
 `;
 
 /**
+ * Type scale used to preview each block type inside the block-type dropdown.
+ *
+ * Deliberately a compressed version of the editor sizes above (4.2rem down to
+ * 1.6rem): the point is to convey the hierarchy at a glance, and a literal 4.2rem
+ * H1 would turn the menu into a scroll container.
+ */
+const BLOCK_PREVIEW_TYPOGRAPHY: Record<
+  string,
+  { fontSize: string; fontWeight: number }
+> = {
+  paragraph: { fontSize: '1.4rem', fontWeight: 400 },
+  'heading-one': { fontSize: '2.2rem', fontWeight: 700 },
+  'heading-two': { fontSize: '1.95rem', fontWeight: 700 },
+  'heading-three': { fontSize: '1.75rem', fontWeight: 600 },
+  'heading-four': { fontSize: '1.6rem', fontWeight: 600 },
+  'heading-five': { fontSize: '1.45rem', fontWeight: 600 },
+  'heading-six': { fontSize: '1.35rem', fontWeight: 600 },
+};
+
+/**
  * Common handler for converting a node to a heading
  */
 const handleConvertToHeading = (
@@ -190,4 +210,4 @@ const headingBlocks: Pick<
   },
 };
 
-export { headingBlocks };
+export { headingBlocks, BLOCK_PREVIEW_TYPOGRAPHY };

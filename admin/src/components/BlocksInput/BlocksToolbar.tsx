@@ -20,6 +20,9 @@ import {
   IndentIncrease,
   IndentDecrease,
   Plus,
+  Quotes,
+  Expand,
+  Collapse,
 } from '@strapi/icons';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import {
@@ -35,10 +38,7 @@ import { HistoryEditor } from 'slate-history';
 import { ReactEditor } from 'slate-react';
 import { css, styled } from 'styled-components';
 
-import {
-  EditorToolbarObserver,
-  type ObservedComponent,
-} from '../EditorToolbarObserver';
+import { getTranslation } from '../../utils/getTranslation';
 
 import {
   type BlocksStore,
@@ -59,7 +59,10 @@ import {
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
 import { insertInlineMath, MathIcon } from './Blocks/Math';
 import { insertTable } from './Blocks/Table';
+import { TableGridPicker } from './Blocks/TableGridPicker';
+import { BLOCK_PREVIEW_TYPOGRAPHY } from './Blocks/Heading';
 import { insertEmbedFromUrl, isEmbeddableUrl } from './Blocks/Embed';
+import { getShortcutLabel } from './utils/shortcuts';
 import {
   UndoIcon,
   RedoIcon,
@@ -74,21 +77,42 @@ import { LineHeightIcon } from './FontModifiersIcons';
 import InlineColorPicker from './InlineColorPicker';
 import { SpecialCharPicker } from './SpecialCharPicker';
 
-const ToolbarSeparator = styled(Flex)`
-  width: 1px;
-  height: 2.4rem;
-  background: ${({ theme }) => theme.colors.neutral200};
-  flex-shrink: 0;
-`;
-
+/**
+ * A single continuous flow of controls that wraps to fill each row, the way
+ * CKEditor's toolbar does — buttons are never held back by their group.
+ *
+ * Grouping is carried by thin rules between clusters rather than by layout
+ * boxes: keeping groups as `nowrap` flex containers made them jump to the next
+ * line as whole units, leaving big holes at the end of rows.
+ */
 const ToolbarWrapper = styled<FlexComponent>(Flex)`
   flex-wrap: wrap;
   align-items: center;
+  gap: ${({ theme }) => theme.spaces[1]};
 
   &[aria-disabled='true'] {
     cursor: not-allowed;
     background: ${({ theme }) => theme.colors.neutral150};
   }
+`;
+
+/**
+ * Keeps the JSX grouped for readability without creating a layout box.
+ * `display: contents` lifts the children up to be flex items of the toolbar
+ * itself, so each button wraps independently.
+ */
+const ToolbarGroup = styled.div`
+  display: contents;
+`;
+
+/** Thin rule marking the boundary between two clusters of controls. */
+const ToolbarSeparator = styled.span`
+  width: 1px;
+  align-self: stretch;
+  min-height: 2.4rem;
+  flex-shrink: 0;
+  margin: 0 ${({ theme }) => theme.spaces[1]};
+  background: ${({ theme }) => theme.colors.neutral200};
 `;
 
 const FlexButton = styled<FlexComponent<'button'>>(Flex)`
@@ -203,15 +227,59 @@ const INSERT_BLOCK_KEYS: SelectorBlockKey[] = [
 
 /**
  * Everything hidden from the block-type dropdown. On top of the insert blocks,
- * lists are excluded too: they have their own dedicated toolbar buttons, so the
- * type-conversion dropdown is left to text-level blocks (text, headings, quote, code).
+ * lists and quote are excluded: they each have a dedicated toggle button in the
+ * toolbar, so the type-conversion dropdown is left to the text hierarchy
+ * (paragraph, headings, code).
  */
 const DROPDOWN_EXCLUDED_KEYS: SelectorBlockKey[] = [
   ...INSERT_BLOCK_KEYS,
   'list-ordered',
   'list-unordered',
   'list-todo',
+  'quote',
 ];
+
+/**
+ * The block key at the selection anchor, or null when there's no selection or
+ * nothing matches. Read-only — it must be safe to call during render.
+ */
+const getAnchorBlockKey = (
+  editor: Editor,
+  blocks: BlocksStore
+): string | null => {
+  if (!editor.selection) return null;
+
+  // A list item reports the type of its parent list, not of the item
+  const listEntry = Editor.above(editor, {
+    match: (node) =>
+      !Editor.isEditor(node) && 'type' in node && node.type === 'list',
+    at: editor.selection.anchor,
+  });
+
+  let node: Ancestor | undefined;
+
+  if (listEntry) {
+    [node] = listEntry;
+  } else {
+    try {
+      [node] = Editor.parent(editor, editor.selection.anchor, {
+        edge: 'start',
+        depth: 2,
+      });
+    } catch {
+      // Selection may point at a path that no longer exists mid-transform
+      return null;
+    }
+  }
+
+  if (!node || Editor.isEditor(node)) return null;
+
+  return (
+    getKeys(blocks).find((blockKey) =>
+      blocks[blockKey].matchNode(node as never)
+    ) ?? null
+  );
+};
 
 const BlocksDropdown = () => {
   const { editor, blocks, disabled } = useBlocksEditorContext('BlocksDropdown');
@@ -229,8 +297,27 @@ const BlocksDropdown = () => {
       : currentKeys;
   }, []);
 
-  const [blockSelected, setBlockSelected] =
-    React.useState<SelectorBlockKey>('paragraph');
+  /**
+   * The label is derived on every render rather than mirrored into state.
+   *
+   * Slate mutates `editor.children` in place, so an effect keyed on the
+   * document never re-runs — which left the label stale after any conversion
+   * that doesn't move the caret (the Cmd/Ctrl+Alt shortcuts, notably). The
+   * component already re-renders on every editor change via `useSlate`, so
+   * reading the document here is both correct and cheap.
+   */
+  const anchorBlockKey = getAnchorBlockKey(editor, blocks);
+  // Remembers the last dropdown-listed block, so the trigger keeps showing
+  // something sensible when the caret sits in a list, table or quote.
+  const lastListedKey = React.useRef<SelectorBlockKey>('paragraph');
+  if (
+    anchorBlockKey &&
+    isSelectorBlockKey(anchorBlockKey) &&
+    !DROPDOWN_EXCLUDED_KEYS.includes(anchorBlockKey)
+  ) {
+    lastListedKey.current = anchorBlockKey;
+  }
+  const blockSelected = lastListedKey.current;
 
   const handleSelect = (optionKey: unknown) => {
     if (!isSelectorBlockKey(optionKey)) {
@@ -294,7 +381,8 @@ const BlocksDropdown = () => {
     const maybeRenderModal = blocks[optionKey].handleConvert?.(editor);
     handleConversionResult(maybeRenderModal);
 
-    setBlockSelected(optionKey);
+    // No need to mirror the choice into state — the next render reads it back
+    // off the document.
     ReactEditor.focus(editor as ReactEditor);
   };
 
@@ -308,64 +396,39 @@ const BlocksDropdown = () => {
    */
   const preventSelectFocus = (e: Event) => e.preventDefault();
 
-  // Listen to the selection change and update the selected block in the dropdown
+  /**
+   * Repairs the stray empty list-item that Slate's delete behaviour leaves
+   * behind instead of converting it to a paragraph.
+   * Issue: https://github.com/ianstormtaylor/slate/issues/2500
+   *
+   * This mutates the document, so it stays in an effect rather than moving to
+   * the render-time derivation above.
+   */
   React.useEffect(() => {
-    if (editor.selection) {
-      let selectedNode: Ancestor;
+    if (!editor.selection) return;
 
-      // If selection anchor is a list-item, get its parent
-      const currentListEntry = Editor.above(editor, {
-        match: (node) =>
-          !Editor.isEditor(node) && 'type' in node && node.type === 'list',
-        at: editor.selection.anchor,
+    const inList = Editor.above(editor, {
+      match: (node) =>
+        !Editor.isEditor(node) && 'type' in node && node.type === 'list',
+      at: editor.selection.anchor,
+    });
+    if (inList) return;
+
+    try {
+      const [anchorNode] = Editor.parent(editor, editor.selection.anchor, {
+        edge: 'start',
+        depth: 2,
       });
 
-      if (currentListEntry) {
-        const [currentList] = currentListEntry;
-        selectedNode = currentList;
-      } else {
-        // Get the parent node of the anchor other than list-item
-        const [anchorNode] = Editor.parent(editor, editor.selection.anchor, {
-          edge: 'start',
-          depth: 2,
-        });
-
-        // @ts-expect-error slate's delete behaviour creates an exceptional type
-        if (anchorNode.type === 'list-item') {
-          // When the last node in the selection is a list item,
-          // slate's default delete operation leaves an empty list-item instead of converting it into a paragraph.
-          // Issue: https://github.com/ianstormtaylor/slate/issues/2500
-
-          Transforms.setNodes(editor, {
-            type: 'paragraph',
-          } as Block<'paragraph'>);
-          // @ts-expect-error convert explicitly type to paragraph
-          selectedNode = { ...anchorNode, type: 'paragraph' };
-        } else {
-          selectedNode = anchorNode;
-        }
+      if ((anchorNode as CustomElement).type === 'list-item') {
+        Transforms.setNodes(editor, {
+          type: 'paragraph',
+        } as Block<'paragraph'>);
       }
-
-      // Find the block key that matches the anchor node
-      const anchorBlockKey = getKeys(blocks).find(
-        (blockKey) =>
-          !Editor.isEditor(selectedNode) &&
-          blocks[blockKey].matchNode(selectedNode as never)
-      );
-
-      // Change the value selected in the dropdown if it doesn't match the anchor block key
-      // Only update if it's a selector block (has icon/label) that the dropdown actually
-      // lists — insert-only blocks (Details/Diagram/Math) live in the "+" menu instead.
-      if (
-        anchorBlockKey &&
-        anchorBlockKey !== blockSelected &&
-        isSelectorBlockKey(anchorBlockKey) &&
-        !DROPDOWN_EXCLUDED_KEYS.includes(anchorBlockKey as SelectorBlockKey)
-      ) {
-        setBlockSelected(anchorBlockKey as SelectorBlockKey);
-      }
+    } catch {
+      // Selection may point at a path that no longer exists
     }
-  }, [editor.selection, editor, blocks, blockSelected]);
+  }, [editor.selection, editor]);
 
   const Icon = blocks[blockSelected].icon;
 
@@ -385,6 +448,9 @@ const BlocksDropdown = () => {
         <Menu.Content onCloseAutoFocus={preventSelectFocus}>
           {blockKeysToInclude.map((key) => {
             const OptionIcon = blocks[key].icon;
+            const preview = BLOCK_PREVIEW_TYPOGRAPHY[key];
+            const shortcut = getShortcutLabel(key);
+
             return (
               <StyledMenuItem
                 key={key}
@@ -392,7 +458,22 @@ const BlocksDropdown = () => {
                 $isActive={key === blockSelected}
               >
                 <OptionIcon />
-                {formatMessage(blocks[key].label)}
+                {/* Rendering the option at (a scaled version of) its own type
+                    style saves authors from converting-then-undoing to find out
+                    what a level looks like. */}
+                <BlockPreviewLabel
+                  style={
+                    preview
+                      ? {
+                          fontSize: preview.fontSize,
+                          fontWeight: preview.fontWeight,
+                        }
+                      : undefined
+                  }
+                >
+                  {formatMessage(blocks[key].label)}
+                </BlockPreviewLabel>
+                {shortcut && <ShortcutHint>{shortcut}</ShortcutHint>}
               </StyledMenuItem>
             );
           })}
@@ -710,12 +791,27 @@ const StyledMenuItem = styled(Menu.Item)<{ $isActive: boolean }>`
     display: inline-flex;
     gap: ${({ theme }) => theme.spaces[2]};
     align-items: center;
+    width: 100%;
   }
 
   svg {
     fill: ${({ theme, $isActive }) =>
       $isActive ? theme.colors.primary600 : theme.colors.neutral600};
+    flex-shrink: 0;
   }
+`;
+
+const BlockPreviewLabel = styled.span`
+  line-height: 1.3;
+`;
+
+/** Keyboard hint pinned to the right edge of a menu item. */
+const ShortcutHint = styled.span`
+  margin-left: auto;
+  padding-left: ${({ theme }) => theme.spaces[6]};
+  color: ${({ theme }) => theme.colors.neutral500};
+  font-size: 1.2rem;
+  white-space: nowrap;
 `;
 
 const UndoButton = ({ disabled }: { disabled: boolean }) => {
@@ -942,30 +1038,31 @@ const InsertBlockButton = ({ disabled }: { disabled: boolean }) => {
   );
 };
 
+/**
+ * Opens a size picker instead of dropping a fixed 3x3 grid, so authors get the
+ * table they actually want without then adding or deleting rows.
+ */
 const InsertTableButton = ({ disabled }: { disabled: boolean }) => {
   const { editor } = useBlocksEditorContext('InsertTableButton');
   const { formatMessage } = useIntl();
+  const [isOpen, setIsOpen] = React.useState(false);
 
   const label = formatMessage({
     id: 'components.Blocks.insertTable',
     defaultMessage: 'Insert table',
   });
 
+  const handleSelect = (rows: number, cols: number) => {
+    insertTable(editor, rows, cols);
+    setIsOpen(false);
+    ReactEditor.focus(editor as ReactEditor);
+  };
+
   return (
-    <Tooltip label={label}>
-      <Toolbar.ToggleItem
-        value="insertTable"
-        data-state="off"
-        onMouseDown={(e) => {
-          e.preventDefault();
-          insertTable(editor);
-          ReactEditor.focus(editor as ReactEditor);
-        }}
-        aria-disabled={disabled}
-        disabled={disabled}
-        aria-label={label}
-        asChild
-      >
+    // Uncontrolled `onOpenChange` would fight the mousedown toggle below and
+    // close the popover again on the same click, so open state is manual.
+    <Popover.Root open={isOpen}>
+      <Popover.Trigger>
         <FlexButton
           tag="button"
           alignItems="center"
@@ -973,10 +1070,105 @@ const InsertTableButton = ({ disabled }: { disabled: boolean }) => {
           width={7}
           height={7}
           hasRadius
+          aria-disabled={disabled}
+          aria-label={label}
+          title={label}
+          onMouseDown={(e: React.MouseEvent) => {
+            e.preventDefault();
+            if (!disabled) setIsOpen((open) => !open);
+          }}
         >
           <GridNine fill={disabled ? 'neutral300' : 'neutral600'} />
         </FlexButton>
-      </Toolbar.ToggleItem>
+      </Popover.Trigger>
+      <Popover.Content onPointerDownOutside={() => setIsOpen(false)}>
+        <TableGridPicker onSelect={handleSelect} />
+      </Popover.Content>
+    </Popover.Root>
+  );
+};
+
+/**
+ * Blockquote as a first-class toggle next to the lists, rather than an entry
+ * buried in the block-type dropdown.
+ */
+const QuoteButton = ({ disabled }: { disabled: boolean }) => {
+  const { editor, blocks } = useBlocksEditorContext('QuoteButton');
+
+  const isQuoteActive = () => {
+    if (!editor.selection) return false;
+
+    const [match] = Editor.nodes(editor, {
+      at: editor.selection.anchor,
+      match: (node) =>
+        !Editor.isEditor(node) && 'type' in node && node.type === 'quote',
+    });
+
+    return Boolean(match);
+  };
+
+  const toggleQuote = () => {
+    if (isQuoteActive()) {
+      blocks.paragraph.handleConvert?.(editor);
+      return;
+    }
+    blocks.quote.handleConvert?.(editor);
+  };
+
+  return (
+    <ToolbarButton
+      icon={Quotes}
+      name="quote"
+      label={blocks.quote.label}
+      isActive={isQuoteActive()}
+      disabled={disabled}
+      handleClick={toggleQuote}
+    />
+  );
+};
+
+/**
+ * Fullscreen toggle. Lives at the toolbar's right edge — the conventional spot
+ * for a maximize control, and always in view unlike the old bottom-corner
+ * placement.
+ */
+const ExpandButton = () => {
+  const { isExpandedMode, onToggleExpand } =
+    useBlocksEditorContext('ExpandButton');
+  const { formatMessage } = useIntl();
+
+  const label = formatMessage(
+    isExpandedMode
+      ? {
+          id: getTranslation('components.Blocks.collapse'),
+          defaultMessage: 'Collapse',
+        }
+      : {
+          id: getTranslation('components.Blocks.expand'),
+          defaultMessage: 'Expand',
+        }
+  );
+
+  return (
+    <Tooltip label={label}>
+      <FlexButton
+        tag="button"
+        type="button"
+        alignItems="center"
+        justifyContent="center"
+        width={7}
+        height={7}
+        hasRadius
+        aria-disabled={false}
+        aria-label={label}
+        onClick={onToggleExpand}
+      >
+        {isExpandedMode ? (
+          <Collapse fill="neutral600" />
+        ) : (
+          <Expand fill="neutral600" />
+        )}
+      </FlexButton>
     </Tooltip>
   );
 };
@@ -1445,158 +1637,135 @@ const BlocksToolbar = () => {
   const isButtonDisabled = checkButtonDisabled();
 
   /**
-   * Observed components are ones that may or may not be visible in the toolbar, depending on the
-   * available space. They provide two render props:
-   * - renderInToolbar: for when we try to render the component in the toolbar (may be hidden)
-   * - renderInMenu: for when the component didn't fit in the toolbar and is relegated
-   *   to the "more" menu
+   * Mark toggles, rendered straight into the toolbar.
+   *
+   * These used to go through EditorToolbarObserver, which relegated whatever
+   * didn't fit into a "More" menu. That design only works for a single
+   * non-wrapping row clipped by `overflow: hidden`; this toolbar wraps instead,
+   * so nothing ever overflowed and the menu's trigger — which reserves its
+   * space with `visibility: hidden` — sat there as a permanent empty slot
+   * between the lists and the next separator.
    */
-  const observedComponents: ObservedComponent[] = [
-    ...Object.entries(modifiers).map(([name, modifier]) => {
-      const Icon = (
-        modifier as { icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }
-      ).icon;
-      const isActive = (
-        modifier as { checkIsActive: (editor: Editor) => boolean }
-      ).checkIsActive(editor);
-      const handleSelect = () =>
-        (modifier as { handleToggle: (editor: Editor) => void }).handleToggle(
-          editor
-        );
+  const markButtons = getEntries(modifiers).map(([name, modifier]) => {
+    const mark = modifier as {
+      icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+      label: MessageDescriptor;
+      checkIsActive: (editor: Editor) => boolean;
+      handleToggle: (editor: Editor) => void;
+    };
 
-      return {
-        toolbar: (
-          <ToolbarButton
-            key={name}
-            name={name}
-            icon={
-              (
-                modifier as {
-                  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
-                }
-              ).icon
-            }
-            label={(modifier as { label: MessageDescriptor }).label}
-            isActive={(
-              modifier as { checkIsActive: (editor: Editor) => boolean }
-            ).checkIsActive(editor)}
-            handleClick={handleSelect}
-            disabled={isButtonDisabled}
-          />
-        ),
-        menu: (
-          <StyledMenuItem onSelect={handleSelect} $isActive={isActive}>
-            <Icon />
-            {formatMessage((modifier as { label: MessageDescriptor }).label)}
-          </StyledMenuItem>
-        ),
-        key: `modifier.${name}`,
-      };
-    }),
-    {
-      toolbar: <LinkButton disabled={isButtonDisabled} location="toolbar" />,
-      menu: <LinkButton disabled={isButtonDisabled} location="menu" />,
-      key: 'block.link',
-    },
-    {
-      // List buttons can only be rendered together when in the toolbar
-      toolbar: (
-        <Flex direction="row" gap={1}>
-          <ToolbarSeparator />
-          <Toolbar.ToggleGroup type="single" asChild>
-            <Flex gap={1}>
-              <ListButton
-                block={blocks['list-unordered']}
-                format={'unordered' as never}
-                location="toolbar"
-              />
-              <ListButton
-                block={blocks['list-ordered']}
-                format={'ordered' as never}
-                location="toolbar"
-              />
-              <ListButton
-                block={blocks['list-todo']}
-                format={'todo' as never}
-                location="toolbar"
-              />
-            </Flex>
-          </Toolbar.ToggleGroup>
-        </Flex>
-      ),
-      menu: (
-        <>
-          <Menu.Separator />
-          <ListButton
-            block={blocks['list-unordered']}
-            format={'unordered' as never}
-            location="menu"
-          />
-          <ListButton
-            block={blocks['list-ordered']}
-            format={'ordered' as never}
-            location="menu"
-          />
-          <ListButton
-            block={blocks['list-todo']}
-            format={'todo' as never}
-            location="menu"
-          />
-        </>
-      ),
-      key: 'block.list',
-    },
-  ];
+    return (
+      <ToolbarButton
+        key={String(name)}
+        name={String(name)}
+        icon={mark.icon}
+        label={mark.label}
+        isActive={mark.checkIsActive(editor)}
+        handleClick={() => mark.handleToggle(editor)}
+        disabled={isButtonDisabled}
+      />
+    );
+  });
 
   return (
     <Toolbar.Root aria-disabled={disabled} asChild>
-      <ToolbarWrapper gap={2} padding={2} width="100%">
+      <ToolbarWrapper padding={2} width="100%">
         <MenuScrollbarStyles />
+
+        {/* ---- History ---- */}
         <Toolbar.ToggleGroup type="multiple" asChild>
-          <Flex direction="row" gap={1}>
+          <ToolbarGroup>
             <UndoButton disabled={disabled} />
             <RedoButton disabled={disabled} />
-          </Flex>
+          </ToolbarGroup>
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
+
+        {/* ---- Structure: what kind of block am I in ---- */}
         <BlocksDropdown />
-        <InsertBlockButton disabled={disabled} />
         <ToolbarSeparator />
-        <FontSizeSelect disabled={isButtonDisabled} />
-        <FontFamilySelect disabled={isButtonDisabled} />
+
+        {/* ---- Type: the look of the characters themselves ---- */}
+        <ToolbarGroup>
+          <FontSizeSelect disabled={isButtonDisabled} />
+          <FontFamilySelect disabled={isButtonDisabled} />
+          <InlineColorPicker />
+        </ToolbarGroup>
         <ToolbarSeparator />
-        <InlineColorPicker />
-        <ToolbarSeparator />
+
+        {/* ---- Marks ---- */}
         <Toolbar.ToggleGroup type="multiple" asChild>
-          <Flex direction="row" gap={1} wrap="wrap">
-            <EditorToolbarObserver observedComponents={observedComponents} />
-          </Flex>
+          <ToolbarGroup>
+            {markButtons}
+            <LinkButton disabled={isButtonDisabled} location="toolbar" />
+          </ToolbarGroup>
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
-        <TextAlignButton disabled={isButtonDisabled} />
-        <LineHeightButton disabled={isButtonDisabled} />
+
+        {/* ---- Lists ---- */}
+        <Toolbar.ToggleGroup type="single" asChild>
+          <ToolbarGroup>
+            <ListButton
+              block={blocks['list-unordered']}
+              format={'unordered' as never}
+              location="toolbar"
+            />
+            <ListButton
+              block={blocks['list-ordered']}
+              format={'ordered' as never}
+              location="toolbar"
+            />
+            <ListButton
+              block={blocks['list-todo']}
+              format={'todo' as never}
+              location="toolbar"
+            />
+          </ToolbarGroup>
+        </Toolbar.ToggleGroup>
+        <ToolbarSeparator />
+
+        {/* ---- Paragraph-level formatting ---- */}
         <Toolbar.ToggleGroup type="multiple" asChild>
-          <Flex direction="row" gap={1}>
+          <ToolbarGroup>
+            <QuoteButton disabled={isButtonDisabled} />
+            <TextAlignButton disabled={isButtonDisabled} />
+            <LineHeightButton disabled={isButtonDisabled} />
             <IndentButton disabled={isButtonDisabled} />
             <OutdentButton disabled={isButtonDisabled} />
-          </Flex>
+            <RemoveFormattingButton disabled={isButtonDisabled} />
+          </ToolbarGroup>
         </Toolbar.ToggleGroup>
         <ToolbarSeparator />
+
+        {/* ---- Insertion: what can I add here ---- */}
         <Toolbar.ToggleGroup type="multiple" asChild>
-          <Flex direction="row" gap={1}>
-            <EmojiPicker disabled={isButtonDisabled} />
-            <SpecialCharPicker disabled={isButtonDisabled} />
+          <ToolbarGroup>
+            <InsertBlockButton disabled={disabled} />
             <InsertTableButton disabled={disabled} />
             <InsertMediaButton disabled={disabled} />
             <InlineMathButton disabled={isButtonDisabled} />
             <HorizontalLineButton disabled={disabled} />
-            <FindReplace disabled={disabled} />
-            <RemoveFormattingButton disabled={isButtonDisabled} />
-          </Flex>
+            <EmojiPicker disabled={isButtonDisabled} />
+            <SpecialCharPicker disabled={isButtonDisabled} />
+          </ToolbarGroup>
         </Toolbar.ToggleGroup>
+        <ToolbarSeparator />
+
+        {/* ---- Utilities ---- */}
+        <ToolbarGroup>
+          <FindReplace disabled={disabled} />
+          <ExpandButton />
+        </ToolbarGroup>
       </ToolbarWrapper>
     </Toolbar.Root>
   );
 };
 
-export { BlocksToolbar, useConversionModal };
+export {
+  BlocksToolbar,
+  useConversionModal,
+  // Re-used by the floating selection toolbar
+  ToolbarButton,
+  LinkButton,
+  RemoveFormattingButton,
+};

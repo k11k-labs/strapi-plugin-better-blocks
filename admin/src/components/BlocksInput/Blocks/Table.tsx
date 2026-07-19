@@ -1,29 +1,52 @@
 import * as React from 'react';
-import { Box, Button, Flex, Popover } from '@strapi/design-system';
-import { GridNine } from '@strapi/icons';
-import { Editor, Transforms } from 'slate';
-import {
-  type RenderElementProps,
-  ReactEditor,
-  useSlateStatic,
-} from 'slate-react';
+import { Box } from '@strapi/design-system';
+import { Editor, Path, Transforms } from 'slate';
+import { type RenderElementProps, ReactEditor, useSlate } from 'slate-react';
 import { styled } from 'styled-components';
 
-import { type BlocksStore } from '../BlocksEditor';
-import { CustomElement } from '../utils/types';
+import { type BlocksStore, useBlocksEditorContext } from '../BlocksEditor';
+import type { TableCellAlign, TableCellElement } from '../utils/types';
+import { TableToolbar } from './TableToolbar';
+import {
+  TABLE_TYPES,
+  createTableCell,
+  createTableRow,
+  getTableLocation,
+  insertTable,
+  isTableElement,
+} from './tableOperations';
 
 /* ---------------------------------------------------------------------------
  * Styled components
  * -------------------------------------------------------------------------*/
 
-const StyledTable = styled.table`
+/** Height reserved above every table for the contextual toolbar, so showing it
+ *  doesn't shift the document. */
+const TOOLBAR_GUTTER = '3.6rem';
+
+const TableWrapper = styled(Box)`
+  padding-top: ${TOOLBAR_GUTTER};
+`;
+
+/** Wide tables scroll horizontally instead of overflowing the editor. */
+const TableScroller = styled.div`
+  overflow-x: auto;
+  max-width: 100%;
+`;
+
+const StyledTable = styled.table<{
+  $activeRow: number | null;
+  $activeCol: number | null;
+}>`
   width: 100%;
   border-collapse: collapse;
   margin: ${({ theme }) => theme.spaces[2]} 0;
 
   th,
   td {
-    border: 1px solid ${({ theme }) => theme.colors.neutral200};
+    /* 2px against a mid-grey: the 1px hairline was effectively invisible on
+       high-DPI screens, which made large tables hard to navigate. */
+    border: 2px solid ${({ theme }) => theme.colors.neutral400};
     padding: ${({ theme }) => theme.spaces[2]} ${({ theme }) => theme.spaces[3]};
     min-width: 80px;
     vertical-align: top;
@@ -33,65 +56,20 @@ const StyledTable = styled.table`
   th {
     background: ${({ theme }) => theme.colors.neutral100};
     font-weight: ${({ theme }) => theme.fontWeights.bold};
+    text-align: inherit;
   }
+
+  /* Spatial orientation while editing: tint the row and column holding the
+     caret. Both rules are cheap nth-child selectors, no per-cell state. */
+  ${({ $activeRow, theme }) =>
+    $activeRow
+      ? `tr:nth-child(${$activeRow}) > * { background: ${theme.colors.primary100}; }`
+      : ''}
+  ${({ $activeCol, theme }) =>
+    $activeCol
+      ? `tr > *:nth-child(${$activeCol}) { background: ${theme.colors.primary100}; }`
+      : ''}
 `;
-
-const TableWrapper = styled(Box)`
-  padding-top: 32px;
-`;
-
-const TableActions = styled(Flex)`
-  position: absolute;
-  top: 0;
-  right: 0;
-  z-index: 1;
-`;
-
-const ActionBtn = styled.button`
-  background: ${({ theme }) => theme.colors.neutral100};
-  border: 1px solid ${({ theme }) => theme.colors.neutral200};
-  border-radius: ${({ theme }) => theme.borderRadius};
-  padding: 2px 6px;
-  cursor: pointer;
-  font-size: 11px;
-  color: ${({ theme }) => theme.colors.neutral600};
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary100};
-    color: ${({ theme }) => theme.colors.primary600};
-  }
-`;
-
-/* ---------------------------------------------------------------------------
- * Helpers
- * -------------------------------------------------------------------------*/
-
-const createTableCell = (isHeader = false) => ({
-  type: isHeader ? 'table-header-cell' : 'table-cell',
-  children: [{ type: 'text', text: '' }],
-});
-
-const createTableRow = (cols: number, isHeader = false) => ({
-  type: 'table-row',
-  children: Array.from({ length: cols }, () => createTableCell(isHeader)),
-});
-
-const createTable = (rows: number, cols: number) => ({
-  type: 'table',
-  children: [
-    createTableRow(cols, true),
-    ...Array.from({ length: rows - 1 }, () => createTableRow(cols)),
-  ],
-});
-
-const insertTable = (editor: Editor, rows = 3, cols = 3) => {
-  const table = createTable(rows, cols);
-  const paragraph = {
-    type: 'paragraph',
-    children: [{ type: 'text', text: '' }],
-  };
-  Transforms.insertNodes(editor, [table as any, paragraph as any]);
-};
 
 /* ---------------------------------------------------------------------------
  * Components
@@ -102,175 +80,78 @@ const TableElement = ({
   children,
   element,
 }: RenderElementProps) => {
-  const editor = useSlateStatic();
-  const [showActions, setShowActions] = React.useState(false);
+  // useSlate (not useSlateStatic) so the toolbar and the active row/column
+  // highlight follow the caret.
+  const editor = useSlate();
+  const { disabled } = useBlocksEditorContext('TableElement');
   const path = ReactEditor.findPath(editor as ReactEditor, element);
 
-  const addRow = () => {
-    allowTableEdit(editor, () => {
-      const tableNode = element as any;
-      const colCount = tableNode.children[0]?.children?.length || 3;
-      const newRow = createTableRow(colCount);
-      Transforms.insertNodes(editor, newRow as any, {
-        at: [...path, tableNode.children.length],
-      });
-    });
-  };
-
-  const addColumn = () => {
-    allowTableEdit(editor, () => {
-      const tableNode = element as any;
-      const colCount = tableNode.children[0]?.children?.length || 0;
-      for (
-        let rowIndex = tableNode.children.length - 1;
-        rowIndex >= 0;
-        rowIndex--
-      ) {
-        const isHeader = rowIndex === 0;
-        Transforms.insertNodes(editor, createTableCell(isHeader) as any, {
-          at: [...path, rowIndex, colCount],
-        });
-      }
-    });
-  };
-
-  const removeRow = () => {
-    allowTableEdit(editor, () => {
-      const tableNode = element as any;
-      // Don't remove if only 1 data row + header
-      if (tableNode.children.length <= 2) return;
-      // Remove last non-header row
-      Transforms.removeNodes(editor, {
-        at: [...path, tableNode.children.length - 1],
-      });
-    });
-  };
-
-  const removeColumn = () => {
-    allowTableEdit(editor, () => {
-      const tableNode = element as any;
-      const colCount = tableNode.children[0]?.children?.length || 0;
-      // Don't remove if only 1 column
-      if (colCount <= 1) return;
-      // Remove last column from each row (reverse order for stable paths)
-      for (
-        let rowIndex = tableNode.children.length - 1;
-        rowIndex >= 0;
-        rowIndex--
-      ) {
-        Transforms.removeNodes(editor, {
-          at: [...path, rowIndex, colCount - 1],
-        });
-      }
-    });
-  };
-
-  const removeTable = () => {
-    allowTableEdit(editor, () => {
-      Transforms.removeNodes(editor, { at: path });
-    });
-  };
+  const location = getTableLocation(editor);
+  const isFocused = Boolean(location && Path.equals(location.tablePath, path));
 
   return (
-    <TableWrapper
-      {...attributes}
-      position="relative"
-      onMouseEnter={() => setShowActions(true)}
-      onMouseLeave={() => setShowActions(false)}
-    >
-      {showActions && (
-        <TableActions contentEditable={false} gap={1}>
-          <ActionBtn
-            onMouseDown={(e) => {
-              e.preventDefault();
-              addRow();
-            }}
-          >
-            + Row
-          </ActionBtn>
-          <ActionBtn
-            onMouseDown={(e) => {
-              e.preventDefault();
-              addColumn();
-            }}
-          >
-            + Col
-          </ActionBtn>
-          <ActionBtn
-            onMouseDown={(e) => {
-              e.preventDefault();
-              removeRow();
-            }}
-          >
-            - Row
-          </ActionBtn>
-          <ActionBtn
-            onMouseDown={(e) => {
-              e.preventDefault();
-              removeColumn();
-            }}
-          >
-            - Col
-          </ActionBtn>
-          <ActionBtn
-            onMouseDown={(e) => {
-              e.preventDefault();
-              removeTable();
-            }}
-          >
-            Delete
-          </ActionBtn>
-        </TableActions>
+    <TableWrapper {...attributes} position="relative">
+      {isFocused && location && (
+        <TableToolbar location={location} disabled={disabled} />
       )}
-      <StyledTable>
-        <tbody>{children}</tbody>
-      </StyledTable>
+      <TableScroller>
+        <StyledTable
+          $activeRow={isFocused && location ? location.rowIndex + 1 : null}
+          $activeCol={isFocused && location ? location.colIndex + 1 : null}
+        >
+          <tbody>{children}</tbody>
+        </StyledTable>
+      </TableScroller>
     </TableWrapper>
   );
 };
 
-const TableRowElement = ({ attributes, children }: RenderElementProps) => {
-  return <tr {...attributes}>{children}</tr>;
-};
+const TableRowElement = ({ attributes, children }: RenderElementProps) => (
+  <tr {...attributes}>{children}</tr>
+);
 
-const TableCellElement = ({
+const TableCellElementComponent = ({
   attributes,
   children,
   element,
 }: RenderElementProps) => {
-  const isHeader = (element as any).type === 'table-header-cell';
+  const cell = element as TableCellElement;
+  const isHeader = cell.type === 'table-header-cell';
   const Tag = isHeader ? 'th' : 'td';
-  return <Tag {...attributes}>{children}</Tag>;
+  const align = (cell.align as TableCellAlign | undefined) ?? 'left';
+
+  return (
+    <Tag
+      {...attributes}
+      // Header cells label their column for screen readers.
+      scope={isHeader ? 'col' : undefined}
+      style={{ textAlign: align }}
+    >
+      {children}
+    </Tag>
+  );
 };
 
 /* ---------------------------------------------------------------------------
- * Void plugin for table structure
+ * Table structure plugin
  * -------------------------------------------------------------------------*/
 
-const TABLE_TYPES = ['table', 'table-row', 'table-cell', 'table-header-cell'];
-
-const isTableElement = (node: any): boolean =>
-  node && 'type' in node && TABLE_TYPES.includes(node.type);
-
 /**
- * Run a callback with table structure protection temporarily disabled.
- * Used by toolbar action buttons (+ Row, + Col, Delete) that need to
- * legitimately modify table structure.
+ * Protects the table's shape from Slate's generic editing behaviours (deleting
+ * across cells, normalizing rows away, converting a cell to a paragraph, …).
+ *
+ * Structural edits are performed by tableOperations, which lifts the guard via
+ * `allowTableEdit`. Inline editing inside a cell — marks, links, inline math —
+ * is deliberately untouched, so cells keep full rich-text parity.
  */
-const allowTableEdit = (editor: Editor, fn: () => void) => {
-  (editor as any).__allowTableEdit = true;
-  fn();
-  (editor as any).__allowTableEdit = false;
-};
-
 const withTables = (editor: Editor): Editor => {
   const { deleteBackward, deleteForward, insertBreak, normalizeNode, apply } =
     editor;
 
-  // Block any operation that would remove/merge/move table structure nodes
-  // unless explicitly allowed by allowTableEdit()
   editor.apply = (op) => {
-    if ((editor as any).__allowTableEdit) {
+    if (
+      (editor as unknown as { __allowTableEdit?: boolean }).__allowTableEdit
+    ) {
       apply(op);
       return;
     }
@@ -284,7 +165,7 @@ const withTables = (editor: Editor): Editor => {
       try {
         const node =
           op.type === 'remove_node'
-            ? (op as any).node
+            ? (op as { node: unknown }).node
             : Editor.node(editor, op.path)?.[0];
         if (node && isTableElement(node)) {
           return; // Block this operation
@@ -298,10 +179,12 @@ const withTables = (editor: Editor): Editor => {
     if (op.type === 'set_node' && op.path.length > 0) {
       try {
         const [node] = Editor.node(editor, op.path);
+        const newType = (op as { newProperties?: { type?: string } })
+          .newProperties?.type;
         if (
           isTableElement(node) &&
-          (op as any).newProperties?.type &&
-          !TABLE_TYPES.includes((op as any).newProperties.type)
+          newType &&
+          !(TABLE_TYPES as readonly string[]).includes(newType)
         ) {
           return;
         }
@@ -313,7 +196,7 @@ const withTables = (editor: Editor): Editor => {
     apply(op);
   };
 
-  // Prevent normalizer from removing table structure nodes
+  // Prevent the normalizer from removing table structure nodes
   editor.normalizeNode = (entry) => {
     const [node] = entry;
     if (isTableElement(node)) {
@@ -330,8 +213,8 @@ const withTables = (editor: Editor): Editor => {
         match: (n) =>
           !Editor.isEditor(n) &&
           'type' in n &&
-          ((n as any).type === 'table-cell' ||
-            (n as any).type === 'table-header-cell'),
+          ((n as { type: string }).type === 'table-cell' ||
+            (n as { type: string }).type === 'table-header-cell'),
       });
       if (cell) {
         const [, cellPath] = cell;
@@ -350,8 +233,8 @@ const withTables = (editor: Editor): Editor => {
         match: (n) =>
           !Editor.isEditor(n) &&
           'type' in n &&
-          ((n as any).type === 'table-cell' ||
-            (n as any).type === 'table-header-cell'),
+          ((n as { type: string }).type === 'table-cell' ||
+            (n as { type: string }).type === 'table-header-cell'),
       });
       if (cell) {
         const [, cellPath] = cell;
@@ -369,7 +252,9 @@ const withTables = (editor: Editor): Editor => {
     if (selection) {
       const [table] = Editor.nodes(editor, {
         match: (n) =>
-          !Editor.isEditor(n) && 'type' in n && (n as any).type === 'table',
+          !Editor.isEditor(n) &&
+          'type' in n &&
+          (n as { type: string }).type === 'table',
       });
       if (table) {
         Transforms.insertText(editor, '\n');
@@ -392,24 +277,31 @@ const tableBlocks: Pick<
 > = {
   table: {
     renderElement: (props) => <TableElement {...props} />,
-    matchNode: (node) => (node as any).type === 'table',
+    matchNode: (node) => (node as { type: string }).type === 'table',
     isInBlocksSelector: false,
   },
   'table-row': {
     renderElement: (props) => <TableRowElement {...props} />,
-    matchNode: (node) => (node as any).type === 'table-row',
+    matchNode: (node) => (node as { type: string }).type === 'table-row',
     isInBlocksSelector: false,
   },
   'table-cell': {
-    renderElement: (props) => <TableCellElement {...props} />,
-    matchNode: (node) => (node as any).type === 'table-cell',
+    renderElement: (props) => <TableCellElementComponent {...props} />,
+    matchNode: (node) => (node as { type: string }).type === 'table-cell',
     isInBlocksSelector: false,
   },
   'table-header-cell': {
-    renderElement: (props) => <TableCellElement {...props} />,
-    matchNode: (node) => (node as any).type === 'table-header-cell',
+    renderElement: (props) => <TableCellElementComponent {...props} />,
+    matchNode: (node) =>
+      (node as { type: string }).type === 'table-header-cell',
     isInBlocksSelector: false,
   },
 };
 
-export { tableBlocks, withTables, insertTable };
+export {
+  tableBlocks,
+  withTables,
+  insertTable,
+  createTableCell,
+  createTableRow,
+};
