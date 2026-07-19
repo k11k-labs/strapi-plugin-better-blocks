@@ -59,7 +59,7 @@ import {
 import { insertHorizontalLine } from './Blocks/HorizontalLine';
 import { insertInlineMath, MathIcon } from './Blocks/Math';
 import { insertTable } from './Blocks/Table';
-import { insertMediaEmbed, isMediaUrl } from './Blocks/MediaEmbed';
+import { insertEmbedFromUrl, isEmbeddableUrl } from './Blocks/Embed';
 import {
   UndoIcon,
   RedoIcon,
@@ -191,6 +191,8 @@ const ToolbarButton = ({
 const INSERT_BLOCK_KEYS: SelectorBlockKey[] = [
   'image',
   'audio',
+  'video',
+  'embed',
   'button',
   'callout',
   'details',
@@ -987,8 +989,9 @@ const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
   const inputRef = React.useRef<HTMLInputElement>(null);
 
   const handleInsert = () => {
-    if (mediaUrl && isMediaUrl(mediaUrl)) {
-      insertMediaEmbed(editor, mediaUrl);
+    // Inserts the `embed` block: `media-embed` is deprecated and kept only so
+    // documents authored before this block still render.
+    if (mediaUrl && insertEmbedFromUrl(editor, mediaUrl)) {
       setMediaUrl('');
       setShowInput(false);
       ReactEditor.focus(editor as ReactEditor);
@@ -1058,7 +1061,7 @@ const InsertMediaButton = ({ disabled }: { disabled: boolean }) => {
               {formatMessage({ id: 'global.cancel', defaultMessage: 'Cancel' })}
             </Button>
             <Button
-              disabled={!mediaUrl || !isMediaUrl(mediaUrl)}
+              disabled={!mediaUrl || !isEmbeddableUrl(mediaUrl)}
               onClick={handleInsert}
             >
               {formatMessage({
