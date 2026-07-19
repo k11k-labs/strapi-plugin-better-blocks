@@ -1,5 +1,43 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.18.0
+
+### Minor Changes
+
+- [#75](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/75) [`2bcbe8b`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/2bcbe8bb5f39a676ee634c9de5ff84dbdb0b17cf) Thanks [@kkukielka](https://github.com/kkukielka)! - Social embeds can now show the real post inside the editor. Each card gets a
+  **Show live post** toggle that swaps in the platform's script-free iframe embed
+  (X, Instagram, Facebook, TikTok, LinkedIn, Pinterest) — no widget JavaScript
+  runs in the admin, so the `script-src 'self'` CSP is untouched.
+
+  Third-party frames load only after that click, never on page load, and the
+  choice isn't persisted in the content. Add the platform hosts you use to
+  `frame-src` in `config/middlewares.ts` (see the README) — without them the card
+  still works, the frame just renders empty.
+
+### Patch Changes
+
+- [#75](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/75) [`2bcbe8b`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/2bcbe8bb5f39a676ee634c9de5ff84dbdb0b17cf) Thanks [@kkukielka](https://github.com/kkukielka)! - Fix social embeds that rely on a pasted embed code, and stop TikTok/Pinterest
+  posts from degrading to a bare link on the frontend.
+  - **Embed code alone is now enough** — Save is enabled when either a post URL or
+    an embed code is present, so platforms without a tokenless oEmbed (Instagram,
+    Facebook) can be embedded by pasting their snippet. Pasting a snippet also
+    recovers the permalink from it (`data-instgrm-permalink`, `cite`, `href`) and
+    auto-detects the platform.
+  - **Widget scripts are stripped** from both fetched oEmbed markup and pasted
+    embed codes. A `<script>` injected via `innerHTML` never executes, and its
+    inert tag made renderers believe the platform widget was already loaded — the
+    cause of TikTok posts rendering as a raw blockquote of links.
+  - **Failed oEmbed lookups now surface an error** instead of silently storing an
+    empty payload. Pinterest answers HTTP 200 with `{"error": …}` for unresolvable
+    pins, which previously saved an embed with no markup that rendered as a
+    "View on Pinterest" fallback card.
+  - **`pin.it` short links are resolved** to their canonical `/pin/<id>/` URL
+    before the Pinterest oEmbed request, which rejects short links.
+  - **LinkedIn embeds keep their URN type.** Every id was rewritten to
+    `urn:li:share:<id>`, which LinkedIn 404s for the activity ids that appear in
+    share URLs, so no LinkedIn post ever loaded. The type from the URL
+    (`activity` / `ugcPost` / `share`) is now preserved.
+
 ## 0.17.1
 
 ### Patch Changes
