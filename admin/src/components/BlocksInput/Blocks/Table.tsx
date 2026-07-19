@@ -1,14 +1,31 @@
 import * as React from 'react';
 import { Box } from '@strapi/design-system';
-import { Editor, Path, Transforms } from 'slate';
-import { type RenderElementProps, ReactEditor, useSlate } from 'slate-react';
+import { Editor, type Node as SlateNode, Path, Transforms } from 'slate';
+import {
+  type RenderElementProps,
+  ReactEditor,
+  useSlate,
+  useSlateStatic,
+} from 'slate-react';
 import { styled } from 'styled-components';
 
 import { type BlocksStore, useBlocksEditorContext } from '../BlocksEditor';
-import type { TableCellAlign, TableCellElement } from '../utils/types';
+import type {
+  CustomElement,
+  TableCellAlign,
+  TableCellElement,
+} from '../utils/types';
 import { TableToolbar } from './TableToolbar';
 import {
+  type GridRange,
+  type TableGrid,
+  buildTableGrid,
+  covers,
+  findCellByPath,
+} from './tableGrid';
+import {
   TABLE_TYPES,
+  allowTableEdit,
   createTableCell,
   createTableRow,
   getTableLocation,
@@ -34,10 +51,7 @@ const TableScroller = styled.div`
   max-width: 100%;
 `;
 
-const StyledTable = styled.table<{
-  $activeRow: number | null;
-  $activeCol: number | null;
-}>`
+const StyledTable = styled.table<{ $hasRange: boolean }>`
   width: 100%;
   border-collapse: collapse;
   margin: ${({ theme }) => theme.spaces[2]} 0;
@@ -59,29 +73,55 @@ const StyledTable = styled.table<{
     text-align: inherit;
   }
 
-  /* Spatial orientation while editing: tint the row and column holding the
-     caret. Both rules are cheap nth-child selectors, no per-cell state. */
-  ${({ $activeRow, theme }) =>
-    $activeRow
-      ? `tr:nth-child(${$activeRow}) > * { background: ${theme.colors.primary100}; }`
-      : ''}
-  ${({ $activeCol, theme }) =>
-    $activeCol
-      ? `tr > *:nth-child(${$activeCol}) { background: ${theme.colors.primary100}; }`
-      : ''}
+  /* Cells carry their own highlight — with colSpan/rowSpan in play, a cell's
+     index within its row is no longer its visual column, so nth-child rules
+     can't identify a column any more. */
+  th[data-highlight='active'],
+  td[data-highlight='active'] {
+    background: ${({ theme }) => theme.colors.primary100};
+  }
+
+  th[data-highlight='range'],
+  td[data-highlight='range'] {
+    background: ${({ theme }) => theme.colors.primary200};
+  }
+
+  /* While a range of cells is selected, the browser's own text highlight would
+     paint across the range tint and read as two competing selections. */
+  ${({ $hasRange }) =>
+    $hasRange ? '& ::selection { background: transparent; }' : ''}
 `;
 
 /* ---------------------------------------------------------------------------
  * Components
  * -------------------------------------------------------------------------*/
 
+/**
+ * Lets each cell work out whether it should be highlighted.
+ *
+ * Cells are rendered independently by Slate's renderElement, so they can't see
+ * the table's grid on their own — and with spans they can't be identified by
+ * child index either. Only the focused table provides a value; every other
+ * table renders with `null` and no highlight.
+ */
+interface TableSelectionValue {
+  grid: TableGrid;
+  activeRow: number;
+  activeCol: number;
+  range: GridRange | null;
+}
+
+const TableSelectionContext = React.createContext<TableSelectionValue | null>(
+  null
+);
+
 const TableElement = ({
   attributes,
   children,
   element,
 }: RenderElementProps) => {
-  // useSlate (not useSlateStatic) so the toolbar and the active row/column
-  // highlight follow the caret.
+  // useSlate (not useSlateStatic) so the toolbar and the highlights follow the
+  // caret.
   const editor = useSlate();
   const { disabled } = useBlocksEditorContext('TableElement');
   const path = ReactEditor.findPath(editor as ReactEditor, element);
@@ -89,17 +129,29 @@ const TableElement = ({
   const location = getTableLocation(editor);
   const isFocused = Boolean(location && Path.equals(location.tablePath, path));
 
+  const selection = React.useMemo<TableSelectionValue | null>(
+    () =>
+      isFocused && location
+        ? {
+            grid: location.grid,
+            activeRow: location.rowIndex,
+            activeCol: location.colIndex,
+            range: location.range,
+          }
+        : null,
+    [isFocused, location]
+  );
+
   return (
     <TableWrapper {...attributes} position="relative">
       {isFocused && location && (
         <TableToolbar location={location} disabled={disabled} />
       )}
       <TableScroller>
-        <StyledTable
-          $activeRow={isFocused && location ? location.rowIndex + 1 : null}
-          $activeCol={isFocused && location ? location.colIndex + 1 : null}
-        >
-          <tbody>{children}</tbody>
+        <StyledTable $hasRange={Boolean(selection?.range)}>
+          <TableSelectionContext.Provider value={selection}>
+            <tbody>{children}</tbody>
+          </TableSelectionContext.Provider>
         </StyledTable>
       </TableScroller>
     </TableWrapper>
@@ -110,6 +162,40 @@ const TableRowElement = ({ attributes, children }: RenderElementProps) => (
   <tr {...attributes}>{children}</tr>
 );
 
+/** Background tint for a cell, or undefined when it isn't highlighted. */
+const useCellHighlight = (
+  element: RenderElementProps['element']
+): 'range' | 'active' | undefined => {
+  const editor = useSlateStatic();
+  const selection = React.useContext(TableSelectionContext);
+  if (!selection) return undefined;
+
+  let path: Path;
+  try {
+    path = ReactEditor.findPath(editor as ReactEditor, element);
+  } catch {
+    return undefined;
+  }
+
+  const cell = findCellByPath(selection.grid, path);
+  if (!cell) return undefined;
+
+  const { range } = selection;
+  if (range) {
+    const overlapsRange =
+      cell.row <= range.bottom &&
+      cell.row + cell.rowSpan - 1 >= range.top &&
+      cell.col <= range.right &&
+      cell.col + cell.colSpan - 1 >= range.left;
+    return overlapsRange ? 'range' : undefined;
+  }
+
+  // Orientation aid: tint the row and column holding the caret
+  const inActiveRow = covers(cell, selection.activeRow, cell.col);
+  const inActiveCol = covers(cell, cell.row, selection.activeCol);
+  return inActiveRow || inActiveCol ? 'active' : undefined;
+};
+
 const TableCellElementComponent = ({
   attributes,
   children,
@@ -119,12 +205,17 @@ const TableCellElementComponent = ({
   const isHeader = cell.type === 'table-header-cell';
   const Tag = isHeader ? 'th' : 'td';
   const align = (cell.align as TableCellAlign | undefined) ?? 'left';
+  const highlight = useCellHighlight(element);
 
   return (
     <Tag
       {...attributes}
       // Header cells label their column for screen readers.
       scope={isHeader ? 'col' : undefined}
+      // Absent spans mean 1; React omits the attribute for undefined.
+      colSpan={cell.colSpan && cell.colSpan > 1 ? cell.colSpan : undefined}
+      rowSpan={cell.rowSpan && cell.rowSpan > 1 ? cell.rowSpan : undefined}
+      data-highlight={highlight}
       style={{ textAlign: align }}
     >
       {children}
@@ -135,6 +226,44 @@ const TableCellElementComponent = ({
 /* ---------------------------------------------------------------------------
  * Table structure plugin
  * -------------------------------------------------------------------------*/
+
+/**
+ * Trims any `rowSpan` that reaches past the last row, or `colSpan` past the
+ * widest row. Returns true when something was changed, so the caller can let
+ * Slate re-run normalization on the repaired table.
+ */
+const clampOversizedSpans = (
+  editor: Editor,
+  table: CustomElement,
+  tablePath: Path
+): boolean => {
+  const grid = buildTableGrid(table, tablePath);
+  let repaired = false;
+
+  for (const cell of grid.cells) {
+    const maxRowSpan = Math.max(grid.rowCount - cell.row, 1);
+    const maxColSpan = Math.max(grid.colCount - cell.col, 1);
+    const next: Record<string, number | undefined> = {};
+
+    if (cell.rowSpan > maxRowSpan) {
+      next.rowSpan = maxRowSpan > 1 ? maxRowSpan : undefined;
+    }
+    if (cell.colSpan > maxColSpan) {
+      next.colSpan = maxColSpan > 1 ? maxColSpan : undefined;
+    }
+
+    if (Object.keys(next).length > 0) {
+      allowTableEdit(editor, () => {
+        Transforms.setNodes(editor, next as Partial<SlateNode>, {
+          at: cell.path,
+        });
+      });
+      repaired = true;
+    }
+  }
+
+  return repaired;
+};
 
 /**
  * Protects the table's shape from Slate's generic editing behaviours (deleting
@@ -198,10 +327,19 @@ const withTables = (editor: Editor): Editor => {
 
   // Prevent the normalizer from removing table structure nodes
   editor.normalizeNode = (entry) => {
-    const [node] = entry;
+    const [node, path] = entry;
+
     if (isTableElement(node)) {
+      // The one repair worth making: spans that reach past the table's bounds.
+      // The operations here can't produce those, but hand-edited or imported
+      // JSON can, and an over-long span throws off every grid calculation.
+      // Clamping strictly decreases the spans, so this always terminates.
+      if ((node as CustomElement).type === 'table') {
+        if (clampOversizedSpans(editor, node as CustomElement, path)) return;
+      }
       return;
     }
+
     normalizeNode(entry);
   };
 

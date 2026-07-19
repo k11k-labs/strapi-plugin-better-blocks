@@ -19,9 +19,13 @@ import {
   InsertColumnRightIcon,
   InsertRowAboveIcon,
   InsertRowBelowIcon,
+  MergeCellsIcon,
+  SplitCellIcon,
 } from './TableIcons';
 import {
   type TableLocation,
+  canMergeCells,
+  canSplitCell,
   deleteColumn,
   deleteRow,
   deleteTable,
@@ -29,7 +33,9 @@ import {
   hasHeaderRow,
   insertColumn,
   insertRow,
+  mergeCells,
   setCellAlign,
+  splitCell,
   toggleHeaderRow,
 } from './tableOperations';
 
@@ -221,6 +227,23 @@ const TableToolbar = ({ location, disabled }: TableToolbarProps) => {
         isDanger
         disabled={disabled || location.colCount <= 1}
         onAction={() => deleteColumn(editor, location)}
+      />
+
+      <Separator />
+
+      <Action
+        label={t('components.Blocks.table.mergeCells', 'Merge cells')}
+        icon={MergeCellsIcon}
+        // Merging needs a selection covering more than one cell — drag across
+        // cells, or extend with Shift+arrow.
+        disabled={disabled || !canMergeCells(location)}
+        onAction={() => mergeCells(editor, location)}
+      />
+      <Action
+        label={t('components.Blocks.table.splitCell', 'Split cell')}
+        icon={SplitCellIcon}
+        disabled={disabled || !canSplitCell(location)}
+        onAction={() => splitCell(editor, location)}
       />
 
       <Separator />
