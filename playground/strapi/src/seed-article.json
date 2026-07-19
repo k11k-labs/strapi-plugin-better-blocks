@@ -843,6 +843,7 @@
     },
     {
       "type": "code",
+      "language": "tsx",
       "children": [
         {
           "type": "text",

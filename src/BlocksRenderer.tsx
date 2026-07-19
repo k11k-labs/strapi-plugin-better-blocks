@@ -15,6 +15,7 @@ import {
   getMediaFigureStyle,
   getMediaFrameStyle,
 } from './media';
+import { CodeBlock } from './CodeBlock';
 import { MermaidDiagram } from './MermaidDiagram';
 import { SocialEmbed } from './SocialEmbed';
 import { Video } from './Video';
@@ -393,7 +394,7 @@ function renderTable(
   }
 
   return (
-    <table key={key}>
+    <table key={key} className="bb-table">
       {headerRowCount > 0 && <thead>{rows.slice(0, headerRowCount)}</thead>}
       {rows.length > headerRowCount && <tbody>{rows.slice(headerRowCount)}</tbody>}
     </table>
@@ -418,11 +419,22 @@ function getPlainText(children: InlineNode[]): string {
     .join('');
 }
 
+/**
+ * Renderer-wide settings that only some blocks consume. Passed as one object
+ * rather than loose parameters so it can be threaded through the blocks that
+ * nest others (callout, details) without widening every signature further.
+ */
+type RenderOptions = {
+  codeTheme: string;
+  codeCopyButton: boolean;
+};
+
 function renderBlock(
   block: BlockNode,
   key: number,
   blocks?: CustomBlocksConfig,
-  modifiers?: CustomModifiersConfig
+  modifiers?: CustomModifiersConfig,
+  options?: RenderOptions
 ): ReactNode {
   switch (block.type) {
     case 'paragraph':
@@ -434,7 +446,7 @@ function renderBlock(
     case 'quote':
       return renderQuote(block, key, blocks, modifiers);
     case 'code':
-      return renderCode(block, key, blocks);
+      return renderCode(block, key, blocks, options);
     case 'image':
       return renderImage(block, key, blocks);
     case 'horizontal-line':
@@ -452,9 +464,9 @@ function renderBlock(
     case 'diagram':
       return renderDiagram(block, key, blocks);
     case 'callout':
-      return renderCallout(block, key, blocks, modifiers);
+      return renderCallout(block, key, blocks, modifiers, options);
     case 'details':
-      return renderDetails(block, key, blocks, modifiers);
+      return renderDetails(block, key, blocks, modifiers, options);
     case 'button':
       return renderButton(block, key, blocks);
     case 'social-embed':
@@ -540,30 +552,86 @@ function renderQuote(
       {children}
     </QuoteComp>
   ) : (
-    <blockquote key={key} style={style}>
+    <blockquote key={key} className="bb-quote" style={style}>
       {children}
     </blockquote>
   );
 }
 
-function renderCode(block: CodeNode, key: number, blocks?: CustomBlocksConfig): ReactNode {
+const DEFAULT_CODE_THEME = 'github-dark';
+
+function renderCode(
+  block: CodeNode,
+  key: number,
+  blocks?: CustomBlocksConfig,
+  options?: RenderOptions
+): ReactNode {
   const CodeComp = blocks?.code;
   const plainText = getPlainText(block.children);
 
   if (CodeComp) {
+    // Custom renderers get the raw editor value, not the Shiki grammar id, so
+    // they can map it to whatever highlighter they use.
     return (
-      <CodeComp key={key} plainText={plainText}>
+      <CodeComp key={key} plainText={plainText} language={block.language}>
         {plainText}
       </CodeComp>
     );
   }
 
   return (
-    <pre key={key}>
-      <code>{plainText}</code>
-    </pre>
+    <CodeBlock
+      key={key}
+      plainText={plainText}
+      language={block.language}
+      theme={options?.codeTheme ?? DEFAULT_CODE_THEME}
+      copyButton={options?.codeCopyButton ?? false}
+    />
   );
 }
+
+// ── GitHub-style Table / Quote / Code Styling ────────────────────────
+//
+// Kept in sync with the Astro renderer so one shared theme covers both. These
+// are classes rather than inline styles for two reasons: `nth-child` striping
+// and `:hover` can't be expressed inline, and inline styles would outrank a
+// consumer's own CSS, defeating the `--bb-*` custom properties below.
+
+// Bordered cells, a shaded header, zebra-striped body rows, and horizontal
+// scroll on overflow. `display:block` is what makes the table scrollable.
+const TABLE_CSS =
+  '.bb-table{display:block;width:max-content;max-width:100%;margin:1rem 0;overflow:auto;' +
+  'border-collapse:collapse;border-spacing:0;border:1px solid var(--bb-table-border,#d0d7de)}' +
+  '.bb-table th,.bb-table td{padding:.375rem .8125rem;' +
+  'border:1px solid var(--bb-table-border,#d0d7de);text-align:left}' +
+  '.bb-table th{font-weight:600;background:var(--bb-table-header-bg,#f6f8fa)}' +
+  '.bb-table tbody tr{background:var(--bb-table-row-bg,#fff)}' +
+  '.bb-table tbody tr:nth-child(2n){background:var(--bb-table-stripe-bg,#f6f8fa)}';
+
+// A muted left border with indented, dimmed text — GitHub's markdown quote,
+// which has no background fill.
+const QUOTE_CSS =
+  '.bb-quote{margin:1rem 0;padding:0 1rem;color:var(--bb-quote-fg,#57606a);' +
+  'border-left:.25rem solid var(--bb-quote-border,#d0d7de)}';
+
+// Shiki inlines the theme's background and text colors onto the `<pre>` it
+// generates, so we only add padding, rounding, and typography around it. The
+// pre-highlight fallback `<pre>` has no such inline colors, so it carries its
+// own — defaulting to the github-dark values to match DEFAULT_CODE_THEME.
+// Retheme them alongside `codeTheme` via --bb-code-fallback-*.
+const CODE_CSS =
+  '.bb-code{position:relative;margin:1rem 0}' +
+  '.bb-code pre{margin:0;padding:1rem;border-radius:6px;font-size:.875rem;' +
+  'line-height:1.45;tab-size:2;overflow-x:auto}' +
+  '.bb-code-pre{background:var(--bb-code-fallback-bg,#24292e);' +
+  'color:var(--bb-code-fallback-fg,#e1e4e8)}' +
+  '.bb-code-copy{position:absolute;top:.5rem;right:.5rem;padding:.25rem .5rem;' +
+  'font-size:.75rem;line-height:1;color:var(--bb-code-copy-fg,#e1e4e8);' +
+  'background:var(--bb-code-copy-bg,rgba(110,118,129,.4));' +
+  'border:1px solid var(--bb-code-copy-border,rgba(240,246,252,.1));' +
+  'border-radius:6px;cursor:pointer;opacity:0;transition:opacity .15s ease,background .15s ease}' +
+  '.bb-code:hover .bb-code-copy,.bb-code-copy:focus-visible{opacity:1}' +
+  '.bb-code-copy:hover{background:var(--bb-code-copy-hover-bg,rgba(110,118,129,.6))}';
 
 function renderImage(block: ImageNode, key: number, blocks?: CustomBlocksConfig): ReactNode {
   const ImageComp = blocks?.image;
@@ -912,12 +980,13 @@ function renderCallout(
   block: CalloutNode,
   key: number,
   blocks?: CustomBlocksConfig,
-  modifiers?: CustomModifiersConfig
+  modifiers?: CustomModifiersConfig,
+  options?: RenderOptions
 ): ReactNode {
   const variant: CalloutVariant = CALLOUT_VARIANTS[block.variant] ? block.variant : 'note';
   const meta = CALLOUT_VARIANTS[variant];
   const childNodes = block.children.map((child, index) =>
-    renderBlock(child, index, blocks, modifiers)
+    renderBlock(child, index, blocks, modifiers, options)
   );
   // Collapse the outer block margins (e.g. a paragraph's default top/bottom
   // margin) so the body sits flush within the callout's padding, keeping the
@@ -992,10 +1061,11 @@ function renderDetails(
   block: DetailsNode,
   key: number,
   blocks?: CustomBlocksConfig,
-  modifiers?: CustomModifiersConfig
+  modifiers?: CustomModifiersConfig,
+  options?: RenderOptions
 ): ReactNode {
   const children = block.children.map((child, index) =>
-    renderBlock(child, index, blocks, modifiers)
+    renderBlock(child, index, blocks, modifiers, options)
   );
 
   const DetailsComp = blocks?.details;
@@ -1280,7 +1350,13 @@ function renderButton(block: ButtonElement, key: number, blocks?: CustomBlocksCo
 
 // ── Main Component ───────────────────────────────────────────────────
 
-export function BlocksRenderer({ content, blocks, modifiers }: BlocksRendererProps): ReactNode {
+export function BlocksRenderer({
+  content,
+  blocks,
+  modifiers,
+  codeTheme = DEFAULT_CODE_THEME,
+  codeCopyButton = false,
+}: BlocksRendererProps): ReactNode {
   if (!content || !Array.isArray(content) || content.length === 0) {
     return null;
   }
@@ -1290,12 +1366,20 @@ export function BlocksRenderer({ content, blocks, modifiers }: BlocksRendererPro
   // won't carry the `.bb-*` classes these rules target.
   const needsButtonCss = !blocks?.button && contentHasBlock(content, 'button');
   const needsEmbedCss = !blocks?.embed && contentHasBlock(content, 'embed');
+  const needsTableCss = !blocks?.table && contentHasBlock(content, 'table');
+  const needsQuoteCss = !blocks?.quote && contentHasBlock(content, 'quote');
+  const needsCodeCss = !blocks?.code && contentHasBlock(content, 'code');
+
+  const options: RenderOptions = { codeTheme, codeCopyButton };
 
   return (
     <>
       {needsButtonCss && <style>{BUTTON_HOVER_CSS}</style>}
       {needsEmbedCss && <style>{EMBED_FRAME_CSS}</style>}
-      {content.map((block, index) => renderBlock(block, index, blocks, modifiers))}
+      {needsTableCss && <style>{TABLE_CSS}</style>}
+      {needsQuoteCss && <style>{QUOTE_CSS}</style>}
+      {needsCodeCss && <style>{CODE_CSS}</style>}
+      {content.map((block, index) => renderBlock(block, index, blocks, modifiers, options))}
     </>
   );
 }

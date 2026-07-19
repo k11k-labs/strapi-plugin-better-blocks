@@ -14,6 +14,25 @@ vi.mock('mermaid', () => ({
   },
 }));
 
+// Shiki loads WASM grammars, so stub it with a highlighter that echoes the
+// resolved grammar id and theme into the markup. Tests then assert on the
+// rendered output rather than on spy calls, which keeps them independent of the
+// highlighter cache the real component keeps at module scope.
+const loadedLangs = vi.hoisted(() => new Set<string>());
+vi.mock('shiki', () => ({
+  createHighlighter: vi.fn(async ({ langs }: { langs: string[] }) => {
+    langs.forEach((lang) => loadedLangs.add(lang));
+    return {
+      codeToHtml: (code: string, { lang, theme }: { lang: string; theme: string }) =>
+        `<pre class="shiki ${theme}" data-lang="${lang}"><code>${code}</code></pre>`,
+      loadLanguage: async (lang: string) => {
+        loadedLangs.add(lang);
+      },
+      getLoadedLanguages: () => [...loadedLangs],
+    };
+  }),
+}));
+
 describe('BlocksRenderer', () => {
   it('returns null for empty content', () => {
     const { container } = render(<BlocksRenderer content={[]} />);
@@ -442,6 +461,29 @@ describe('BlocksRenderer', () => {
     expect(screen.getByText('Wise words').closest('blockquote')).toBeInTheDocument();
   });
 
+  it('applies the bb-quote class to the default blockquote', () => {
+    const content: BlocksContent = [
+      { type: 'quote', children: [{ type: 'text', text: 'Wise words' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('blockquote.bb-quote')).toBeInTheDocument();
+    expect(container.querySelector('style')?.textContent).toContain('--bb-quote-border');
+  });
+
+  it('omits the quote styles when the quote block is overridden', () => {
+    const content: BlocksContent = [
+      { type: 'quote', children: [{ type: 'text', text: 'Wise words' }] },
+    ];
+    const { container } = render(
+      <BlocksRenderer
+        content={content}
+        blocks={{ quote: ({ children }) => <div data-testid="custom-quote">{children}</div> }}
+      />
+    );
+    expect(container.querySelector('.bb-quote')).not.toBeInTheDocument();
+    expect(container.querySelector('style')).not.toBeInTheDocument();
+  });
+
   // ── Code Block ───────────────────────────────────────────────────
 
   it('renders code block', () => {
@@ -452,6 +494,127 @@ describe('BlocksRenderer', () => {
     const code = screen.getByText('const x = 1;');
     expect(code.tagName).toBe('CODE');
     expect(code.closest('pre')).toBeInTheDocument();
+  });
+
+  it('wraps code blocks in a bb-code container with a plain pre before highlighting', () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'typescript', children: [{ type: 'text', text: 'const x = 1;' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    // Server render and first paint emit the raw source, so hydration matches.
+    expect(container.querySelector('.bb-code pre.bb-code-pre code')).toHaveTextContent(
+      'const x = 1;'
+    );
+  });
+
+  it('highlights code blocks with the given language', async () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'typescript', children: [{ type: 'text', text: 'const x = 1;' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(container.querySelector('.bb-code pre.shiki')).toHaveAttribute(
+        'data-lang',
+        'typescript'
+      );
+    });
+    expect(container.querySelector('pre.bb-code-pre')).not.toBeInTheDocument();
+  });
+
+  it('falls back to plaintext for an unknown language', async () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'klingon', children: [{ type: 'text', text: 'nuqneH' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(container.querySelector('pre.shiki')).toHaveAttribute('data-lang', 'plaintext');
+    });
+  });
+
+  it('falls back to plaintext when no language is set', async () => {
+    const content: BlocksContent = [
+      { type: 'code', children: [{ type: 'text', text: 'plain text' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(container.querySelector('pre.shiki')).toHaveAttribute('data-lang', 'plaintext');
+    });
+  });
+
+  it('maps editor language values to Shiki grammar ids', async () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'objectivec', children: [{ type: 'text', text: '@interface' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(container.querySelector('pre.shiki')).toHaveAttribute('data-lang', 'objective-c');
+    });
+  });
+
+  it('defaults to the github-dark theme', async () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'javascript', children: [{ type: 'text', text: 'let a;' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    await waitFor(() => {
+      expect(container.querySelector('pre.shiki')).toHaveClass('github-dark');
+    });
+  });
+
+  it('applies the codeTheme prop to the highlighted output', async () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'javascript', children: [{ type: 'text', text: 'let a;' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} codeTheme="github-light" />);
+    await waitFor(() => {
+      expect(container.querySelector('pre.shiki')).toHaveClass('github-light');
+    });
+  });
+
+  it('omits the copy button by default', () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'javascript', children: [{ type: 'text', text: 'let a;' }] },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('.bb-code-copy')).not.toBeInTheDocument();
+  });
+
+  it('renders an opt-in copy button that copies the source', async () => {
+    const writeText = vi.fn(() => Promise.resolve());
+    Object.defineProperty(navigator, 'clipboard', { value: { writeText }, configurable: true });
+
+    const content: BlocksContent = [
+      { type: 'code', language: 'javascript', children: [{ type: 'text', text: 'let a;' }] },
+    ];
+    render(<BlocksRenderer content={content} codeCopyButton />);
+
+    const button = screen.getByRole('button', { name: 'Copy code' });
+    expect(button).toHaveTextContent('Copy');
+
+    fireEvent.click(button);
+    expect(writeText).toHaveBeenCalledWith('let a;');
+    await waitFor(() => expect(button).toHaveTextContent('Copied!'));
+  });
+
+  it('uses a custom code renderer with plainText and the raw language', () => {
+    const content: BlocksContent = [
+      { type: 'code', language: 'objectivec', children: [{ type: 'text', text: '@interface' }] },
+    ];
+    render(
+      <BlocksRenderer
+        content={content}
+        blocks={{
+          // The override gets the editor value, not the Shiki grammar id.
+          code: ({ plainText, language }) => (
+            <pre data-testid="custom-code" data-language={language}>
+              <code>{plainText}</code>
+            </pre>
+          ),
+        }}
+      />
+    );
+    expect(screen.getByTestId('custom-code')).toHaveAttribute('data-language', 'objectivec');
+    expect(screen.getByTestId('custom-code')).toHaveTextContent('@interface');
   });
 
   // ── Image ────────────────────────────────────────────────────────
@@ -627,6 +790,23 @@ describe('BlocksRenderer', () => {
     expect(container.querySelectorAll('td')).toHaveLength(2);
     expect(screen.getByText('Name').tagName).toBe('TH');
     expect(screen.getByText('Alice').tagName).toBe('TD');
+  });
+
+  it('applies the bb-table class and ships the table styles', () => {
+    const content: BlocksContent = [
+      {
+        type: 'table',
+        children: [
+          {
+            type: 'table-row',
+            children: [{ type: 'table-cell', children: [{ type: 'text', text: 'Cell' }] }],
+          },
+        ],
+      },
+    ];
+    const { container } = render(<BlocksRenderer content={content} />);
+    expect(container.querySelector('table.bb-table')).toBeInTheDocument();
+    expect(container.querySelector('style')?.textContent).toContain('--bb-table-stripe-bg');
   });
 
   it('renders table within tbody', () => {

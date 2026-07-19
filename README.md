@@ -29,13 +29,14 @@
 2. [Compatibility](#compatibility)
 3. [Installation](#installation)
 4. [Usage](#usage)
-5. [Supported Blocks](#supported-blocks)
-6. [Supported Modifiers](#supported-modifiers)
-7. [Custom Renderers](#custom-renderers)
-8. [TypeScript](#typescript)
-9. [Contributing](#contributing)
-10. [Support this project](#support-this-project)
-11. [License](#license)
+5. [GitHub-style defaults](#tables-blockquotes--code-blocks-github-style)
+6. [Supported Blocks](#supported-blocks)
+7. [Supported Modifiers](#supported-modifiers)
+8. [Custom Renderers](#custom-renderers)
+9. [TypeScript](#typescript)
+10. [Contributing](#contributing)
+11. [Support this project](#support-this-project)
+12. [License](#license)
 
 ---
 
@@ -490,7 +491,7 @@ A merged header with a `rowSpan` grouping in the body &mdash; `Region` and `Team
 renders as:
 
 ```html
-<table>
+<table class="bb-table">
   <thead>
     <tr>
       <th scope="col" rowspan="2">Region</th>
@@ -535,6 +536,81 @@ Cell `children` go through the same inline renderer as paragraphs, so marks (`bo
 />
 ```
 
+### Tables, Blockquotes & Code Blocks (GitHub-style)
+
+These three blocks ship with GitHub-flavored defaults out of the box &mdash; no stylesheet to import. Each carries a stable `bb-*` class, and the styles are injected as a `<style>` tag only when the block actually appears in the content (and skipped entirely when you override the block). Everything is rethemable through CSS custom properties, so you can restyle without replacing any markup.
+
+The same classes and custom properties are used by the [Astro renderer](https://github.com/k11k-labs/better-blocks-astro-renderer), so one shared theme covers both.
+
+| Block   | Default element                 | Custom properties                                                                        |
+| ------- | ------------------------------- | ---------------------------------------------------------------------------------------- |
+| `table` | `<table class="bb-table">`      | `--bb-table-border`, `--bb-table-header-bg`, `--bb-table-row-bg`, `--bb-table-stripe-bg` |
+| `quote` | `<blockquote class="bb-quote">` | `--bb-quote-border`, `--bb-quote-fg`                                                     |
+| `code`  | `<div class="bb-code">`         | `--bb-code-fallback-bg`, `--bb-code-fallback-fg`, `--bb-code-copy-*`                     |
+
+**Tables** get bordered cells, a shaded header, zebra-striped body rows, and horizontal scrolling on overflow. See [Tables](#tables) for the `<thead>` / `<tbody>` rules and cell properties.
+
+**Blockquotes** get a muted left border with indented, dimmed text &mdash; GitHub's markdown quote, which has no background fill.
+
+**Code blocks** are syntax-highlighted with [Shiki](https://shiki.style/), driven by the `language` the editor stores on the block:
+
+```json
+{
+  "type": "code",
+  "language": "typescript",
+  "children": [{ "type": "text", "text": "const x: number = 1;" }]
+}
+```
+
+Shiki needs to resolve grammars asynchronously, so &mdash; like [diagrams](#diagrams-mermaid) &mdash; highlighting happens on the client. The server render and first paint emit the raw source in a plain `<pre class="bb-code-pre">` so hydration matches, then the highlighted markup swaps in after mount:
+
+```html
+<!-- before hydration -->
+<div class="bb-code">
+  <pre class="bb-code-pre"><code>const x: number = 1;</code></pre>
+</div>
+
+<!-- after -->
+<div class="bb-code">
+  <div>
+    <pre class="shiki github-dark" style="…"><code>…</code></pre>
+  </div>
+</div>
+```
+
+If Shiki fails to load, the plain `<pre>` simply stays. Language values are mapped to Shiki grammar ids (`objectivec` → `objective-c`, `fortran` → `fortran-free-form`, `vbnet` → `vb`, …); an unknown or missing language falls back to `plaintext`, rendered themed but unhighlighted, so a stray value never breaks the page.
+
+Two props control the defaults:
+
+| Prop             | Default         | Description                                                    |
+| ---------------- | --------------- | -------------------------------------------------------------- |
+| `codeTheme`      | `'github-dark'` | Any bundled Shiki theme (`github-light`, `dracula`, `nord`, …) |
+| `codeCopyButton` | `false`         | Adds a "Copy" button in the top-right corner                   |
+
+```jsx
+<BlocksRenderer content={content} codeTheme="github-light" codeCopyButton />
+```
+
+Because the pre-hydration `<pre>` has no theme colors of its own, it defaults to the `github-dark` palette. If you change `codeTheme`, set the fallback colors to match so the swap isn't jarring:
+
+```css
+:root {
+  --bb-code-fallback-bg: #fff;
+  --bb-code-fallback-fg: #24292f;
+}
+```
+
+Both props are ignored when you supply your own `code` renderer, which receives the raw editor `language` (not the Shiki grammar id) so it can map it however it likes:
+
+```jsx
+<BlocksRenderer
+  content={content}
+  blocks={{
+    code: ({ plainText, language }) => <Prism code={plainText} language={language} />,
+  }}
+/>
+```
+
 ### Astro
 
 `BlocksRenderer` works in [Astro](https://astro.build/) via the [`@astrojs/react`](https://docs.astro.build/en/guides/integrations-guide/react/) integration. Because the renderer is purely presentational and KaTeX renders to a string on the server (see [Math (KaTeX)](#math-katex)), you can render it as a static [Astro island](https://docs.astro.build/en/concepts/islands/) with **no client directive** &mdash; Astro outputs plain HTML and ships zero JavaScript:
@@ -567,30 +643,30 @@ const { blocks } = Astro.props;
 
 ## Supported Blocks
 
-| Block                           | Default element                   | Source                      |
-| ------------------------------- | --------------------------------- | --------------------------- |
-| `paragraph`                     | `<p>`                             | Strapi core                 |
-| `heading` (1&ndash;6)           | `<h1>`&ndash;`<h6>`               | Strapi core                 |
-| `list` (ordered/unordered/todo) | `<ol>` / `<ul>`                   | Strapi core + Better Blocks |
-| `list-item`                     | `<li>`                            | Strapi core                 |
-| `link`                          | `<a>`                             | Strapi core                 |
-| `quote`                         | `<blockquote>`                    | Strapi core                 |
-| `code`                          | `<pre><code>`                     | Strapi core                 |
-| `image`                         | `<figure><img>`                   | Strapi core                 |
-| `horizontal-line`               | `<hr>`                            | Better Blocks               |
-| `table`                         | `<table>` (`<thead>` / `<tbody>`) | Better Blocks               |
-| `table-header-cell`             | `<th scope="col">`                | Better Blocks               |
-| `table-cell`                    | `<td>`                            | Better Blocks               |
-| `media-embed` (deprecated)      | `<iframe>` (16:9)                 | Better Blocks               |
-| `embed` (iframe)                | `<figure><iframe>`                | Better Blocks               |
-| `video`                         | `<figure><video>`                 | Better Blocks               |
-| `math` (inline/block)           | `<span>` / `<div>`                | Better Blocks               |
-| `diagram` (mermaid)             | `<div>` (SVG)                     | Better Blocks               |
-| `callout` (admonition)          | `<aside>`                         | Better Blocks               |
-| `details` (collapsible)         | `<details>`                       | Better Blocks               |
-| `button` (CTA / file download)  | `<a>`                             | Better Blocks               |
-| `social-embed`                  | `<figure>`                        | Better Blocks               |
-| `audio`                         | `<figure><audio>`                 | Better Blocks               |
+| Block                           | Default element                 | Source                      |
+| ------------------------------- | ------------------------------- | --------------------------- |
+| `paragraph`                     | `<p>`                           | Strapi core                 |
+| `heading` (1&ndash;6)           | `<h1>`&ndash;`<h6>`             | Strapi core                 |
+| `list` (ordered/unordered/todo) | `<ol>` / `<ul>`                 | Strapi core + Better Blocks |
+| `list-item`                     | `<li>`                          | Strapi core                 |
+| `link`                          | `<a>`                           | Strapi core                 |
+| `quote`                         | `<blockquote class="bb-quote">` | Strapi core                 |
+| `code`                          | `<pre><code>` (Shiki)           | Strapi core                 |
+| `image`                         | `<figure><img>`                 | Strapi core                 |
+| `horizontal-line`               | `<hr>`                          | Better Blocks               |
+| `table`                         | `<table class="bb-table">`      | Better Blocks               |
+| `table-header-cell`             | `<th scope="col">`              | Better Blocks               |
+| `table-cell`                    | `<td>`                          | Better Blocks               |
+| `media-embed` (deprecated)      | `<iframe>` (16:9)               | Better Blocks               |
+| `embed` (iframe)                | `<figure><iframe>`              | Better Blocks               |
+| `video`                         | `<figure><video>`               | Better Blocks               |
+| `math` (inline/block)           | `<span>` / `<div>`              | Better Blocks               |
+| `diagram` (mermaid)             | `<div>` (SVG)                   | Better Blocks               |
+| `callout` (admonition)          | `<aside>`                       | Better Blocks               |
+| `details` (collapsible)         | `<details>`                     | Better Blocks               |
+| `button` (CTA / file download)  | `<a>`                           | Better Blocks               |
+| `social-embed`                  | `<figure>`                      | Better Blocks               |
+| `audio`                         | `<figure><audio>`               | Better Blocks               |
 
 ### Block properties
 
@@ -606,6 +682,7 @@ const { blocks } = Astro.props;
 | `rel`               | link                          | `noopener noreferrer` for new-tab links                                                                |
 | `caption`           | image                         | Text displayed below the image                                                                         |
 | `imageAlign`        | image                         | Image alignment (`left`, `center`, `right`)                                                            |
+| `language`          | code                          | Shiki grammar for syntax highlighting (e.g. `typescript`, `python`); falls back to `plaintext`         |
 | `align`             | table-cell, table-header-cell | Cell text alignment (`left` when absent, `center`, `right`)                                            |
 | `colSpan`           | table-cell, table-header-cell | HTML `colspan` (`1` when absent)                                                                       |
 | `rowSpan`           | table-cell, table-header-cell | HTML `rowspan` (`1` when absent)                                                                       |
@@ -712,6 +789,13 @@ Override any block type with your own component:
         <li>{children}</li>
       ),
     'horizontal-line': () => <hr className="my-divider" />,
+    quote: ({ children, style }) => (
+      <blockquote className="my-quote" style={style}>
+        {children}
+      </blockquote>
+    ),
+    // `language` is the raw editor value, not the Shiki grammar id
+    code: ({ plainText, language }) => <Prism code={plainText} language={language} />,
     table: ({ children }) => <table className="my-table">{children}</table>,
     'table-header-cell': ({ children, colSpan, rowSpan, style }) => (
       <th className="my-th" scope="col" colSpan={colSpan} rowSpan={rowSpan} style={style}>

@@ -260,7 +260,7 @@ function App() {
             >
               ① Default rendering &mdash; callouts are GitHub-style
             </h2>
-            <BlocksRenderer content={article.content} />
+            <BlocksRenderer content={article.content} codeCopyButton />
 
             {callouts.length > 0 && (
               <section

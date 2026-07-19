@@ -82,6 +82,12 @@ export type QuoteNode = {
 
 export type CodeNode = {
   type: 'code';
+  /**
+   * Language attached in the editor (e.g. `typescript`, `python`). Drives Shiki
+   * syntax highlighting. Unknown or missing values render as themed-but-
+   * unhighlighted `plaintext`.
+   */
+  language?: string;
   children: InlineNode[];
 };
 
@@ -444,7 +450,7 @@ export type CustomBlocksConfig = Partial<{
   'list-item': ComponentType<BlockComponentProps<{ checked?: boolean }>>;
   link: ComponentType<BlockComponentProps<{ url: string; target?: string; rel?: string }>>;
   quote: ComponentType<BlockComponentProps<{ style?: CSSProperties }>>;
-  code: ComponentType<BlockComponentProps<{ plainText: string }>>;
+  code: ComponentType<BlockComponentProps<{ plainText: string; language?: string }>>;
   image: ComponentType<{
     image: { url: string; alternativeText?: string | null; width?: number; height?: number };
     caption?: string;
@@ -550,4 +556,16 @@ export type BlocksRendererProps = {
   content: BlocksContent;
   blocks?: CustomBlocksConfig;
   modifiers?: CustomModifiersConfig;
+  /**
+   * Shiki theme for the default `code` block highlighting. Any bundled Shiki
+   * theme name (e.g. `github-dark`, `github-light`, `dracula`, `nord`).
+   * Defaults to `github-dark`. Ignored when a custom `code` renderer is
+   * supplied via `blocks.code`.
+   */
+  codeTheme?: string;
+  /**
+   * Adds a "Copy" button to default `code` blocks. Off by default. Ignored when
+   * a custom `code` renderer is supplied via `blocks.code`.
+   */
+  codeCopyButton?: boolean;
 };
