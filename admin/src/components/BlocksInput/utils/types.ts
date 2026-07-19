@@ -269,6 +269,38 @@ export interface ButtonElement extends CustomElement {
   children: CustomText[];
 }
 
+/* ---------------------------------------------------------------------------
+ * Table blocks
+ * -------------------------------------------------------------------------*/
+
+/**
+ * Horizontal alignment of a table cell's content. Absent means `left`, so
+ * documents authored before alignment existed need no migration.
+ */
+export type TableCellAlign = 'left' | 'center' | 'right';
+
+export interface TableCellElement extends CustomElement {
+  type: 'table-cell' | 'table-header-cell';
+  align?: TableCellAlign;
+  /** Inline content: text leaves, links, inline math, … */
+  children: Descendant[];
+}
+
+export interface TableRowElement extends CustomElement {
+  type: 'table-row';
+  children: TableCellElement[];
+}
+
+export interface TableElement extends CustomElement {
+  type: 'table';
+  children: TableRowElement[];
+}
+
+export const isTableCellNode = (
+  element: CustomElement
+): element is TableCellElement =>
+  element.type === 'table-cell' || element.type === 'table-header-cell';
+
 export type Block<T extends string> = Extract<Node, { type: T }>;
 
 // Utility functions

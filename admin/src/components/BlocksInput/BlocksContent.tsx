@@ -43,6 +43,7 @@ import { useConversionModal } from './BlocksToolbar';
 import { decorateSearchMatches } from './FindReplace';
 import { SlashCommandMenu } from './SlashCommands';
 import { subscribeShiki } from './utils/shiki';
+import { matchBlockShortcut } from './utils/shortcuts';
 import {
   CustomElement,
   getEntries,
@@ -661,6 +662,20 @@ const BlocksContent = ({
   const handleKeyboardShortcuts = React.useCallback(
     (event: React.KeyboardEvent<HTMLElement>) => {
       const isCtrlOrCmd = event.metaKey || event.ctrlKey;
+
+      // Block-type conversion (Cmd/Ctrl+Alt+1..6, +0, +Q). Checked before the
+      // mark modifiers because those only look at `key`, which Option rewrites.
+      const shortcutBlockKey = matchBlockShortcut(event);
+      if (shortcutBlockKey && blocks[shortcutBlockKey as never]) {
+        event.preventDefault();
+        (
+          blocks[shortcutBlockKey as never] as {
+            handleConvert?: (editor: Editor) => void;
+          }
+        ).handleConvert?.(editor);
+        return;
+      }
+
       if (isCtrlOrCmd) {
         Object.values(modifiers).forEach((value) => {
           const modifier = value as {
@@ -696,7 +711,7 @@ const BlocksContent = ({
         }
       }
     },
-    [editor, modifiers, setLiveText, formatMessage]
+    [editor, blocks, modifiers, setLiveText, formatMessage]
   ); // Assuming handleMoveBlocks is stable (module scope)
 
   const handleKeyDown = React.useCallback<

@@ -5,21 +5,11 @@ import {
   Flex,
   FocusTrap,
   Portal,
-  IconButton,
   FlexComponent,
 } from '@strapi/design-system';
-import { Collapse } from '@strapi/icons';
-import { useIntl } from 'react-intl';
 import { css, styled } from 'styled-components';
 
-import { getTranslation } from '../../utils/getTranslation';
 import { useBlocksEditorContext } from './BlocksEditor';
-
-const CollapseIconButton = styled(IconButton)`
-  position: absolute;
-  bottom: 1.2rem;
-  right: 1.2rem;
-`;
 
 const ExpandWrapper = styled<FlexComponent>(Flex)`
   // Background with 20% opacity
@@ -41,7 +31,6 @@ const EditorLayout = ({
   onCollapse,
   ariaDescriptionId,
 }: EditorLayoutProps) => {
-  const { formatMessage } = useIntl();
   const { isExpandedMode } = useBlocksEditorContext('editorLayout');
 
   React.useEffect(() => {
@@ -79,17 +68,10 @@ const EditorLayout = ({
               aria-describedby={ariaDescriptionId}
               position="relative"
             >
+              {/* The collapse control lives in the toolbar (top-right), next
+                  to where the expand control was clicked. */}
               <Flex height="100%" alignItems="flex-start" direction="column">
                 {children}
-                <CollapseIconButton
-                  label={formatMessage({
-                    id: getTranslation('components.Blocks.collapse'),
-                    defaultMessage: 'Collapse',
-                  })}
-                  onClick={onCollapse}
-                >
-                  <Collapse />
-                </CollapseIconButton>
               </Flex>
             </Box>
           </ExpandWrapper>

@@ -1,13 +1,7 @@
 import * as React from 'react';
 
 import { createContext, type FieldValue } from '@strapi/admin/strapi-admin';
-import {
-  Box,
-  IconButton,
-  Divider,
-  VisuallyHidden,
-} from '@strapi/design-system';
-import { Expand } from '@strapi/icons';
+import { Box, Divider, VisuallyHidden } from '@strapi/design-system';
 import { MessageDescriptor, useIntl } from 'react-intl';
 import { Editor, type Descendant, createEditor, Transforms } from 'slate';
 import { withHistory } from 'slate-history';
@@ -47,6 +41,7 @@ import { tableBlocks, withTables } from './Blocks/Table';
 import { BlocksContent, type BlocksContentProps } from './BlocksContent';
 import { BlocksToolbar } from './BlocksToolbar';
 import { EditorLayout } from './EditorLayout';
+import { FloatingSelectionToolbar } from './FloatingSelectionToolbar';
 import { type ModifiersStore, modifiers } from './Modifiers';
 import { withLinks } from './plugins/withLinks';
 import { withAutoTransform } from './plugins/withAutoTransform';
@@ -139,6 +134,8 @@ interface BlocksEditorContextValue {
   name: string;
   setLiveText: (text: string) => void;
   isExpandedMode: boolean;
+  /** Enters or leaves fullscreen. Surfaced so the toolbar owns the toggle. */
+  onToggleExpand: () => void;
   pluginOptions?: Record<string, any>;
 }
 
@@ -150,6 +147,7 @@ interface BlocksEditorProviderProps {
   name: string;
   setLiveText: (text: string) => void;
   isExpandedMode: boolean;
+  onToggleExpand: () => void;
   pluginOptions?: Record<string, any>;
 }
 
@@ -174,13 +172,6 @@ function useBlocksEditorContext(
 
 const EditorDivider = styled(Divider)`
   background: ${({ theme }) => theme.colors.neutral200};
-`;
-
-const ExpandIconButton = styled(IconButton)`
-  position: absolute;
-  bottom: 1.2rem;
-  right: 1.2rem;
-  box-shadow: ${({ theme }) => theme.shadows.filterShadow};
 `;
 
 /**
@@ -406,6 +397,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
             name={name}
             setLiveText={setLiveText}
             isExpandedMode={isExpandedMode}
+            onToggleExpand={handleToggleExpand}
             pluginOptions={pluginOptions}
           >
             <EditorLayout
@@ -418,17 +410,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
               <EditorDivider width="100%" />
               <BlocksContent {...contentProps} />
               <WordCount />
-              {!isExpandedMode && (
-                <ExpandIconButton
-                  label={formatMessage({
-                    id: getTranslation('components.Blocks.expand'),
-                    defaultMessage: 'Expand',
-                  })}
-                  onClick={handleToggleExpand}
-                >
-                  <Expand />
-                </ExpandIconButton>
-              )}
+              <FloatingSelectionToolbar />
             </EditorLayout>
           </_BlocksEditorProvider>
         </Slate>
