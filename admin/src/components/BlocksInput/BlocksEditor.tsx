@@ -44,6 +44,7 @@ import { EditorLayout } from './EditorLayout';
 import { FloatingSelectionToolbar } from './FloatingSelectionToolbar';
 import { type ModifiersStore, modifiers } from './Modifiers';
 import { withLinks } from './plugins/withLinks';
+import { withMarkdownPaste } from './plugins/withMarkdownPaste';
 import { withAutoTransform } from './plugins/withAutoTransform';
 import { withStrapiSchema } from './plugins/withStrapiSchema';
 import { WordCount } from './WordCount';
@@ -251,6 +252,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withStrapiSchema,
         withReact,
         withLinks,
+        withMarkdownPaste,
         withImages,
         withAudio,
         withButtons,
