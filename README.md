@@ -88,7 +88,7 @@
 - **Customizable Palettes** &mdash; Define custom color presets per field via Content-Type Builder
 - **Dark & Light Mode** &mdash; Fully compatible with both Strapi themes
 - **Drop-in Replacement** &mdash; Works as a custom field alongside the native Rich Text (Blocks) field
-- **Markdown Paste Support** &mdash; Paste CommonMark or GitHub Flavored Markdown (GFM) from tools like ChatGPT, Claude, DeepSeek, Kimi, docs, and issue trackers, and convert headings, lists, task lists, tables, links, code, quotes, horizontal rules, and inline marks into rich Better Blocks content automatically
+- **Markdown Paste Support** &mdash; Paste CommonMark or GitHub Flavored Markdown (GFM) from tools like ChatGPT, Claude, DeepSeek, Kimi, docs, and issue trackers, and convert headings, lists, task lists, tables, links, code, quotes, horizontal rules, LaTeX math, and inline marks into rich Better Blocks content automatically
 - **Nested Lists** &mdash; Infinitely nestable ordered and unordered lists with per-level format switching (Tab to indent, Shift+Tab to outdent)
 - **To-do Lists** &mdash; Checkbox list items with click-to-toggle and strikethrough on checked items
 - **Tables** &mdash; Insert tables with header row, add/remove rows and columns via hover toolbar

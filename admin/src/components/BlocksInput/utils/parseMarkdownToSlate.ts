@@ -1,4 +1,5 @@
 import type {
+  AlignType,
   Blockquote,
   Break,
   Code,
@@ -6,6 +7,7 @@ import type {
   Delete,
   Emphasis,
   FootnoteDefinition,
+  FootnoteReference,
   Heading,
   Html,
   Image,
@@ -16,49 +18,41 @@ import type {
   List,
   ListItem,
   Paragraph,
+  PhrasingContent,
+  Root,
   RootContent,
   Strong,
   Table,
   Text,
   ThematicBreak,
 } from 'mdast';
-import { unified } from 'unified';
-import remarkGfm from 'remark-gfm';
-import remarkParse from 'remark-parse';
-import { remarkToSlate } from 'remark-slate-transformer';
 import type { Descendant } from 'slate';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import remarkParse from 'remark-parse';
+import { unified } from 'unified';
 
 import type { CustomElement, CustomText, TableCellAlign } from './types';
 
-type InlineNode =
-  | Text
-  | Emphasis
-  | Strong
-  | Delete
-  | InlineCode
-  | Link
-  | LinkReference
-  | Image
-  | ImageReference
-  | Html
-  | Break;
+type InlineMathNode = {
+  type: 'inlineMath';
+  value: string;
+};
 
-type BlockNode =
-  | Paragraph
-  | Heading
-  | Blockquote
-  | Code
-  | List
-  | Table
-  | ThematicBreak
-  | FootnoteDefinition
-  | Definition
-  | Html;
+type MathNode = {
+  type: 'math';
+  value: string;
+};
+
+type MarkdownInlineNode = PhrasingContent | InlineMathNode;
+type MarkdownBlockNode = RootContent | MathNode;
+
+type DefinitionMap = Map<string, Definition>;
 
 const markdownProcessor = unified()
   .use(remarkParse)
-  .use(remarkGfm)
-  .use(remarkToSlate);
+  .use(remarkMath)
+  .use(remarkGfm);
 
 const text = (
   value: string,
@@ -69,25 +63,38 @@ const text = (
   ...marks,
 });
 
-const paragraph = (children: Descendant[] = [text('')]): CustomElement => ({
+const emptyText = (): CustomText => text('');
+
+const paragraph = (children: Descendant[] = [emptyText()]): CustomElement => ({
   type: 'paragraph',
-  children: ensureInlineChildren(children),
+  children: ensureChildren(children),
 });
 
-const ensureInlineChildren = (children: Descendant[]): Descendant[] => {
-  return children.length > 0 ? children : [text('')];
+const math = (value: string, format: 'inline' | 'block'): CustomElement => ({
+  type: 'math',
+  format,
+  value,
+  children: [emptyText()],
+});
+
+const ensureChildren = (children: Descendant[]): Descendant[] => {
+  return children.length > 0 ? children : [emptyText()];
 };
 
-const plainTextFromInline = (nodes: readonly InlineNode[]): string => {
-  return nodes
-    .map((node) => {
-      if ('value' in node && typeof node.value === 'string') return node.value;
-      if ('alt' in node && typeof node.alt === 'string') return node.alt;
-      if ('children' in node)
-        return plainTextFromInline(node.children as InlineNode[]);
-      return '';
-    })
-    .join('');
+const normalizeIdentifier = (identifier: string): string => {
+  return identifier.trim().replace(/\s+/g, ' ').toLowerCase();
+};
+
+const collectDefinitions = (tree: Root): DefinitionMap => {
+  const definitions: DefinitionMap = new Map();
+
+  tree.children.forEach((node) => {
+    if (node.type === 'definition') {
+      definitions.set(normalizeIdentifier(node.identifier), node);
+    }
+  });
+
+  return definitions;
 };
 
 const normalizeUrl = (url: string): string => {
@@ -99,22 +106,27 @@ const normalizeUrl = (url: string): string => {
 };
 
 const mapInlineChildren = (
-  children: readonly InlineNode[] = [],
+  children: readonly MarkdownInlineNode[] = [],
+  definitions: DefinitionMap,
   marks: Partial<Omit<CustomText, 'type' | 'text'>> = {}
 ): Descendant[] => {
-  return children.flatMap((node) => mapInlineNode(node, marks));
+  return children.flatMap((node) => mapInlineNode(node, definitions, marks));
 };
 
 const mapInlineNode = (
-  node: InlineNode,
+  node: MarkdownInlineNode,
+  definitions: DefinitionMap,
   marks: Partial<Omit<CustomText, 'type' | 'text'>>
 ): Descendant[] => {
   switch (node.type) {
     case 'text':
-      return [text(node.value, marks)];
+      return [text((node as Text).value, marks)];
+    case 'break':
+      return [text('\n', marks)];
     case 'emphasis':
       return mapInlineChildren(
-        node.children as InlineNode[],
+        (node as Emphasis).children as MarkdownInlineNode[],
+        definitions,
         {
           ...marks,
           italic: true,
@@ -122,7 +134,8 @@ const mapInlineNode = (
       );
     case 'strong':
       return mapInlineChildren(
-        node.children as InlineNode[],
+        (node as Strong).children as MarkdownInlineNode[],
+        definitions,
         {
           ...marks,
           bold: true,
@@ -130,446 +143,372 @@ const mapInlineNode = (
       );
     case 'delete':
       return mapInlineChildren(
-        node.children as InlineNode[],
+        (node as Delete).children as MarkdownInlineNode[],
+        definitions,
         {
           ...marks,
           strikethrough: true,
         } as never
       );
     case 'inlineCode':
-      return [text(node.value, { ...marks, code: true } as never)];
-    case 'link':
+      return [
+        text((node as InlineCode).value, { ...marks, code: true } as never),
+      ];
+    case 'inlineMath':
+      return [math((node as InlineMathNode).value, 'inline')];
+    case 'link': {
+      const link = node as Link;
+
       return [
         {
           type: 'link',
-          url: normalizeUrl(node.url),
-          children: ensureInlineChildren(
-            mapInlineChildren(node.children as InlineNode[], marks)
+          url: normalizeUrl(link.url),
+          children: ensureChildren(
+            mapInlineChildren(
+              link.children as MarkdownInlineNode[],
+              definitions,
+              marks
+            )
           ),
         } as CustomElement,
       ];
-    case 'linkReference':
-      return mapInlineChildren(node.children as InlineNode[], marks);
+    }
+    case 'linkReference': {
+      const reference = node as LinkReference;
+      const definition = definitions.get(
+        normalizeIdentifier(reference.identifier)
+      );
+      const children = ensureChildren(
+        mapInlineChildren(
+          reference.children as MarkdownInlineNode[],
+          definitions,
+          marks
+        )
+      );
+
+      return definition
+        ? [
+            {
+              type: 'link',
+              url: normalizeUrl(definition.url),
+              children,
+            } as CustomElement,
+          ]
+        : children;
+    }
     case 'image': {
-      const label = node.alt || node.url;
+      const image = node as Image;
+      const label = image.alt || image.url;
+
       return [
         {
           type: 'link',
-          url: node.url,
+          url: image.url,
           children: [text(label, marks)],
         } as CustomElement,
       ];
     }
-    case 'imageReference':
-      return [text(node.alt || '', marks)];
-    case 'break':
-      return [text('\n', marks)];
+    case 'imageReference': {
+      const image = node as ImageReference;
+      const definition = definitions.get(normalizeIdentifier(image.identifier));
+      const label = image.alt || definition?.title || definition?.url || '';
+
+      return definition
+        ? [
+            {
+              type: 'link',
+              url: definition.url,
+              children: [text(label, marks)],
+            } as CustomElement,
+          ]
+        : [text(label, marks)];
+    }
+    case 'footnoteReference':
+      return [text(`[^${(node as FootnoteReference).identifier}]`, marks)];
     case 'html':
-      return [text(node.value, marks)];
+      return [text((node as Html).value, marks)];
     default:
       return [];
   }
 };
 
-const mapBlockquote = (node: Blockquote, depth: number): CustomElement => ({
-  type: 'quote',
-  children: ensureInlineChildren(
-    node.children.flatMap((child) => {
-      if (child.type === 'paragraph') {
-        return mapInlineChildren(child.children as InlineNode[]);
+const inlinePlainText = (
+  children: readonly MarkdownInlineNode[] = [],
+  definitions: DefinitionMap
+): string => {
+  return children
+    .map((node) => {
+      switch (node.type) {
+        case 'text':
+        case 'inlineCode':
+        case 'inlineMath':
+        case 'html':
+          return (node as Text | InlineCode | InlineMathNode | Html).value;
+        case 'break':
+          return '\n';
+        case 'image':
+          return (node as Image).alt || (node as Image).url;
+        case 'imageReference': {
+          const image = node as ImageReference;
+          const definition = definitions.get(
+            normalizeIdentifier(image.identifier)
+          );
+          return image.alt || definition?.url || '';
+        }
+        case 'footnoteReference':
+          return `[^${(node as FootnoteReference).identifier}]`;
+        default:
+          return 'children' in node
+            ? inlinePlainText(
+                (node.children || []) as MarkdownInlineNode[],
+                definitions
+              )
+            : '';
       }
-
-      return [text(blockToPlainText(child as BlockNode))];
     })
-  ),
-});
-
-const mapList = (node: List, depth: number): CustomElement => {
-  const isTodo = node.children.some(
-    (item) => typeof item.checked === 'boolean'
-  );
-
-  return {
-    type: 'list',
-    format: isTodo ? 'todo' : node.ordered ? 'ordered' : 'unordered',
-    indentLevel: depth,
-    children: node.children.map((item) => mapListItem(item, depth)),
-  };
+    .join('');
 };
 
-const mapListItem = (node: ListItem, depth: number): CustomElement => {
-  const children: Descendant[] = [];
+const blockPlainText = (
+  node: MarkdownBlockNode,
+  definitions: DefinitionMap
+): string => {
+  switch (node.type) {
+    case 'paragraph':
+    case 'heading':
+      return inlinePlainText(
+        (node as Paragraph | Heading).children as MarkdownInlineNode[],
+        definitions
+      );
+    case 'blockquote':
+      return (node as Blockquote).children
+        .map((child) => blockPlainText(child as MarkdownBlockNode, definitions))
+        .join('\n');
+    case 'code':
+    case 'math':
+    case 'html':
+      return (node as Code | MathNode | Html).value;
+    case 'list':
+      return listPlainText(node as List, definitions);
+    case 'footnoteDefinition':
+      return footnoteDefinitionText(node as FootnoteDefinition, definitions);
+    case 'definition':
+      return definitionText(node as Definition);
+    case 'thematicBreak':
+      return '---';
+    default:
+      return '';
+  }
+};
 
-  node.children.forEach((child) => {
+const listPlainText = (node: List, definitions: DefinitionMap): string => {
+  return node.children
+    .flatMap((item, index) => {
+      const marker = node.ordered ? `${index + (node.start || 1)}. ` : '- ';
+      const lines = item.children.map((child) =>
+        blockPlainText(child as MarkdownBlockNode, definitions)
+      );
+
+      return lines.map((line, lineIndex) =>
+        lineIndex === 0 ? `${marker}${line}` : `  ${line}`
+      );
+    })
+    .join('\n');
+};
+
+const definitionText = (node: Definition): string => {
+  return `[${node.identifier}]: ${node.url}`;
+};
+
+const footnoteDefinitionText = (
+  node: FootnoteDefinition,
+  definitions: DefinitionMap
+): string => {
+  const content = node.children
+    .map((child) => blockPlainText(child as MarkdownBlockNode, definitions))
+    .join('\n');
+
+  return `[^${node.identifier}]: ${content}`;
+};
+
+const joinInlineGroups = (groups: Descendant[][]): Descendant[] => {
+  return groups.flatMap((group, index) =>
+    index === 0 ? group : [text('\n'), ...group]
+  );
+};
+
+const mapBlockquote = (
+  node: Blockquote,
+  definitions: DefinitionMap
+): CustomElement => {
+  const groups = node.children.map((child) => {
     if (child.type === 'paragraph') {
-      children.push(...mapInlineChildren(child.children as InlineNode[]));
-      return;
+      return mapInlineChildren(
+        child.children as MarkdownInlineNode[],
+        definitions
+      );
     }
 
-    if (child.type === 'list') {
-      children.push(mapList(child, depth + 1));
-      return;
-    }
-
-    children.push(text(blockToPlainText(child as BlockNode)));
+    return [text(blockPlainText(child as MarkdownBlockNode, definitions))];
   });
 
   return {
-    type: 'list-item',
-    ...(typeof node.checked === 'boolean' ? { checked: node.checked } : {}),
-    children: ensureInlineChildren(children),
+    type: 'quote',
+    children: ensureChildren(joinInlineGroups(groups)),
   };
 };
 
-const mapTable = (node: Table): CustomElement => ({
+const mapList = (
+  node: List,
+  definitions: DefinitionMap,
+  depth: number
+): CustomElement => {
+  const isTodo = node.children.some(
+    (item) => typeof item.checked === 'boolean'
+  );
+  const format = isTodo ? 'todo' : node.ordered ? 'ordered' : 'unordered';
+
+  return {
+    type: 'list',
+    format,
+    indentLevel: depth,
+    children: node.children.flatMap((item) =>
+      mapListItem(item, definitions, depth, isTodo)
+    ),
+  };
+};
+
+const mapListItem = (
+  node: ListItem,
+  definitions: DefinitionMap,
+  depth: number,
+  parentIsTodo: boolean
+): CustomElement[] => {
+  const inlineGroups: Descendant[][] = [];
+  const nestedLists: CustomElement[] = [];
+
+  node.children.forEach((child) => {
+    if (child.type === 'list') {
+      nestedLists.push(mapList(child as List, definitions, depth + 1));
+      return;
+    }
+
+    if (child.type === 'paragraph') {
+      inlineGroups.push(
+        mapInlineChildren(
+          (child as Paragraph).children as MarkdownInlineNode[],
+          definitions
+        )
+      );
+      return;
+    }
+
+    inlineGroups.push([
+      text(blockPlainText(child as MarkdownBlockNode, definitions)),
+    ]);
+  });
+
+  const listItem: CustomElement = {
+    type: 'list-item',
+    ...(parentIsTodo ? { checked: node.checked === true } : {}),
+    children: ensureChildren(joinInlineGroups(inlineGroups)),
+  };
+
+  return [listItem, ...nestedLists];
+};
+
+const mapTableAlign = (
+  align: AlignType | undefined
+): TableCellAlign | undefined => {
+  return align === 'left' || align === 'center' || align === 'right'
+    ? align
+    : undefined;
+};
+
+const mapTable = (node: Table, definitions: DefinitionMap): CustomElement => ({
   type: 'table',
   children: node.children.map((row, rowIndex) => ({
     type: 'table-row',
     children: row.children.map((cell, cellIndex) => {
-      const align = node.align?.[cellIndex] as
-        | TableCellAlign
-        | null
-        | undefined;
+      const align = mapTableAlign(node.align?.[cellIndex] ?? undefined);
 
       return {
         type: rowIndex === 0 ? 'table-header-cell' : 'table-cell',
         ...(align ? { align } : {}),
-        children: ensureInlineChildren(
-          mapInlineChildren(cell.children as InlineNode[])
+        children: ensureChildren(
+          mapInlineChildren(cell.children as MarkdownInlineNode[], definitions)
         ),
       } as CustomElement;
     }),
   })) as CustomElement[],
 });
 
-const blockToPlainText = (node: BlockNode): string => {
-  if ('value' in node && typeof node.value === 'string') return node.value;
-  if ('children' in node) {
-    return (node.children as RootContent[])
-      .map((child) => {
-        if ('value' in child && typeof child.value === 'string')
-          return child.value;
-        if ('children' in child) {
-          return plainTextFromInline(child.children as InlineNode[]);
-        }
-        return '';
-      })
-      .join('\n');
-  }
-
-  return '';
-};
-
-const mapBlockNode = (node: RootContent, depth = 0): CustomElement[] => {
+const mapBlockNode = (
+  node: MarkdownBlockNode,
+  definitions: DefinitionMap,
+  includeDefinitions: boolean
+): CustomElement[] => {
   switch (node.type) {
     case 'paragraph':
-      return [paragraph(mapInlineChildren(node.children as InlineNode[]))];
+      return [
+        paragraph(
+          mapInlineChildren(
+            (node as Paragraph).children as MarkdownInlineNode[],
+            definitions
+          )
+        ),
+      ];
     case 'heading':
       return [
         {
           type: 'heading',
           level: Math.min(Math.max((node as Heading).depth, 1), 6),
-          children: ensureInlineChildren(
-            mapInlineChildren(node.children as InlineNode[])
-          ),
-        } as CustomElement,
-      ];
-    case 'blockquote':
-      return [mapBlockquote(node, depth)];
-    case 'code':
-      return [
-        {
-          type: 'code',
-          language: node.lang || 'plaintext',
-          children: [text(node.value || '')],
-        } as CustomElement,
-      ];
-    case 'list':
-      return [mapList(node, depth)];
-    case 'table':
-      return [mapTable(node)];
-    case 'thematicBreak':
-      return [
-        {
-          type: 'horizontal-line',
-          children: [text('')],
-        } as CustomElement,
-      ];
-    case 'footnoteDefinition':
-      return [
-        paragraph([
-          text(`[${node.identifier}]: `),
-          ...node.children.flatMap((child) => {
-            if (child.type === 'paragraph') {
-              return mapInlineChildren(child.children as InlineNode[]);
-            }
-
-            return [text(blockToPlainText(child as BlockNode))];
-          }),
-        ]),
-      ];
-    case 'definition':
-      return [
-        paragraph([
-          text(`[${node.identifier}]: `),
-          {
-            type: 'link',
-            url: node.url,
-            children: [text(node.title || node.url)],
-          } as CustomElement,
-        ]),
-      ];
-    case 'html':
-      return [paragraph([text(node.value)])];
-    default:
-      return [];
-  }
-};
-
-const normalizeTopLevelNodes = (nodes: Descendant[]): CustomElement[] => {
-  return nodes.flatMap((node) => {
-    if ('type' in node && node.type !== 'text') {
-      return [node as CustomElement];
-    }
-
-    return [paragraph([node])];
-  });
-};
-
-const isRecord = (value: unknown): value is Record<string, unknown> => {
-  return Boolean(value && typeof value === 'object');
-};
-
-const normalizeTransformedText = (
-  node: Record<string, unknown>
-): CustomText => ({
-  type: 'text',
-  text: typeof node.text === 'string' ? node.text : '',
-  ...(node.strong ? { bold: true } : {}),
-  ...(node.emphasis ? { italic: true } : {}),
-  ...(node.delete ? { strikethrough: true } : {}),
-  ...(node.inlineCode ? { code: true } : {}),
-});
-
-const normalizeTransformedInline = (node: unknown): Descendant[] => {
-  if (!isRecord(node)) return [];
-
-  if ('text' in node) {
-    return [normalizeTransformedText(node)];
-  }
-
-  if (node.type === 'link') {
-    return [
-      {
-        type: 'link',
-        url: normalizeUrl(typeof node.url === 'string' ? node.url : ''),
-        children: ensureInlineChildren(
-          (Array.isArray(node.children) ? node.children : []).flatMap(
-            normalizeTransformedInline
-          )
-        ),
-      } as CustomElement,
-    ];
-  }
-
-  if (node.type === 'image') {
-    const url = typeof node.url === 'string' ? node.url : '';
-    const label = typeof node.alt === 'string' && node.alt ? node.alt : url;
-
-    return [
-      {
-        type: 'link',
-        url,
-        children: [text(label)],
-      } as CustomElement,
-    ];
-  }
-
-  return 'children' in node && Array.isArray(node.children)
-    ? node.children.flatMap(normalizeTransformedInline)
-    : [];
-};
-
-const normalizeTransformedListItem = (
-  node: Record<string, unknown>,
-  depth: number
-): CustomElement => {
-  const children: Descendant[] = [];
-
-  (Array.isArray(node.children) ? node.children : []).forEach((child) => {
-    if (!isRecord(child)) return;
-
-    if (child.type === 'paragraph') {
-      children.push(
-        ...ensureInlineChildren(
-          (Array.isArray(child.children) ? child.children : []).flatMap(
-            normalizeTransformedInline
-          )
-        )
-      );
-      return;
-    }
-
-    if (child.type === 'list') {
-      children.push(...normalizeTransformedBlock(child, depth + 1));
-      return;
-    }
-
-    normalizeTransformedBlock(child, depth).forEach((block) => {
-      children.push(...block.children);
-    });
-  });
-
-  return {
-    type: 'list-item',
-    ...(typeof node.checked === 'boolean' ? { checked: node.checked } : {}),
-    children: ensureInlineChildren(children),
-  };
-};
-
-const normalizeTransformedTable = (
-  node: Record<string, unknown>
-): CustomElement => {
-  const align = Array.isArray(node.align) ? node.align : [];
-
-  return {
-    type: 'table',
-    children: (Array.isArray(node.children) ? node.children : []).map(
-      (row, rowIndex) => ({
-        type: 'table-row',
-        children:
-          isRecord(row) && Array.isArray(row.children)
-            ? row.children.map((cell, cellIndex) => {
-                const cellAlign = align[cellIndex] as
-                  | TableCellAlign
-                  | null
-                  | undefined;
-
-                return {
-                  type: rowIndex === 0 ? 'table-header-cell' : 'table-cell',
-                  ...(cellAlign ? { align: cellAlign } : {}),
-                  children:
-                    isRecord(cell) && Array.isArray(cell.children)
-                      ? ensureInlineChildren(
-                          cell.children.flatMap(normalizeTransformedInline)
-                        )
-                      : [text('')],
-                } as CustomElement;
-              })
-            : [],
-      })
-    ) as CustomElement[],
-  };
-};
-
-const normalizeTransformedBlock = (
-  node: unknown,
-  depth = 0
-): CustomElement[] => {
-  if (!isRecord(node)) return [];
-
-  switch (node.type) {
-    case 'paragraph':
-      return [
-        paragraph(
-          (Array.isArray(node.children) ? node.children : []).flatMap(
-            normalizeTransformedInline
-          )
-        ),
-      ];
-    case 'heading':
-      return [
-        {
-          type: 'heading',
-          level: Math.min(
-            Math.max(typeof node.depth === 'number' ? node.depth : 1, 1),
-            6
-          ),
-          children: ensureInlineChildren(
-            (Array.isArray(node.children) ? node.children : []).flatMap(
-              normalizeTransformedInline
+          children: ensureChildren(
+            mapInlineChildren(
+              (node as Heading).children as MarkdownInlineNode[],
+              definitions
             )
           ),
         } as CustomElement,
       ];
     case 'blockquote':
-      return [
-        {
-          type: 'quote',
-          children: ensureInlineChildren(
-            (Array.isArray(node.children) ? node.children : [])
-              .flatMap((child) => normalizeTransformedBlock(child, depth))
-              .flatMap((block) => block.children)
-          ),
-        } as CustomElement,
-      ];
+      return [mapBlockquote(node as Blockquote, definitions)];
     case 'code':
       return [
         {
           type: 'code',
-          language:
-            typeof node.lang === 'string' && node.lang
-              ? node.lang
-              : 'plaintext',
-          children: [
-            text(
-              Array.isArray(node.children)
-                ? node.children
-                    .filter(isRecord)
-                    .map((child) => child.text)
-                    .filter(
-                      (value): value is string => typeof value === 'string'
-                    )
-                    .join('\n')
-                : ''
-            ),
-          ],
+          language: (node as Code).lang || 'plaintext',
+          children: [text((node as Code).value || '')],
         } as CustomElement,
       ];
-    case 'list': {
-      const children = (
-        Array.isArray(node.children) ? node.children : []
-      ).filter(isRecord);
-      const isTodo = children.some(
-        (child) => typeof child.checked === 'boolean'
-      );
-
-      return [
-        {
-          type: 'list',
-          format: isTodo ? 'todo' : node.ordered ? 'ordered' : 'unordered',
-          indentLevel: depth,
-          children: children.map((child) =>
-            normalizeTransformedListItem(child, depth)
-          ),
-        } as CustomElement,
-      ];
-    }
+    case 'math':
+      return [math((node as MathNode).value, 'block')];
+    case 'list':
+      return [mapList(node as List, definitions, 0)];
     case 'table':
-      return [normalizeTransformedTable(node)];
+      return [mapTable(node as Table, definitions)];
     case 'thematicBreak':
       return [
         {
           type: 'horizontal-line',
-          children: [text('')],
+          children: [emptyText()],
         } as CustomElement,
       ];
     case 'footnoteDefinition':
-    case 'definition':
-    case 'html':
       return [
-        paragraph([text(blockToPlainText(node as unknown as BlockNode))]),
+        paragraph([
+          text(footnoteDefinitionText(node as FootnoteDefinition, definitions)),
+        ]),
       ];
+    case 'definition':
+      return includeDefinitions
+        ? [paragraph([text(definitionText(node as Definition))])]
+        : [];
+    case 'html':
+      return [paragraph([text((node as Html).value)])];
     default:
-      if ('text' in node) return [paragraph([normalizeTransformedText(node)])];
       return [];
   }
-};
-
-const normalizeTransformedNodes = (value: unknown): CustomElement[] => {
-  if (!Array.isArray(value)) return [];
-
-  return value.flatMap((node) => normalizeTransformedBlock(node));
 };
 
 export const parseMarkdownToSlate = (
@@ -578,21 +517,22 @@ export const parseMarkdownToSlate = (
   if (!markdownText || typeof markdownText !== 'string') return null;
 
   try {
-    const transformed = markdownProcessor.processSync(markdownText).result;
-    const transformedNodes = normalizeTransformedNodes(transformed);
+    const tree = markdownProcessor.parse(markdownText) as Root;
+    const parsedTree = markdownProcessor.runSync(tree) as Root;
+    const definitions = collectDefinitions(parsedTree);
+    const hasRenderableContent = parsedTree.children.some(
+      (node) => node.type !== 'definition'
+    );
 
-    if (transformedNodes.length > 0) {
-      return transformedNodes;
-    }
+    const nodes = parsedTree.children.flatMap((node) =>
+      mapBlockNode(
+        node as MarkdownBlockNode,
+        definitions,
+        !hasRenderableContent
+      )
+    );
 
-    const tree = markdownProcessor.parse(markdownText);
-
-    markdownProcessor.runSync(tree);
-
-    const nodes = tree.children.flatMap((node) => mapBlockNode(node));
-    const normalizedNodes = normalizeTopLevelNodes(nodes as Descendant[]);
-
-    return normalizedNodes.length > 0 ? normalizedNodes : null;
+    return nodes.length > 0 ? nodes : null;
   } catch (error) {
     console.error('[Better Blocks] Markdown parsing failed:', error);
     return null;
