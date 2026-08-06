@@ -32,6 +32,7 @@ import remarkMath from 'remark-math';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 
+import { codeLanguages } from './constants';
 import type { CustomElement, CustomText, TableCellAlign } from './types';
 
 type InlineMathNode = {
@@ -85,14 +86,27 @@ const normalizeIdentifier = (identifier: string): string => {
   return identifier.trim().replace(/\s+/g, ' ').toLowerCase();
 };
 
+/**
+ * Definitions are only legal at the top level in CommonMark, but remark still
+ * parses them inside blockquotes and list items — so walk the whole tree or a
+ * `[ref]` used from one of those containers would lose its URL.
+ */
 const collectDefinitions = (tree: Root): DefinitionMap => {
   const definitions: DefinitionMap = new Map();
 
-  tree.children.forEach((node) => {
-    if (node.type === 'definition') {
-      definitions.set(normalizeIdentifier(node.identifier), node);
-    }
-  });
+  const walk = (nodes: readonly RootContent[]): void => {
+    nodes.forEach((node) => {
+      if (node.type === 'definition') {
+        definitions.set(normalizeIdentifier(node.identifier), node);
+      }
+
+      if ('children' in node) {
+        walk(node.children as RootContent[]);
+      }
+    });
+  };
+
+  walk(tree.children);
 
   return definitions;
 };
@@ -109,6 +123,57 @@ const isLikelyInlineMath = (value: string): boolean => {
 
 const inlineMathText = (value: string): string => {
   return isLikelyInlineMath(value) ? value : `$${value}$`;
+};
+
+/**
+ * Fence info strings use short aliases (```ts, ```py, ```sh) while the plugin's
+ * code block stores the canonical values from `codeLanguages`. Without this map
+ * a pasted fence keeps an id the language dropdown cannot display, so the block
+ * renders with no selectable language. Anything unrecognised falls back to
+ * `plaintext` rather than persisting a value the UI does not know.
+ */
+const CODE_LANGUAGE_ALIASES: Record<string, string> = {
+  'c++': 'cpp',
+  'c#': 'csharp',
+  'obj-c': 'objectivec',
+  'objective-c': 'objectivec',
+  sh: 'shell',
+  'shell-session': 'shell',
+  console: 'shell',
+  zsh: 'shell',
+  bat: 'powershell',
+  cmd: 'powershell',
+  ps1: 'powershell',
+  docker: 'dockerfile',
+  golang: 'go',
+  htm: 'html',
+  js: 'javascript',
+  kt: 'kotlin',
+  md: 'markdown',
+  mdx: 'markdown',
+  objc: 'objectivec',
+  py: 'python',
+  rb: 'ruby',
+  rs: 'rust',
+  text: 'plaintext',
+  txt: 'plaintext',
+  ts: 'typescript',
+  tex: 'latex',
+  vb: 'vbnet',
+  yml: 'yaml',
+};
+
+const supportedCodeLanguages = new Set(
+  codeLanguages.map((language) => language.value)
+);
+
+const normalizeCodeLanguage = (lang: string | null | undefined): string => {
+  if (!lang) return 'plaintext';
+
+  const id = lang.trim().toLowerCase();
+  const mapped = CODE_LANGUAGE_ALIASES[id] ?? id;
+
+  return supportedCodeLanguages.has(mapped) ? mapped : 'plaintext';
 };
 
 const normalizeUrl = (url: string): string => {
@@ -497,7 +562,7 @@ const mapBlockNode = (
       return [
         {
           type: 'code',
-          language: (node as Code).lang || 'plaintext',
+          language: normalizeCodeLanguage((node as Code).lang),
           children: [text((node as Code).value || '')],
         } as CustomElement,
       ];
