@@ -49,7 +49,7 @@
   ],
   "scripts": {
     "build": "yarn clean && strapi-plugin build --minify",
-    "clean": "npx rimraf dist",
+    "clean": "rm -rf dist",
     "lint": "prettier --check .",
     "format": "prettier --write .",
     "test:ts:front": "tsc -p admin/tsconfig.json",

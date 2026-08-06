@@ -97,6 +97,20 @@ const collectDefinitions = (tree: Root): DefinitionMap => {
   return definitions;
 };
 
+/**
+ * remark-math treats every `$…$` pair as inline math, so shell-style prose like
+ * `run $HOME/bin and $PATH` parses as a formula and would be swallowed by KaTeX.
+ * Real LaTeX never pads its delimiters with whitespace, so a padded (or empty)
+ * span is text the author never meant as math — keep it as literal `$…$`.
+ */
+const isLikelyInlineMath = (value: string): boolean => {
+  return value.trim() !== '' && !/^\s|\s$/.test(value);
+};
+
+const inlineMathText = (value: string): string => {
+  return isLikelyInlineMath(value) ? value : `$${value}$`;
+};
+
 const normalizeUrl = (url: string): string => {
   if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(url)) {
     return `mailto:${url}`;
@@ -154,8 +168,13 @@ const mapInlineNode = (
       return [
         text((node as InlineCode).value, { ...marks, code: true } as never),
       ];
-    case 'inlineMath':
-      return [math((node as InlineMathNode).value, 'inline')];
+    case 'inlineMath': {
+      const value = (node as InlineMathNode).value;
+
+      return isLikelyInlineMath(value)
+        ? [math(value, 'inline')]
+        : [text(inlineMathText(value), marks)];
+    }
     case 'link': {
       const link = node as Link;
 
@@ -241,9 +260,10 @@ const inlinePlainText = (
       switch (node.type) {
         case 'text':
         case 'inlineCode':
-        case 'inlineMath':
         case 'html':
-          return (node as Text | InlineCode | InlineMathNode | Html).value;
+          return (node as Text | InlineCode | Html).value;
+        case 'inlineMath':
+          return inlineMathText((node as InlineMathNode).value);
         case 'break':
           return '\n';
         case 'image':

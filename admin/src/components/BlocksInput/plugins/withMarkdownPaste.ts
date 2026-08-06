@@ -21,7 +21,10 @@ const hasMarkdownTable = (text: string): boolean => {
     return Boolean(
       line.includes('|') &&
       nextLine &&
-      /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(nextLine)
+      // GFM allows one or more dashes per delimiter cell (`|-|-|` is valid), so
+      // the dash run must not be pinned to three. The leading `|` on the row
+      // above plus the pipe between cells is what keeps this from over-matching.
+      /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(nextLine)
     );
   });
 };
