@@ -177,6 +177,13 @@ const normalizeCodeLanguage = (lang: string | null | undefined): string => {
 };
 
 const normalizeUrl = (url: string): string => {
+  // remark already resolves `<hi@example.com>` to `mailto:hi@example.com`, and
+  // that value still looks like a bare address to the test below — without this
+  // guard it would be prefixed a second time (`mailto:mailto:…`).
+  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) {
+    return url;
+  }
+
   if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(url)) {
     return `mailto:${url}`;
   }
@@ -452,11 +459,18 @@ const mapList = (
     (item) => typeof item.checked === 'boolean'
   );
   const format = isTodo ? 'todo' : node.ordered ? 'ordered' : 'unordered';
+  // Only carry `start` when the list actually begins somewhere other than 1, so
+  // the common case keeps the exact shape the editor produces on its own.
+  const start =
+    format === 'ordered' && typeof node.start === 'number' && node.start > 1
+      ? node.start
+      : undefined;
 
   return {
     type: 'list',
     format,
     indentLevel: depth,
+    ...(start ? { start } : {}),
     children: node.children.flatMap((item) =>
       mapListItem(item, definitions, depth, isTodo)
     ),
@@ -502,6 +516,45 @@ const mapListItem = (
   return [listItem, ...nestedLists];
 };
 
+/**
+ * A Markdown image is inline while the plugin's image is a block, so only an
+ * image that is alone in its paragraph can become one — `see ![x](y) here` has
+ * to stay an inline link or the sentence would be torn in two.
+ */
+const standaloneImage = (
+  node: Paragraph,
+  definitions: DefinitionMap
+): { url: string; alt: string } | null => {
+  const meaningful = node.children.filter(
+    (child) => !(child.type === 'text' && child.value.trim() === '')
+  );
+
+  if (meaningful.length !== 1) return null;
+
+  const only = meaningful[0];
+
+  if (only.type === 'image') {
+    return { url: only.url, alt: only.alt || '' };
+  }
+
+  if (only.type === 'imageReference') {
+    const definition = definitions.get(normalizeIdentifier(only.identifier));
+
+    return definition ? { url: definition.url, alt: only.alt || '' } : null;
+  }
+
+  return null;
+};
+
+const mapImageBlock = (image: { url: string; alt: string }): CustomElement => ({
+  type: 'image',
+  image: {
+    url: image.url,
+    alternativeText: image.alt,
+  },
+  children: [emptyText()],
+});
+
 const mapTableAlign = (
   align: AlignType | undefined
 ): TableCellAlign | undefined => {
@@ -534,7 +587,11 @@ const mapBlockNode = (
   includeDefinitions: boolean
 ): CustomElement[] => {
   switch (node.type) {
-    case 'paragraph':
+    case 'paragraph': {
+      const image = standaloneImage(node as Paragraph, definitions);
+
+      if (image) return [mapImageBlock(image)];
+
       return [
         paragraph(
           mapInlineChildren(
@@ -543,6 +600,7 @@ const mapBlockNode = (
           )
         ),
       ];
+    }
     case 'heading':
       return [
         {

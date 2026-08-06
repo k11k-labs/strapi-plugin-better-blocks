@@ -26,6 +26,9 @@ jobs:
       - name: Check formatting
         run: yarn lint
 
+      - name: Unit tests
+        run: yarn test
+
       - name: TypeScript check (frontend)
         run: yarn test:ts:front
 

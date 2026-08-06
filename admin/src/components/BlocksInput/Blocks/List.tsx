@@ -70,7 +70,11 @@ const List = ({ attributes, children, element }: RenderElementProps) => {
 
   if (listNode.format === 'ordered') {
     return (
-      <Orderedlist $listStyleType={listStyleType} {...attributes}>
+      <Orderedlist
+        $listStyleType={listStyleType}
+        start={listNode.start}
+        {...attributes}
+      >
         {children}
       </Orderedlist>
     );
