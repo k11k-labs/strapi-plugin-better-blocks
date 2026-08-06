@@ -49,9 +49,11 @@
   ],
   "scripts": {
     "build": "yarn clean && strapi-plugin build --minify",
-    "clean": "npx rimraf dist",
+    "clean": "rm -rf dist",
     "lint": "prettier --check .",
     "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:ts:front": "tsc -p admin/tsconfig.json",
     "test:ts:back": "tsc -p server/tsconfig.json",
     "verify": "strapi-plugin verify",
@@ -88,7 +90,8 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.30.0",
     "styled-components": "^6.1.17",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@radix-ui/react-toolbar": "^1.0.0",

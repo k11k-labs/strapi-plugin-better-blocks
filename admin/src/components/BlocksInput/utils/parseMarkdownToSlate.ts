@@ -32,6 +32,7 @@ import remarkMath from 'remark-math';
 import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 
+import { codeLanguages } from './constants';
 import type { CustomElement, CustomText, TableCellAlign } from './types';
 
 type InlineMathNode = {
@@ -85,19 +86,104 @@ const normalizeIdentifier = (identifier: string): string => {
   return identifier.trim().replace(/\s+/g, ' ').toLowerCase();
 };
 
+/**
+ * Definitions are only legal at the top level in CommonMark, but remark still
+ * parses them inside blockquotes and list items — so walk the whole tree or a
+ * `[ref]` used from one of those containers would lose its URL.
+ */
 const collectDefinitions = (tree: Root): DefinitionMap => {
   const definitions: DefinitionMap = new Map();
 
-  tree.children.forEach((node) => {
-    if (node.type === 'definition') {
-      definitions.set(normalizeIdentifier(node.identifier), node);
-    }
-  });
+  const walk = (nodes: readonly RootContent[]): void => {
+    nodes.forEach((node) => {
+      if (node.type === 'definition') {
+        definitions.set(normalizeIdentifier(node.identifier), node);
+      }
+
+      if ('children' in node) {
+        walk(node.children as RootContent[]);
+      }
+    });
+  };
+
+  walk(tree.children);
 
   return definitions;
 };
 
+/**
+ * remark-math treats every `$…$` pair as inline math, so shell-style prose like
+ * `run $HOME/bin and $PATH` parses as a formula and would be swallowed by KaTeX.
+ * Real LaTeX never pads its delimiters with whitespace, so a padded (or empty)
+ * span is text the author never meant as math — keep it as literal `$…$`.
+ */
+const isLikelyInlineMath = (value: string): boolean => {
+  return value.trim() !== '' && !/^\s|\s$/.test(value);
+};
+
+const inlineMathText = (value: string): string => {
+  return isLikelyInlineMath(value) ? value : `$${value}$`;
+};
+
+/**
+ * Fence info strings use short aliases (```ts, ```py, ```sh) while the plugin's
+ * code block stores the canonical values from `codeLanguages`. Without this map
+ * a pasted fence keeps an id the language dropdown cannot display, so the block
+ * renders with no selectable language. Anything unrecognised falls back to
+ * `plaintext` rather than persisting a value the UI does not know.
+ */
+const CODE_LANGUAGE_ALIASES: Record<string, string> = {
+  'c++': 'cpp',
+  'c#': 'csharp',
+  'obj-c': 'objectivec',
+  'objective-c': 'objectivec',
+  sh: 'shell',
+  'shell-session': 'shell',
+  console: 'shell',
+  zsh: 'shell',
+  bat: 'powershell',
+  cmd: 'powershell',
+  ps1: 'powershell',
+  docker: 'dockerfile',
+  golang: 'go',
+  htm: 'html',
+  js: 'javascript',
+  kt: 'kotlin',
+  md: 'markdown',
+  mdx: 'markdown',
+  objc: 'objectivec',
+  py: 'python',
+  rb: 'ruby',
+  rs: 'rust',
+  text: 'plaintext',
+  txt: 'plaintext',
+  ts: 'typescript',
+  tex: 'latex',
+  vb: 'vbnet',
+  yml: 'yaml',
+};
+
+const supportedCodeLanguages = new Set(
+  codeLanguages.map((language) => language.value)
+);
+
+const normalizeCodeLanguage = (lang: string | null | undefined): string => {
+  if (!lang) return 'plaintext';
+
+  const id = lang.trim().toLowerCase();
+  const mapped = CODE_LANGUAGE_ALIASES[id] ?? id;
+
+  return supportedCodeLanguages.has(mapped) ? mapped : 'plaintext';
+};
+
 const normalizeUrl = (url: string): string => {
+  // remark already resolves `<hi@example.com>` to `mailto:hi@example.com`, and
+  // that value still looks like a bare address to the test below — without this
+  // guard it would be prefixed a second time (`mailto:mailto:…`).
+  if (/^[a-z][a-z0-9+.-]*:/i.test(url)) {
+    return url;
+  }
+
   if (/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(url)) {
     return `mailto:${url}`;
   }
@@ -154,8 +240,13 @@ const mapInlineNode = (
       return [
         text((node as InlineCode).value, { ...marks, code: true } as never),
       ];
-    case 'inlineMath':
-      return [math((node as InlineMathNode).value, 'inline')];
+    case 'inlineMath': {
+      const value = (node as InlineMathNode).value;
+
+      return isLikelyInlineMath(value)
+        ? [math(value, 'inline')]
+        : [text(inlineMathText(value), marks)];
+    }
     case 'link': {
       const link = node as Link;
 
@@ -241,9 +332,10 @@ const inlinePlainText = (
       switch (node.type) {
         case 'text':
         case 'inlineCode':
-        case 'inlineMath':
         case 'html':
-          return (node as Text | InlineCode | InlineMathNode | Html).value;
+          return (node as Text | InlineCode | Html).value;
+        case 'inlineMath':
+          return inlineMathText((node as InlineMathNode).value);
         case 'break':
           return '\n';
         case 'image':
@@ -367,11 +459,18 @@ const mapList = (
     (item) => typeof item.checked === 'boolean'
   );
   const format = isTodo ? 'todo' : node.ordered ? 'ordered' : 'unordered';
+  // Only carry `start` when the list actually begins somewhere other than 1, so
+  // the common case keeps the exact shape the editor produces on its own.
+  const start =
+    format === 'ordered' && typeof node.start === 'number' && node.start > 1
+      ? node.start
+      : undefined;
 
   return {
     type: 'list',
     format,
     indentLevel: depth,
+    ...(start ? { start } : {}),
     children: node.children.flatMap((item) =>
       mapListItem(item, definitions, depth, isTodo)
     ),
@@ -417,6 +516,45 @@ const mapListItem = (
   return [listItem, ...nestedLists];
 };
 
+/**
+ * A Markdown image is inline while the plugin's image is a block, so only an
+ * image that is alone in its paragraph can become one — `see ![x](y) here` has
+ * to stay an inline link or the sentence would be torn in two.
+ */
+const standaloneImage = (
+  node: Paragraph,
+  definitions: DefinitionMap
+): { url: string; alt: string } | null => {
+  const meaningful = node.children.filter(
+    (child) => !(child.type === 'text' && child.value.trim() === '')
+  );
+
+  if (meaningful.length !== 1) return null;
+
+  const only = meaningful[0];
+
+  if (only.type === 'image') {
+    return { url: only.url, alt: only.alt || '' };
+  }
+
+  if (only.type === 'imageReference') {
+    const definition = definitions.get(normalizeIdentifier(only.identifier));
+
+    return definition ? { url: definition.url, alt: only.alt || '' } : null;
+  }
+
+  return null;
+};
+
+const mapImageBlock = (image: { url: string; alt: string }): CustomElement => ({
+  type: 'image',
+  image: {
+    url: image.url,
+    alternativeText: image.alt,
+  },
+  children: [emptyText()],
+});
+
 const mapTableAlign = (
   align: AlignType | undefined
 ): TableCellAlign | undefined => {
@@ -449,7 +587,11 @@ const mapBlockNode = (
   includeDefinitions: boolean
 ): CustomElement[] => {
   switch (node.type) {
-    case 'paragraph':
+    case 'paragraph': {
+      const image = standaloneImage(node as Paragraph, definitions);
+
+      if (image) return [mapImageBlock(image)];
+
       return [
         paragraph(
           mapInlineChildren(
@@ -458,6 +600,7 @@ const mapBlockNode = (
           )
         ),
       ];
+    }
     case 'heading':
       return [
         {
@@ -477,7 +620,7 @@ const mapBlockNode = (
       return [
         {
           type: 'code',
-          language: (node as Code).lang || 'plaintext',
+          language: normalizeCodeLanguage((node as Code).lang),
           children: [text((node as Code).value || '')],
         } as CustomElement,
       ];

@@ -1,6 +1,7 @@
 import { Editor, Element, Transforms, type BaseEditor } from 'slate';
 
 import { parseMarkdownToSlate } from '../utils/parseMarkdownToSlate';
+import type { CustomElement } from '../utils/types';
 
 type DataTransferEditor = BaseEditor & {
   insertData: (data: DataTransfer) => void;
@@ -21,7 +22,10 @@ const hasMarkdownTable = (text: string): boolean => {
     return Boolean(
       line.includes('|') &&
       nextLine &&
-      /^\s*\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?\s*$/.test(nextLine)
+      // GFM allows one or more dashes per delimiter cell (`|-|-|` is valid), so
+      // the dash run must not be pinned to three. The leading `|` on the row
+      // above plus the pipe between cells is what keeps this from over-matching.
+      /^\s*\|?\s*:?-+:?\s*(\|\s*:?-+:?\s*)+\|?\s*$/.test(nextLine)
     );
   });
 };
@@ -63,6 +67,38 @@ const shouldUseNativePaste = (editor: BaseEditor): boolean => {
   return Boolean(protectedEntry);
 };
 
+/**
+ * `insertFragment` merges the fragment's first block into the block under the
+ * cursor, so pasting a document that opens with a heading at the end of an
+ * existing paragraph silently downgrades that heading to body text.
+ * `insertNodes` keeps every block's identity and splits the current block, but
+ * leaves the block behind when it is empty. Pick per case, and keep the inline
+ * merge for a lone paragraph so pasting a sentence still flows into the text.
+ */
+const insertMarkdownFragment = (
+  editor: BaseEditor,
+  fragment: CustomElement[]
+): void => {
+  const blockEntry = Editor.above(editor, {
+    match: (node) =>
+      !Editor.isEditor(node) &&
+      Element.isElement(node) &&
+      Editor.isBlock(editor as Editor, node),
+  });
+  const currentBlockIsEmpty = blockEntry
+    ? Editor.string(editor as Editor, blockEntry[1]) === ''
+    : true;
+  const isSingleParagraph =
+    fragment.length === 1 && fragment[0]?.type === 'paragraph';
+
+  if (currentBlockIsEmpty || isSingleParagraph) {
+    Transforms.insertFragment(editor, fragment as never);
+    return;
+  }
+
+  Transforms.insertNodes(editor, fragment as never, { select: true });
+};
+
 const withMarkdownPaste = (editor: BaseEditor): BaseEditor => {
   const markdownEditor = editor as DataTransferEditor;
   const { insertData } = markdownEditor;
@@ -79,7 +115,7 @@ const withMarkdownPaste = (editor: BaseEditor): BaseEditor => {
 
       if (fragment && fragment.length > 0) {
         Editor.withoutNormalizing(editor, () => {
-          Transforms.insertFragment(markdownEditor, fragment as never);
+          insertMarkdownFragment(markdownEditor, fragment);
         });
         return;
       }
