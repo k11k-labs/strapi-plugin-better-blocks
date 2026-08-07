@@ -65,6 +65,12 @@ export interface ListNode extends CustomElement {
   type: 'list';
   format: 'ordered' | 'unordered' | 'todo';
   indentLevel: number;
+  /**
+   * First number of an ordered list, mirroring the `start` attribute on `<ol>`.
+   * Only set when the list does not begin at 1 (e.g. Markdown `3.` pasted in),
+   * so existing content and consumers that ignore it keep numbering from 1.
+   */
+  start?: number;
   children: Descendant[];
 }
 
