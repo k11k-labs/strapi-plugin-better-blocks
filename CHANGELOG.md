@@ -1,5 +1,13 @@
 # @k11k/strapi-plugin-better-blocks
 
+## 0.22.0
+
+### Minor Changes
+
+- [#84](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/84) [`6b3f71d`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/6b3f71d62782794928a998ad33bfcf72a6d7764d) Thanks [@fazi-gondal](https://github.com/fazi-gondal)! - Add CommonMark and GitHub Flavored Markdown paste support for the Better Blocks editor, including tables, task lists, code fences, links, inline marks, and LaTeX math.
+
+- [#84](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/84) [`6b3f71d`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/6b3f71d62782794928a998ad33bfcf72a6d7764d) Thanks [@fazi-gondal](https://github.com/fazi-gondal)! - Ordered lists keep their starting number, so a pasted Markdown list beginning at `3.` no longer renumbers from 1.
+
 ## 0.21.0
 
 ### Minor Changes
