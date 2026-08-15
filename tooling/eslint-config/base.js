@@ -105,6 +105,9 @@ export default [
       // base rule cannot see type-only globals.
       'no-undef': 'off',
       'no-unused-vars': 'off',
+      // Overload signatures are one declaration to TypeScript and several to
+      // the base rule, which cannot tell them from an actual redeclaration.
+      'no-redeclare': 'off',
     },
   },
   {

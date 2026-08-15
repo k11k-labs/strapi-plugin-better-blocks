@@ -61,10 +61,68 @@ breaks if you never run it — this is for normalising stored content, say in a
 Strapi migration or a one-off script. The input is never mutated, and blocks
 that need no change are carried over by reference.
 
+The walk descends into blocks that nest other blocks, so a `media-embed` inside
+a callout or a details is found and migrated like any other. A registered
+block's own migrator runs on every pass, whatever the document's version — the
+two version lines are independent, and a document that is current by Better
+Blocks' reckoning can still hold an outdated `chart`.
+
 The migrated block renders the same frame, from the same source, at the same
 aspect ratio. The wrapper markup differs, because an `embed` renders as a
 `bb-embed` figure rather than the old bare div. A `media-embed` whose URL is
 not `http(s)` is left alone and reported in `skipped` rather than guessed at.
+
+## Registering a block type
+
+Another package can add a block type Better Blocks knows nothing about. A
+definition is plain data, and covers the three things this package needs to
+handle a block whose shape it cannot see:
+
+```ts
+import { createBlockRegistry, validateDocument, migrateDocument } from '@qkix/better-blocks-core';
+import type { BlockDefinition } from '@qkix/better-blocks-core';
+
+const chart: BlockDefinition = {
+  type: 'chart',
+  // What it holds: 'void' (attributes only), 'inline' (text), 'blocks' (nested blocks).
+  content: 'void',
+  // Its own attributes are its own business — the core has already checked the
+  // node is an object and walked its children.
+  validate: (node, { path, fail }) => {
+    if (typeof node.spec !== 'object' || node.spec === null) {
+      fail(`${path}.spec`, 'chart spec must be an object');
+    }
+  },
+  // Called for every node of this type, at any depth. The block carries its own
+  // version marker and reads it; the core does not track one for you.
+  migrate: (node) => {
+    const spec = node.spec as { version?: number };
+    if (spec?.version !== 1) return { status: 'unchanged' };
+    return { status: 'migrated', node: { ...node, spec: { ...spec, version: 2 } } };
+  },
+};
+
+const blocks = createBlockRegistry([chart]);
+
+validateDocument(document, { blocks });
+migrateDocument(document, { blocks });
+```
+
+Without `blocks`, a document containing a `chart` is reported as **invalid** —
+which is the right answer for a caller that has not opted in, since it has no
+way to render it either.
+
+A registration may not shadow a built-in type or be declared twice;
+`createBlockRegistry` throws on both, because either one otherwise surfaces much
+later as a block that mysteriously does not appear.
+
+Registries are built and passed explicitly rather than kept in a module-level
+global: the renderers run on servers handling concurrent requests, where mutable
+module state is a cross-request bug waiting to happen.
+
+Drawing the block is not here — a React component type and an Astro component
+type have nothing in common, so each renderer takes its own registration. See
+their READMEs.
 
 ## Zero runtime dependencies
 
