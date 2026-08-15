@@ -1,0 +1,12 @@
+node_modules
+playground/strapi/node_modules
+playground/strapi/.tmp/*
+!playground/strapi/.tmp/data.db
+playground/strapi/.cache
+playground/strapi/.strapi
+playground/strapi/dist
+playground/strapi/build
+playground/react-app/node_modules
+playground/react-app/dist
+.git
+coverage

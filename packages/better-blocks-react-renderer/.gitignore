@@ -1,0 +1,13 @@
+node_modules
+dist
+coverage
+*.tsbuildinfo
+.DS_Store
+
+# Playground — Strapi
+playground/strapi/package-lock.json
+
+# Playground — React app
+playground/react-app/dist
+playground/react-app/yarn.lock
+playground/react-app/package-lock.json
