@@ -10,14 +10,16 @@
     "url": "git+https://github.com/k11k-labs/strapi-plugin-better-blocks.git"
   },
   "scripts": {
-    "build": "nx run-many -t build",
+    "build": "nx run-many -t build --exclude=tag:scope:example",
     "test": "nx run-many -t test",
     "lint": "nx run-many -t lint",
     "typecheck": "nx run-many -t typecheck",
     "format": "prettier --write .",
     "graph": "nx graph",
     "release:dry": "nx release --dry-run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:examples": "nx run-many -t build --projects=tag:scope:example",
+    "dev": "nx run @k11k/example-strapi-app:develop"
   },
   "devDependencies": {
     "husky": "^9.1.7",

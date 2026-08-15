@@ -1,0 +1,15 @@
+.git
+.github
+.nx
+**/node_modules
+**/dist
+**/build
+**/coverage
+**/.astro
+**/.strapi
+**/.tmp
+**/.vite
+examples/strapi-app/database/*.db
+examples/strapi-app/public/uploads/*
+docs
+**/*.md

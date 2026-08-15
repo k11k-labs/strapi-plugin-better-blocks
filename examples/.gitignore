@@ -1,0 +1,11 @@
+# Strapi runtime state — regenerated on every boot.
+strapi-app/.strapi
+strapi-app/.tmp
+strapi-app/build
+strapi-app/database/*.db
+strapi-app/public/uploads/*
+!strapi-app/public/uploads/.gitkeep
+
+# Astro / Vite build state
+astro-app/.astro
+react-app/.vite

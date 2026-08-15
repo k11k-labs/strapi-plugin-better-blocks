@@ -5,23 +5,6 @@
 .strapi
 
 ############################
-# Playground
-############################
-
-playground/strapi/node_modules
-playground/strapi/.tmp
-playground/strapi/.cache
-playground/strapi/.strapi
-playground/strapi/dist
-playground/strapi/build
-playground/strapi/yarn.lock
-playground/strapi/yarn-error.log
-playground/strapi/package-lock.json
-playground/strapi/.env
-playground/strapi/database
-playground/strapi/public/uploads
-
-############################
 # Compiled server output (TypeScript source lives alongside as .ts)
 ############################
 

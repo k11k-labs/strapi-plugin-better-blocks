@@ -1,0 +1,22 @@
+{
+  "name": "@k11k/example-astro-app",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@k11k/better-blocks-astro-renderer": "workspace:*",
+    "astro": "^5.0.0",
+    "katex": "^0.16.11"
+  },
+  "description": "Astro app rendering the seeded Strapi content with @k11k/better-blocks-astro-renderer",
+  "nx": {
+    "tags": [
+      "scope:example"
+    ]
+  }
+}

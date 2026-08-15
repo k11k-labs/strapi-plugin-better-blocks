@@ -1,0 +1,48 @@
+{
+  "name": "@k11k/example-strapi-app",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Strapi v5 instance running the Better Blocks plugin, seeded with the showcase articles the renderer examples consume",
+  "scripts": {
+    "build": "strapi build",
+    "console": "strapi console",
+    "deploy": "strapi deploy",
+    "dev": "strapi develop",
+    "develop": "strapi develop",
+    "start": "strapi start",
+    "strapi": "strapi",
+    "upgrade": "npx @strapi/upgrade latest",
+    "upgrade:dry": "npx @strapi/upgrade latest --dry"
+  },
+  "dependencies": {
+    "@k11k/strapi-plugin-better-blocks": "workspace:*",
+    "@strapi/plugin-cloud": "5.52.0",
+    "@strapi/plugin-users-permissions": "5.52.0",
+    "@strapi/strapi": "5.52.0",
+    "better-sqlite3": "12.6.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-router-dom": "^6.0.0",
+    "strapi-plugin-mux-video-uploader": "^3.0.2",
+    "styled-components": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "typescript": "^5"
+  },
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  },
+  "strapi": {
+    "uuid": "b03fc2a9-8cc1-4043-938d-4ad5a1ec9581",
+    "installId": "16a753d0393a9994d06b6f0a3ae3f9a2421cd078be2b358be90483de503fc966"
+  },
+  "nx": {
+    "tags": [
+      "scope:example"
+    ]
+  }
+}
