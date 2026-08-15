@@ -7,7 +7,7 @@
   "author": "qkix",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git"
+    "url": "git+https://github.com/qkix/strapi-plugins.git"
   },
   "scripts": {
     "build": "nx run-many -t build --exclude=tag:scope:example",

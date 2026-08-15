@@ -9,7 +9,7 @@
   <a href="https://www.npmjs.com/package/@qkix/better-blocks-astro-renderer">
     <img alt="npm downloads" src="https://img.shields.io/npm/dm/@qkix/better-blocks-astro-renderer.svg" />
   </a>
-  <a href="https://github.com/qkix/strapi-plugin-better-blocks/blob/main/LICENSE">
+  <a href="https://github.com/qkix/strapi-plugins/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/npm/l/@qkix/better-blocks-astro-renderer.svg" />
   </a>
   <a href="https://buymeacoffee.com/k11k">
@@ -43,7 +43,7 @@
 
 The official Strapi blocks renderers are built for React. If your site is built with [Astro](https://astro.build/), you _can_ render Strapi blocks through the [`@astrojs/react`](https://docs.astro.build/en/guides/integrations-guide/react/) integration — but that pulls React into your build for what is purely presentational content.
 
-This package is a **native Astro renderer**. It renders Strapi v5 Blocks content — including every feature the [Better Blocks](https://github.com/qkix/strapi-plugin-better-blocks) plugin adds (color marks, text alignment, to-do lists, tables, media embeds, and more) — using plain `.astro` components. The output is **static HTML with zero client-side JavaScript**, and math is rendered to a string on the server (see [Math (KaTeX)](#math-katex)).
+This package is a **native Astro renderer**. It renders Strapi v5 Blocks content — including every feature the [Better Blocks](https://github.com/qkix/strapi-plugins) plugin adds (color marks, text alignment, to-do lists, tables, media embeds, and more) — using plain `.astro` components. The output is **static HTML with zero client-side JavaScript**, and math is rendered to a string on the server (see [Math (KaTeX)](#math-katex)).
 
 It is a **drop-in renderer** that handles all Better Blocks features out of the box — no configuration needed.
 
@@ -228,7 +228,7 @@ Block-level `social-embed` nodes render a post from Twitter/X, Instagram, Facebo
 2. **`oembed.html`** &mdash; the markup the plugin fetched from the platform's oEmbed API at author time (a `<blockquote>` for Twitter/TikTok/Instagram, an `<iframe>` for Pinterest/LinkedIn).
 3. **Fallback link card** &mdash; when neither is available, a card enriched with the oEmbed `thumbnailUrl`, `title`, and `author` when present. It's a plain `<a>` to the original post when a `url` is known, or a non-interactive `<div>` for embed-code-only nodes that carry no post URL (never an empty `<a href="">`).
 
-The embed is wrapped in a `<figure class="bb-social-embed bb-social-embed-{platform} social-embed align-{alignment}">` (alignment defaults to `center`) with an `aria-label` describing it (`"{providerName} post by {author}"`), and the optional `caption` renders below it in a `<figcaption>`. Any `<iframe>` in the embed markup (e.g. LinkedIn) is given `loading="lazy"`. This markup is byte-for-byte compatible with the [React renderer](https://github.com/qkix/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer), so shared CSS themes both.
+The embed is wrapped in a `<figure class="bb-social-embed bb-social-embed-{platform} social-embed align-{alignment}">` (alignment defaults to `center`) with an `aria-label` describing it (`"{providerName} post by {author}"`), and the optional `caption` renders below it in a `<figcaption>`. Any `<iframe>` in the embed markup (e.g. LinkedIn) is given `loading="lazy"`. This markup is byte-for-byte compatible with the [React renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-react-renderer), so shared CSS themes both.
 
 **Widget scripts (lazy & deduped).** Twitter, Instagram, TikTok, Pinterest, and Facebook enhance their `<blockquote>`/`<div>` markup into a rich embed via a platform script (LinkedIn renders a self-contained `<iframe>` and needs none). Because Astro ships zero JavaScript by default, this block adds one tiny loader — its only client-side script — that watches embeds with an **IntersectionObserver** and injects a platform's script **once per page** (deduped by URL, guarded against double-injection) only when one of its embeds nears the viewport, so no third-party JavaScript loads eagerly. Any widget `<script>` shipped inline in the embed markup (TikTok's oEmbed always ships one; hand-pasted Instagram/Facebook codes may too) is stripped before render so the loader is the **single** script injector — no duplicate widget script. After the script loads it re-runs the platform's processor (`twttr.widgets.load()`, `instgrm.Embeds.process()`, `FB.XFBML.parse()`, `tiktokEmbed.lib.render()`, &hellip;), and it re-scans on `astro:page-load` so view-transition navigations upgrade too.
 
@@ -250,7 +250,7 @@ const { blocks } = Astro.props;
 
 Block-level `audio` nodes embed an audio file — from the Strapi Media Library or a raw URL — using a native HTML5 `<audio>` player, with **zero client-side JavaScript** (the native player is enough). The `file.url` is rendered as-is: for Media-Library assets the editor already stores the backend-prefixed URL (same convention as the `image`/`button` blocks), so the renderer never re-prefixes it.
 
-The block renders a `<figure class="bb-audio align-{alignment}">` (alignment defaults to `center`) containing an `<audio class="bb-audio-player">` element. The `player` flags map 1:1 to the element: `controls` (default `true`), `autoplay`, `loop`, and `preload` (`none` / `metadata` / `auto`). An optional `title` renders above the player and an optional `caption` below it, each in a `<figcaption>`. For accessibility the player gets an `aria-label` (the `title`, or `"Audio player"` when absent) and an `aria-describedby` pointing at the caption, and inside the `<audio>` element a fallback line plus a download link cover unsupported formats/browsers. The alignment cross-axis placement (`left`/`center`/`right` → `flex-start`/`center`/`flex-end`; `none` = full-width, flows inline) ships as inline styles, and the markup — `bb-audio`, `bb-audio-player`, `bb-audio-title`, `bb-audio-caption` class hooks included — is byte-for-byte compatible with the [React renderer](https://github.com/qkix/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer), so a shared CSS theme covers both.
+The block renders a `<figure class="bb-audio align-{alignment}">` (alignment defaults to `center`) containing an `<audio class="bb-audio-player">` element. The `player` flags map 1:1 to the element: `controls` (default `true`), `autoplay`, `loop`, and `preload` (`none` / `metadata` / `auto`). An optional `title` renders above the player and an optional `caption` below it, each in a `<figcaption>`. For accessibility the player gets an `aria-label` (the `title`, or `"Audio player"` when absent) and an `aria-describedby` pointing at the caption, and inside the `<audio>` element a fallback line plus a download link cover unsupported formats/browsers. The alignment cross-axis placement (`left`/`center`/`right` → `flex-start`/`center`/`flex-end`; `none` = full-width, flows inline) ships as inline styles, and the markup — `bb-audio`, `bb-audio-player`, `bb-audio-title`, `bb-audio-caption` class hooks included — is byte-for-byte compatible with the [React renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-react-renderer), so a shared CSS theme covers both.
 
 The baseline appearance (flex column, centered, `max-width: 32rem` player) ships as inline styles — retheme it from your own CSS via the stable `bb-audio*` classes.
 
@@ -557,12 +557,12 @@ import type {
 ## Contributing
 
 Contributions are welcome! This package lives in the
-[strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugin-better-blocks)
+[strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins)
 monorepo, next to the Strapi plugin and the React renderer. The easiest way to
 get started is with Docker:
 
 ```bash
-git clone https://github.com/qkix/strapi-plugin-better-blocks.git
+git clone https://github.com/qkix/strapi-plugins.git
 cd strapi-plugin-better-blocks
 
 docker compose up --build
@@ -604,12 +604,12 @@ pnpm --filter @qkix/better-blocks-astro-renderer test   # just this one
 
 ## Community & Support
 
-- [GitHub Issues](https://github.com/qkix/strapi-plugin-better-blocks/issues) &mdash; Bug reports and feature requests
+- [GitHub Issues](https://github.com/qkix/strapi-plugins/issues) &mdash; Bug reports and feature requests
 
 ## Related
 
-- [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer) &mdash; React renderer with the same Better Blocks support
-- [@qkix/strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugin-better-blocks) &mdash; Strapi plugin that extends the Blocks editor with colors, tables, to-do lists, media embeds, and more
+- [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-react-renderer) &mdash; React renderer with the same Better Blocks support
+- [@qkix/strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins) &mdash; Strapi plugin that extends the Blocks editor with colors, tables, to-do lists, media embeds, and more
 
 ## Support this project
 

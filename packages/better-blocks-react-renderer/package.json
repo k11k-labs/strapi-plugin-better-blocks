@@ -83,13 +83,13 @@
   "author": "qkix",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git",
+    "url": "git+https://github.com/qkix/strapi-plugins.git",
     "directory": "packages/better-blocks-react-renderer"
   },
   "bugs": {
-    "url": "https://github.com/qkix/strapi-plugin-better-blocks/issues"
+    "url": "https://github.com/qkix/strapi-plugins/issues"
   },
-  "homepage": "https://github.com/qkix/strapi-plugin-better-blocks#readme",
+  "homepage": "https://github.com/qkix/strapi-plugins#readme",
   "engines": {
     "node": ">=20.0.0 <=24.x.x",
     "npm": ">=6.0.0"

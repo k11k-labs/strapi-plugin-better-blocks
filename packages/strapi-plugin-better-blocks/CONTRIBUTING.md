@@ -10,7 +10,7 @@ and the shared core, so most commands below are run from the repository root.
 The quickest way to set up a development environment is with Docker:
 
 ```bash
-git clone https://github.com/qkix/strapi-plugin-better-blocks.git
+git clone https://github.com/qkix/strapi-plugins.git
 cd strapi-plugin-better-blocks
 docker compose up --build
 ```
@@ -72,8 +72,8 @@ package, so a change here does not bump the renderers.
 
 ## Reporting bugs
 
-Use the [bug report template](https://github.com/qkix/strapi-plugin-better-blocks/issues/new?template=bug_report.yml) and include your Strapi version, plugin version, and steps to reproduce.
+Use the [bug report template](https://github.com/qkix/strapi-plugins/issues/new?template=bug_report.yml) and include your Strapi version, plugin version, and steps to reproduce.
 
 ## Feature requests
 
-Use the [feature request template](https://github.com/qkix/strapi-plugin-better-blocks/issues/new?template=feature_request.yml) to suggest new features.
+Use the [feature request template](https://github.com/qkix/strapi-plugins/issues/new?template=feature_request.yml) to suggest new features.
