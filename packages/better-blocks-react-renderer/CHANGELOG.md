@@ -1,3 +1,17 @@
+## 0.17.1 (2026-08-15)
+
+### 🩹 Fixes
+
+- publish scoped packages publicly ([#99](https://github.com/qkix/strapi-plugin-better-blocks/pull/99))
+
+### 🧱 Updated Dependencies
+
+- Updated @k11k/better-blocks-core to 0.1.2
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.17.0 (2026-08-15)
 
 ### 🚀 Features
