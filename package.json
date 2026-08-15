@@ -4,7 +4,7 @@
   "private": true,
   "description": "Better Blocks — Strapi v5 blocks editor plugin and its React / Astro renderers",
   "license": "MIT",
-  "author": "k11k-labs",
+  "author": "qkix",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git"
