@@ -1,13 +1,19 @@
 name: Release — publish
 
-# Run this on main after a release PR from "Release — prepare" has been merged.
-# It tags the merged commit and publishes to npm. Nothing here bumps versions —
-# whatever is in the manifests is what gets published.
+# Runs itself when a release PR from "Release — prepare" lands on main: merging
+# that PR is the decision to release, so requiring a second manual step only
+# adds a way to forget. It tags the merged commit and publishes to npm; nothing
+# here bumps versions — whatever is in the manifests is what ships.
 #
-# This is the only irreversible step in the repository: npm does not allow a
-# version to be republished. It therefore defaults to a dry run, and refuses to
-# run anywhere but main.
+# Can also be dispatched by hand, which defaults to a dry run.
+#
+# This is the only irreversible step in the repository — npm does not allow a
+# version to be republished — so it is guarded three ways: it refuses to run
+# outside main, it only tags versions that have no tag yet, and it publishes
+# only when that tagging produced something new.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
     inputs:
       dry_run:
@@ -19,7 +25,15 @@ concurrency: ${{ github.workflow }}
 
 jobs:
   publish:
+    # On push, only the commit a release PR produces qualifies. Anything else
+    # landing on main is an ordinary change and must not reach the registry.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      startsWith(github.event.head_commit.message, 'chore: release')
     runs-on: ubuntu-latest
+    env:
+      # A push means a real release; only a manual run can be a dry run.
+      DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
     permissions:
       contents: write
       id-token: write
@@ -51,6 +65,7 @@ jobs:
       # Tags carry the version history nx release reads on the next run, so they
       # have to match releaseTag.pattern in nx.json: {projectName}@{version}.
       - name: Tag the release
+        id: tag
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
@@ -69,7 +84,7 @@ jobs:
               continue
             fi
 
-            if [ "${{ inputs.dry_run }}" = "true" ]; then
+            if [ "$DRY_RUN" = "true" ]; then
               echo "  would tag $tag"
             else
               git tag -a "$tag" -m "$tag"
@@ -78,16 +93,21 @@ jobs:
             fi
           done
 
-          if [ "${{ inputs.dry_run }}" != "true" ] && [ "$created" -gt 0 ]; then
+          if [ "$DRY_RUN" != "true" ] && [ "$created" -gt 0 ]; then
             git push origin --tags
           fi
 
+          echo "created=$created" >> "$GITHUB_OUTPUT"
+
+      # No new tag means every version in the manifests is already released, so
+      # there is nothing to push and npm would reject it anyway.
       - name: Publish to npm
+        if: ${{ github.event_name == 'workflow_dispatch' || steps.tag.outputs.created != '0' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
+          if [ "$DRY_RUN" = "true" ]; then
             pnpm exec nx release publish --dry-run
           else
             pnpm exec nx release publish
