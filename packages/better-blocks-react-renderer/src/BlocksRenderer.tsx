@@ -1,13 +1,25 @@
 import {
   Fragment,
   cloneElement,
+  createElement,
   isValidElement,
+  type ComponentType,
   type CSSProperties,
   type MouseEvent as ReactMouseEvent,
   type ReactElement,
   type ReactNode,
 } from 'react';
 import katex from 'katex';
+import {
+  buildTextMarks,
+  formatFileSize,
+  getBlockStyle as coreGetBlockStyle,
+  getDefaultMarkRender,
+  getFileIcon,
+  getListStyleType,
+  getModifierProps,
+  getPlainText,
+} from '@k11k/better-blocks-core';
 
 import {
   MEDIA_CAPTION_STYLE,
@@ -56,107 +68,24 @@ import type {
 // ── Text / Modifier Rendering ────────────────────────────────────────
 
 function renderTextNode(node: TextNode, key: number, modifiers?: CustomModifiersConfig): ReactNode {
-  const {
-    text,
-    bold,
-    italic,
-    underline,
-    strikethrough,
-    code,
-    uppercase,
-    superscript,
-    subscript,
-    color,
-    backgroundColor,
-    fontFamily,
-    fontSize,
-  } = node;
+  // The core decides which marks are active and in what order they nest; this
+  // renderer only turns each one into an element. Marks come back outer → inner,
+  // so wrapping from the end inwards reproduces the original nesting exactly.
+  const marks = buildTextMarks(node);
 
-  let content: ReactNode = text;
+  let content: ReactNode = node.text;
+  for (let i = marks.length - 1; i >= 0; i -= 1) {
+    const mark = marks[i];
+    const Comp = modifiers?.[mark.name as keyof CustomModifiersConfig] as
+      ComponentType<Record<string, unknown> & { children?: ReactNode }> | undefined;
 
-  // Apply modifiers inside-out
-  if (code) {
-    const Comp = modifiers?.code;
-    content = Comp ? <Comp>{content}</Comp> : <code>{content}</code>;
-  }
+    if (Comp) {
+      content = <Comp {...getModifierProps(mark)}>{content}</Comp>;
+      continue;
+    }
 
-  if (subscript) {
-    const Comp = modifiers?.subscript;
-    content = Comp ? <Comp>{content}</Comp> : <sub>{content}</sub>;
-  }
-
-  if (superscript) {
-    const Comp = modifiers?.superscript;
-    content = Comp ? <Comp>{content}</Comp> : <sup>{content}</sup>;
-  }
-
-  if (strikethrough) {
-    const Comp = modifiers?.strikethrough;
-    content = Comp ? <Comp>{content}</Comp> : <del>{content}</del>;
-  }
-
-  if (underline) {
-    const Comp = modifiers?.underline;
-    content = Comp ? (
-      <Comp>{content}</Comp>
-    ) : (
-      <span style={{ textDecoration: 'underline' }}>{content}</span>
-    );
-  }
-
-  if (uppercase) {
-    const Comp = modifiers?.uppercase;
-    content = Comp ? (
-      <Comp>{content}</Comp>
-    ) : (
-      <span style={{ textTransform: 'uppercase' }}>{content}</span>
-    );
-  }
-
-  if (italic) {
-    const Comp = modifiers?.italic;
-    content = Comp ? <Comp>{content}</Comp> : <em>{content}</em>;
-  }
-
-  if (bold) {
-    const Comp = modifiers?.bold;
-    content = Comp ? <Comp>{content}</Comp> : <strong>{content}</strong>;
-  }
-
-  if (color) {
-    const Comp = modifiers?.color;
-    content = Comp ? (
-      <Comp color={color}>{content}</Comp>
-    ) : (
-      <span style={{ color }}>{content}</span>
-    );
-  }
-
-  if (backgroundColor) {
-    const Comp = modifiers?.backgroundColor;
-    content = Comp ? (
-      <Comp backgroundColor={backgroundColor}>{content}</Comp>
-    ) : (
-      <span style={{ backgroundColor }}>{content}</span>
-    );
-  }
-
-  if (fontFamily) {
-    const Comp = modifiers?.fontFamily;
-    content = Comp ? (
-      <Comp fontFamily={fontFamily}>{content}</Comp>
-    ) : (
-      <span style={{ fontFamily }}>{content}</span>
-    );
-  }
-
-  if (fontSize) {
-    const Comp = modifiers?.fontSize;
-    content = Comp ? (
-      <Comp fontSize={fontSize}>{content}</Comp>
-    ) : (
-      <span style={{ fontSize }}>{content}</span>
-    );
+    const { tag, style } = getDefaultMarkRender(mark);
+    content = createElement(tag, { style: style as CSSProperties | undefined }, content);
   }
 
   return <Fragment key={key}>{content}</Fragment>;
@@ -232,14 +161,6 @@ function renderInlineContent(
 }
 
 // ── List Rendering ───────────────────────────────────────────────────
-
-const orderedStyles = ['decimal', 'lower-alpha', 'upper-roman'];
-const unorderedStyles = ['disc', 'circle', 'square'];
-
-function getListStyleType(format: 'ordered' | 'unordered', indentLevel: number): string {
-  const styles = format === 'ordered' ? orderedStyles : unorderedStyles;
-  return styles[indentLevel % styles.length];
-}
 
 function renderListItem(
   node: ListItemNode,
@@ -409,16 +330,6 @@ function isHeaderRow(row: TableRowNode | undefined): boolean {
 
 // ── Block Rendering ──────────────────────────────────────────────────
 
-function getPlainText(children: InlineNode[]): string {
-  return children
-    .map((child) => {
-      if (child.type === 'text') return child.text;
-      if (child.type === 'link') return child.children.map((t) => t.text).join('');
-      return '';
-    })
-    .join('');
-}
-
 /**
  * Renderer-wide settings that only some blocks consume. Passed as one object
  * rather than loose parameters so it can be threaded through the blocks that
@@ -483,11 +394,8 @@ function getBlockStyle(block: {
   lineHeight?: string;
   indent?: number;
 }): CSSProperties | undefined {
-  const style: CSSProperties = {};
-  if (block.textAlign) style.textAlign = block.textAlign as CSSProperties['textAlign'];
-  if (block.lineHeight) style.lineHeight = block.lineHeight;
-  if (block.indent) style.marginLeft = `${block.indent * 2}rem`;
-  return Object.keys(style).length > 0 ? style : undefined;
+  // The core returns a neutral style record; React just needs it typed.
+  return coreGetBlockStyle(block) as CSSProperties | undefined;
 }
 
 function renderParagraph(
@@ -783,7 +691,7 @@ function renderVideo(block: VideoNode, key: number, blocks?: CustomBlocksConfig)
       <VideoComp
         key={key}
         provider={block.provider}
-        url={block.url}
+        url={block.url ?? ''}
         assetId={block.assetId}
         playbackId={block.playbackId}
         file={block.file}
@@ -803,7 +711,7 @@ function renderVideo(block: VideoNode, key: number, blocks?: CustomBlocksConfig)
     <Video
       key={key}
       provider={block.provider}
-      url={block.url}
+      url={block.url ?? ''}
       assetId={block.assetId}
       playbackId={block.playbackId}
       file={block.file}
@@ -877,13 +785,14 @@ function renderAudio(block: AudioNode, key: number, blocks?: CustomBlocksConfig)
         file={block.file}
         title={block.title}
         caption={block.caption}
-        player={block.player}
+        player={block.player ?? {}}
         alignment={block.alignment}
       />
     );
   }
 
-  const { file, title, caption, player } = block;
+  const { file, title, caption } = block;
+  const player = block.player ?? {};
   const alignment: AudioAlignment = block.alignment ?? 'center';
   // Stable id linking the caption to the player via aria-describedby. Prefer the
   // Media-Library id, fall back to the file hash, then the block index.
@@ -1109,62 +1018,6 @@ function contentHasBlock(nodes: BlockNode[], type: BlockNode['type']): boolean {
     if (Array.isArray(children) && contentHasBlock(children as BlockNode[], type)) return true;
   }
   return false;
-}
-
-// Emoji icons keyed by file extension (falls back to a MIME-type group, then a
-// generic paperclip). Mirrors the icon mapping in the editor's button modal.
-const FILE_ICONS: Record<string, string> = {
-  pdf: '📄',
-  doc: '📝',
-  docx: '📝',
-  txt: '📃',
-  md: '📃',
-  rtf: '📃',
-  xls: '📊',
-  xlsx: '📊',
-  csv: '📊',
-  ppt: '📽️',
-  pptx: '📽️',
-  zip: '🗜️',
-  rar: '🗜️',
-  '7z': '🗜️',
-  gz: '🗜️',
-  tar: '🗜️',
-  png: '🖼️',
-  jpg: '🖼️',
-  jpeg: '🖼️',
-  gif: '🖼️',
-  svg: '🖼️',
-  webp: '🖼️',
-  mp3: '🎵',
-  wav: '🎵',
-  ogg: '🎵',
-  mp4: '🎬',
-  mov: '🎬',
-  avi: '🎬',
-  webm: '🎬',
-};
-
-function getFileIcon(file: ButtonFile): string {
-  const ext = (file.ext ?? '').replace(/^\./, '').toLowerCase();
-  if (ext && FILE_ICONS[ext]) return FILE_ICONS[ext];
-
-  const mime = file.mime ?? '';
-  if (mime.startsWith('image/')) return '🖼️';
-  if (mime.startsWith('audio/')) return '🎵';
-  if (mime.startsWith('video/')) return '🎬';
-  if (mime === 'application/pdf') return '📄';
-  return '📎';
-}
-
-// Human-readable byte size, e.g. 5242880 → "5 MB".
-function formatFileSize(bytes: number): string {
-  if (!Number.isFinite(bytes) || bytes <= 0) return '0 B';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.min(units.length - 1, Math.floor(Math.log(bytes) / Math.log(1024)));
-  const value = bytes / Math.pow(1024, i);
-  const rounded = i === 0 ? Math.round(value) : Math.round(value * 10) / 10;
-  return `${rounded} ${units[i]}`;
 }
 
 function getButtonStyle(style?: ButtonStyle): CSSProperties {

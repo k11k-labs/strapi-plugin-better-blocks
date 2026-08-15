@@ -12,7 +12,7 @@ import {
   getPlainText,
   normalizeCodeLang,
 } from '../src/utils';
-import type { InlineNode, TextNode } from '../src/types';
+import type { ButtonFile, InlineNode, TextNode } from '../src/types';
 
 /**
  * Characterization tests for the framework-independent helpers this renderer
@@ -143,20 +143,26 @@ describe('formatFileSize', () => {
 });
 
 describe('getFileIcon', () => {
+  const file = (extra: Partial<ButtonFile> = {}): ButtonFile => ({
+    url: '/a',
+    name: 'a',
+    ...extra,
+  });
+
   it('resolves by extension, with or without a leading dot', () => {
-    expect(getFileIcon({ ext: '.pdf' })).toBe(getFileIcon({ ext: 'pdf' }));
+    expect(getFileIcon(file({ ext: '.pdf' }))).toBe(getFileIcon(file({ ext: 'pdf' })));
   });
 
   it('is case-insensitive about the extension', () => {
-    expect(getFileIcon({ ext: '.PDF' })).toBe(getFileIcon({ ext: '.pdf' }));
+    expect(getFileIcon(file({ ext: '.PDF' }))).toBe(getFileIcon(file({ ext: '.pdf' })));
   });
 
   it('falls back to the mime type family when the extension is unknown', () => {
-    expect(getFileIcon({ ext: '.qqq', mime: 'image/webp' })).toBe('🖼️');
+    expect(getFileIcon(file({ ext: '.qqq', mime: 'image/webp' }))).toBe('🖼️');
   });
 
   it('returns a generic icon when nothing matches', () => {
-    const icon = getFileIcon({});
+    const icon = getFileIcon(file());
     expect(typeof icon).toBe('string');
     expect(icon.length).toBeGreaterThan(0);
   });

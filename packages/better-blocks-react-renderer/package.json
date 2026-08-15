@@ -31,6 +31,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@k11k/better-blocks-core": "workspace:^",
     "katex": "^0.16.11",
     "mermaid": "^11.4.0",
     "shiki": "^1.24.0"
