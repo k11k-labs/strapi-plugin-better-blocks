@@ -17,11 +17,15 @@ WORKDIR /workspace
 # Install first, from the manifests alone, so editing source does not blow away
 # the dependency layer.
 COPY .npmrc package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/better-blocks-core/package.json packages/better-blocks-core/
 COPY packages/strapi-plugin-better-blocks/package.json packages/strapi-plugin-better-blocks/
 COPY packages/better-blocks-react-renderer/package.json packages/better-blocks-react-renderer/
 COPY packages/better-blocks-astro-renderer/package.json packages/better-blocks-astro-renderer/
-COPY tooling/tsconfig/package.json tooling/tsconfig/
-COPY tooling/eslint-config/package.json tooling/eslint-config/
+# tooling/* goes in whole, not just its manifests: with the hoisted linker pnpm
+# materialises workspace packages at install time, so a tsconfig that is not on
+# disk yet never lands in node_modules and `extends` fails to resolve. They are
+# a handful of config files, so the dependency layer stays cheap either way.
+COPY tooling/ tooling/
 COPY examples/strapi-app/package.json examples/strapi-app/
 COPY examples/react-app/package.json examples/react-app/
 COPY examples/astro-app/package.json examples/astro-app/
