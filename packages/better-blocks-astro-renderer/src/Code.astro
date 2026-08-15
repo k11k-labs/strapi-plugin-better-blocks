@@ -1,0 +1,84 @@
+---
+import { Code } from 'astro/components';
+import type { CodeNode, CustomBlocksConfig } from './types';
+import { getPlainText, normalizeCodeLang } from './utils';
+import CodeCopyScript from './CodeCopyScript.astro';
+
+interface Props {
+  node: CodeNode;
+  blocks?: CustomBlocksConfig;
+  /** Shiki theme for the highlighted output. Defaults to `github-dark`. */
+  codeTheme?: string;
+  /** When true, renders a client-side copy button + bundles its script once. */
+  codeCopyButton?: boolean;
+}
+
+const { node, blocks, codeTheme = 'github-dark', codeCopyButton = false } = Astro.props;
+
+const CodeComp = blocks?.code as any;
+const plainText = getPlainText(node.children);
+const lang = normalizeCodeLang(node.language);
+---
+
+{
+  CodeComp ? (
+    <CodeComp plainText={plainText} language={node.language}>
+      {plainText}
+    </CodeComp>
+  ) : (
+    <div class="bb-code">
+      <Code code={plainText} lang={lang as any} theme={codeTheme as any} />
+      {codeCopyButton && (
+        <button class="bb-code-copy" type="button" data-bb-code-copy aria-label="Copy code">
+          Copy
+        </button>
+      )}
+    </div>
+  )
+}
+
+{!CodeComp && codeCopyButton && <CodeCopyScript />}
+
+<style>
+  /* Wraps Astro's <Code> (Shiki) output. Shiki inlines the theme background and
+     text colors onto the generated <pre class="astro-code">; we only add the
+     GitHub-style padding, rounding, and typography around it. The <pre> is
+     rendered by another component, so it needs :global to be reached. */
+  .bb-code {
+    position: relative;
+    margin: 1rem 0;
+  }
+  .bb-code :global(.astro-code) {
+    padding: 1rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    line-height: 1.45;
+    tab-size: 2;
+  }
+  /* Opt-in copy button — sits in the top-right corner, styled with neutral
+     tokens so it reads on both light and dark themes. */
+  .bb-code-copy {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    line-height: 1;
+    color: var(--bb-code-copy-fg, #e1e4e8);
+    background: var(--bb-code-copy-bg, rgba(110, 118, 129, 0.4));
+    border: 1px solid var(--bb-code-copy-border, rgba(240, 246, 252, 0.1));
+    border-radius: 6px;
+    cursor: pointer;
+    opacity: 0;
+    transition:
+      opacity 0.15s ease,
+      background 0.15s ease;
+  }
+  .bb-code:hover .bb-code-copy,
+  .bb-code-copy:focus-visible {
+    opacity: 1;
+  }
+  .bb-code-copy:hover {
+    background: var(--bb-code-copy-hover-bg, rgba(110, 118, 129, 0.6));
+  }
+</style>

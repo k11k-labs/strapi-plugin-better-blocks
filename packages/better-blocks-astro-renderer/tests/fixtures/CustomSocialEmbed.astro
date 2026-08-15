@@ -1,0 +1,7 @@
+---
+const { platform, url, alignment, caption } = Astro.props;
+---
+
+<div class="custom-social-embed" data-platform={platform} data-alignment={alignment} data-url={url}>
+  {caption && <span class="custom-social-caption">{caption}</span>}
+</div>

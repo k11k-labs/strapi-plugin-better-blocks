@@ -1,2 +1,6 @@
-dist
 node_modules
+dist
+coverage
+.nx
+pnpm-lock.yaml
+CHANGELOG.md

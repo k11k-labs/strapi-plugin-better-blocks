@@ -1,0 +1,103 @@
+---
+import type { DetailsNode, CustomBlocksConfig, CustomModifiersConfig, DiagramTheme } from './types';
+import Block from './Block.astro';
+
+interface Props {
+  node: DetailsNode;
+  blocks?: CustomBlocksConfig;
+  modifiers?: CustomModifiersConfig;
+  diagramTheme?: DiagramTheme;
+  codeTheme?: string;
+  codeCopyButton?: boolean;
+}
+
+const { node, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton } = Astro.props;
+
+const DetailsComp = blocks?.details as any;
+---
+
+{
+  DetailsComp ? (
+    <DetailsComp summary={node.summary} defaultOpen={node.defaultOpen}>
+      {node.children.map((child, index) => (
+        <Block
+          block={child}
+          blocks={blocks}
+          modifiers={modifiers}
+          diagramTheme={diagramTheme}
+          codeTheme={codeTheme}
+          codeCopyButton={codeCopyButton}
+          index={index}
+        />
+      ))}
+    </DetailsComp>
+  ) : (
+    <details class="bb-details" open={node.defaultOpen}>
+      <summary class="bb-details-summary">{node.summary}</summary>
+      <div class="bb-details-body">
+        {node.children.map((child, index) => (
+          <Block
+            block={child}
+            blocks={blocks}
+            modifiers={modifiers}
+            diagramTheme={diagramTheme}
+            codeTheme={codeTheme}
+            codeCopyButton={codeCopyButton}
+            index={index}
+          />
+        ))}
+      </div>
+    </details>
+  )
+}
+
+<style>
+  /* GitHub-inspired collapsible. Zero client-side JavaScript — the open/closed
+     state is handled natively by the <details>/<summary> elements. */
+  .bb-details {
+    border: 1px solid var(--bb-details-border, #d0d7de);
+    border-radius: 6px;
+    margin: 1rem 0;
+    background: var(--bb-details-bg, #fff);
+  }
+  .bb-details-summary {
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    font-weight: 600;
+    list-style: none;
+    border-radius: 6px;
+    background: var(--bb-details-summary-bg, #f6f8fa);
+  }
+  /* Hide the browser's native disclosure triangle and draw our own that
+     rotates when the disclosure is open. */
+  .bb-details-summary::-webkit-details-marker {
+    display: none;
+  }
+  .bb-details-summary::before {
+    content: '\25B8';
+    display: inline-block;
+    margin-right: 0.5rem;
+    color: var(--bb-details-marker, #57606a);
+    transition: transform 0.15s ease;
+  }
+  .bb-details[open] > .bb-details-summary::before {
+    transform: rotate(90deg);
+  }
+  .bb-details[open] > .bb-details-summary {
+    border-bottom: 1px solid var(--bb-details-border, #d0d7de);
+    border-radius: 6px 6px 0 0;
+  }
+  /* Inset the body content. Collapse the body's outer margins so it sits flush
+     within the box (top/bottom balanced). :global is required because the body
+     blocks are rendered by other components and don't carry this component's
+     scoped id. */
+  .bb-details-body {
+    padding: 0.5rem 1rem;
+  }
+  .bb-details-body > :global(:first-child) {
+    margin-top: 0;
+  }
+  .bb-details-body > :global(:last-child) {
+    margin-bottom: 0;
+  }
+</style>

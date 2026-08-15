@@ -1,0 +1,8 @@
+---
+const { file, title, caption, alignment } = Astro.props;
+---
+
+<div class="custom-audio" data-alignment={alignment} data-url={file?.url}>
+  {title && <span class="custom-audio-title">{title}</span>}
+  {caption && <span class="custom-audio-caption">{caption}</span>}
+</div>

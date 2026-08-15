@@ -1,0 +1,46 @@
+---
+// A custom button renderer that fully replaces the default markup with a
+// pill-shaped gradient CTA. It receives label, link/file, buttonType, alignment,
+// filePreview. A preview file button opens in a new tab; otherwise it downloads.
+const { label, link, file, buttonType, alignment, filePreview } = Astro.props;
+const isFile = buttonType === 'file';
+const isPreview = isFile && filePreview === true;
+const href = isFile ? file?.url : link?.url;
+const target = isPreview ? '_blank' : link?.target;
+const rel = isPreview ? 'noopener noreferrer' : link?.rel;
+const download = isFile && !isPreview ? file?.name : undefined;
+const emoji = isFile ? (isPreview ? '👁' : '⬇') : '✨';
+const wrapperStyle = alignment && alignment !== 'none' ? `text-align: ${alignment};` : '';
+---
+
+<div style={`margin: 12px 0; ${wrapperStyle}`}>
+  <a
+    class="custom-button"
+    href={href}
+    target={target}
+    rel={rel}
+    download={download}
+    style="display: inline-flex; align-items: center; gap: 8px; line-height: 1; background: linear-gradient(135deg, #7c3aed, #4945ff); color: #fff; text-decoration: none; font-weight: 700; padding: 12px 28px; border-radius: 999px;"
+  >
+    <span aria-hidden="true">{emoji}</span>
+    {label}
+  </a>
+</div>
+
+<style>
+  .custom-button {
+    transition:
+      transform 0.15s ease,
+      filter 0.15s ease,
+      box-shadow 0.15s ease;
+  }
+  .custom-button:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 18px rgba(73, 69, 255, 0.35);
+  }
+  .custom-button:focus-visible {
+    outline: 2px solid #4945ff;
+    outline-offset: 2px;
+  }
+</style>

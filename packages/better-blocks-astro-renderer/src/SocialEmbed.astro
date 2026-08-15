@@ -1,0 +1,129 @@
+---
+import type { CustomBlocksConfig, SocialEmbedNode } from './types';
+import {
+  SOCIAL_SCRIPTS,
+  addLazyLoadingToIframes,
+  getSocialAriaLabel,
+  getSocialEmbedSource,
+  getSocialProviderName,
+} from './utils';
+import SocialEmbedScript from './SocialEmbedScript.astro';
+
+interface Props {
+  node: SocialEmbedNode;
+  blocks?: CustomBlocksConfig;
+}
+
+const { node, blocks } = Astro.props;
+const SocialComp = blocks?.['social-embed'] as any;
+
+const alignment = node.alignment ?? 'center';
+const source = getSocialEmbedSource(node);
+// Trusted markup (platform oEmbed / author-pasted embed code). It intentionally
+// contains <iframe>/<blockquote> and must NOT be passed through a sanitizer that
+// strips them — see the README's trust-boundary note. Widget <script> tags are
+// stripped in getSocialEmbedSource; the lazy loader is the single script injector.
+const html = source.kind === 'html' ? addLazyLoadingToIframes(source.html) : null;
+
+// Lazy widget script only for platforms that ship one AND when we actually
+// rendered embed markup (not the fallback link, which needs no script).
+const needsScript = html !== null && !!SOCIAL_SCRIPTS[node.platform];
+
+const ariaLabel = getSocialAriaLabel(node);
+const providerName = getSocialProviderName(node);
+const oembed = node.oembed;
+
+// Fallback card links to the post when a URL is known; embed-code-only nodes
+// (no tokenless oEmbed) have none, so it renders as a non-interactive <div>
+// rather than an empty `<a href="">`.
+const fallbackHref = node.url?.trim() || null;
+const FallbackTag = fallbackHref ? 'a' : 'div';
+const fallbackLinkAttrs = fallbackHref
+  ? { href: fallbackHref, target: '_blank', rel: 'noopener noreferrer' }
+  : {};
+
+// Fallback link-card title: the oEmbed title, else a descriptive label.
+const fallbackLabel = oembed?.author
+  ? `${providerName} post by ${oembed.author}`
+  : `View on ${providerName}`;
+const fallbackTitle = oembed?.title ?? fallbackLabel;
+
+// Mirrors the React renderer: centered embeds get `1rem auto` so the block
+// centers within its column; left/right keep a flush `1rem 0`.
+const figureStyle = {
+  margin: alignment === 'center' ? '1rem auto' : '1rem 0',
+  textAlign: alignment,
+};
+---
+
+{
+  SocialComp ? (
+    <SocialComp
+      platform={node.platform}
+      url={node.url}
+      embedCode={node.embedCode}
+      oembed={node.oembed}
+      alignment={node.alignment}
+      caption={node.caption}
+    />
+  ) : (
+    <figure
+      class={`bb-social-embed bb-social-embed-${node.platform} social-embed align-${alignment}`}
+      aria-label={ariaLabel}
+      style={figureStyle}
+      data-bb-social-embed={needsScript ? '' : undefined}
+      data-bb-social-platform={needsScript ? node.platform : undefined}
+    >
+      {html !== null ? (
+        <div class="bb-social-embed-html" set:html={html} />
+      ) : (
+        /* No embedCode/oembed.html — graceful link card. Renders as an <a> when a
+           post URL is known, else a non-interactive <div> (no empty href). */
+        <FallbackTag
+          class="bb-social-embed-fallback"
+          {...fallbackLinkAttrs}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '0.75rem',
+            padding: '0.75rem 1rem',
+            border: '1px solid #d0d7de',
+            borderRadius: '0.5rem',
+            textDecoration: 'none',
+            color: 'inherit',
+            textAlign: 'left',
+          }}
+        >
+          {oembed?.thumbnailUrl && (
+            <img
+              class="bb-social-embed-fallback-thumb"
+              src={oembed.thumbnailUrl}
+              alt=""
+              loading="lazy"
+              width={48}
+              height={48}
+              style={{ borderRadius: '0.25rem', objectFit: 'cover', flexShrink: 0 }}
+            />
+          )}
+          <span class="bb-social-embed-fallback-body">
+            <span
+              class="bb-social-embed-fallback-title"
+              style={{ display: 'block', fontWeight: 600 }}
+            >
+              {fallbackTitle}
+            </span>
+            <span
+              class="bb-social-embed-fallback-provider"
+              style={{ opacity: 0.7, fontSize: '0.875em' }}
+            >
+              {providerName}
+            </span>
+          </span>
+        </FallbackTag>
+      )}
+      {node.caption && <figcaption class="bb-social-embed-caption">{node.caption}</figcaption>}
+    </figure>
+  )
+}
+
+{needsScript && <SocialEmbedScript />}

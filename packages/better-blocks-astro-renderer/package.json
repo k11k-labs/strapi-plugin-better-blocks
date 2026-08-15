@@ -1,0 +1,91 @@
+{
+  "name": "@k11k/better-blocks-astro-renderer",
+  "version": "0.12.0",
+  "description": "Astro renderer for Strapi v5 Blocks content with full Better Blocks plugin support — colors, tables, to-do lists, media embeds, alignment, and more. Native Astro components, zero client-side JavaScript.",
+  "type": "module",
+  "types": "./index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./BlocksRenderer.astro": "./src/BlocksRenderer.astro",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "index.ts",
+    "env.d.ts"
+  ],
+  "scripts": {
+    "build": "astro check",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ts": "astro check",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@k11k/better-blocks-core": "workspace:^",
+    "beautiful-mermaid": "^1.1.3",
+    "katex": "^0.16.11"
+  },
+  "peerDependencies": {
+    "astro": ">=4.0.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@k11k/eslint-config": "workspace:*",
+    "@k11k/tsconfig": "workspace:*",
+    "@types/katex": "^0.16.7",
+    "astro": "^5.0.0",
+    "eslint": "^10.8.1",
+    "linkedom": "^0.18.12",
+    "prettier": "^3.4.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  },
+  "keywords": [
+    "strapi",
+    "strapi-v5",
+    "blocks",
+    "blocks-renderer",
+    "astro",
+    "renderer",
+    "rich-text",
+    "better-blocks",
+    "color",
+    "highlight",
+    "text-color",
+    "background-color",
+    "katex",
+    "latex",
+    "math",
+    "mermaid",
+    "diagram",
+    "cms",
+    "headless-cms"
+  ],
+  "license": "MIT",
+  "author": "k11k-labs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k11k-labs/strapi-plugin-better-blocks.git",
+    "directory": "packages/better-blocks-astro-renderer"
+  },
+  "bugs": {
+    "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks/issues"
+  },
+  "homepage": "https://github.com/k11k-labs/strapi-plugin-better-blocks#readme",
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:renderer"
+    ]
+  }
+}

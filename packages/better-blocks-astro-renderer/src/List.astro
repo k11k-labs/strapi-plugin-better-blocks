@@ -1,0 +1,49 @@
+---
+import type { CustomBlocksConfig, CustomModifiersConfig, ListNode, StyleValue } from './types';
+import ListItem from './ListItem.astro';
+import { getListStyleType } from './utils';
+
+interface Props {
+  node: ListNode;
+  blocks?: CustomBlocksConfig;
+  modifiers?: CustomModifiersConfig;
+}
+
+const { node, blocks, modifiers } = Astro.props;
+const indentLevel = node.indentLevel || 0;
+const isTodo = node.format === 'todo';
+const ListComp = blocks?.list as any;
+
+// Pick the wrapper element + props; the children map is identical across all
+// cases, so render it once as slot content.
+let Wrapper: unknown;
+let wrapperProps: Record<string, unknown> = {};
+if (ListComp) {
+  Wrapper = ListComp;
+  wrapperProps = { format: node.format, indentLevel };
+} else if (isTodo) {
+  Wrapper = 'ul';
+  const style: StyleValue = {
+    listStyle: 'none',
+    paddingLeft: indentLevel > 0 ? '1.5em' : '0',
+  };
+  wrapperProps = { style };
+} else {
+  Wrapper = node.format === 'ordered' ? 'ol' : 'ul';
+  const listStyleType = getListStyleType(node.format as 'ordered' | 'unordered', indentLevel);
+  wrapperProps = { style: { listStyleType } satisfies StyleValue };
+}
+const Tag = Wrapper as any;
+---
+
+<Tag {...wrapperProps}>
+  {
+    node.children.map((child) =>
+      child.type === 'list-item' ? (
+        <ListItem node={child} isTodo={isTodo} blocks={blocks} modifiers={modifiers} />
+      ) : (
+        <Astro.self node={child} blocks={blocks} modifiers={modifiers} />
+      )
+    )
+  }
+</Tag>

@@ -1,0 +1,8 @@
+---
+const { summary, defaultOpen } = Astro.props;
+---
+
+<details class="custom-details" data-summary={summary} open={defaultOpen}>
+  <summary>{summary}</summary>
+  <slot />
+</details>

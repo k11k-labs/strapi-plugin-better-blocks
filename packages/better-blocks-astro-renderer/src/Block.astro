@@ -1,0 +1,167 @@
+---
+import type { BlockNode, CustomBlocksConfig, CustomModifiersConfig, DiagramTheme } from './types';
+import Inline from './Inline.astro';
+import List from './List.astro';
+import Table from './Table.astro';
+import Quote from './Quote.astro';
+import Code from './Code.astro';
+import Math from './Math.astro';
+import Diagram from './Diagram.astro';
+import Callout from './Callout.astro';
+import Details from './Details.astro';
+import Button from './Button.astro';
+import SocialEmbed from './SocialEmbed.astro';
+import Audio from './Audio.astro';
+import Embed from './Embed.astro';
+import Video from './Video.astro';
+import { getBlockStyle } from './utils';
+
+interface Props {
+  block: BlockNode;
+  blocks?: CustomBlocksConfig;
+  modifiers?: CustomModifiersConfig;
+  diagramTheme?: DiagramTheme;
+  /** Shiki theme for default `code` blocks. */
+  codeTheme?: string;
+  /** Whether default `code` blocks render an opt-in copy button. */
+  codeCopyButton?: boolean;
+  /** Position among sibling blocks — forwarded to blocks that need a stable key. */
+  index?: number;
+}
+
+const { block, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton, index } = Astro.props;
+
+const ParagraphComp = blocks?.paragraph as any;
+const HeadingComp = blocks?.heading as any;
+const ImageComp = blocks?.image as any;
+const HrComp = blocks?.['horizontal-line'] as any;
+const EmbedComp = blocks?.['media-embed'] as any;
+---
+
+{
+  block.type === 'paragraph' && (
+    <Fragment>
+      {(() => {
+        const style = getBlockStyle(block);
+        return ParagraphComp ? (
+          <ParagraphComp style={style}>
+            <Inline nodes={block.children} blocks={blocks} modifiers={modifiers} />
+          </ParagraphComp>
+        ) : (
+          <p style={style}>
+            <Inline nodes={block.children} blocks={blocks} modifiers={modifiers} />
+          </p>
+        );
+      })()}
+    </Fragment>
+  )
+}
+
+{
+  block.type === 'heading' && (
+    <Fragment>
+      {(() => {
+        const style = getBlockStyle(block);
+        const HeadingTag = `h${block.level}` as any;
+        return HeadingComp ? (
+          <HeadingComp level={block.level} style={style}>
+            <Inline nodes={block.children} blocks={blocks} modifiers={modifiers} />
+          </HeadingComp>
+        ) : (
+          <HeadingTag style={style}>
+            <Inline nodes={block.children} blocks={blocks} modifiers={modifiers} />
+          </HeadingTag>
+        );
+      })()}
+    </Fragment>
+  )
+}
+
+{block.type === 'list' && <List node={block} blocks={blocks} modifiers={modifiers} />}
+
+{block.type === 'quote' && <Quote node={block} blocks={blocks} modifiers={modifiers} />}
+
+{
+  block.type === 'code' && (
+    <Code node={block} blocks={blocks} codeTheme={codeTheme} codeCopyButton={codeCopyButton} />
+  )
+}
+
+{
+  block.type === 'image' && (
+    <Fragment>
+      {(() => {
+        const align = block.imageAlign || 'center';
+        return ImageComp ? (
+          <ImageComp image={block.image} caption={block.caption} imageAlign={block.imageAlign} />
+        ) : (
+          <figure style={{ textAlign: align }}>
+            <img
+              src={block.image.url}
+              alt={block.image.alternativeText || ''}
+              width={block.image.width}
+              height={block.image.height}
+            />
+            {block.caption && <figcaption>{block.caption}</figcaption>}
+          </figure>
+        );
+      })()}
+    </Fragment>
+  )
+}
+
+{block.type === 'horizontal-line' && <Fragment>{HrComp ? <HrComp /> : <hr />}</Fragment>}
+
+{block.type === 'table' && <Table node={block} blocks={blocks} modifiers={modifiers} />}
+
+{
+  block.type === 'media-embed' && (
+    <Fragment>
+      {EmbedComp ? (
+        <EmbedComp url={block.url} originalUrl={block.originalUrl} />
+      ) : (
+        <div style={{ position: 'relative', paddingBottom: '56.25%', height: '0' }}>
+          <iframe
+            src={block.url}
+            style={{
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              width: '100%',
+              height: '100%',
+              border: '0',
+            }}
+            allowfullscreen
+            title="Embedded media"
+          />
+        </div>
+      )}
+    </Fragment>
+  )
+}
+
+{block.type === 'math' && <Math node={block} blocks={blocks} />}
+
+{block.type === 'diagram' && <Diagram node={block} blocks={blocks} diagramTheme={diagramTheme} />}
+
+{
+  block.type === 'callout' && (
+    <Callout node={block} blocks={blocks} modifiers={modifiers} diagramTheme={diagramTheme} />
+  )
+}
+
+{
+  block.type === 'details' && (
+    <Details node={block} blocks={blocks} modifiers={modifiers} diagramTheme={diagramTheme} />
+  )
+}
+
+{block.type === 'button' && <Button node={block} blocks={blocks} />}
+
+{block.type === 'social-embed' && <SocialEmbed node={block} blocks={blocks} />}
+
+{block.type === 'audio' && <Audio node={block} blocks={blocks} index={index} />}
+
+{block.type === 'embed' && <Embed node={block} blocks={blocks} />}
+
+{block.type === 'video' && <Video node={block} blocks={blocks} index={index} />}

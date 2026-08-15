@@ -1,0 +1,41 @@
+---
+import type { CustomBlocksConfig, CustomModifiersConfig, InlineNode } from './types';
+import Text from './Text.astro';
+import Math from './Math.astro';
+
+interface Props {
+  nodes: InlineNode[];
+  blocks?: CustomBlocksConfig;
+  modifiers?: CustomModifiersConfig;
+}
+
+const { nodes, blocks, modifiers } = Astro.props;
+const LinkComp = blocks?.link as any;
+---
+
+{
+  nodes.map((child) => {
+    if (child.type === 'text') {
+      return <Text node={child} modifiers={modifiers} />;
+    }
+    if (child.type === 'math') {
+      return <Math node={child} blocks={blocks} />;
+    }
+    if (child.type === 'link') {
+      return LinkComp ? (
+        <LinkComp url={child.url} target={child.target} rel={child.rel}>
+          {child.children.map((textNode) => (
+            <Text node={textNode} modifiers={modifiers} />
+          ))}
+        </LinkComp>
+      ) : (
+        <a href={child.url} target={child.target} rel={child.rel}>
+          {child.children.map((textNode) => (
+            <Text node={textNode} modifiers={modifiers} />
+          ))}
+        </a>
+      );
+    }
+    return null;
+  })
+}

@@ -1,0 +1,42 @@
+---
+import katex from 'katex';
+import type { CustomBlocksConfig, MathNode } from './types';
+
+interface Props {
+  node: MathNode;
+  blocks?: CustomBlocksConfig;
+}
+
+const { node, blocks } = Astro.props;
+
+const isBlock = node.format === 'block';
+const formula = node.value ?? '';
+const MathComp = blocks?.math;
+
+const Tag = isBlock ? 'div' : 'span';
+const className = isBlock ? 'katex-block' : 'katex-inline';
+
+// KaTeX renders to an HTML string on the server (no client hydration needed).
+// With `throwOnError: false` it renders parse errors inline instead of throwing;
+// the try/catch is a last-resort guard that falls back to the raw LaTeX source.
+let html: string | null = null;
+if (!MathComp) {
+  try {
+    html = katex.renderToString(formula, { displayMode: isBlock, throwOnError: false });
+  } catch {
+    html = null;
+  }
+}
+const Wrapper = Tag as any;
+const Custom = MathComp as any;
+---
+
+{
+  Custom ? (
+    <Custom formula={formula} inline={!isBlock} />
+  ) : html !== null ? (
+    <Wrapper class={className} set:html={html} />
+  ) : (
+    <Wrapper class={className}>{formula}</Wrapper>
+  )
+}

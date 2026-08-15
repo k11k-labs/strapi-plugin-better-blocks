@@ -1,0 +1,7 @@
+---
+const { align, colSpan, rowSpan } = Astro.props;
+---
+
+<div data-testid="custom-td" data-align={align} data-colspan={colSpan} data-rowspan={rowSpan}>
+  <slot />
+</div>

@@ -1,0 +1,154 @@
+---
+import type { CustomBlocksConfig, MediaAlignment, VideoNode } from './types';
+import { MEDIA_JUSTIFY, getAspectRatio } from './utils';
+
+interface Props {
+  node: VideoNode;
+  blocks?: CustomBlocksConfig;
+  /** Position among sibling blocks — last-resort key for the caption id. */
+  index?: number;
+}
+
+const { node, blocks, index = 0 } = Astro.props;
+const VideoComp = blocks?.video as any;
+
+const alignment: MediaAlignment = node.alignment ?? 'center';
+const aspectRatio = getAspectRatio(node.aspectRatio, node.customAspectRatio);
+
+const { provider, playbackId, file, title, caption, transcript, player } = node;
+
+// Preferred playback source: an explicit url, else the Media-Library file url,
+// else a Mux public-playback stream derived from the playback id.
+const src =
+  node.url?.trim() ||
+  file?.url?.trim() ||
+  (provider === 'mux' && playbackId ? `https://stream.mux.com/${playbackId}.m3u8` : undefined);
+
+// Poster: explicit, else a Mux thumbnail derived from the playback id.
+const poster =
+  node.poster?.trim() ||
+  (provider === 'mux' && playbackId
+    ? `https://image.mux.com/${playbackId}/thumbnail.jpg`
+    : undefined);
+
+// HLS/DASH only plays natively in Safari; other browsers fall back to the poster
+// plus the download/open link inside <video>. Override the block for a JS player.
+const isStream = /\.(m3u8|mpd)(\?.*)?$/i.test(src ?? '');
+
+const controls = player?.controls ?? true;
+// autoplay is a no-op unless the video is muted, so muted is forced on with it.
+const autoplay = player?.autoplay ?? false;
+const muted = (player?.muted ?? false) || autoplay;
+const loop = player?.loop ?? false;
+
+// Stable id linking the caption to the player via aria-describedby. Prefer the
+// Media-Library id, fall back to the playback id, then the block index.
+const capId = caption ? `bb-video-cap-${file?.id ?? playbackId ?? index}` : undefined;
+
+const frameMaxWidth = alignment === 'none' ? '100%' : 'var(--bb-video-max-width, 40rem)';
+---
+
+{
+  VideoComp ? (
+    <VideoComp
+      provider={node.provider}
+      url={node.url}
+      assetId={node.assetId}
+      playbackId={node.playbackId}
+      file={node.file}
+      poster={node.poster}
+      title={node.title}
+      caption={node.caption}
+      transcript={node.transcript}
+      player={node.player}
+      alignment={node.alignment}
+      aspectRatio={node.aspectRatio}
+      customAspectRatio={node.customAspectRatio}
+    />
+  ) : (
+    <figure
+      class={`bb-video align-${alignment}`}
+      data-hls={isStream ? '' : undefined}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: MEDIA_JUSTIFY[alignment],
+        gap: '0.5rem',
+        margin: '1rem 0',
+      }}
+    >
+      {title && (
+        <figcaption class="bb-video-title" style={{ fontWeight: 600 }}>
+          {title}
+        </figcaption>
+      )}
+      <div
+        class="bb-video-frame"
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: frameMaxWidth,
+          aspectRatio,
+          background: '#000',
+        }}
+      >
+        {src ? (
+          <video
+            class="bb-video-player"
+            src={src}
+            poster={poster}
+            controls={controls}
+            autoplay={autoplay}
+            muted={muted}
+            loop={loop}
+            playsinline
+            preload="metadata"
+            aria-label={title || 'Video player'}
+            aria-describedby={capId}
+          >
+            {transcript && <track kind="captions" src={transcript} />}
+            <p>
+              Your browser can&rsquo;t play this video. <a href={src}>Open the video</a>.
+            </p>
+          </video>
+        ) : (
+          poster && (
+            <img
+              class="bb-video-poster"
+              src={poster}
+              alt={title || ''}
+              loading="lazy"
+              style={{
+                position: 'absolute',
+                inset: '0',
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+              }}
+            />
+          )
+        )}
+      </div>
+      {caption && (
+        <figcaption
+          id={capId}
+          class="bb-video-caption"
+          style={{ fontSize: '0.875rem', color: '#6b7280' }}
+        >
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
+<style>
+  .bb-video-frame > .bb-video-player {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: contain;
+  }
+</style>

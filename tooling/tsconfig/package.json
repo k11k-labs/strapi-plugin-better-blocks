@@ -1,0 +1,16 @@
+{
+  "name": "@k11k/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared TypeScript configuration for the Better Blocks packages",
+  "license": "MIT",
+  "files": [
+    "base.json",
+    "react-library.json"
+  ],
+  "nx": {
+    "tags": [
+      "scope:tooling"
+    ]
+  }
+}

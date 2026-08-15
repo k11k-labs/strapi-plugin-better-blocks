@@ -1,0 +1,34 @@
+---
+import type { CustomBlocksConfig, CustomModifiersConfig, ListItemNode } from './types';
+import Inline from './Inline.astro';
+
+interface Props {
+  node: ListItemNode;
+  isTodo: boolean;
+  blocks?: CustomBlocksConfig;
+  modifiers?: CustomModifiersConfig;
+}
+
+const { node, isTodo, blocks, modifiers } = Astro.props;
+const ListItemComp = blocks?.['list-item'] as any;
+const checked = node.checked ?? false;
+---
+
+{
+  ListItemComp ? (
+    <ListItemComp checked={isTodo ? node.checked : undefined}>
+      <Inline nodes={node.children} blocks={blocks} modifiers={modifiers} />
+    </ListItemComp>
+  ) : isTodo ? (
+    <li style={{ listStyle: 'none' }}>
+      <input type="checkbox" checked={checked} readonly style={{ marginRight: '0.5em' }} />
+      <span style={checked ? { textDecoration: 'line-through', opacity: '0.6' } : undefined}>
+        <Inline nodes={node.children} blocks={blocks} modifiers={modifiers} />
+      </span>
+    </li>
+  ) : (
+    <li>
+      <Inline nodes={node.children} blocks={blocks} modifiers={modifiers} />
+    </li>
+  )
+}
