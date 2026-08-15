@@ -1,3 +1,35 @@
+## 0.13.0 (2026-08-15)
+
+### 🚀 Features
+
+- **examples:** one Strapi instance and both renderers on the same content ([66465a7](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/66465a7))
+
+### 🩹 Fixes
+
+- keep generated changelogs out of prettier's way ([#96](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/96))
+
+### ❤️ Thank You
+
+- kkukielka
+
+## 0.12.1 (2026-08-15)
+
+### 🚀 Features
+
+- **examples:** one Strapi instance and both renderers on the same content ([66465a7](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/66465a7))
+
+### 🩹 Fixes
+
+- keep generated changelogs out of prettier's way ([#96](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/96))
+
+### 🧱 Updated Dependencies
+
+- Updated @k11k/better-blocks-core to 0.1.1
+
+### ❤️ Thank You
+
+- kkukielka
+
 # @k11k/better-blocks-astro-renderer
 
 ## 0.12.0
