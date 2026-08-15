@@ -1,0 +1,45 @@
+---
+import type { CustomModifiersConfig, TextNode } from './types';
+import { buildTextMarks, getDefaultMarkRender, getModifierProps, type Mark } from './utils';
+
+interface Props {
+  node: TextNode;
+  modifiers?: CustomModifiersConfig;
+  /** Remaining marks to apply, outer → inner. Built from `node` on first call. */
+  marks?: Mark[];
+}
+
+const { node, modifiers, marks } = Astro.props;
+const activeMarks = marks ?? buildTextMarks(node);
+const hasMarks = activeMarks.length > 0;
+
+const [current, ...rest] = activeMarks;
+
+// Choose the wrapper for the outermost remaining mark: a custom modifier
+// component if one is configured, otherwise the default HTML element. The inner
+// content recurses through the remaining marks via `Astro.self`.
+let Tag: unknown = null;
+let tagProps: Record<string, unknown> = {};
+if (hasMarks) {
+  const Custom = modifiers?.[current.name as keyof CustomModifiersConfig];
+  if (Custom) {
+    Tag = Custom;
+    tagProps = getModifierProps(current);
+  } else {
+    const { tag, style } = getDefaultMarkRender(current);
+    Tag = tag;
+    tagProps = style ? { style } : {};
+  }
+}
+const Wrapper = Tag as any;
+---
+
+{
+  hasMarks ? (
+    <Wrapper {...tagProps}>
+      <Astro.self node={node} modifiers={modifiers} marks={rest} />
+    </Wrapper>
+  ) : (
+    node.text
+  )
+}

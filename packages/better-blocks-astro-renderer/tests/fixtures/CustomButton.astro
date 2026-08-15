@@ -1,0 +1,16 @@
+---
+const { label, buttonType, alignment, link, file } = Astro.props;
+const href = buttonType === 'file' ? file?.url : link?.url;
+---
+
+<a
+  class="custom-button"
+  data-button-type={buttonType}
+  data-alignment={alignment}
+  href={href}
+  target={link?.target}
+  rel={link?.rel}
+  download={buttonType === 'file' ? file?.name : undefined}
+>
+  {label}
+</a>

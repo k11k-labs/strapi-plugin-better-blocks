@@ -1,0 +1,14 @@
+---
+const { embedHtml, provider, aspectRatio, alignment, caption, title } = Astro.props;
+---
+
+<div
+  class="custom-embed-block"
+  data-provider={provider}
+  data-aspect={aspectRatio}
+  data-alignment={alignment}
+>
+  {title && <span class="custom-embed-title">{title}</span>}
+  <div class="custom-embed-html" set:html={embedHtml} />
+  {caption && <span class="custom-embed-caption">{caption}</span>}
+</div>

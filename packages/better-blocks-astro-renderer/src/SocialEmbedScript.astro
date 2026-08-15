@@ -1,0 +1,110 @@
+---
+/**
+ * Lazy, deduped loader for social-platform widget scripts. Rendered once per
+ * `social-embed` node, but Astro hoists and dedupes identical module scripts,
+ * so the `<script>` below is bundled and runs a single time per page.
+ *
+ * It watches every `[data-bb-social-embed]` figure with an IntersectionObserver
+ * and injects a platform's widget script only when an embed nears the viewport
+ * — no third-party JavaScript loads eagerly. Each platform script is injected
+ * at most once; when it's already present, the platform's re-process API is
+ * called (including TikTok's `tiktokEmbed.lib.render`) so embeds that scroll in
+ * later are hydrated too. Re-scans on `astro:page-load` for view-transition
+ * navigations.
+ *
+ * This component carries no server props — it's a pure client-side loader.
+ */
+---
+
+<script>
+  // Mirrors SOCIAL_SCRIPTS in utils.ts. LinkedIn is intentionally absent — its
+  // oEmbed markup is a self-contained <iframe> that needs no widget script.
+  const SCRIPTS: Record<string, string> = {
+    twitter: 'https://platform.twitter.com/widgets.js',
+    instagram: 'https://www.instagram.com/embed.js',
+    tiktok: 'https://www.tiktok.com/embed.js',
+    pinterest: 'https://assets.pinterest.com/js/pinit.js',
+    facebook: 'https://connect.facebook.net/en_US/sdk.js',
+  };
+
+  // Re-process embeds for a platform whose widget script is already loaded.
+  // Returns false only when the platform's re-process global is genuinely
+  // missing (TikTok) so the caller can fall back to re-injecting the script.
+  function refresh(platform: string): boolean {
+    const w = window as any;
+    if (platform === 'twitter') w.twttr?.widgets?.load?.();
+    else if (platform === 'instagram') w.instgrm?.Embeds?.process?.();
+    else if (platform === 'facebook') w.FB?.XFBML?.parse?.();
+    else if (platform === 'pinterest') w.PinUtils?.build?.();
+    else if (platform === 'tiktok') {
+      const render = w.tiktokEmbed?.lib?.render;
+      if (typeof render !== 'function') return false;
+      render(document.querySelectorAll('blockquote.tiktok-embed:not([data-tiktok-rendered])'));
+    }
+    return true;
+  }
+
+  const injected = new Set<string>();
+
+  function ensureScript(platform: string | null) {
+    if (!platform) return;
+    const src = SCRIPTS[platform];
+    if (!src) return; // e.g. linkedin — self-contained iframe.
+    const existing = document.querySelector(`script[data-bb-social-script="${platform}"]`);
+    // Already loaded (this page or a prior injection) → re-process in place.
+    if (injected.has(platform) || existing) {
+      injected.add(platform);
+      // refresh() re-processed via the platform's public API…
+      if (refresh(platform)) return;
+      // …else its global is absent (TikTok). If our script tag is still present
+      // it will process on load; otherwise fall through to (re-)inject it.
+      if (existing) return;
+    }
+    injected.add(platform);
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = true;
+    script.setAttribute('data-bb-social-script', platform);
+    if (platform === 'instagram' || platform === 'facebook') script.crossOrigin = 'anonymous';
+    document.body.appendChild(script);
+  }
+
+  let observer: IntersectionObserver | null = null;
+
+  function scan() {
+    const targets = document.querySelectorAll<HTMLElement>(
+      '[data-bb-social-embed]:not([data-bb-social-seen])'
+    );
+    if (!targets.length) return;
+
+    // No IntersectionObserver (old browsers) → load present platforms eagerly.
+    if (!('IntersectionObserver' in window)) {
+      targets.forEach((el) => {
+        el.setAttribute('data-bb-social-seen', '');
+        ensureScript(el.getAttribute('data-bb-social-platform'));
+      });
+      return;
+    }
+
+    observer =
+      observer ||
+      new IntersectionObserver(
+        (entries, obs) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            obs.unobserve(entry.target);
+            ensureScript(entry.target.getAttribute('data-bb-social-platform'));
+          });
+        },
+        { rootMargin: '200px' }
+      );
+
+    targets.forEach((el) => {
+      el.setAttribute('data-bb-social-seen', '');
+      observer!.observe(el);
+    });
+  }
+
+  scan();
+  document.addEventListener('astro:page-load', scan);
+</script>

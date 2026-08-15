@@ -1,0 +1,5 @@
+---
+const { url, target, rel } = Astro.props;
+---
+
+<a data-testid="custom-link" href={url} target={target} rel={rel}><slot /></a>

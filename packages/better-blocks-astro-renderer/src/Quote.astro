@@ -1,0 +1,38 @@
+---
+import type { CustomBlocksConfig, CustomModifiersConfig, QuoteNode } from './types';
+import Inline from './Inline.astro';
+import { getBlockStyle } from './utils';
+
+interface Props {
+  node: QuoteNode;
+  blocks?: CustomBlocksConfig;
+  modifiers?: CustomModifiersConfig;
+}
+
+const { node, blocks, modifiers } = Astro.props;
+const QuoteComp = blocks?.quote as any;
+const style = getBlockStyle(node);
+---
+
+{
+  QuoteComp ? (
+    <QuoteComp style={style}>
+      <Inline nodes={node.children} blocks={blocks} modifiers={modifiers} />
+    </QuoteComp>
+  ) : (
+    <blockquote class="bb-quote" style={style}>
+      <Inline nodes={node.children} blocks={blocks} modifiers={modifiers} />
+    </blockquote>
+  )
+}
+
+<style>
+  /* GitHub-style blockquote: a muted left border with indented, dimmed text.
+     Retheme via the --bb-quote-* custom properties without touching markup. */
+  .bb-quote {
+    margin: 1rem 0;
+    padding: 0 1rem;
+    color: var(--bb-quote-fg, #57606a);
+    border-left: 0.25rem solid var(--bb-quote-border, #d0d7de);
+  }
+</style>

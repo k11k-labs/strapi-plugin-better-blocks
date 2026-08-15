@@ -1,0 +1,36 @@
+---
+/**
+ * Client-side wiring for the opt-in code-block copy button. Rendered once per
+ * `code` block that enables `codeCopyButton`, but Astro hoists and dedupes
+ * identical module scripts, so the `<script>` below is bundled and runs a
+ * single time per page.
+ *
+ * It delegates clicks from `[data-bb-code-copy]` buttons, reads the sibling
+ * `<code>` text, and copies it to the clipboard — updating the label briefly to
+ * confirm. Carries no server props; it's a pure client-side enhancer.
+ */
+---
+
+<script>
+  function copyFrom(button: HTMLElement) {
+    const wrapper = button.closest('.bb-code');
+    const code = wrapper?.querySelector('code');
+    const text = code?.textContent ?? '';
+    if (!text || !navigator.clipboard) return;
+    navigator.clipboard.writeText(text).then(() => {
+      const original = button.textContent;
+      button.textContent = 'Copied!';
+      window.setTimeout(() => {
+        button.textContent = original;
+      }, 2000);
+    });
+  }
+
+  // One delegated listener handles every copy button on the page, including any
+  // added later by view-transition navigations.
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement | null;
+    const button = target?.closest<HTMLElement>('[data-bb-code-copy]');
+    if (button) copyFrom(button);
+  });
+</script>

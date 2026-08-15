@@ -1,0 +1,36 @@
+---
+import type { ButtonElement, CustomBlocksConfig } from './types';
+import ButtonControl from './ButtonControl.astro';
+
+interface Props {
+  node: ButtonElement;
+  blocks?: CustomBlocksConfig;
+}
+
+const { node, blocks } = Astro.props;
+const ButtonComp = blocks?.button as any;
+const alignment = node.alignment ?? 'left';
+---
+
+{
+  ButtonComp ? (
+    <ButtonComp
+      label={node.label}
+      buttonType={node.buttonType}
+      alignment={node.alignment}
+      link={node.link}
+      file={node.file}
+      showFileSize={node.showFileSize}
+      showFileIcon={node.showFileIcon}
+      filePreview={node.filePreview}
+      style={node.style}
+      cssClass={node.cssClass}
+    />
+  ) : alignment === 'none' ? (
+    <ButtonControl node={node} />
+  ) : (
+    <div class="bb-button-wrapper" style={{ textAlign: alignment, margin: '0.5rem 0' }}>
+      <ButtonControl node={node} />
+    </div>
+  )
+}

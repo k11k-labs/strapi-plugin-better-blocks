@@ -1,0 +1,24 @@
+---
+import type { BlocksRendererProps } from './types';
+import Block from './Block.astro';
+
+type Props = BlocksRendererProps;
+
+const { content, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton } = Astro.props;
+const isValid = Array.isArray(content) && content.length > 0;
+---
+
+{
+  isValid &&
+    content.map((block, index) => (
+      <Block
+        block={block}
+        blocks={blocks}
+        modifiers={modifiers}
+        diagramTheme={diagramTheme}
+        codeTheme={codeTheme}
+        codeCopyButton={codeCopyButton}
+        index={index}
+      />
+    ))
+}

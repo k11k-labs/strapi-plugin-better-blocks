@@ -1,0 +1,159 @@
+---
+import type { ButtonElement } from './types';
+import { formatFileSize, getButtonStyle, getFileIcon } from './utils';
+
+interface Props {
+  node: ButtonElement;
+}
+
+const { node } = Astro.props;
+
+const style = getButtonStyle(node.style);
+const className = node.cssClass ? `bb-button ${node.cssClass}` : 'bb-button';
+
+const file = node.file;
+const isFile = node.buttonType === 'file' && !!file;
+const filePreview = isFile && node.filePreview === true;
+const icon = isFile && node.showFileIcon && file ? getFileIcon(file) : null;
+const size =
+  isFile && node.showFileSize && file && typeof file.size === 'number'
+    ? formatFileSize(file.size)
+    : null;
+---
+
+{
+  isFile && file ? (
+    filePreview ? (
+      /* Preview mode — open the file in a new tab instead of downloading. */
+      <a
+        href={file.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Preview ${file.name}`}
+        class={className}
+        style={style}
+      >
+        {icon && (
+          <span class="bb-button-icon" aria-hidden="true">
+            {icon}{' '}
+          </span>
+        )}
+        {node.label}
+        {size && <span class="bb-button-size"> ({size})</span>}
+      </a>
+    ) : (
+      /* Download mode — the `download` attribute handles same-origin assets; the
+         scoped script below force-downloads cross-origin ones (where `download`
+         is ignored and PDFs/videos/images would otherwise preview inline). */
+      <a
+        href={file.url}
+        download={file.name}
+        aria-label={`Download ${file.name}`}
+        class={className}
+        style={style}
+        data-bb-download
+        data-bb-download-name={file.name}
+      >
+        {icon && (
+          <span class="bb-button-icon" aria-hidden="true">
+            {icon}{' '}
+          </span>
+        )}
+        {node.label}
+        {size && <span class="bb-button-size"> ({size})</span>}
+      </a>
+    )
+  ) : node.link ? (
+    <a
+      href={node.link.url}
+      target={node.link.target}
+      rel={node.link.rel}
+      aria-label={node.link.ariaLabel}
+      class={className}
+      style={style}
+    >
+      {node.label}
+    </a>
+  ) : (
+    /* No link/file payload — render the label as a styled, non-navigating span. */
+    <span class={className} style={style}>
+      {node.label}
+    </span>
+  )
+}
+
+<style>
+  /* Smooth hover + visible keyboard focus, shipped by default (zero JS). Hover
+     colors come from the `--bb-button-hover-*` custom properties the renderer
+     sets from `style.hoverBackgroundColor` / `hoverTextColor`; they fall back to
+     the base color props so a button without hover colors doesn't change on
+     hover. `!important` lets the rule win over the inline base colors. */
+  .bb-button {
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+  .bb-button:hover {
+    background-color: var(--bb-button-hover-bg, var(--bb-button-bg)) !important;
+    color: var(--bb-button-hover-color, var(--bb-button-color)) !important;
+  }
+  .bb-button:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+</style>
+
+<script>
+  // Progressive enhancement for file-download buttons. The native `download`
+  // attribute is ignored for cross-origin URLs (the common case for Strapi/CDN
+  // assets), so browsers open renderable files (PDF, video, images) inline
+  // instead of saving them. We fetch the asset as a blob and download it from a
+  // same-origin object URL. The rest of the renderer stays zero-JS; without this
+  // script the anchor still works via its `href` + `download` attributes
+  // (same-origin), and a CORS-blocked fetch falls back to native navigation.
+  function bindBetterBlocksDownloads() {
+    document.querySelectorAll('a[data-bb-download]').forEach((node) => {
+      const anchor = node as HTMLAnchorElement;
+      if (anchor.dataset.bbDownloadBound) return;
+      anchor.dataset.bbDownloadBound = 'true';
+      anchor.addEventListener('click', (event) => {
+        // Respect modifier clicks (open in new tab, etc.) and non-primary buttons.
+        if (
+          event.defaultPrevented ||
+          event.button !== 0 ||
+          event.metaKey ||
+          event.ctrlKey ||
+          event.shiftKey ||
+          event.altKey
+        ) {
+          return;
+        }
+        const url = anchor.href;
+        const name = anchor.getAttribute('data-bb-download-name') || '';
+        event.preventDefault();
+        fetch(url)
+          .then((response) => {
+            if (!response.ok) throw new Error('Request failed: ' + response.status);
+            return response.blob();
+          })
+          .then((blob) => {
+            const objectUrl = URL.createObjectURL(blob);
+            const temp = document.createElement('a');
+            temp.href = objectUrl;
+            temp.download = name;
+            document.body.appendChild(temp);
+            temp.click();
+            temp.remove();
+            URL.revokeObjectURL(objectUrl);
+          })
+          .catch(() => {
+            // CORS-blocked or offline — fall back to native navigation.
+            window.location.href = url;
+          });
+      });
+    });
+  }
+
+  bindBetterBlocksDownloads();
+  document.addEventListener('astro:page-load', bindBetterBlocksDownloads);
+</script>

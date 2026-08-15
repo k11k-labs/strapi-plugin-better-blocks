@@ -1,0 +1,185 @@
+---
+import { BlocksRenderer, type BlocksContent } from '@k11k/better-blocks-astro-renderer';
+import 'katex/dist/katex.min.css';
+import CustomCallout from '../components/CustomCallout.astro';
+import CustomDetails from '../components/CustomDetails.astro';
+import CustomButton from '../components/CustomButton.astro';
+import CustomSocialEmbed from '../components/CustomSocialEmbed.astro';
+
+interface Article {
+  id: number;
+  documentId: string;
+  content: BlocksContent;
+}
+
+const STRAPI_URL = process.env.STRAPI_URL || 'http://localhost:1337';
+
+let articles: Article[] = [];
+let error: string | null = null;
+
+try {
+  const res = await fetch(`${STRAPI_URL}/api/articles?status=published`);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const json = await res.json();
+  articles = json.data.map((item: Article) => ({
+    id: item.id,
+    documentId: item.documentId,
+    content: item.content,
+  }));
+} catch (err) {
+  error = err instanceof Error ? err.message : String(err);
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Better Blocks Renderer Playground</title>
+  </head>
+  <body>
+    <div style="max-width: 720px; margin: 0 auto; padding: 24px; font-family: system-ui;">
+      <h1>Better Blocks Renderer Playground</h1>
+      <p style="color: #666; margin-bottom: 32px;">
+        Fetching articles from Strapi at <code>localhost:1339</code> and rendering with
+        <code>@k11k/better-blocks-astro-renderer</code> — native Astro, zero client-side JavaScript.
+      </p>
+
+      {
+        error && (
+          <p style="color: red;">
+            Error: {error}. Make sure Strapi is running on port 1339.
+          </p>
+        )
+      }
+
+      {
+        !error && articles.length === 0 && (
+          <p>
+            No published articles found. Create one in
+            <a href="http://localhost:1339/admin" target="_blank" rel="noopener noreferrer">
+              Strapi admin
+            </a>
+            and publish it.
+          </p>
+        )
+      }
+
+      {
+        articles.map((article) => {
+          // Pull just the callout blocks so the custom-renderer demo below is
+          // focused on callouts (not a second copy of the whole article).
+          const callouts = article.content.filter((block) => block.type === 'callout');
+          const details = article.content.filter((block) => block.type === 'details');
+          const buttons = article.content.filter((block) => block.type === 'button');
+          const socialEmbeds = article.content.filter((block) => block.type === 'social-embed');
+
+          return (
+            <article style="margin-bottom: 48px; border-bottom: 1px solid #eee; padding-bottom: 24px;">
+              <h2 style="color: #888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+                ① Default rendering — callouts are GitHub-style
+              </h2>
+              <BlocksRenderer content={article.content} codeCopyButton />
+
+              {callouts.length > 0 && (
+                <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #d7c7ff;">
+                  <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    ② Custom callout renderer — same callouts via the <code>blocks</code> override
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    The callouts below are the exact same content as above, re-rendered with a
+                    custom <code>callout</code> component (purple boxes with emoji) instead of the
+                    built-in GitHub-style default.
+                  </p>
+                  <BlocksRenderer content={callouts} blocks={{ callout: CustomCallout }} />
+                </section>
+              )}
+
+              {details.length > 0 && (
+                <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #d0d7de;">
+                  <h2 style="color: #57606a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    ③ Default details — GitHub-style markup shipped by the renderer
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    The same details blocks as above, rendered with the built-in
+                    <code>bb-details</code> markup and its scoped GitHub-inspired stylesheet — a
+                    native <code>&lt;details&gt;</code> disclosure with zero client-side JavaScript.
+                  </p>
+                  <BlocksRenderer content={details} />
+
+                  <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 32px;">
+                    ④ Custom details renderer — same details via the <code>blocks</code> override
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    The same details blocks re-rendered with a custom <code>details</code> component
+                    (purple box, emoji marker) instead of the built-in default.
+                  </p>
+                  <BlocksRenderer content={details} blocks={{ details: CustomDetails }} />
+                </section>
+              )}
+
+              {buttons.length > 0 && (
+                <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #c7d2fe;">
+                  <h2 style="color: #4945ff; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    ⑤ Buttons — default rendering (inline styles + hover via CSS variables)
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    The same buttons as in the article above. Hover them — the
+                    <code>hoverBackgroundColor</code> / <code>hoverTextColor</code> from the block
+                    are exposed as CSS custom properties and wired up by the renderer's scoped
+                    stylesheet (zero client-side JavaScript). The file button downloads a real asset.
+                  </p>
+                  <BlocksRenderer content={buttons} />
+
+                  <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 32px;">
+                    ⑥ Custom button renderer — same buttons via the <code>blocks</code> override
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    The same buttons re-rendered with a custom <code>button</code> component
+                    (pill-shaped gradient CTA) instead of the built-in default.
+                  </p>
+                  <BlocksRenderer content={buttons} blocks={{ button: CustomButton }} />
+                </section>
+              )}
+
+              {socialEmbeds.length > 0 && (
+                <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #a5d8ff;">
+                  <h2 style="color: #1c7ed6; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    ⑦ Social embeds — default rendering (lazy, deduped widget scripts)
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    The same social embeds as in the article above. Platform widget scripts load
+                    lazily via an <code>IntersectionObserver</code> — scroll one into view and its
+                    script is injected <strong>once</strong>. Widget <code>&lt;script&gt;</code>
+                    tags shipped inside the embed markup (e.g. TikTok's oEmbed, hand-pasted embed
+                    codes) are stripped so the loader is the single injector — no duplicate. TikTok
+                    is re-processed via <code>tiktokEmbed.lib.render()</code>. Pinterest, Instagram,
+                    and LinkedIn here return self-contained <code>&lt;iframe&gt;</code>s that render
+                    without any widget script. Embeds with no
+                    <code>embedCode</code>/<code>oembed.html</code> degrade to
+                    a fallback card, which is a non-interactive <code>&lt;div&gt;</code> (not an empty
+                    <code>&lt;a href=""&gt;</code>) when the node also has no post URL.
+                  </p>
+                  <BlocksRenderer content={socialEmbeds} />
+
+                  <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 32px;">
+                    ⑧ Custom social-embed renderer — same embeds via the <code>blocks</code> override
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    The same embeds re-rendered with a custom <code>social-embed</code> component
+                    (a compact card that just links out) instead of the built-in default.
+                  </p>
+                  <BlocksRenderer
+                    content={socialEmbeds}
+                    blocks={{ 'social-embed': CustomSocialEmbed }}
+                  />
+                </section>
+              )}
+            </article>
+          );
+        })
+      }
+    </div>
+  </body>
+</html>

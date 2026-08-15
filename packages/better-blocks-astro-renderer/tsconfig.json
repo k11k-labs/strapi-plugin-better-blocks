@@ -1,0 +1,9 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src", "tests", "index.ts", "env.d.ts"],
+  "exclude": ["node_modules", "playground"]
+}

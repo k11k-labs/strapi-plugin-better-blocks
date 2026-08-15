@@ -1,0 +1,15 @@
+---
+const { provider, url, playbackId, poster, title, caption, alignment } = Astro.props;
+---
+
+<div
+  class="custom-video"
+  data-provider={provider}
+  data-url={url}
+  data-playback-id={playbackId}
+  data-poster={poster}
+  data-alignment={alignment}
+>
+  {title && <span class="custom-video-title">{title}</span>}
+  {caption && <span class="custom-video-caption">{caption}</span>}
+</div>

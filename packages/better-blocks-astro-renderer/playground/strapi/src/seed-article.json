@@ -1,0 +1,1212 @@
+{
+  "content": [
+    {
+      "type": "heading",
+      "level": 1,
+      "children": [{ "type": "text", "text": "Better Blocks Renderer — Feature Showcase" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "This article demonstrates " },
+        { "type": "text", "text": "every feature", "bold": true },
+        { "type": "text", "text": " supported by the renderer." }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Standard Text Modifiers" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Bold text", "bold": true },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Italic text", "italic": true },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Underlined text", "underline": true },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Strikethrough text", "strikethrough": true },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Inline code", "code": true }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Combined: ", "bold": true, "italic": true },
+        { "type": "text", "text": "bold + italic + underline", "bold": true, "italic": true, "underline": true },
+        { "type": "text", "text": " and " },
+        { "type": "text", "text": "bold + strikethrough", "bold": true, "strikethrough": true }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "UPPERCASE", "uppercase": true },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "E=mc", "bold": true },
+        { "type": "text", "text": "2", "superscript": true },
+        { "type": "text", "text": " · H" },
+        { "type": "text", "text": "2", "subscript": true },
+        { "type": "text", "text": "O" }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Font Family & Size" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Georgia serif", "fontFamily": "Georgia, serif" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Courier mono", "fontFamily": "Courier New, monospace" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Small text", "fontSize": "12px" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Large text", "fontSize": "24px" }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Line Height & Indent" }]
+    },
+    {
+      "type": "paragraph",
+      "lineHeight": "2.0",
+      "children": [{ "type": "text", "text": "This paragraph has double line height (2.0). Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore." }]
+    },
+    {
+      "type": "paragraph",
+      "indent": 1,
+      "children": [{ "type": "text", "text": "This paragraph is indented one level (2rem)." }]
+    },
+    {
+      "type": "paragraph",
+      "indent": 2,
+      "children": [{ "type": "text", "text": "This paragraph is indented two levels (4rem)." }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Better Blocks: Color & Highlight", "color": "#7C3AED" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Red text", "color": "#E53E3E" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Blue text", "color": "#3182CE" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Green text", "color": "#38A169" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Purple text", "color": "#7C3AED" }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Yellow highlight", "backgroundColor": "#FEFCBF" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Pink highlight", "backgroundColor": "#FED7D7" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Blue highlight", "backgroundColor": "#BEE3F8" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Green highlight", "backgroundColor": "#C6F6D5" }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Red on yellow", "color": "#E53E3E", "backgroundColor": "#FEFCBF" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Bold blue on pink", "bold": true, "color": "#3182CE", "backgroundColor": "#FED7D7" },
+        { "type": "text", "text": " · " },
+        { "type": "text", "text": "Italic green on blue", "italic": true, "color": "#38A169", "backgroundColor": "#BEE3F8" }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Text Alignment" }]
+    },
+    {
+      "type": "paragraph",
+      "textAlign": "left",
+      "children": [{ "type": "text", "text": "Left-aligned paragraph (default)." }]
+    },
+    {
+      "type": "paragraph",
+      "textAlign": "center",
+      "children": [{ "type": "text", "text": "Center-aligned paragraph." }]
+    },
+    {
+      "type": "paragraph",
+      "textAlign": "right",
+      "children": [{ "type": "text", "text": "Right-aligned paragraph." }]
+    },
+    {
+      "type": "paragraph",
+      "textAlign": "justify",
+      "children": [{ "type": "text", "text": "Justified paragraph. This text is longer to demonstrate how justify alignment distributes spacing evenly across the full width of the container." }]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "textAlign": "center",
+      "children": [{ "type": "text", "text": "Centered Heading" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Horizontal Line" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "Content above the line." }]
+    },
+    {
+      "type": "horizontal-line",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "Content below the line." }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Links" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Check out " },
+        {
+          "type": "link",
+          "url": "https://github.com/k11k-labs/better-blocks-react-renderer",
+          "children": [{ "type": "text", "text": "the repo on GitHub" }]
+        },
+        { "type": "text", "text": " and " },
+        {
+          "type": "link",
+          "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
+          "target": "_blank",
+          "rel": "noopener noreferrer",
+          "children": [{ "type": "text", "text": "the Strapi plugin (opens in new tab)", "bold": true }]
+        },
+        { "type": "text", "text": "." }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Lists" }]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "children": [{ "type": "text", "text": "Unordered list" }]
+    },
+    {
+      "type": "list",
+      "format": "unordered",
+      "indentLevel": 0,
+      "children": [
+        { "type": "list-item", "children": [{ "type": "text", "text": "First item (disc)" }] },
+        { "type": "list-item", "children": [{ "type": "text", "text": "Second item with " }, { "type": "text", "text": "bold", "bold": true }] },
+        {
+          "type": "list",
+          "format": "unordered",
+          "indentLevel": 1,
+          "children": [
+            { "type": "list-item", "children": [{ "type": "text", "text": "Nested item (circle)" }] },
+            { "type": "list-item", "children": [{ "type": "text", "text": "Another nested item", "color": "#E53E3E" }] },
+            {
+              "type": "list",
+              "format": "unordered",
+              "indentLevel": 2,
+              "children": [
+                { "type": "list-item", "children": [{ "type": "text", "text": "Deep nested item (square)" }] }
+              ]
+            }
+          ]
+        },
+        { "type": "list-item", "children": [{ "type": "text", "text": "Third item" }] }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "children": [{ "type": "text", "text": "Ordered list" }]
+    },
+    {
+      "type": "list",
+      "format": "ordered",
+      "indentLevel": 0,
+      "children": [
+        { "type": "list-item", "children": [{ "type": "text", "text": "Step one (decimal)" }] },
+        { "type": "list-item", "children": [{ "type": "text", "text": "Step two" }] },
+        {
+          "type": "list",
+          "format": "ordered",
+          "indentLevel": 1,
+          "children": [
+            { "type": "list-item", "children": [{ "type": "text", "text": "Sub-step (lower-alpha)" }] },
+            {
+              "type": "list",
+              "format": "ordered",
+              "indentLevel": 2,
+              "children": [
+                { "type": "list-item", "children": [{ "type": "text", "text": "Detail (upper-roman)" }] }
+              ]
+            }
+          ]
+        },
+        { "type": "list-item", "children": [{ "type": "text", "text": "Step three" }] }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "children": [{ "type": "text", "text": "Mixed nested list" }]
+    },
+    {
+      "type": "list",
+      "format": "unordered",
+      "indentLevel": 0,
+      "children": [
+        { "type": "list-item", "children": [{ "type": "text", "text": "Bullet point" }] },
+        {
+          "type": "list",
+          "format": "ordered",
+          "indentLevel": 1,
+          "children": [
+            { "type": "list-item", "children": [{ "type": "text", "text": "Numbered inside bullets" }] },
+            { "type": "list-item", "children": [{ "type": "text", "text": "Another numbered item" }] }
+          ]
+        },
+        { "type": "list-item", "children": [{ "type": "text", "text": "Back to bullets" }] }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "children": [{ "type": "text", "text": "To-do list" }]
+    },
+    {
+      "type": "list",
+      "format": "todo",
+      "indentLevel": 0,
+      "children": [
+        { "type": "list-item", "checked": true, "children": [{ "type": "text", "text": "Set up project" }] },
+        { "type": "list-item", "checked": true, "children": [{ "type": "text", "text": "Implement renderer" }] },
+        { "type": "list-item", "checked": false, "children": [{ "type": "text", "text": "Write documentation" }] },
+        { "type": "list-item", "checked": false, "children": [{ "type": "text", "text": "Publish to npm" }] }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Blockquote" }]
+    },
+    {
+      "type": "quote",
+      "children": [
+        { "type": "text", "text": "The best way to predict the future is to invent it.", "italic": true },
+        { "type": "text", "text": " — Alan Kay" }
+      ]
+    },
+    {
+      "type": "quote",
+      "textAlign": "center",
+      "children": [
+        { "type": "text", "text": "Centered quote with alignment.", "italic": true }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Code Block" }]
+    },
+    {
+      "type": "code",
+      "language": "typescript",
+      "children": [
+        { "type": "text", "text": "import { BlocksRenderer } from '@k11k/better-blocks-react-renderer';\n\n<BlocksRenderer content={blocks} />" }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "python",
+      "children": [
+        { "type": "text", "text": "def greet(name: str) -> str:\n    return f\"Hello, {name}!\"\n\nprint(greet(\"world\"))" }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "bash",
+      "children": [
+        { "type": "text", "text": "#!/usr/bin/env bash\nset -euo pipefail\nfor f in *.astro; do\n  echo \"Rendering $f\"\ndone" }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "rust",
+      "children": [
+        { "type": "text", "text": "fn main() {\n    let blocks = vec![1, 2, 3];\n    let total: i32 = blocks.iter().sum();\n    println!(\"total = {total}\");\n}" }
+      ]
+    },
+    {
+      "type": "code",
+      "language": "json",
+      "children": [
+        { "type": "text", "text": "{\n  \"type\": \"code\",\n  \"language\": \"json\",\n  \"children\": [{ \"type\": \"text\", \"text\": \"…\" }]\n}" }
+      ]
+    },
+    {
+      "type": "code",
+      "children": [
+        { "type": "text", "text": "This block has no language set — it renders as themed plaintext (no syntax colors)." }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Table" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Tables support semantic header rows (rendered as "
+        },
+        { "type": "text", "text": "<th scope=\"col\">", "code": true },
+        { "type": "text", "text": " inside " },
+        { "type": "text", "text": "<thead>", "code": true },
+        { "type": "text", "text": "), per-cell " },
+        { "type": "text", "text": "align", "code": true },
+        { "type": "text", "text": ", merged cells via " },
+        { "type": "text", "text": "colSpan", "code": true },
+        { "type": "text", "text": " / " },
+        { "type": "text", "text": "rowSpan", "code": true },
+        { "type": "text", "text": ", and the full set of inline marks inside cells." }
+      ]
+    },
+    {
+      "type": "table",
+      "children": [
+        {
+          "type": "table-row",
+          "children": [
+            { "type": "table-header-cell", "children": [{ "type": "text", "text": "Feature" }] },
+            {
+              "type": "table-header-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "Status" }]
+            },
+            {
+              "type": "table-header-cell",
+              "align": "right",
+              "children": [{ "type": "text", "text": "Phase" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "children": [
+                {
+                  "type": "link",
+                  "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
+                  "children": [{ "type": "text", "text": "Semantic headers" }]
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+            },
+            {
+              "type": "table-cell",
+              "align": "right",
+              "children": [{ "type": "text", "text": "1" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "children": [
+                { "type": "text", "text": "Cell " },
+                { "type": "text", "text": "align", "code": true }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+            },
+            {
+              "type": "table-cell",
+              "align": "right",
+              "children": [{ "type": "text", "text": "2" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "children": [
+                { "type": "text", "text": "Inline math (" },
+                {
+                  "type": "math",
+                  "format": "inline",
+                  "value": "a^2 + b^2 = c^2",
+                  "children": [{ "type": "text", "text": "" }]
+                },
+                { "type": "text", "text": ")" }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+            },
+            {
+              "type": "table-cell",
+              "align": "right",
+              "children": [{ "type": "text", "text": "3" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "children": [
+                { "type": "text", "text": "Merged cells", "italic": true }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+            },
+            {
+              "type": "table-cell",
+              "align": "right",
+              "children": [{ "type": "text", "text": "3" }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "children": [{ "type": "text", "text": "Merged cells (colSpan / rowSpan)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "A spanned-over slot carries no node — cells are emitted in document order and the span attributes reconstruct the grid, exactly like hand-written HTML."
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "children": [
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-header-cell",
+              "rowSpan": 2,
+              "children": [{ "type": "text", "text": "Region" }]
+            },
+            {
+              "type": "table-header-cell",
+              "rowSpan": 2,
+              "children": [{ "type": "text", "text": "Team" }]
+            },
+            {
+              "type": "table-header-cell",
+              "align": "center",
+              "colSpan": 2,
+              "children": [{ "type": "text", "text": "Half-year totals" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-header-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "Q3" }]
+            },
+            {
+              "type": "table-header-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "Q4" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            {
+              "type": "table-cell",
+              "rowSpan": 2,
+              "children": [{ "type": "text", "text": "North" }]
+            },
+            { "type": "table-cell", "children": [{ "type": "text", "text": "Alpha" }] },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "12" }]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "18" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            { "type": "table-cell", "children": [{ "type": "text", "text": "Beta" }] },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "9" }]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "14" }]
+            }
+          ]
+        },
+        {
+          "type": "table-row",
+          "children": [
+            { "type": "table-cell", "children": [{ "type": "text", "text": "South" }] },
+            { "type": "table-cell", "children": [{ "type": "text", "text": "Gamma" }] },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "11" }]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [{ "type": "text", "text": "20" }]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Image" }]
+    },
+    {
+      "type": "image",
+      "image": {
+        "url": "https://picsum.photos/600/200?random=3",
+        "alternativeText": "Better Blocks placeholder image",
+        "width": 600,
+        "height": 200
+      },
+      "caption": "Better Blocks — a rich-text editor plugin for Strapi v5",
+      "imageAlign": "center",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 3,
+      "children": [{ "type": "text", "text": "Image alignment" }]
+    },
+    {
+      "type": "image",
+      "image": {
+        "url": "https://picsum.photos/200/100?random=1",
+        "alternativeText": "Left-aligned image",
+        "width": 200,
+        "height": 100
+      },
+      "imageAlign": "left",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "image",
+      "image": {
+        "url": "https://picsum.photos/200/100?random=2",
+        "alternativeText": "Right-aligned image",
+        "width": 200,
+        "height": 100
+      },
+      "imageAlign": "right",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Media Embed" }]
+    },
+    {
+      "type": "media-embed",
+      "url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
+      "originalUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Embed (generic iframe)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "The new embed block renders a provider's sanitized iframe verbatim inside an aspect-ratio box — no client-side JavaScript."
+        }
+      ]
+    },
+    {
+      "type": "embed",
+      "source": "url",
+      "provider": "vimeo",
+      "url": "https://vimeo.com/76979871",
+      "embedSrc": "https://player.vimeo.com/video/76979871",
+      "embedHtml": "<iframe src=\"https://player.vimeo.com/video/76979871\" title=\"Vimeo video player\" allow=\"autoplay; fullscreen; picture-in-picture\" allowfullscreen></iframe>",
+      "aspectRatio": "16:9",
+      "alignment": "center",
+      "title": "The Mountain",
+      "caption": "A generic Vimeo embed, rendered from its plugin-sanitized iframe.",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Video (provider-aware)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Direct file URLs render as a native HTML5 player. HLS/DASH (Mux) sources play natively in Safari and fall back to the poster elsewhere."
+        }
+      ]
+    },
+    {
+      "type": "video",
+      "provider": "local",
+      "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+      "poster": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
+      "title": "For Bigger Blazes",
+      "caption": "A native <video> from a direct file URL — zero client-side JavaScript.",
+      "player": { "controls": true, "autoplay": false, "loop": false, "muted": false },
+      "alignment": "center",
+      "aspectRatio": "16:9",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "video",
+      "provider": "mux",
+      "playbackId": "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe",
+      "title": "Mux HLS stream",
+      "caption": "An HLS (.m3u8) Mux asset — the stream URL and poster are derived from the playback id.",
+      "player": { "controls": true },
+      "alignment": "center",
+      "aspectRatio": "16:9",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Math (KaTeX / LaTeX)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "Einstein's mass–energy equivalence " },
+        {
+          "type": "math",
+          "format": "inline",
+          "value": "E = mc^2",
+          "children": [{ "type": "text", "text": "" }]
+        },
+        { "type": "text", "text": " is written inline, mid-sentence." }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "A block formula renders centered on its own line:" }]
+    },
+    {
+      "type": "math",
+      "format": "block",
+      "value": "\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "math",
+      "format": "block",
+      "value": "\\sum_{n=1}^{\\infty} \\frac{1}{n^2} = \\frac{\\pi^2}{6}",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Diagrams (Mermaid)" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Mermaid diagrams are pre-rendered to SVG on the server — zero client-side JavaScript:"
+        }
+      ]
+    },
+    {
+      "type": "diagram",
+      "format": "mermaid",
+      "value": "graph TD\n  A[Write content in Strapi] --> B{Block type?}\n  B -->|diagram| C[Render to SVG on the server]\n  B -->|other| D[Render native Astro markup]\n  C --> E[Static HTML, no JS]\n  D --> E",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "diagram",
+      "format": "mermaid",
+      "value": "sequenceDiagram\n  participant Astro\n  participant Renderer\n  participant Mermaid\n  Astro->>Renderer: <BlocksRenderer content={blocks} />\n  Renderer->>Mermaid: renderMermaidSVG(value)\n  Mermaid-->>Renderer: <svg>…</svg>\n  Renderer-->>Astro: inline SVG (no hydration)",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Callouts (Admonitions)" }]
+    },
+    {
+      "type": "callout",
+      "variant": "note",
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "This callout uses the default localized title and GitHub-style rendering."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "variant": "tip",
+      "title": "Pro tip",
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [
+            { "type": "text", "text": "Callouts support a " },
+            { "type": "text", "text": "custom title", "bold": true },
+            { "type": "text", "text": " and nested content, including lists:" }
+          ]
+        },
+        {
+          "type": "list",
+          "format": "unordered",
+          "children": [
+            { "type": "list-item", "children": [{ "type": "text", "text": "Paragraphs" }] },
+            { "type": "list-item", "children": [{ "type": "text", "text": "Lists" }] },
+            {
+              "type": "list-item",
+              "children": [
+                { "type": "text", "text": "Links and " },
+                { "type": "text", "text": "inline formatting", "italic": true }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "variant": "important",
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [{ "type": "text", "text": "Key information users need to know." }]
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "variant": "warning",
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [{ "type": "text", "text": "Pay attention to this potentially risky step." }]
+        }
+      ]
+    },
+    {
+      "type": "callout",
+      "variant": "caution",
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [
+            { "type": "text", "text": "Negative consequences can result from this action." }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Details / Summary (Collapsible)" }]
+    },
+    {
+      "type": "details",
+      "summary": "Click to expand",
+      "defaultOpen": false,
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [
+            {
+              "type": "text",
+              "text": "This content is hidden until you open the disclosure. It renders as native, accessible "
+            },
+            { "type": "text", "text": "<details>", "code": true },
+            { "type": "text", "text": " / " },
+            { "type": "text", "text": "<summary>", "code": true },
+            { "type": "text", "text": " HTML with zero client-side JavaScript." }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "details",
+      "summary": "Open by default, with nested content",
+      "defaultOpen": true,
+      "children": [
+        {
+          "type": "paragraph",
+          "children": [
+            { "type": "text", "text": "This block uses " },
+            { "type": "text", "text": "defaultOpen", "code": true },
+            { "type": "text", "text": " and can hold any block-level content, including lists:" }
+          ]
+        },
+        {
+          "type": "list",
+          "format": "unordered",
+          "children": [
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Paragraphs" }]
+            },
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Lists" }]
+            },
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Even nested disclosures" }]
+            }
+          ]
+        },
+        {
+          "type": "details",
+          "summary": "Nested details",
+          "defaultOpen": false,
+          "children": [
+            {
+              "type": "paragraph",
+              "children": [
+                { "type": "text", "text": "Details blocks can be arbitrarily nested." }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Buttons (CTA & File Download)" }]
+    },
+    {
+      "type": "button",
+      "buttonType": "link",
+      "label": "Get started",
+      "alignment": "center",
+      "link": {
+        "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
+        "target": "_blank",
+        "rel": "noopener noreferrer",
+        "ariaLabel": "Get started with Better Blocks"
+      },
+      "style": {
+        "backgroundColor": "#4945ff",
+        "textColor": "#ffffff",
+        "borderRadius": "4px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "padding": "12px 24px",
+        "border": "none",
+        "hoverBackgroundColor": "#3732c9",
+        "hoverTextColor": "#ffffff"
+      }
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "File buttons can either force a download or open the file in a new tab for preview. The PDF below downloads directly (cross-origin assets no longer open inline), while the second button previews the same PDF. The DOCX downloads natively."
+        }
+      ]
+    },
+    {
+      "type": "button",
+      "buttonType": "file",
+      "label": "Download PDF",
+      "alignment": "center",
+      "file": {
+        "url": "/uploads/placeholder.pdf",
+        "name": "sample.pdf",
+        "size": 0,
+        "ext": ".pdf",
+        "mime": "application/pdf"
+      },
+      "showFileSize": true,
+      "showFileIcon": true,
+      "filePreview": false,
+      "style": {
+        "backgroundColor": "#4945ff",
+        "textColor": "#ffffff",
+        "borderRadius": "4px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "padding": "12px 24px",
+        "border": "none",
+        "hoverBackgroundColor": "#3732c9",
+        "hoverTextColor": "#ffffff"
+      }
+    },
+    {
+      "type": "button",
+      "buttonType": "file",
+      "label": "Preview PDF",
+      "alignment": "center",
+      "file": {
+        "url": "/uploads/placeholder.pdf",
+        "name": "sample.pdf",
+        "size": 0,
+        "ext": ".pdf",
+        "mime": "application/pdf"
+      },
+      "showFileSize": true,
+      "showFileIcon": true,
+      "filePreview": true,
+      "style": {
+        "backgroundColor": "#ffffff",
+        "textColor": "#4945ff",
+        "borderRadius": "4px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "padding": "12px 24px",
+        "border": "1px solid #4945ff",
+        "hoverBackgroundColor": "#f4f0ff",
+        "hoverTextColor": "#3732c9"
+      }
+    },
+    {
+      "type": "button",
+      "buttonType": "file",
+      "label": "Download DOCX",
+      "alignment": "center",
+      "file": {
+        "url": "/uploads/placeholder.docx",
+        "name": "sample.docx",
+        "size": 0,
+        "ext": ".docx",
+        "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+      },
+      "showFileSize": true,
+      "showFileIcon": true,
+      "filePreview": false,
+      "style": {
+        "backgroundColor": "#ffffff",
+        "textColor": "#4945ff",
+        "borderRadius": "4px",
+        "fontSize": "16px",
+        "fontWeight": "600",
+        "padding": "12px 24px",
+        "border": "1px solid #4945ff",
+        "hoverBackgroundColor": "#f4f0ff",
+        "hoverTextColor": "#3732c9"
+      }
+    },
+    {
+      "type": "paragraph",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Social Embed" }]
+    },
+    {
+      "type": "social-embed",
+      "platform": "twitter",
+      "url": "https://twitter.com/Interior/status/463440424141459456",
+      "alignment": "center",
+      "caption": "A tweet embedded from X (Twitter).",
+      "oembed": {
+        "html": "<blockquote class=\"twitter-tweet\"><p lang=\"en\" dir=\"ltr\">Sunsets don't get much better than this one over <a href=\"https://twitter.com/GrandTetonNPS\">@GrandTetonNPS</a>. <a href=\"https://t.co/YuKy2rcjyU\">pic.twitter.com/YuKy2rcjyU</a></p>&mdash; US Department of the Interior (@Interior) <a href=\"https://twitter.com/Interior/status/463440424141459456\">May 5, 2014</a></blockquote>",
+        "author": "US Department of the Interior",
+        "authorUrl": "https://twitter.com/Interior",
+        "providerName": "Twitter",
+        "width": 550,
+        "height": 600
+      }
+    },
+    {
+      "type": "social-embed",
+      "platform": "twitter",
+      "url": "https://twitter.com/Interior/status/463440424141459456",
+      "alignment": "left",
+      "caption": "Fallback link card (no oembed/embedCode)."
+    },
+    {
+      "type": "social-embed",
+      "platform": "tiktok",
+      "url": "https://www.tiktok.com/@scout2015/video/6718335390845095173",
+      "alignment": "center",
+      "caption": "TikTok — its oEmbed html ships an inline <script>. It's stripped before render, so the lazy loader is the only injector (no duplicate embed.js), and the loader calls tiktokEmbed.lib.render() to hydrate the blockquote.",
+      "oembed": {
+        "html": "<blockquote class=\"tiktok-embed\" cite=\"https://www.tiktok.com/@scout2015/video/6718335390845095173\" data-video-id=\"6718335390845095173\" data-embed-from=\"oembed\" style=\"max-width:605px; min-width:325px;\"> <section> <a target=\"_blank\" title=\"@scout2015\" href=\"https://www.tiktok.com/@scout2015?refer=embed\">@scout2015</a> <p>Scramble up ur name &amp; I&rsquo;ll try to guess it&#128525;&#10084;&#65039; <a title=\"foryoupage\" target=\"_blank\" href=\"https://www.tiktok.com/tag/foryoupage?refer=embed\">#foryoupage</a> <a title=\"petsoftiktok\" target=\"_blank\" href=\"https://www.tiktok.com/tag/petsoftiktok?refer=embed\">#petsoftiktok</a> <a title=\"aesthetic\" target=\"_blank\" href=\"https://www.tiktok.com/tag/aesthetic?refer=embed\">#aesthetic</a></p> <a target=\"_blank\" title=\"&#9835; original sound - tiff\" href=\"https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed\">&#9835; original sound - tiff</a> </section> </blockquote><script async src=\"https://www.tiktok.com/embed.js\"></script>",
+        "author": "Scout, Suki & Stella",
+        "providerName": "TikTok"
+      }
+    },
+    {
+      "type": "social-embed",
+      "platform": "pinterest",
+      "url": "https://www.pinterest.com/pin/99360735500167749/",
+      "alignment": "center",
+      "caption": "Pinterest — its modern oEmbed returns a self-contained <iframe>, so the pin renders on its own (the pinit.js widget script is not required).",
+      "oembed": {
+        "html": "<iframe src=\"https://assets.pinterest.com/ext/embed.html?id=99360735500167749&src=oembed\" height=\"436\" width=\"450\" frameborder=\"0\" scrolling=\"no\"></iframe>",
+        "title": "Love my Pinterest t-shirt!",
+        "author": "Kent Brewster",
+        "providerName": "Pinterest"
+      }
+    },
+    {
+      "type": "social-embed",
+      "platform": "instagram",
+      "url": "https://www.instagram.com/p/BsOGulcndj-/",
+      "alignment": "center",
+      "caption": "Instagram — rendered from its self-contained /embed/ iframe, so the post shows without depending on Instagram's widget script hydrating the blockquote.",
+      "oembed": {
+        "html": "<iframe src=\"https://www.instagram.com/p/BsOGulcndj-/embed/captioned/\" width=\"400\" height=\"640\" frameborder=\"0\" scrolling=\"no\" style=\"max-width:100%;border:1px solid #dbdbdb;border-radius:3px;\"></iframe>",
+        "title": "World record egg",
+        "author": "world_record_egg",
+        "providerName": "Instagram"
+      }
+    },
+    {
+      "type": "social-embed",
+      "platform": "facebook",
+      "alignment": "left",
+      "caption": "Embed-code-only node saved with no post URL — the fallback renders as a non-interactive card, never an empty <a href=\"\">.",
+      "oembed": {
+        "title": "Facebook post",
+        "author": "Meta",
+        "providerName": "Facebook"
+      }
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [{ "type": "text", "text": "Audio" }]
+    },
+    {
+      "type": "audio",
+      "file": {
+        "id": 1,
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg",
+        "name": "Example.ogg",
+        "ext": ".ogg",
+        "hash": "example_abc123",
+        "mime": "audio/ogg",
+        "size": 116306,
+        "provider": "local"
+      },
+      "title": "Episode 1: Introduction",
+      "caption": "Our first podcast episode.",
+      "player": {
+        "autoplay": false,
+        "loop": false,
+        "controls": true,
+        "preload": "metadata"
+      },
+      "alignment": "center",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "audio",
+      "file": {
+        "url": "https://upload.wikimedia.org/wikipedia/commons/c/c8/Example.ogg",
+        "name": "Example.ogg",
+        "mime": "audio/ogg"
+      },
+      "player": {
+        "autoplay": false,
+        "loop": false,
+        "controls": true,
+        "preload": "none"
+      },
+      "alignment": "none",
+      "children": [{ "type": "text", "text": "" }]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        { "type": "text", "text": "All features working! 🎉", "bold": true, "color": "#38A169" }
+      ]
+    }
+  ]
+}

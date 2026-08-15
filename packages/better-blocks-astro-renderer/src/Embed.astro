@@ -1,0 +1,79 @@
+---
+import type { CustomBlocksConfig, EmbedNode, MediaAlignment } from './types';
+import { MEDIA_JUSTIFY, getAspectRatio } from './utils';
+
+interface Props {
+  node: EmbedNode;
+  blocks?: CustomBlocksConfig;
+}
+
+const { node, blocks } = Astro.props;
+const EmbedComp = blocks?.embed as any;
+
+const alignment: MediaAlignment = node.alignment ?? 'center';
+const aspectRatio = getAspectRatio(node.aspectRatio, node.customAspectRatio);
+
+// Sanitized plugin-side (attribute allowlist over an https-only src, scripts /
+// handlers / inline styles / unknown attributes stripped), so it is emitted
+// verbatim via set:html — see the README's trust-boundary note.
+const { embedHtml, title, caption } = node;
+
+// `none` = full-width; aligned variants are capped by the retheme-able
+// `--bb-embed-max-width` custom property and positioned via justify-content.
+const frameMaxWidth = alignment === 'none' ? '100%' : 'var(--bb-embed-max-width, 40rem)';
+---
+
+{
+  EmbedComp ? (
+    <EmbedComp
+      embedHtml={node.embedHtml}
+      embedSrc={node.embedSrc}
+      provider={node.provider}
+      thumbnail={node.thumbnail}
+      aspectRatio={node.aspectRatio}
+      customAspectRatio={node.customAspectRatio}
+      alignment={node.alignment}
+      caption={node.caption}
+      title={node.title}
+    />
+  ) : (
+    <figure
+      class={`bb-embed align-${alignment}`}
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: MEDIA_JUSTIFY[alignment],
+        gap: '0.5rem',
+        margin: '1rem 0',
+      }}
+    >
+      {title && (
+        <figcaption class="bb-embed-title" style={{ fontWeight: 600 }}>
+          {title}
+        </figcaption>
+      )}
+      <div
+        class="bb-embed-frame"
+        style={{ position: 'relative', width: '100%', maxWidth: frameMaxWidth, aspectRatio }}
+        set:html={embedHtml}
+      />
+      {caption && (
+        <figcaption class="bb-embed-caption" style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+          {caption}
+        </figcaption>
+      )}
+    </figure>
+  )
+}
+
+<style>
+  /* Make the sanitized iframe fill the aspect-ratio box. The iframe arrives via
+     set:html, so it is targeted globally within our scoped `.bb-embed-frame`. */
+  .bb-embed-frame > :global(iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+</style>
