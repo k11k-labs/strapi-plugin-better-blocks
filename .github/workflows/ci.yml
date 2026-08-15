@@ -1,42 +1,38 @@
 name: CI
 
 on:
+  push:
+    branches: [main]
   pull_request:
     branches: [main]
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
     strategy:
       matrix:
+        # @strapi/sdk-plugin refuses Node 23+, so the matrix stops at 22.
         node-version: [20, 22]
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          # nx affected compares against a base commit, which it cannot find in
+          # a shallow clone — without this it either rebuilds everything or
+          # nothing.
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
+          cache: pnpm
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
+      - name: Derive the base and head SHAs for nx affected
+        uses: nrwl/nx-set-shas@v4
 
-      - name: Check formatting
-        run: yarn lint
+      - run: pnpm install --frozen-lockfile
 
-      - name: Unit tests
-        run: yarn test
-
-      - name: TypeScript check (frontend)
-        run: yarn test:ts:front
-
-      - name: TypeScript check (backend)
-        run: yarn test:ts:back
-
-      - name: Build plugin
-        run: yarn build
-
-      - name: Verify plugin
-        run: yarn verify
+      - run: pnpm exec nx affected -t lint,typecheck,test,build

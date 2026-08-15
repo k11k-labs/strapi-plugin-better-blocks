@@ -51,5 +51,24 @@
     "start": {
       "cache": false
     }
+  },
+  "release": {
+    "projects": ["packages/*"],
+    "projectsRelationship": "independent",
+    "releaseTag": {
+      "pattern": "{projectName}@{version}"
+    },
+    "version": {
+      "conventionalCommits": true,
+      "preVersionCommand": "pnpm build",
+      "fallbackCurrentVersionResolver": "disk"
+    },
+    "changelog": {
+      "automaticFromRef": true,
+      "workspaceChangelog": false,
+      "projectChangelogs": {
+        "createRelease": "github"
+      }
+    }
   }
 }
