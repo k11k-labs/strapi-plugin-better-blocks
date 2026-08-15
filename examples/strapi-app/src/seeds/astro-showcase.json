@@ -3,39 +3,96 @@
     {
       "type": "heading",
       "level": 1,
-      "children": [{ "type": "text", "text": "Better Blocks Renderer — Feature Showcase" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Better Blocks Renderer — Feature Showcase"
+        }
+      ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "This article demonstrates " },
-        { "type": "text", "text": "every feature", "bold": true },
-        { "type": "text", "text": " supported by the renderer." }
+        {
+          "type": "text",
+          "text": "This article demonstrates "
+        },
+        {
+          "type": "text",
+          "text": "every feature",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "text": " supported by the renderer."
+        }
       ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Standard Text Modifiers" }]
-    },
-    {
-      "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Bold text", "bold": true },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Italic text", "italic": true },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Underlined text", "underline": true },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Strikethrough text", "strikethrough": true },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Inline code", "code": true }
+        {
+          "type": "text",
+          "text": "Standard Text Modifiers"
+        }
       ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Combined: ", "bold": true, "italic": true },
+        {
+          "type": "text",
+          "text": "Bold text",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Italic text",
+          "italic": true
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Underlined text",
+          "underline": true
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Strikethrough text",
+          "strikethrough": true
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Inline code",
+          "code": true
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Combined: ",
+          "bold": true,
+          "italic": true
+        },
         {
           "type": "text",
           "text": "bold + italic + underline",
@@ -43,43 +100,111 @@
           "italic": true,
           "underline": true
         },
-        { "type": "text", "text": " and " },
-        { "type": "text", "text": "bold + strikethrough", "bold": true, "strikethrough": true }
+        {
+          "type": "text",
+          "text": " and "
+        },
+        {
+          "type": "text",
+          "text": "bold + strikethrough",
+          "bold": true,
+          "strikethrough": true
+        }
       ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "UPPERCASE", "uppercase": true },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "E=mc", "bold": true },
-        { "type": "text", "text": "2", "superscript": true },
-        { "type": "text", "text": " · H" },
-        { "type": "text", "text": "2", "subscript": true },
-        { "type": "text", "text": "O" }
+        {
+          "type": "text",
+          "text": "UPPERCASE",
+          "uppercase": true
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "E=mc",
+          "bold": true
+        },
+        {
+          "type": "text",
+          "text": "2",
+          "superscript": true
+        },
+        {
+          "type": "text",
+          "text": " · H"
+        },
+        {
+          "type": "text",
+          "text": "2",
+          "subscript": true
+        },
+        {
+          "type": "text",
+          "text": "O"
+        }
       ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Font Family & Size" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Font Family & Size"
+        }
+      ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Georgia serif", "fontFamily": "Georgia, serif" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Courier mono", "fontFamily": "Courier New, monospace" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Small text", "fontSize": "12px" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Large text", "fontSize": "24px" }
+        {
+          "type": "text",
+          "text": "Georgia serif",
+          "fontFamily": "Georgia, serif"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Courier mono",
+          "fontFamily": "Courier New, monospace"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Small text",
+          "fontSize": "12px"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Large text",
+          "fontSize": "24px"
+        }
       ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Line Height & Indent" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Line Height & Indent"
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -94,42 +219,106 @@
     {
       "type": "paragraph",
       "indent": 1,
-      "children": [{ "type": "text", "text": "This paragraph is indented one level (2rem)." }]
+      "children": [
+        {
+          "type": "text",
+          "text": "This paragraph is indented one level (2rem)."
+        }
+      ]
     },
     {
       "type": "paragraph",
       "indent": 2,
-      "children": [{ "type": "text", "text": "This paragraph is indented two levels (4rem)." }]
+      "children": [
+        {
+          "type": "text",
+          "text": "This paragraph is indented two levels (4rem)."
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
       "children": [
-        { "type": "text", "text": "Better Blocks: Color & Highlight", "color": "#7C3AED" }
+        {
+          "type": "text",
+          "text": "Better Blocks: Color & Highlight",
+          "color": "#7C3AED"
+        }
       ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Red text", "color": "#E53E3E" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Blue text", "color": "#3182CE" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Green text", "color": "#38A169" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Purple text", "color": "#7C3AED" }
+        {
+          "type": "text",
+          "text": "Red text",
+          "color": "#E53E3E"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Blue text",
+          "color": "#3182CE"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Green text",
+          "color": "#38A169"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Purple text",
+          "color": "#7C3AED"
+        }
       ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Yellow highlight", "backgroundColor": "#FEFCBF" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Pink highlight", "backgroundColor": "#FED7D7" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Blue highlight", "backgroundColor": "#BEE3F8" },
-        { "type": "text", "text": " · " },
-        { "type": "text", "text": "Green highlight", "backgroundColor": "#C6F6D5" }
+        {
+          "type": "text",
+          "text": "Yellow highlight",
+          "backgroundColor": "#FEFCBF"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Pink highlight",
+          "backgroundColor": "#FED7D7"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Blue highlight",
+          "backgroundColor": "#BEE3F8"
+        },
+        {
+          "type": "text",
+          "text": " · "
+        },
+        {
+          "type": "text",
+          "text": "Green highlight",
+          "backgroundColor": "#C6F6D5"
+        }
       ]
     },
     {
@@ -141,7 +330,10 @@
           "color": "#E53E3E",
           "backgroundColor": "#FEFCBF"
         },
-        { "type": "text", "text": " · " },
+        {
+          "type": "text",
+          "text": " · "
+        },
         {
           "type": "text",
           "text": "Bold blue on pink",
@@ -149,7 +341,10 @@
           "color": "#3182CE",
           "backgroundColor": "#FED7D7"
         },
-        { "type": "text", "text": " · " },
+        {
+          "type": "text",
+          "text": " · "
+        },
         {
           "type": "text",
           "text": "Italic green on blue",
@@ -162,22 +357,42 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Text Alignment" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Text Alignment"
+        }
+      ]
     },
     {
       "type": "paragraph",
       "textAlign": "left",
-      "children": [{ "type": "text", "text": "Left-aligned paragraph (default)." }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Left-aligned paragraph (default)."
+        }
+      ]
     },
     {
       "type": "paragraph",
       "textAlign": "center",
-      "children": [{ "type": "text", "text": "Center-aligned paragraph." }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Center-aligned paragraph."
+        }
+      ]
     },
     {
       "type": "paragraph",
       "textAlign": "right",
-      "children": [{ "type": "text", "text": "Right-aligned paragraph." }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Right-aligned paragraph."
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -193,73 +408,146 @@
       "type": "heading",
       "level": 3,
       "textAlign": "center",
-      "children": [{ "type": "text", "text": "Centered Heading" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Centered Heading"
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Horizontal Line" }]
-    },
-    {
-      "type": "paragraph",
-      "children": [{ "type": "text", "text": "Content above the line." }]
-    },
-    {
-      "type": "horizontal-line",
-      "children": [{ "type": "text", "text": "" }]
-    },
-    {
-      "type": "paragraph",
-      "children": [{ "type": "text", "text": "Content below the line." }]
-    },
-    {
-      "type": "heading",
-      "level": 2,
-      "children": [{ "type": "text", "text": "Links" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Horizontal Line"
+        }
+      ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Check out " },
+        {
+          "type": "text",
+          "text": "Content above the line."
+        }
+      ]
+    },
+    {
+      "type": "horizontal-line",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Content below the line."
+        }
+      ]
+    },
+    {
+      "type": "heading",
+      "level": 2,
+      "children": [
+        {
+          "type": "text",
+          "text": "Links"
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "Check out "
+        },
         {
           "type": "link",
           "url": "https://github.com/k11k-labs/better-blocks-react-renderer",
-          "children": [{ "type": "text", "text": "the repo on GitHub" }]
+          "children": [
+            {
+              "type": "text",
+              "text": "the repo on GitHub"
+            }
+          ]
         },
-        { "type": "text", "text": " and " },
+        {
+          "type": "text",
+          "text": " and "
+        },
         {
           "type": "link",
           "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
           "target": "_blank",
           "rel": "noopener noreferrer",
           "children": [
-            { "type": "text", "text": "the Strapi plugin (opens in new tab)", "bold": true }
+            {
+              "type": "text",
+              "text": "the Strapi plugin (opens in new tab)",
+              "bold": true
+            }
           ]
         },
-        { "type": "text", "text": "." }
+        {
+          "type": "text",
+          "text": "."
+        }
       ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Lists" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Lists"
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 3,
-      "children": [{ "type": "text", "text": "Unordered list" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Unordered list"
+        }
+      ]
     },
     {
       "type": "list",
       "format": "unordered",
       "indentLevel": 0,
       "children": [
-        { "type": "list-item", "children": [{ "type": "text", "text": "First item (disc)" }] },
         {
           "type": "list-item",
           "children": [
-            { "type": "text", "text": "Second item with " },
-            { "type": "text", "text": "bold", "bold": true }
+            {
+              "type": "text",
+              "text": "First item (disc)"
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "children": [
+            {
+              "type": "text",
+              "text": "Second item with "
+            },
+            {
+              "type": "text",
+              "text": "bold",
+              "bold": true
+            }
           ]
         },
         {
@@ -269,11 +557,22 @@
           "children": [
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Nested item (circle)" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Nested item (circle)"
+                }
+              ]
             },
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Another nested item", "color": "#E53E3E" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Another nested item",
+                  "color": "#E53E3E"
+                }
+              ]
             },
             {
               "type": "list",
@@ -282,27 +581,61 @@
               "children": [
                 {
                   "type": "list-item",
-                  "children": [{ "type": "text", "text": "Deep nested item (square)" }]
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "Deep nested item (square)"
+                    }
+                  ]
                 }
               ]
             }
           ]
         },
-        { "type": "list-item", "children": [{ "type": "text", "text": "Third item" }] }
+        {
+          "type": "list-item",
+          "children": [
+            {
+              "type": "text",
+              "text": "Third item"
+            }
+          ]
+        }
       ]
     },
     {
       "type": "heading",
       "level": 3,
-      "children": [{ "type": "text", "text": "Ordered list" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Ordered list"
+        }
+      ]
     },
     {
       "type": "list",
       "format": "ordered",
       "indentLevel": 0,
       "children": [
-        { "type": "list-item", "children": [{ "type": "text", "text": "Step one (decimal)" }] },
-        { "type": "list-item", "children": [{ "type": "text", "text": "Step two" }] },
+        {
+          "type": "list-item",
+          "children": [
+            {
+              "type": "text",
+              "text": "Step one (decimal)"
+            }
+          ]
+        },
+        {
+          "type": "list-item",
+          "children": [
+            {
+              "type": "text",
+              "text": "Step two"
+            }
+          ]
+        },
         {
           "type": "list",
           "format": "ordered",
@@ -310,7 +643,12 @@
           "children": [
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Sub-step (lower-alpha)" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Sub-step (lower-alpha)"
+                }
+              ]
             },
             {
               "type": "list",
@@ -319,26 +657,52 @@
               "children": [
                 {
                   "type": "list-item",
-                  "children": [{ "type": "text", "text": "Detail (upper-roman)" }]
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "Detail (upper-roman)"
+                    }
+                  ]
                 }
               ]
             }
           ]
         },
-        { "type": "list-item", "children": [{ "type": "text", "text": "Step three" }] }
+        {
+          "type": "list-item",
+          "children": [
+            {
+              "type": "text",
+              "text": "Step three"
+            }
+          ]
+        }
       ]
     },
     {
       "type": "heading",
       "level": 3,
-      "children": [{ "type": "text", "text": "Mixed nested list" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Mixed nested list"
+        }
+      ]
     },
     {
       "type": "list",
       "format": "unordered",
       "indentLevel": 0,
       "children": [
-        { "type": "list-item", "children": [{ "type": "text", "text": "Bullet point" }] },
+        {
+          "type": "list-item",
+          "children": [
+            {
+              "type": "text",
+              "text": "Bullet point"
+            }
+          ]
+        },
         {
           "type": "list",
           "format": "ordered",
@@ -346,21 +710,44 @@
           "children": [
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Numbered inside bullets" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Numbered inside bullets"
+                }
+              ]
             },
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Another numbered item" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Another numbered item"
+                }
+              ]
             }
           ]
         },
-        { "type": "list-item", "children": [{ "type": "text", "text": "Back to bullets" }] }
+        {
+          "type": "list-item",
+          "children": [
+            {
+              "type": "text",
+              "text": "Back to bullets"
+            }
+          ]
+        }
       ]
     },
     {
       "type": "heading",
       "level": 3,
-      "children": [{ "type": "text", "text": "To-do list" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "To-do list"
+        }
+      ]
     },
     {
       "type": "list",
@@ -370,29 +757,54 @@
         {
           "type": "list-item",
           "checked": true,
-          "children": [{ "type": "text", "text": "Set up project" }]
+          "children": [
+            {
+              "type": "text",
+              "text": "Set up project"
+            }
+          ]
         },
         {
           "type": "list-item",
           "checked": true,
-          "children": [{ "type": "text", "text": "Implement renderer" }]
+          "children": [
+            {
+              "type": "text",
+              "text": "Implement renderer"
+            }
+          ]
         },
         {
           "type": "list-item",
           "checked": false,
-          "children": [{ "type": "text", "text": "Write documentation" }]
+          "children": [
+            {
+              "type": "text",
+              "text": "Write documentation"
+            }
+          ]
         },
         {
           "type": "list-item",
           "checked": false,
-          "children": [{ "type": "text", "text": "Publish to npm" }]
+          "children": [
+            {
+              "type": "text",
+              "text": "Publish to npm"
+            }
+          ]
         }
       ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Blockquote" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Blockquote"
+        }
+      ]
     },
     {
       "type": "quote",
@@ -402,18 +814,32 @@
           "text": "The best way to predict the future is to invent it.",
           "italic": true
         },
-        { "type": "text", "text": " — Alan Kay" }
+        {
+          "type": "text",
+          "text": " — Alan Kay"
+        }
       ]
     },
     {
       "type": "quote",
       "textAlign": "center",
-      "children": [{ "type": "text", "text": "Centered quote with alignment.", "italic": true }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Centered quote with alignment.",
+          "italic": true
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Code Block" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Code Block"
+        }
+      ]
     },
     {
       "type": "code",
@@ -477,7 +903,12 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Table" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Table"
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -486,16 +917,51 @@
           "type": "text",
           "text": "Tables support semantic header rows (rendered as "
         },
-        { "type": "text", "text": "<th scope=\"col\">", "code": true },
-        { "type": "text", "text": " inside " },
-        { "type": "text", "text": "<thead>", "code": true },
-        { "type": "text", "text": "), per-cell " },
-        { "type": "text", "text": "align", "code": true },
-        { "type": "text", "text": ", merged cells via " },
-        { "type": "text", "text": "colSpan", "code": true },
-        { "type": "text", "text": " / " },
-        { "type": "text", "text": "rowSpan", "code": true },
-        { "type": "text", "text": ", and the full set of inline marks inside cells." }
+        {
+          "type": "text",
+          "text": "<th scope=\"col\">",
+          "code": true
+        },
+        {
+          "type": "text",
+          "text": " inside "
+        },
+        {
+          "type": "text",
+          "text": "<thead>",
+          "code": true
+        },
+        {
+          "type": "text",
+          "text": "), per-cell "
+        },
+        {
+          "type": "text",
+          "text": "align",
+          "code": true
+        },
+        {
+          "type": "text",
+          "text": ", merged cells via "
+        },
+        {
+          "type": "text",
+          "text": "colSpan",
+          "code": true
+        },
+        {
+          "type": "text",
+          "text": " / "
+        },
+        {
+          "type": "text",
+          "text": "rowSpan",
+          "code": true
+        },
+        {
+          "type": "text",
+          "text": ", and the full set of inline marks inside cells."
+        }
       ]
     },
     {
@@ -504,16 +970,34 @@
         {
           "type": "table-row",
           "children": [
-            { "type": "table-header-cell", "children": [{ "type": "text", "text": "Feature" }] },
+            {
+              "type": "table-header-cell",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Feature"
+                }
+              ]
+            },
             {
               "type": "table-header-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "Status" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Status"
+                }
+              ]
             },
             {
               "type": "table-header-cell",
               "align": "right",
-              "children": [{ "type": "text", "text": "Phase" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Phase"
+                }
+              ]
             }
           ]
         },
@@ -526,19 +1010,36 @@
                 {
                   "type": "link",
                   "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
-                  "children": [{ "type": "text", "text": "Semantic headers" }]
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": "Semantic headers"
+                    }
+                  ]
                 }
               ]
             },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Done",
+                  "bold": true,
+                  "color": "#38A169"
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "right",
-              "children": [{ "type": "text", "text": "1" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "1"
+                }
+              ]
             }
           ]
         },
@@ -548,19 +1049,38 @@
             {
               "type": "table-cell",
               "children": [
-                { "type": "text", "text": "Cell " },
-                { "type": "text", "text": "align", "code": true }
+                {
+                  "type": "text",
+                  "text": "Cell "
+                },
+                {
+                  "type": "text",
+                  "text": "align",
+                  "code": true
+                }
               ]
             },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Done",
+                  "bold": true,
+                  "color": "#38A169"
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "right",
-              "children": [{ "type": "text", "text": "2" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "2"
+                }
+              ]
             }
           ]
         },
@@ -570,25 +1090,48 @@
             {
               "type": "table-cell",
               "children": [
-                { "type": "text", "text": "Inline math (" },
+                {
+                  "type": "text",
+                  "text": "Inline math ("
+                },
                 {
                   "type": "math",
                   "format": "inline",
                   "value": "a^2 + b^2 = c^2",
-                  "children": [{ "type": "text", "text": "" }]
+                  "children": [
+                    {
+                      "type": "text",
+                      "text": ""
+                    }
+                  ]
                 },
-                { "type": "text", "text": ")" }
+                {
+                  "type": "text",
+                  "text": ")"
+                }
               ]
             },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Done",
+                  "bold": true,
+                  "color": "#38A169"
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "right",
-              "children": [{ "type": "text", "text": "3" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "3"
+                }
+              ]
             }
           ]
         },
@@ -597,17 +1140,35 @@
           "children": [
             {
               "type": "table-cell",
-              "children": [{ "type": "text", "text": "Merged cells", "italic": true }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Merged cells",
+                  "italic": true
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "Done", "bold": true, "color": "#38A169" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Done",
+                  "bold": true,
+                  "color": "#38A169"
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "right",
-              "children": [{ "type": "text", "text": "3" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "3"
+                }
+              ]
             }
           ]
         }
@@ -616,7 +1177,12 @@
     {
       "type": "heading",
       "level": 3,
-      "children": [{ "type": "text", "text": "Merged cells (colSpan / rowSpan)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Merged cells (colSpan / rowSpan)"
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -636,18 +1202,33 @@
             {
               "type": "table-header-cell",
               "rowSpan": 2,
-              "children": [{ "type": "text", "text": "Region" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Region"
+                }
+              ]
             },
             {
               "type": "table-header-cell",
               "rowSpan": 2,
-              "children": [{ "type": "text", "text": "Team" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Team"
+                }
+              ]
             },
             {
               "type": "table-header-cell",
               "align": "center",
               "colSpan": 2,
-              "children": [{ "type": "text", "text": "Half-year totals" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Half-year totals"
+                }
+              ]
             }
           ]
         },
@@ -657,12 +1238,22 @@
             {
               "type": "table-header-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "Q3" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Q3"
+                }
+              ]
             },
             {
               "type": "table-header-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "Q4" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Q4"
+                }
+              ]
             }
           ]
         },
@@ -672,51 +1263,118 @@
             {
               "type": "table-cell",
               "rowSpan": 2,
-              "children": [{ "type": "text", "text": "North" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "North"
+                }
+              ]
             },
-            { "type": "table-cell", "children": [{ "type": "text", "text": "Alpha" }] },
+            {
+              "type": "table-cell",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Alpha"
+                }
+              ]
+            },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "12" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "12"
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "18" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "18"
+                }
+              ]
             }
           ]
         },
         {
           "type": "table-row",
           "children": [
-            { "type": "table-cell", "children": [{ "type": "text", "text": "Beta" }] },
             {
               "type": "table-cell",
-              "align": "center",
-              "children": [{ "type": "text", "text": "9" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Beta"
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "14" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "9"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "14"
+                }
+              ]
             }
           ]
         },
         {
           "type": "table-row",
           "children": [
-            { "type": "table-cell", "children": [{ "type": "text", "text": "South" }] },
-            { "type": "table-cell", "children": [{ "type": "text", "text": "Gamma" }] },
             {
               "type": "table-cell",
-              "align": "center",
-              "children": [{ "type": "text", "text": "11" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "South"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Gamma"
+                }
+              ]
             },
             {
               "type": "table-cell",
               "align": "center",
-              "children": [{ "type": "text", "text": "20" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "11"
+                }
+              ]
+            },
+            {
+              "type": "table-cell",
+              "align": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "20"
+                }
+              ]
             }
           ]
         }
@@ -725,7 +1383,12 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Image" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Image"
+        }
+      ]
     },
     {
       "type": "image",
@@ -737,12 +1400,22 @@
       },
       "caption": "Better Blocks — a rich-text editor plugin for Strapi v5",
       "imageAlign": "center",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 3,
-      "children": [{ "type": "text", "text": "Image alignment" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Image alignment"
+        }
+      ]
     },
     {
       "type": "image",
@@ -753,7 +1426,12 @@
         "height": 100
       },
       "imageAlign": "left",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "image",
@@ -764,23 +1442,43 @@
         "height": 100
       },
       "imageAlign": "right",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Media Embed" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Media Embed"
+        }
+      ]
     },
     {
       "type": "media-embed",
       "url": "https://www.youtube.com/embed/dQw4w9WgXcQ",
       "originalUrl": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Embed (generic iframe)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Embed (generic iframe)"
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -802,12 +1500,22 @@
       "alignment": "center",
       "title": "The Mountain",
       "caption": "A generic Vimeo embed, rendered from its plugin-sanitized iframe.",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Video (provider-aware)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Video (provider-aware)"
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -825,10 +1533,20 @@
       "poster": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
       "title": "For Bigger Blazes",
       "caption": "A native <video> from a direct file URL — zero client-side JavaScript.",
-      "player": { "controls": true, "autoplay": false, "loop": false, "muted": false },
+      "player": {
+        "controls": true,
+        "autoplay": false,
+        "loop": false,
+        "muted": false
+      },
       "alignment": "center",
       "aspectRatio": "16:9",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "video",
@@ -836,49 +1554,92 @@
       "playbackId": "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe",
       "title": "Mux HLS stream",
       "caption": "An HLS (.m3u8) Mux asset — the stream URL and poster are derived from the playback id.",
-      "player": { "controls": true },
+      "player": {
+        "controls": true
+      },
       "alignment": "center",
       "aspectRatio": "16:9",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Math (KaTeX / LaTeX)" }]
-    },
-    {
-      "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Einstein's mass–energy equivalence " },
         {
-          "type": "math",
-          "format": "inline",
-          "value": "E = mc^2",
-          "children": [{ "type": "text", "text": "" }]
-        },
-        { "type": "text", "text": " is written inline, mid-sentence." }
+          "type": "text",
+          "text": "Math (KaTeX / LaTeX)"
+        }
       ]
     },
     {
       "type": "paragraph",
-      "children": [{ "type": "text", "text": "A block formula renders centered on its own line:" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Einstein's mass–energy equivalence "
+        },
+        {
+          "type": "math",
+          "format": "inline",
+          "value": "E = mc^2",
+          "children": [
+            {
+              "type": "text",
+              "text": ""
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "text": " is written inline, mid-sentence."
+        }
+      ]
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "text": "A block formula renders centered on its own line:"
+        }
+      ]
     },
     {
       "type": "math",
       "format": "block",
       "value": "\\int_0^\\infty e^{-x^2}\\,dx = \\frac{\\sqrt{\\pi}}{2}",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "math",
       "format": "block",
       "value": "\\sum_{n=1}^{\\infty} \\frac{1}{n^2} = \\frac{\\pi^2}{6}",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Diagrams (Mermaid)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Diagrams (Mermaid)"
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -893,22 +1654,42 @@
       "type": "diagram",
       "format": "mermaid",
       "value": "graph TD\n  A[Write content in Strapi] --> B{Block type?}\n  B -->|diagram| C[Render to SVG on the server]\n  B -->|other| D[Render native Astro markup]\n  C --> E[Static HTML, no JS]\n  D --> E",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "diagram",
       "format": "mermaid",
       "value": "sequenceDiagram\n  participant Astro\n  participant Renderer\n  participant Mermaid\n  Astro->>Renderer: <BlocksRenderer content={blocks} />\n  Renderer->>Mermaid: renderMermaidSVG(value)\n  Mermaid-->>Renderer: <svg>…</svg>\n  Renderer-->>Astro: inline SVG (no hydration)",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "paragraph",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Callouts (Admonitions)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Callouts (Admonitions)"
+        }
+      ]
     },
     {
       "type": "callout",
@@ -933,22 +1714,55 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "Callouts support a " },
-            { "type": "text", "text": "custom title", "bold": true },
-            { "type": "text", "text": " and nested content, including lists:" }
+            {
+              "type": "text",
+              "text": "Callouts support a "
+            },
+            {
+              "type": "text",
+              "text": "custom title",
+              "bold": true
+            },
+            {
+              "type": "text",
+              "text": " and nested content, including lists:"
+            }
           ]
         },
         {
           "type": "list",
           "format": "unordered",
           "children": [
-            { "type": "list-item", "children": [{ "type": "text", "text": "Paragraphs" }] },
-            { "type": "list-item", "children": [{ "type": "text", "text": "Lists" }] },
             {
               "type": "list-item",
               "children": [
-                { "type": "text", "text": "Links and " },
-                { "type": "text", "text": "inline formatting", "italic": true }
+                {
+                  "type": "text",
+                  "text": "Paragraphs"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Lists"
+                }
+              ]
+            },
+            {
+              "type": "list-item",
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Links and "
+                },
+                {
+                  "type": "text",
+                  "text": "inline formatting",
+                  "italic": true
+                }
               ]
             }
           ]
@@ -961,7 +1775,12 @@
       "children": [
         {
           "type": "paragraph",
-          "children": [{ "type": "text", "text": "Key information users need to know." }]
+          "children": [
+            {
+              "type": "text",
+              "text": "Key information users need to know."
+            }
+          ]
         }
       ]
     },
@@ -971,7 +1790,12 @@
       "children": [
         {
           "type": "paragraph",
-          "children": [{ "type": "text", "text": "Pay attention to this potentially risky step." }]
+          "children": [
+            {
+              "type": "text",
+              "text": "Pay attention to this potentially risky step."
+            }
+          ]
         }
       ]
     },
@@ -982,7 +1806,10 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "Negative consequences can result from this action." }
+            {
+              "type": "text",
+              "text": "Negative consequences can result from this action."
+            }
           ]
         }
       ]
@@ -990,7 +1817,12 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Details / Summary (Collapsible)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Details / Summary (Collapsible)"
+        }
+      ]
     },
     {
       "type": "details",
@@ -1004,10 +1836,24 @@
               "type": "text",
               "text": "This content is hidden until you open the disclosure. It renders as native, accessible "
             },
-            { "type": "text", "text": "<details>", "code": true },
-            { "type": "text", "text": " / " },
-            { "type": "text", "text": "<summary>", "code": true },
-            { "type": "text", "text": " HTML with zero client-side JavaScript." }
+            {
+              "type": "text",
+              "text": "<details>",
+              "code": true
+            },
+            {
+              "type": "text",
+              "text": " / "
+            },
+            {
+              "type": "text",
+              "text": "<summary>",
+              "code": true
+            },
+            {
+              "type": "text",
+              "text": " HTML with zero client-side JavaScript."
+            }
           ]
         }
       ]
@@ -1020,9 +1866,19 @@
         {
           "type": "paragraph",
           "children": [
-            { "type": "text", "text": "This block uses " },
-            { "type": "text", "text": "defaultOpen", "code": true },
-            { "type": "text", "text": " and can hold any block-level content, including lists:" }
+            {
+              "type": "text",
+              "text": "This block uses "
+            },
+            {
+              "type": "text",
+              "text": "defaultOpen",
+              "code": true
+            },
+            {
+              "type": "text",
+              "text": " and can hold any block-level content, including lists:"
+            }
           ]
         },
         {
@@ -1031,15 +1887,30 @@
           "children": [
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Paragraphs" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Paragraphs"
+                }
+              ]
             },
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Lists" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Lists"
+                }
+              ]
             },
             {
               "type": "list-item",
-              "children": [{ "type": "text", "text": "Even nested disclosures" }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Even nested disclosures"
+                }
+              ]
             }
           ]
         },
@@ -1050,7 +1921,12 @@
           "children": [
             {
               "type": "paragraph",
-              "children": [{ "type": "text", "text": "Details blocks can be arbitrarily nested." }]
+              "children": [
+                {
+                  "type": "text",
+                  "text": "Details blocks can be arbitrarily nested."
+                }
+              ]
             }
           ]
         }
@@ -1059,7 +1935,12 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Buttons (CTA & File Download)" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Buttons (CTA & File Download)"
+        }
+      ]
     },
     {
       "type": "button",
@@ -1082,7 +1963,13 @@
         "border": "none",
         "hoverBackgroundColor": "#3732c9",
         "hoverTextColor": "#ffffff"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -1118,7 +2005,13 @@
         "border": "none",
         "hoverBackgroundColor": "#3732c9",
         "hoverTextColor": "#ffffff"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "button",
@@ -1145,7 +2038,13 @@
         "border": "1px solid #4945ff",
         "hoverBackgroundColor": "#f4f0ff",
         "hoverTextColor": "#3732c9"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "button",
@@ -1172,16 +2071,32 @@
         "border": "1px solid #4945ff",
         "hoverBackgroundColor": "#f4f0ff",
         "hoverTextColor": "#3732c9"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "paragraph",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Social Embed" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Social Embed"
+        }
+      ]
     },
     {
       "type": "social-embed",
@@ -1196,14 +2111,26 @@
         "providerName": "Twitter",
         "width": 550,
         "height": 600
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "social-embed",
       "platform": "twitter",
       "url": "https://twitter.com/Interior/status/463440424141459456",
       "alignment": "left",
-      "caption": "Fallback link card (no oembed/embedCode)."
+      "caption": "Fallback link card (no oembed/embedCode).",
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "social-embed",
@@ -1215,7 +2142,13 @@
         "html": "<blockquote class=\"tiktok-embed\" cite=\"https://www.tiktok.com/@scout2015/video/6718335390845095173\" data-video-id=\"6718335390845095173\" data-embed-from=\"oembed\" style=\"max-width:605px; min-width:325px;\"> <section> <a target=\"_blank\" title=\"@scout2015\" href=\"https://www.tiktok.com/@scout2015?refer=embed\">@scout2015</a> <p>Scramble up ur name &amp; I&rsquo;ll try to guess it&#128525;&#10084;&#65039; <a title=\"foryoupage\" target=\"_blank\" href=\"https://www.tiktok.com/tag/foryoupage?refer=embed\">#foryoupage</a> <a title=\"petsoftiktok\" target=\"_blank\" href=\"https://www.tiktok.com/tag/petsoftiktok?refer=embed\">#petsoftiktok</a> <a title=\"aesthetic\" target=\"_blank\" href=\"https://www.tiktok.com/tag/aesthetic?refer=embed\">#aesthetic</a></p> <a target=\"_blank\" title=\"&#9835; original sound - tiff\" href=\"https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed\">&#9835; original sound - tiff</a> </section> </blockquote><script async src=\"https://www.tiktok.com/embed.js\"></script>",
         "author": "Scout, Suki & Stella",
         "providerName": "TikTok"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "social-embed",
@@ -1228,7 +2161,13 @@
         "title": "Love my Pinterest t-shirt!",
         "author": "Kent Brewster",
         "providerName": "Pinterest"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "social-embed",
@@ -1241,7 +2180,13 @@
         "title": "World record egg",
         "author": "world_record_egg",
         "providerName": "Instagram"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "social-embed",
@@ -1252,12 +2197,23 @@
         "title": "Facebook post",
         "author": "Meta",
         "providerName": "Facebook"
-      }
+      },
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Audio" }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Audio"
+        }
+      ]
     },
     {
       "type": "audio",
@@ -1280,7 +2236,12 @@
         "preload": "metadata"
       },
       "alignment": "center",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "audio",
@@ -1296,12 +2257,22 @@
         "preload": "none"
       },
       "alignment": "none",
-      "children": [{ "type": "text", "text": "" }]
+      "children": [
+        {
+          "type": "text",
+          "text": ""
+        }
+      ]
     },
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "All features working! 🎉", "bold": true, "color": "#38A169" }
+        {
+          "type": "text",
+          "text": "All features working! 🎉",
+          "bold": true,
+          "color": "#38A169"
+        }
       ]
     }
   ]

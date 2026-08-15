@@ -49,9 +49,13 @@ const INLINE_PARENTS = new Set([
   'list-item',
   'table-cell',
   'table-header-cell',
-  'callout',
-  'details',
 ]);
+
+/**
+ * Block types that nest whole blocks rather than inline content — a callout or
+ * a details holds paragraphs and lists, and details can nest further details.
+ */
+const BLOCK_PARENTS = new Set(['callout', 'details']);
 
 const LIST_FORMATS = new Set(['ordered', 'unordered', 'todo']);
 
@@ -172,7 +176,15 @@ export function validateDocument(value: unknown): ValidationResult {
       fail(`${path}.url`, 'media-embed url must be a string');
     }
 
-    if (INLINE_PARENTS.has(type)) checkChildren(node, path, checkInline);
+    if (INLINE_PARENTS.has(type)) return checkChildren(node, path, checkInline);
+    if (BLOCK_PARENTS.has(type)) return checkChildren(node, path, checkBlock);
+
+    // Every remaining block is a void: it renders from its own attributes and
+    // carries an empty text placeholder as its children. The placeholder is not
+    // decoration — Slate refuses to load a document whose top-level nodes are
+    // not all elements, and an element is something with a children array. A
+    // void block saved without it takes the whole editor down.
+    checkChildren(node, path, checkInline);
   }
 
   if (!Array.isArray(value)) {

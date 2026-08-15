@@ -15,6 +15,7 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
+    "@k11k/better-blocks-core": "workspace:^",
     "@k11k/strapi-plugin-better-blocks": "workspace:*",
     "@strapi/plugin-cloud": "5.52.0",
     "@strapi/plugin-users-permissions": "5.52.0",

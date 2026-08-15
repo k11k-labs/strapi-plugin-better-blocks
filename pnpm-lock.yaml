@@ -78,6 +78,9 @@ importers:
 
   examples/strapi-app:
     dependencies:
+      '@k11k/better-blocks-core':
+        specifier: workspace:^
+        version: link:../../packages/better-blocks-core
       '@k11k/strapi-plugin-better-blocks':
         specifier: workspace:*
         version: link:../../packages/strapi-plugin-better-blocks

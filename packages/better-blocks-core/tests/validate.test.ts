@@ -169,6 +169,78 @@ describe('validateDocument', () => {
   });
 });
 
+describe('the Slate element invariant', () => {
+  // Slate refuses a document whose top-level nodes are not all elements, and an
+  // element is something with a children array. A void block saved without its
+  // empty-text placeholder therefore takes the whole editor down rather than
+  // degrading — which is exactly how it reached a seeded showcase unnoticed.
+  it('rejects a void block saved without its children placeholder', () => {
+    const result = validateDocument([
+      { type: 'button', buttonType: 'link', label: 'Go', link: { url: '/x' } },
+    ]);
+    expect(result.valid).toBe(false);
+    expect(result.issues[0]).toEqual({
+      path: '[0].children',
+      message: 'expected a children array',
+    });
+  });
+
+  it('accepts the same block once the placeholder is there', () => {
+    const result = validateDocument([
+      {
+        type: 'button',
+        buttonType: 'link',
+        label: 'Go',
+        link: { url: '/x' },
+        children: [{ type: 'text', text: '' }],
+      },
+    ]);
+    expect(result.valid).toBe(true);
+  });
+
+  it('flags every offending node, not just the first', () => {
+    const result = validateDocument([
+      { type: 'social-embed', platform: 'twitter' },
+      { type: 'button', buttonType: 'link', label: 'a' },
+    ]);
+    expect(result.issues.map((i) => i.path)).toEqual(['[0].children', '[1].children']);
+  });
+});
+
+describe('blocks that nest other blocks', () => {
+  it('accepts a callout holding paragraphs and lists', () => {
+    const content = [
+      {
+        type: 'callout',
+        variant: 'note',
+        children: [
+          paragraph('inside'),
+          {
+            type: 'list',
+            format: 'unordered',
+            children: [{ type: 'list-item', children: [{ type: 'text', text: 'x' }] }],
+          },
+        ],
+      },
+    ];
+    expect(validateDocument(content).valid).toBe(true);
+  });
+
+  it('accepts details nested inside details', () => {
+    const content = [
+      {
+        type: 'details',
+        summary: 'outer',
+        children: [
+          paragraph('a'),
+          { type: 'details', summary: 'inner', children: [paragraph('b')] },
+        ],
+      },
+    ];
+    expect(validateDocument(content).valid).toBe(true);
+  });
+});
+
 describe('isBlocksContent', () => {
   it('narrows a valid document', () => {
     const value: unknown = [paragraph('hi')];

@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { Core } from '@strapi/strapi';
+import { validateDocument } from '@k11k/better-blocks-core';
 
 import astroShowcase from './seeds/astro-showcase.json';
 import pluginShowcase from './seeds/plugin-showcase.json';
@@ -188,7 +189,11 @@ export default {
           };
         }
 
-        if (block.type === 'button' && block.buttonType === 'file' && block.file) {
+        if (
+          block.type === 'button' &&
+          block.buttonType === 'file' &&
+          block.file
+        ) {
           const asset = assetsByExt[block.file.ext as string];
           if (asset) {
             block.file = {
@@ -212,6 +217,21 @@ export default {
     for (const seed of SEEDS) {
       const data = JSON.parse(JSON.stringify(seed.content));
       hydrate(data.content as any[]);
+
+      // A block saved without its children array takes the whole editor down:
+      // Slate refuses a document whose top-level nodes are not all elements,
+      // and the admin shows a crash screen instead of the field. Catch it here
+      // rather than letting a bad seed look fine until someone opens it.
+      const { valid, issues } = validateDocument(data.content);
+      if (!valid) {
+        strapi.log.error(
+          `Seed "${seed.title}" is not a valid Better Blocks document; skipping it.`
+        );
+        for (const issue of issues) {
+          strapi.log.error(`  ${issue.path}: ${issue.message}`);
+        }
+        continue;
+      }
 
       const article = await strapi.documents('api::article.article').create({
         data: { title: seed.title, content: data.content } as any,
