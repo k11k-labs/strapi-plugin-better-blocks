@@ -943,26 +943,18 @@ const TextAlignButton = ({ disabled }: { disabled: boolean }) => {
 
   return (
     <Menu.Root>
-      <Menu.Trigger disabled={disabled}>
-        <Tooltip
-          label={formatMessage({
-            id: 'components.Blocks.textAlign',
-            defaultMessage: 'Text alignment',
-          })}
-        >
-          <FlexButton
-            tag="button"
-            alignItems="center"
-            justifyContent="center"
-            width={7}
-            height={7}
-            hasRadius
-            aria-disabled={disabled}
-          >
-            <CurrentIcon fill={disabled ? 'neutral300' : 'neutral600'} />
-          </FlexButton>
-        </Tooltip>
-      </Menu.Trigger>
+      <Menu.Trigger
+        disabled={disabled}
+        size="S"
+        variant="ghost"
+        startIcon={
+          <CurrentIcon fill={disabled ? 'neutral300' : 'neutral600'} />
+        }
+        aria-label={formatMessage({
+          id: 'components.Blocks.textAlign',
+          defaultMessage: 'Text alignment',
+        })}
+      />
       <Menu.Content>
         {ALIGN_OPTIONS.map((opt) => {
           const Icon = opt.icon;
@@ -997,26 +989,16 @@ const InsertBlockButton = ({ disabled }: { disabled: boolean }) => {
   return (
     <>
       <Menu.Root>
-        <Menu.Trigger disabled={disabled}>
-          <Tooltip
-            label={formatMessage({
-              id: 'components.Blocks.insertBlock',
-              defaultMessage: 'Insert',
-            })}
-          >
-            <FlexButton
-              tag="button"
-              alignItems="center"
-              justifyContent="center"
-              width={7}
-              height={7}
-              hasRadius
-              aria-disabled={disabled}
-            >
-              <Plus fill={disabled ? 'neutral300' : 'neutral600'} />
-            </FlexButton>
-          </Tooltip>
-        </Menu.Trigger>
+        <Menu.Trigger
+          disabled={disabled}
+          size="S"
+          variant="ghost"
+          startIcon={<Plus fill={disabled ? 'neutral300' : 'neutral600'} />}
+          aria-label={formatMessage({
+            id: 'components.Blocks.insertBlock',
+            defaultMessage: 'Insert',
+          })}
+        />
         <Menu.Content>
           {INSERT_BLOCK_KEYS.map((key) => {
             const Icon = blocks[key].icon;
@@ -1412,26 +1394,18 @@ const LineHeightButton = ({ disabled }: { disabled: boolean }) => {
 
   return (
     <Menu.Root>
-      <Menu.Trigger disabled={disabled}>
-        <Tooltip
-          label={formatMessage({
-            id: 'components.Blocks.lineHeight',
-            defaultMessage: 'Line height',
-          })}
-        >
-          <FlexButton
-            tag="button"
-            alignItems="center"
-            justifyContent="center"
-            width={7}
-            height={7}
-            hasRadius
-            aria-disabled={disabled}
-          >
-            <LineHeightIcon fill={disabled ? 'neutral300' : 'neutral600'} />
-          </FlexButton>
-        </Tooltip>
-      </Menu.Trigger>
+      <Menu.Trigger
+        disabled={disabled}
+        size="S"
+        variant="ghost"
+        startIcon={
+          <LineHeightIcon fill={disabled ? 'neutral300' : 'neutral600'} />
+        }
+        aria-label={formatMessage({
+          id: 'components.Blocks.lineHeight',
+          defaultMessage: 'Line height',
+        })}
+      />
       <Menu.Content>
         {LINE_HEIGHT_OPTIONS.map((opt) => (
           <StyledMenuItem
