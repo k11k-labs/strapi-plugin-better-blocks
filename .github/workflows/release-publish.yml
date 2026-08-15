@@ -1,0 +1,94 @@
+name: Release — publish
+
+# Run this on main after a release PR from "Release — prepare" has been merged.
+# It tags the merged commit and publishes to npm. Nothing here bumps versions —
+# whatever is in the manifests is what gets published.
+#
+# This is the only irreversible step in the repository: npm does not allow a
+# version to be republished. It therefore defaults to a dry run, and refuses to
+# run anywhere but main.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Show what would be tagged and published, without doing it'
+        type: boolean
+        default: true
+
+concurrency: ${{ github.workflow }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Refuse to publish from anywhere but main
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "This workflow may only run on main; got ${{ github.ref }}."
+          exit 1
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+          registry-url: https://registry.npmjs.org
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm build
+
+      # Tags carry the version history nx release reads on the next run, so they
+      # have to match releaseTag.pattern in nx.json: {projectName}@{version}.
+      - name: Tag the release
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          created=0
+          for manifest in packages/*/package.json; do
+            name=$(node -p "require('./$manifest').name")
+            private=$(node -p "require('./$manifest').private === true")
+            [ "$private" = "true" ] && continue
+            version=$(node -p "require('./$manifest').version")
+            tag="$name@$version"
+
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              echo "  $tag already exists — skipping"
+              continue
+            fi
+
+            if [ "${{ inputs.dry_run }}" = "true" ]; then
+              echo "  would tag $tag"
+            else
+              git tag -a "$tag" -m "$tag"
+              created=$((created + 1))
+              echo "  tagged $tag"
+            fi
+          done
+
+          if [ "${{ inputs.dry_run }}" != "true" ] && [ "$created" -gt 0 ]; then
+            git push origin --tags
+          fi
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_PROVENANCE: true
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            pnpm exec nx release publish --dry-run
+          else
+            pnpm exec nx release publish
+          fi
