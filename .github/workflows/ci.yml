@@ -5,6 +5,10 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  # A PR opened by GITHUB_TOKEN does not trigger workflows — GitHub blocks that
+  # to avoid loops — so the release PR would never get the checks main requires.
+  # "Release — prepare" dispatches this workflow for the release branch instead.
+  workflow_dispatch:
 
 jobs:
   # Keep this job id as `build`: branch protection on main requires the
