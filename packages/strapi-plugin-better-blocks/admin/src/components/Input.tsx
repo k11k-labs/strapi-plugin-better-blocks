@@ -99,8 +99,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>((props, ref) => {
   React.useEffect(() => {
     if (cachedConfig) return;
     if (!configPromise) {
-      configPromise = get('/better-blocks/config')
-        .then((res: { data: PluginConfig }) => {
+      configPromise = get<PluginConfig>('/better-blocks/config')
+        .then((res) => {
           cachedConfig = res.data ?? {};
           return cachedConfig;
         })
