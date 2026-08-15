@@ -69,6 +69,11 @@
       "projectChangelogs": {
         "createRelease": "github"
       }
+    },
+    "git": {
+      "commit": false,
+      "tag": false,
+      "push": false
     }
   }
 }
