@@ -13,6 +13,11 @@ on:
         description: 'Preview the versions and changelogs without opening a PR'
         type: boolean
         default: true
+      overrides:
+        description: 'Optional explicit versions, e.g. "@k11k/better-blocks-react-renderer=0.17.0 @k11k/better-blocks-astro-renderer=0.13.0". Applied after the conventional-commits pass, so they win.'
+        type: string
+        required: false
+        default: ''
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -39,16 +44,31 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Preview versions and changelogs
-        if: ${{ inputs.dry_run }}
-        run: pnpm exec nx release --dry-run
-
-      # nx.json sets release.git.{commit,tag,push} to false, so this only edits
+      # nx.json sets release.git.{commit,tag,push} to false, so nx only edits
       # manifests, changelogs and the lockfile. The commit, the branch and the
       # PR are this workflow's job; tagging waits until the PR is merged.
-      - name: Apply versions and changelogs
-        if: ${{ !inputs.dry_run }}
-        run: pnpm exec nx release --skip-publish
+      #
+      # Note on 0.x versions: nx maps a "minor" bump to a patch increment and a
+      # "major" bump to the middle number, so asking for "minor" on 0.12.0 gets
+      # you 0.12.1. Pass an exact version in `overrides` when that matters.
+      - name: Version and changelog
+        env:
+          DRY: ${{ inputs.dry_run && '--dry-run' || '' }}
+          OVERRIDES: ${{ inputs.overrides }}
+        run: |
+          set -euo pipefail
+          pnpm exec nx release --skip-publish $DRY
+
+          for pair in $OVERRIDES; do
+            project="${pair%%=*}"
+            version="${pair#*=}"
+            if [ "$project" = "$pair" ] || [ -z "$version" ]; then
+              echo "Malformed override '$pair'; expected project=version." >&2
+              exit 1
+            fi
+            echo "Overriding $project to $version"
+            pnpm exec nx release "$version" --projects="$project" --skip-publish $DRY
+          done
 
       - name: Open the release PR
         if: ${{ !inputs.dry_run }}
