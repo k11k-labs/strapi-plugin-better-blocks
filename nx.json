@@ -66,9 +66,7 @@
     "changelog": {
       "automaticFromRef": true,
       "workspaceChangelog": false,
-      "projectChangelogs": {
-        "createRelease": "github"
-      }
+      "projectChangelogs": true
     },
     "git": {
       "commit": false,
