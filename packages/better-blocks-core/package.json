@@ -1,5 +1,5 @@
 {
-  "name": "@k11k/better-blocks-core",
+  "name": "@qkix/better-blocks-core",
   "version": "0.1.1",
   "description": "Framework-independent core for Strapi v5 Better Blocks content — the document types every renderer shares, plus the attribute mapping they all apply",
   "type": "commonjs",
@@ -30,8 +30,8 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@k11k/eslint-config": "workspace:*",
-    "@k11k/tsconfig": "workspace:*",
+    "@qkix/eslint-config": "workspace:*",
+    "@qkix/tsconfig": "workspace:*",
     "eslint": "^10.8.1",
     "prettier": "^3.4.2",
     "tsup": "^8.3.5",
@@ -51,13 +51,13 @@
   "author": "k11k-labs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/k11k-labs/strapi-plugin-better-blocks.git",
+    "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git",
     "directory": "packages/better-blocks-core"
   },
   "bugs": {
-    "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks/issues"
+    "url": "https://github.com/qkix/strapi-plugin-better-blocks/issues"
   },
-  "homepage": "https://github.com/k11k-labs/strapi-plugin-better-blocks#readme",
+  "homepage": "https://github.com/qkix/strapi-plugin-better-blocks#readme",
   "engines": {
     "node": ">=20.0.0 <=24.x.x",
     "npm": ">=6.0.0"

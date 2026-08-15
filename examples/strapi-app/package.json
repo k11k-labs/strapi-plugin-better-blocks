@@ -1,5 +1,5 @@
 {
-  "name": "@k11k/example-strapi-app",
+  "name": "@qkix/example-strapi-app",
   "version": "0.1.0",
   "private": true,
   "description": "Strapi v5 instance running the Better Blocks plugin, seeded with the showcase articles the renderer examples consume",
@@ -15,8 +15,8 @@
     "upgrade:dry": "npx @strapi/upgrade latest --dry"
   },
   "dependencies": {
-    "@k11k/better-blocks-core": "workspace:^",
-    "@k11k/strapi-plugin-better-blocks": "workspace:*",
+    "@qkix/better-blocks-core": "workspace:^",
+    "@qkix/strapi-plugin-better-blocks": "workspace:*",
     "@strapi/plugin-cloud": "5.52.0",
     "@strapi/plugin-users-permissions": "5.52.0",
     "@strapi/strapi": "5.52.0",

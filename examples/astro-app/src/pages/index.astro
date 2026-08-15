@@ -1,5 +1,5 @@
 ---
-import { BlocksRenderer, type BlocksContent } from '@k11k/better-blocks-astro-renderer';
+import { BlocksRenderer, type BlocksContent } from '@qkix/better-blocks-astro-renderer';
 import 'katex/dist/katex.min.css';
 import CustomCallout from '../components/CustomCallout.astro';
 import CustomDetails from '../components/CustomDetails.astro';
@@ -45,13 +45,15 @@ try {
       <h1>Better Blocks — Astro renderer</h1>
       <p style="color: #666; margin-bottom: 32px;">
         Every showcase article seeded into the Strapi example, rendered with
-        <code>@k11k/better-blocks-astro-renderer</code> — native Astro, zero client-side
-        JavaScript. The React example serves the same content at <code>localhost:5173</code>.
+        <code>@qkix/better-blocks-astro-renderer</code> — native Astro, zero client-side JavaScript. The
+        React example serves the same content at <code>localhost:5173</code>.
       </p>
 
       {
         error && (
-          <p style="color: red;">Error: {error}. Make sure the Strapi example is running on port 1337.</p>
+          <p style="color: red;">
+            Error: {error}. Make sure the Strapi example is running on port 1337.
+          </p>
         )
       }
 

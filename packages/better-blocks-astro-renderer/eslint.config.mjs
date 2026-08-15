@@ -1,4 +1,4 @@
-import astro from '@k11k/eslint-config/astro';
+import astro from '@qkix/eslint-config/astro';
 
 export default [
   ...astro,

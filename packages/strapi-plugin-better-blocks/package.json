@@ -1,5 +1,5 @@
 {
-  "name": "@k11k/strapi-plugin-better-blocks",
+  "name": "@qkix/strapi-plugin-better-blocks",
   "version": "0.22.1",
   "description": "An enhanced Rich Text (Blocks) field for Strapi with inline color picker and more",
   "strapi": {
@@ -71,8 +71,8 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
-    "@k11k/eslint-config": "workspace:*",
-    "@k11k/tsconfig": "workspace:*",
+    "@qkix/eslint-config": "workspace:*",
+    "@qkix/tsconfig": "workspace:*",
     "@strapi/sdk-plugin": "^5.3.2",
     "@strapi/strapi": "^5.12.5",
     "@strapi/typescript-utils": "^5.12.5",
@@ -113,13 +113,13 @@
   "author": "k11k-labs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/k11k-labs/strapi-plugin-better-blocks.git",
+    "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git",
     "directory": "packages/strapi-plugin-better-blocks"
   },
   "bugs": {
-    "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks/issues"
+    "url": "https://github.com/qkix/strapi-plugin-better-blocks/issues"
   },
-  "homepage": "https://github.com/k11k-labs/strapi-plugin-better-blocks#readme",
+  "homepage": "https://github.com/qkix/strapi-plugin-better-blocks#readme",
   "nx": {
     "tags": [
       "scope:plugin"

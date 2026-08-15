@@ -23,7 +23,7 @@ services:
   strapi:
     <<: *workspace
     container_name: better-blocks-strapi
-    command: pnpm --filter @k11k/example-strapi-app develop
+    command: pnpm --filter @qkix/example-strapi-app develop
     ports:
       - '1337:1337'
     environment:
@@ -61,7 +61,7 @@ services:
   react:
     <<: *workspace
     container_name: better-blocks-react
-    command: pnpm --filter @k11k/example-react-app dev -- --host
+    command: pnpm --filter @qkix/example-react-app dev -- --host
     ports:
       - '5173:5173'
     environment:
@@ -76,7 +76,7 @@ services:
   astro:
     <<: *workspace
     container_name: better-blocks-astro
-    command: pnpm --filter @k11k/example-astro-app dev -- --host
+    command: pnpm --filter @qkix/example-astro-app dev -- --host
     ports:
       - '4321:4321'
     environment:

@@ -471,7 +471,7 @@
         },
         {
           "type": "link",
-          "url": "https://github.com/k11k-labs/better-blocks-react-renderer",
+          "url": "https://github.com/qkix/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer",
           "children": [
             {
               "type": "text",
@@ -485,7 +485,7 @@
         },
         {
           "type": "link",
-          "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
+          "url": "https://github.com/qkix/strapi-plugin-better-blocks",
           "target": "_blank",
           "rel": "noopener noreferrer",
           "children": [
@@ -847,7 +847,7 @@
       "children": [
         {
           "type": "text",
-          "text": "import { BlocksRenderer } from '@k11k/better-blocks-react-renderer';\n\n<BlocksRenderer content={blocks} />"
+          "text": "import { BlocksRenderer } from '@qkix/better-blocks-react-renderer';\n\n<BlocksRenderer content={blocks} />"
         }
       ]
     },
@@ -1009,7 +1009,7 @@
               "children": [
                 {
                   "type": "link",
-                  "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
+                  "url": "https://github.com/qkix/strapi-plugin-better-blocks",
                   "children": [
                     {
                       "type": "text",
@@ -1948,7 +1948,7 @@
       "label": "Get started",
       "alignment": "center",
       "link": {
-        "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
+        "url": "https://github.com/qkix/strapi-plugin-better-blocks",
         "target": "_blank",
         "rel": "noopener noreferrer",
         "ariaLabel": "Get started with Better Blocks"

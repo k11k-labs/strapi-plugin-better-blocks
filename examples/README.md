@@ -4,9 +4,9 @@ Three apps that together exercise everything this repo publishes:
 
 | App          | Port | What it is                                                                                 |
 | ------------ | ---- | ------------------------------------------------------------------------------------------ |
-| `strapi-app` | 1337 | Strapi v5 running `@k11k/strapi-plugin-better-blocks`, seeded with three showcase articles |
-| `react-app`  | 5173 | Vite app rendering that content with `@k11k/better-blocks-react-renderer`                  |
-| `astro-app`  | 4321 | Astro app rendering the same content with `@k11k/better-blocks-astro-renderer`             |
+| `strapi-app` | 1337 | Strapi v5 running `@qkix/strapi-plugin-better-blocks`, seeded with three showcase articles |
+| `react-app`  | 5173 | Vite app rendering that content with `@qkix/better-blocks-react-renderer`                  |
+| `astro-app`  | 4321 | Astro app rendering the same content with `@qkix/better-blocks-astro-renderer`             |
 
 All three resolve the packages through the pnpm workspace, so they always run
 against the working tree rather than a published release.
@@ -37,9 +37,9 @@ docker compose down -v
 pnpm install
 pnpm build                                   # plugin + both renderers
 
-pnpm --filter @k11k/example-strapi-app develop
-pnpm --filter @k11k/example-react-app dev
-pnpm --filter @k11k/example-astro-app dev
+pnpm --filter @qkix/example-strapi-app develop
+pnpm --filter @qkix/example-react-app dev
+pnpm --filter @qkix/example-astro-app dev
 ```
 
 The renderer apps proxy `/api` and `/uploads` to `http://localhost:1337` by

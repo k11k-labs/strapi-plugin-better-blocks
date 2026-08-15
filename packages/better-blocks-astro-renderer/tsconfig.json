@@ -1,5 +1,5 @@
 {
-  "extends": ["astro/tsconfigs/strict", "@k11k/tsconfig/base.json"],
+  "extends": ["astro/tsconfigs/strict", "@qkix/tsconfig/base.json"],
   "compilerOptions": {
     "verbatimModuleSyntax": false
   },

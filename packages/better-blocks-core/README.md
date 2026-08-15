@@ -6,7 +6,7 @@
 
 ## What this is
 
-`@k11k/better-blocks-core` holds everything about Better Blocks content that
+`@qkix/better-blocks-core` holds everything about Better Blocks content that
 does not depend on how it is displayed:
 
 - **Document and block types** — the shape the Strapi plugin stores. Single
@@ -26,7 +26,7 @@ it dispatches over and the child shapes it walks into. It reports every problem
 it finds, with a path, rather than stopping at the first.
 
 ```ts
-import { validateDocument, isBlocksContent } from '@k11k/better-blocks-core';
+import { validateDocument, isBlocksContent } from '@qkix/better-blocks-core';
 
 const { valid, issues } = validateDocument(await res.json());
 // issues: [{ path: '[2].children[0].text', message: 'text must be a string' }]
@@ -51,7 +51,7 @@ number. The version is inferred from what a document contains instead.
 | 2       | `media-embed` was superseded by the richer `embed` and `video` blocks. Nothing inserts it any more.         |
 
 ```ts
-import { migrateDocument } from '@k11k/better-blocks-core';
+import { migrateDocument } from '@qkix/better-blocks-core';
 
 const { content, changed, skipped } = migrateDocument(document);
 ```
@@ -75,8 +75,8 @@ can depend on it without pulling a framework along.
 
 | Package                                                                 | Uses core for                                 |
 | ----------------------------------------------------------------------- | --------------------------------------------- |
-| [`@k11k/better-blocks-react-renderer`](../better-blocks-react-renderer) | types, marks, and the shared resolution rules |
-| [`@k11k/better-blocks-astro-renderer`](../better-blocks-astro-renderer) | the same                                      |
+| [`@qkix/better-blocks-react-renderer`](../better-blocks-react-renderer) | types, marks, and the shared resolution rules |
+| [`@qkix/better-blocks-astro-renderer`](../better-blocks-astro-renderer) | the same                                      |
 
 Both renderers re-export the document types, so consumers keep importing
 `BlocksContent` from the renderer they already use.

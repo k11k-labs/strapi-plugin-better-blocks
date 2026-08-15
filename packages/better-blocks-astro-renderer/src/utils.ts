@@ -2,7 +2,7 @@ import type { ButtonStyle, SocialEmbedNode, SocialPlatform, StyleValue } from '.
 
 /**
  * Everything here that the React renderer also needs now lives in
- * `@k11k/better-blocks-core`. It is re-exported so this package's components
+ * `@qkix/better-blocks-core`. It is re-exported so this package's components
  * keep importing from a single place.
  */
 export {
@@ -16,8 +16,8 @@ export {
   getModifierProps,
   getPlainText,
   normalizeCodeLang,
-} from '@k11k/better-blocks-core';
-export type { Mark } from '@k11k/better-blocks-core';
+} from '@qkix/better-blocks-core';
+export type { Mark } from '@qkix/better-blocks-core';
 
 // What follows is Astro-specific: button styling and the social-embed handling,
 // which the React renderer solves a different way (it loads widget scripts on

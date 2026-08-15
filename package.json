@@ -1,5 +1,5 @@
 {
-  "name": "@k11k/better-blocks-monorepo",
+  "name": "@qkix/better-blocks-monorepo",
   "version": "0.0.0",
   "private": true,
   "description": "Better Blocks — Strapi v5 blocks editor plugin and its React / Astro renderers",
@@ -7,7 +7,7 @@
   "author": "k11k-labs",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/k11k-labs/strapi-plugin-better-blocks.git"
+    "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git"
   },
   "scripts": {
     "build": "nx run-many -t build --exclude=tag:scope:example",
@@ -19,7 +19,7 @@
     "release:dry": "nx release --dry-run",
     "prepare": "husky",
     "build:examples": "nx run-many -t build --projects=tag:scope:example",
-    "dev": "nx run @k11k/example-strapi-app:develop"
+    "dev": "nx run @qkix/example-strapi-app:develop"
   },
   "devDependencies": {
     "husky": "^9.1.7",

@@ -1,3 +1,3 @@
-import base from '@k11k/eslint-config/base';
+import base from '@qkix/eslint-config/base';
 
 export default [...base];

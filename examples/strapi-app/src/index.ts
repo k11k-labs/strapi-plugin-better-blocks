@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import type { Core } from '@strapi/strapi';
-import { validateDocument } from '@k11k/better-blocks-core';
+import { validateDocument } from '@qkix/better-blocks-core';
 
 import astroShowcase from './seeds/astro-showcase.json';
 import pluginShowcase from './seeds/plugin-showcase.json';

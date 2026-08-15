@@ -3,14 +3,14 @@
 <p align="center">An enhanced Rich Text (Blocks) editor for Strapi v5 with inline text color, background highlight, and more.</p>
 
 <p align="center">
-  <a href="https://www.npmjs.com/package/@k11k/strapi-plugin-better-blocks">
-    <img alt="npm version" src="https://img.shields.io/npm/v/@k11k/strapi-plugin-better-blocks.svg" />
+  <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-better-blocks">
+    <img alt="npm version" src="https://img.shields.io/npm/v/@qkix/strapi-plugin-better-blocks.svg" />
   </a>
-  <a href="https://www.npmjs.com/package/@k11k/strapi-plugin-better-blocks">
-    <img alt="npm downloads" src="https://img.shields.io/npm/dm/@k11k/strapi-plugin-better-blocks.svg" />
+  <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-better-blocks">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dm/@qkix/strapi-plugin-better-blocks.svg" />
   </a>
-  <a href="https://github.com/k11k-labs/strapi-plugin-better-blocks/blob/main/LICENSE">
-    <img alt="license" src="https://img.shields.io/npm/l/@k11k/strapi-plugin-better-blocks.svg" />
+  <a href="https://github.com/qkix/strapi-plugin-better-blocks/blob/main/LICENSE">
+    <img alt="license" src="https://img.shields.io/npm/l/@qkix/strapi-plugin-better-blocks.svg" />
   </a>
   <a href="https://buymeacoffee.com/k11k">
     <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" />
@@ -131,10 +131,10 @@
 
 ```bash
 # Using yarn
-yarn add @k11k/strapi-plugin-better-blocks
+yarn add @qkix/strapi-plugin-better-blocks
 
 # Using npm
-npm install @k11k/strapi-plugin-better-blocks
+npm install @qkix/strapi-plugin-better-blocks
 ```
 
 After installation, rebuild your Strapi admin panel:
@@ -358,7 +358,7 @@ loop={player.loop} preload={player.preload}>` wrapped in an alignment container 
 map to `flex-start`/`center`/`flex-end`; `none` flows full-width). Include fallback text and a download
 link inside `<audio>` for unsupported browsers, and associate the `caption` via `aria-describedby`.
 `file.url` is already backend-prefixed for Media Library assets, and the `title`/`caption` keys are
-omitted when empty. See the full React/Astro renderer contract on [issue #43](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/43).
+omitted when empty. See the full React/Astro renderer contract on [issue #43](https://github.com/qkix/strapi-plugin-better-blocks/issues/43).
 
 #### Embed JSON shape (for frontend renderers)
 
@@ -693,14 +693,14 @@ To render Better Blocks content in your React frontend, use the companion render
 
 ```bash
 # Using yarn
-yarn add @k11k/better-blocks-react-renderer
+yarn add @qkix/better-blocks-react-renderer
 
 # Using npm
-npm install @k11k/better-blocks-react-renderer
+npm install @qkix/better-blocks-react-renderer
 ```
 
 ```tsx
-import { BlocksRenderer } from '@k11k/better-blocks-react-renderer';
+import { BlocksRenderer } from '@qkix/better-blocks-react-renderer';
 
 const MyComponent = ({ content }) => {
   return <BlocksRenderer content={content} />;
@@ -709,7 +709,7 @@ const MyComponent = ({ content }) => {
 
 The renderer supports all Better Blocks features including text colors, background highlights, images, and all standard block types.
 
-See the [@k11k/better-blocks-react-renderer](https://github.com/k11k-labs/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer) documentation for details.
+See the [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer) documentation for details.
 
 ## Requirements
 
@@ -724,7 +724,7 @@ React and Astro renderers. The easiest way to get started is with Docker:
 
 ```bash
 # Clone the repository
-git clone https://github.com/k11k-labs/strapi-plugin-better-blocks.git
+git clone https://github.com/qkix/strapi-plugin-better-blocks.git
 cd strapi-plugin-better-blocks
 
 docker compose up --build
@@ -764,7 +764,7 @@ docker compose down -v && docker compose up --build
 pnpm install
 pnpm build   # the plugin, the core and both renderers
 
-pnpm --filter @k11k/example-strapi-app develop
+pnpm --filter @qkix/example-strapi-app develop
 ```
 
 Run the checks the way CI does:
@@ -777,8 +777,8 @@ pnpm test
 
 ## Community & Support
 
-- [GitHub Issues](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues) &mdash; Bug reports and feature requests
-- [GitHub Discussions](https://github.com/k11k-labs/strapi-plugin-better-blocks/discussions) &mdash; Questions and ideas
+- [GitHub Issues](https://github.com/qkix/strapi-plugin-better-blocks/issues) &mdash; Bug reports and feature requests
+- [GitHub Discussions](https://github.com/qkix/strapi-plugin-better-blocks/discussions) &mdash; Questions and ideas
 
 ## Support this project
 

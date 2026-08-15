@@ -10,7 +10,7 @@ and the shared core, so most commands below are run from the repository root.
 The quickest way to set up a development environment is with Docker:
 
 ```bash
-git clone https://github.com/k11k-labs/strapi-plugin-better-blocks.git
+git clone https://github.com/qkix/strapi-plugin-better-blocks.git
 cd strapi-plugin-better-blocks
 docker compose up --build
 ```
@@ -28,7 +28,7 @@ Node 20 or 22 — the Strapi SDK refuses 23 and newer.
 pnpm install
 pnpm build   # the plugin, the core and both renderers
 
-pnpm --filter @k11k/example-strapi-app develop
+pnpm --filter @qkix/example-strapi-app develop
 ```
 
 ## Development workflow
@@ -50,7 +50,7 @@ pnpm --filter @k11k/example-strapi-app develop
 To work on a single package, filter:
 
 ```bash
-pnpm --filter @k11k/strapi-plugin-better-blocks test
+pnpm --filter @qkix/strapi-plugin-better-blocks test
 ```
 
 ## A note on the shared core
@@ -72,8 +72,8 @@ package, so a change here does not bump the renderers.
 
 ## Reporting bugs
 
-Use the [bug report template](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/new?template=bug_report.yml) and include your Strapi version, plugin version, and steps to reproduce.
+Use the [bug report template](https://github.com/qkix/strapi-plugin-better-blocks/issues/new?template=bug_report.yml) and include your Strapi version, plugin version, and steps to reproduce.
 
 ## Feature requests
 
-Use the [feature request template](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/new?template=feature_request.yml) to suggest new features.
+Use the [feature request template](https://github.com/qkix/strapi-plugin-better-blocks/issues/new?template=feature_request.yml) to suggest new features.

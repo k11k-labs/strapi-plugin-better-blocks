@@ -3,7 +3,7 @@ import { render } from '@testing-library/react';
 
 import { BlocksRenderer } from '../src';
 import { getAspectRatio } from '../src/media';
-import { migrateDocument } from '@k11k/better-blocks-core';
+import { migrateDocument } from '@qkix/better-blocks-core';
 import type { BlocksContent } from '../src';
 
 /**

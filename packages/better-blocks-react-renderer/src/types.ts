@@ -51,10 +51,10 @@ import type {
   VideoNode,
   VideoPlayer,
   VideoProvider,
-} from '@k11k/better-blocks-core';
+} from '@qkix/better-blocks-core';
 
 /**
- * The document types come from `@k11k/better-blocks-core`, which both renderers
+ * The document types come from `@qkix/better-blocks-core`, which both renderers
  * share so they cannot drift apart again. They are re-exported here so existing
  * imports from this package keep resolving.
  *
@@ -112,7 +112,7 @@ export type {
   VideoNode,
   VideoPlayer,
   VideoProvider,
-} from '@k11k/better-blocks-core';
+} from '@qkix/better-blocks-core';
 
 // ── Modifier (Mark) Props ────────────────────────────────────────────
 

@@ -1,5 +1,5 @@
 {
-  "name": "@k11k/example-astro-app",
+  "name": "@qkix/example-astro-app",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -9,11 +9,14 @@
     "preview": "astro preview"
   },
   "dependencies": {
-    "@k11k/better-blocks-astro-renderer": "workspace:*",
+    "@qkix/better-blocks-astro-renderer": "workspace:*",
     "astro": "^5.0.0",
     "katex": "^0.16.11"
   },
-  "description": "Astro app rendering the seeded Strapi content with @k11k/better-blocks-astro-renderer",
+  "devDependencies": {
+    "prettier-plugin-astro": "^0.14.1"
+  },
+  "description": "Astro app rendering the seeded Strapi content with @qkix/better-blocks-astro-renderer",
   "nx": {
     "tags": [
       "scope:example"

@@ -1,6 +1,6 @@
 # Strapi example
 
-A Strapi v5 application running `@k11k/strapi-plugin-better-blocks` from the
+A Strapi v5 application running `@qkix/strapi-plugin-better-blocks` from the
 workspace, seeded on first boot with the showcase articles the renderer
 examples display.
 
@@ -15,15 +15,15 @@ From the repository root:
 pnpm install
 pnpm build                                      # the plugin it depends on
 
-pnpm --filter @k11k/example-strapi-app develop  # http://localhost:1337/admin
+pnpm --filter @qkix/example-strapi-app develop  # http://localhost:1337/admin
 ```
 
 Other Strapi commands work the same way:
 
 ```bash
-pnpm --filter @k11k/example-strapi-app build    # build the admin panel
-pnpm --filter @k11k/example-strapi-app start    # run the built app
-pnpm --filter @k11k/example-strapi-app strapi -- --help
+pnpm --filter @qkix/example-strapi-app build    # build the admin panel
+pnpm --filter @qkix/example-strapi-app start    # run the built app
+pnpm --filter @qkix/example-strapi-app strapi -- --help
 ```
 
 The seeded admin is `admin@example.com` / `admin12#`.

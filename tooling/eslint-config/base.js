@@ -31,9 +31,9 @@ export const ignores = {
  *
  * Note when testing this rule: it only inspects imports it can resolve to a
  * project. The Strapi plugin publishes no "." export, only ./strapi-admin and
- * ./strapi-server, so a bare `import '@k11k/strapi-plugin-better-blocks'`
+ * ./strapi-server, so a bare `import '@qkix/strapi-plugin-better-blocks'`
  * resolves to nothing and is skipped — it would not build either. Verify with
- * a real entry point, e.g. '@k11k/strapi-plugin-better-blocks/strapi-admin'.
+ * a real entry point, e.g. '@qkix/strapi-plugin-better-blocks/strapi-admin'.
  */
 export const boundaries = {
   files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx', '**/*.mjs', '**/*.cjs'],
