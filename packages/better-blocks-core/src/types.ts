@@ -93,9 +93,9 @@ export type QuoteNode = {
 export type CodeNode = {
   type: 'code';
   /**
-   * Language attached in the editor (e.g. `typescript`, `python`). Drives Shiki
-   * syntax highlighting via Astro's `<Code>` component. Unknown or missing
-   * values render as themed-but-unhighlighted `plaintext`.
+   * Language attached in the editor (e.g. `typescript`, `python`). Drives the
+   * renderer's syntax highlighting. Unknown or missing values fall back to
+   * `plaintext` — see normalizeCodeLang.
    */
   language?: string;
   children: InlineNode[];

@@ -3,6 +3,7 @@ import { render } from '@testing-library/react';
 
 import { BlocksRenderer } from '../src';
 import { getAspectRatio } from '../src/media';
+import { migrateDocument } from '@k11k/better-blocks-core';
 import type { BlocksContent } from '../src';
 
 /**
@@ -202,5 +203,35 @@ describe('file button size and icon', () => {
     );
     expect(container.querySelector('.bb-button-size')).toBeNull();
     expect(container.querySelector('.bb-button-icon')).toBeNull();
+  });
+});
+
+describe('media-embed migration', () => {
+  const url = 'https://player.vimeo.com/video/12345';
+  const legacy: BlocksContent = [
+    { type: 'media-embed', url, children: [{ type: 'text', text: '' }] },
+  ];
+
+  it('renders the migrated block from the same source, in the same 16:9 box', () => {
+    const before = render(<BlocksRenderer content={legacy} />);
+    const beforeIframe = before.container.querySelector('iframe');
+    expect(beforeIframe?.getAttribute('src')).toBe(url);
+
+    const { content } = migrateDocument(legacy);
+    const after = render(<BlocksRenderer content={content} />);
+    const afterIframe = after.container.querySelector('iframe');
+
+    // The wrapper changes — an `embed` renders as a bb-embed figure rather than
+    // the old bare div — but what the reader sees is the same frame, same
+    // source, same aspect ratio.
+    expect(afterIframe?.getAttribute('src')).toBe(url);
+    expect(after.container.querySelector('.bb-embed-frame')).toHaveStyle({
+      aspectRatio: '16 / 9',
+    });
+  });
+
+  it('leaves the document alone when it has nothing to migrate', () => {
+    const content: BlocksContent = [{ type: 'paragraph', children: [{ type: 'text', text: 'x' }] }];
+    expect(migrateDocument(content).content).toBe(content);
   });
 });

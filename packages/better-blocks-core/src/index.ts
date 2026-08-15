@@ -3,6 +3,10 @@ export { getFileIcon, formatFileSize } from './file';
 export { getListStyleType } from './list';
 export { getAspectRatio } from './media';
 export { getBlockStyle } from './style';
+export { validateDocument, isBlocksContent } from './validate';
+export type { ValidationIssue, ValidationResult } from './validate';
+export { CURRENT_SCHEMA_VERSION, detectSchemaVersion, migrateDocument } from './migrate';
+export type { SchemaVersion, MigrationResult } from './migrate';
 export { getPlainText, buildTextMarks, getDefaultMarkRender, getModifierProps } from './text';
 export type { Mark } from './text';
 
