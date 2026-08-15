@@ -1,3 +1,17 @@
+## 0.22.1 (2026-08-15)
+
+### 🚀 Features
+
+- **examples:** one Strapi instance and both renderers on the same content ([66465a7](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/66465a7))
+
+### 🩹 Fixes
+
+- **plugin:** stop nesting a button inside the toolbar menu triggers ([66f6be4](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/66f6be4))
+
+### ❤️ Thank You
+
+- kkukielka
+
 # @k11k/strapi-plugin-better-blocks
 
 ## 0.22.0
