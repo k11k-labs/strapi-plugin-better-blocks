@@ -9,7 +9,7 @@
   <a href="https://www.npmjs.com/package/@qkix/better-blocks-react-renderer">
     <img alt="npm downloads" src="https://img.shields.io/npm/dm/@qkix/better-blocks-react-renderer.svg" />
   </a>
-  <a href="https://github.com/qkix/strapi-plugin-better-blocks/blob/main/LICENSE">
+  <a href="https://github.com/qkix/strapi-plugins/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/npm/l/@qkix/better-blocks-react-renderer.svg" />
   </a>
   <a href="https://buymeacoffee.com/k11k">
@@ -42,7 +42,7 @@
 
 ## Why?
 
-The official [`@strapi/blocks-react-renderer`](https://github.com/strapi/blocks-react-renderer) doesn't support the features that the [Better Blocks](https://github.com/qkix/strapi-plugin-better-blocks) plugin adds to the Strapi editor &mdash; color marks, text alignment, to-do lists, tables, media embeds, and more.
+The official [`@strapi/blocks-react-renderer`](https://github.com/strapi/blocks-react-renderer) doesn't support the features that the [Better Blocks](https://github.com/qkix/strapi-plugins) plugin adds to the Strapi editor &mdash; color marks, text alignment, to-do lists, tables, media embeds, and more.
 
 This package is a **drop-in replacement** that renders all Better Blocks features out of the box &mdash; no configuration needed.
 
@@ -333,7 +333,7 @@ The markup is wrapped in a `<figure className="bb-embed align-{alignment}">` (al
 
 > **Trust boundary.** `embedHtml` is injected with `dangerouslySetInnerHTML`. The plugin sanitizes it at author time &mdash; the iframe is rebuilt from an attribute allowlist over an **https-only** `src`, with scripts, event handlers, inline styles and unknown attributes stripped, and `allow` filtered to a safe permission set &mdash; so treat your CMS content as trusted. If you accept `embed` blocks from untrusted authors, sanitize on the server before storing, or override the block (below) and render the parsed parts instead of the HTML.
 
-Consumers need to allow the embed hosts in their `frame-src` (and `img-src` for thumbnails) CSP directives &mdash; see the [plugin README](https://github.com/qkix/strapi-plugin-better-blocks#embed-json-shape-for-frontend-renderers) for the host list.
+Consumers need to allow the embed hosts in their `frame-src` (and `img-src` for thumbnails) CSP directives &mdash; see the [plugin README](https://github.com/qkix/strapi-plugins#embed-json-shape-for-frontend-renderers) for the host list.
 
 Baseline appearance ships as inline styles plus one small stylesheet (injected only when a default embed renders, since inline styles can't reach into injected markup). Every element carries a stable `bb-embed*` class:
 
@@ -540,7 +540,7 @@ Cell `children` go through the same inline renderer as paragraphs, so marks (`bo
 
 These three blocks ship with GitHub-flavored defaults out of the box &mdash; no stylesheet to import. Each carries a stable `bb-*` class, and the styles are injected as a `<style>` tag only when the block actually appears in the content (and skipped entirely when you override the block). Everything is rethemable through CSS custom properties, so you can restyle without replacing any markup.
 
-The same classes and custom properties are used by the [Astro renderer](https://github.com/qkix/strapi-plugin-better-blocks/tree/main/packages/better-blocks-astro-renderer), so one shared theme covers both.
+The same classes and custom properties are used by the [Astro renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-astro-renderer), so one shared theme covers both.
 
 | Block   | Default element                 | Custom properties                                                                        |
 | ------- | ------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -902,12 +902,12 @@ import type {
 ## Contributing
 
 Contributions are welcome! This package lives in the
-[strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugin-better-blocks)
+[strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins)
 monorepo, next to the Strapi plugin and the Astro renderer. The easiest way to
 get started is with Docker:
 
 ```bash
-git clone https://github.com/qkix/strapi-plugin-better-blocks.git
+git clone https://github.com/qkix/strapi-plugins.git
 cd strapi-plugin-better-blocks
 
 docker compose up --build
@@ -948,7 +948,7 @@ pnpm --filter @qkix/better-blocks-react-renderer test   # just this one
 
 ## Community & Support
 
-- [GitHub Issues](https://github.com/qkix/strapi-plugin-better-blocks/issues) &mdash; Bug reports and feature requests
+- [GitHub Issues](https://github.com/qkix/strapi-plugins/issues) &mdash; Bug reports and feature requests
 
 ## Support this project
 
@@ -962,7 +962,7 @@ Every coffee goes toward fixing bugs, reviewing PRs, writing docs, and shipping 
 
 ## Related
 
-- [@qkix/strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugin-better-blocks) &mdash; Strapi plugin that extends the Blocks editor with colors, tables, to-do lists, media embeds, and more
+- [@qkix/strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins) &mdash; Strapi plugin that extends the Blocks editor with colors, tables, to-do lists, media embeds, and more
 - [@strapi/blocks-react-renderer](https://github.com/strapi/blocks-react-renderer) &mdash; Official Strapi renderer (standard blocks only)
 
 ## License

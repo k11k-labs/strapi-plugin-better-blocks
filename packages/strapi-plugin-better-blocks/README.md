@@ -9,7 +9,7 @@
   <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-better-blocks">
     <img alt="npm downloads" src="https://img.shields.io/npm/dm/@qkix/strapi-plugin-better-blocks.svg" />
   </a>
-  <a href="https://github.com/qkix/strapi-plugin-better-blocks/blob/main/LICENSE">
+  <a href="https://github.com/qkix/strapi-plugins/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/npm/l/@qkix/strapi-plugin-better-blocks.svg" />
   </a>
   <a href="https://buymeacoffee.com/k11k">
@@ -358,7 +358,7 @@ loop={player.loop} preload={player.preload}>` wrapped in an alignment container 
 map to `flex-start`/`center`/`flex-end`; `none` flows full-width). Include fallback text and a download
 link inside `<audio>` for unsupported browsers, and associate the `caption` via `aria-describedby`.
 `file.url` is already backend-prefixed for Media Library assets, and the `title`/`caption` keys are
-omitted when empty. See the full React/Astro renderer contract on [issue #43](https://github.com/qkix/strapi-plugin-better-blocks/issues/43).
+omitted when empty. See the full React/Astro renderer contract on [issue #43](https://github.com/qkix/strapi-plugins/issues/43).
 
 #### Embed JSON shape (for frontend renderers)
 
@@ -709,7 +709,7 @@ const MyComponent = ({ content }) => {
 
 The renderer supports all Better Blocks features including text colors, background highlights, images, and all standard block types.
 
-See the [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer) documentation for details.
+See the [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-react-renderer) documentation for details.
 
 ## Requirements
 
@@ -724,7 +724,7 @@ React and Astro renderers. The easiest way to get started is with Docker:
 
 ```bash
 # Clone the repository
-git clone https://github.com/qkix/strapi-plugin-better-blocks.git
+git clone https://github.com/qkix/strapi-plugins.git
 cd strapi-plugin-better-blocks
 
 docker compose up --build
@@ -777,8 +777,8 @@ pnpm test
 
 ## Community & Support
 
-- [GitHub Issues](https://github.com/qkix/strapi-plugin-better-blocks/issues) &mdash; Bug reports and feature requests
-- [GitHub Discussions](https://github.com/qkix/strapi-plugin-better-blocks/discussions) &mdash; Questions and ideas
+- [GitHub Issues](https://github.com/qkix/strapi-plugins/issues) &mdash; Bug reports and feature requests
+- [GitHub Discussions](https://github.com/qkix/strapi-plugins/discussions) &mdash; Questions and ideas
 
 ## Support this project
 
