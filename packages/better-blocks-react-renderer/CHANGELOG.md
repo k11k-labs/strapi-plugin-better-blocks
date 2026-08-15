@@ -1,3 +1,29 @@
+## 0.17.0 (2026-08-15)
+
+### 🚀 Features
+
+- **core:** validate documents and migrate the legacy media-embed block ([c5d7659](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/c5d7659))
+- **examples:** one Strapi instance and both renderers on the same content ([66465a7](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/66465a7))
+
+### ❤️ Thank You
+
+- kkukielka
+
+## 0.16.1 (2026-08-15)
+
+### 🚀 Features
+
+- **core:** validate documents and migrate the legacy media-embed block ([c5d7659](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/c5d7659))
+- **examples:** one Strapi instance and both renderers on the same content ([66465a7](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/66465a7))
+
+### 🧱 Updated Dependencies
+
+- Updated @k11k/better-blocks-core to 0.1.1
+
+### ❤️ Thank You
+
+- kkukielka
+
 # @k11k/better-blocks-react-renderer
 
 ## 0.16.0
