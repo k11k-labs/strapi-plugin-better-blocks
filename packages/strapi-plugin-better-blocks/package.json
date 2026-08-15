@@ -110,7 +110,7 @@
     "npm": ">=6.0.0"
   },
   "license": "MIT",
-  "author": "k11k-labs",
+  "author": "qkix",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git",

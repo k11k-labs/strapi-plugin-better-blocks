@@ -48,7 +48,7 @@
     "headless-cms"
   ],
   "license": "MIT",
-  "author": "k11k-labs",
+  "author": "qkix",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qkix/strapi-plugin-better-blocks.git",

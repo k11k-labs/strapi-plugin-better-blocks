@@ -967,4 +967,4 @@ Every coffee goes toward fixing bugs, reviewing PRs, writing docs, and shipping 
 
 ## License
 
-[MIT License](LICENSE) &copy; [k11k-labs](https://github.com/k11k-labs)
+[MIT License](LICENSE) &copy; [qkix](https://github.com/qkix)
