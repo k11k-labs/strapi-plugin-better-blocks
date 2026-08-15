@@ -1,6 +1,6 @@
 {
   "name": "@qkix/better-blocks-astro-renderer",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Astro renderer for Strapi v5 Blocks content with full Better Blocks plugin support — colors, tables, to-do lists, media embeds, alignment, and more. Native Astro components, zero client-side JavaScript.",
   "type": "module",
   "types": "./index.ts",
