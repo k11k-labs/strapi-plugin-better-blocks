@@ -36,7 +36,13 @@
       "type": "paragraph",
       "children": [
         { "type": "text", "text": "Combined: ", "bold": true, "italic": true },
-        { "type": "text", "text": "bold + italic + underline", "bold": true, "italic": true, "underline": true },
+        {
+          "type": "text",
+          "text": "bold + italic + underline",
+          "bold": true,
+          "italic": true,
+          "underline": true
+        },
         { "type": "text", "text": " and " },
         { "type": "text", "text": "bold + strikethrough", "bold": true, "strikethrough": true }
       ]
@@ -78,7 +84,12 @@
     {
       "type": "paragraph",
       "lineHeight": "2.0",
-      "children": [{ "type": "text", "text": "This paragraph has double line height (2.0). Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore." }]
+      "children": [
+        {
+          "type": "text",
+          "text": "This paragraph has double line height (2.0). Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore."
+        }
+      ]
     },
     {
       "type": "paragraph",
@@ -93,7 +104,9 @@
     {
       "type": "heading",
       "level": 2,
-      "children": [{ "type": "text", "text": "Better Blocks: Color & Highlight", "color": "#7C3AED" }]
+      "children": [
+        { "type": "text", "text": "Better Blocks: Color & Highlight", "color": "#7C3AED" }
+      ]
     },
     {
       "type": "paragraph",
@@ -122,11 +135,28 @@
     {
       "type": "paragraph",
       "children": [
-        { "type": "text", "text": "Red on yellow", "color": "#E53E3E", "backgroundColor": "#FEFCBF" },
+        {
+          "type": "text",
+          "text": "Red on yellow",
+          "color": "#E53E3E",
+          "backgroundColor": "#FEFCBF"
+        },
         { "type": "text", "text": " · " },
-        { "type": "text", "text": "Bold blue on pink", "bold": true, "color": "#3182CE", "backgroundColor": "#FED7D7" },
+        {
+          "type": "text",
+          "text": "Bold blue on pink",
+          "bold": true,
+          "color": "#3182CE",
+          "backgroundColor": "#FED7D7"
+        },
         { "type": "text", "text": " · " },
-        { "type": "text", "text": "Italic green on blue", "italic": true, "color": "#38A169", "backgroundColor": "#BEE3F8" }
+        {
+          "type": "text",
+          "text": "Italic green on blue",
+          "italic": true,
+          "color": "#38A169",
+          "backgroundColor": "#BEE3F8"
+        }
       ]
     },
     {
@@ -152,7 +182,12 @@
     {
       "type": "paragraph",
       "textAlign": "justify",
-      "children": [{ "type": "text", "text": "Justified paragraph. This text is longer to demonstrate how justify alignment distributes spacing evenly across the full width of the container." }]
+      "children": [
+        {
+          "type": "text",
+          "text": "Justified paragraph. This text is longer to demonstrate how justify alignment distributes spacing evenly across the full width of the container."
+        }
+      ]
     },
     {
       "type": "heading",
@@ -197,7 +232,9 @@
           "url": "https://github.com/k11k-labs/strapi-plugin-better-blocks",
           "target": "_blank",
           "rel": "noopener noreferrer",
-          "children": [{ "type": "text", "text": "the Strapi plugin (opens in new tab)", "bold": true }]
+          "children": [
+            { "type": "text", "text": "the Strapi plugin (opens in new tab)", "bold": true }
+          ]
         },
         { "type": "text", "text": "." }
       ]
@@ -218,20 +255,35 @@
       "indentLevel": 0,
       "children": [
         { "type": "list-item", "children": [{ "type": "text", "text": "First item (disc)" }] },
-        { "type": "list-item", "children": [{ "type": "text", "text": "Second item with " }, { "type": "text", "text": "bold", "bold": true }] },
+        {
+          "type": "list-item",
+          "children": [
+            { "type": "text", "text": "Second item with " },
+            { "type": "text", "text": "bold", "bold": true }
+          ]
+        },
         {
           "type": "list",
           "format": "unordered",
           "indentLevel": 1,
           "children": [
-            { "type": "list-item", "children": [{ "type": "text", "text": "Nested item (circle)" }] },
-            { "type": "list-item", "children": [{ "type": "text", "text": "Another nested item", "color": "#E53E3E" }] },
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Nested item (circle)" }]
+            },
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Another nested item", "color": "#E53E3E" }]
+            },
             {
               "type": "list",
               "format": "unordered",
               "indentLevel": 2,
               "children": [
-                { "type": "list-item", "children": [{ "type": "text", "text": "Deep nested item (square)" }] }
+                {
+                  "type": "list-item",
+                  "children": [{ "type": "text", "text": "Deep nested item (square)" }]
+                }
               ]
             }
           ]
@@ -256,13 +308,19 @@
           "format": "ordered",
           "indentLevel": 1,
           "children": [
-            { "type": "list-item", "children": [{ "type": "text", "text": "Sub-step (lower-alpha)" }] },
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Sub-step (lower-alpha)" }]
+            },
             {
               "type": "list",
               "format": "ordered",
               "indentLevel": 2,
               "children": [
-                { "type": "list-item", "children": [{ "type": "text", "text": "Detail (upper-roman)" }] }
+                {
+                  "type": "list-item",
+                  "children": [{ "type": "text", "text": "Detail (upper-roman)" }]
+                }
               ]
             }
           ]
@@ -286,8 +344,14 @@
           "format": "ordered",
           "indentLevel": 1,
           "children": [
-            { "type": "list-item", "children": [{ "type": "text", "text": "Numbered inside bullets" }] },
-            { "type": "list-item", "children": [{ "type": "text", "text": "Another numbered item" }] }
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Numbered inside bullets" }]
+            },
+            {
+              "type": "list-item",
+              "children": [{ "type": "text", "text": "Another numbered item" }]
+            }
           ]
         },
         { "type": "list-item", "children": [{ "type": "text", "text": "Back to bullets" }] }
@@ -303,10 +367,26 @@
       "format": "todo",
       "indentLevel": 0,
       "children": [
-        { "type": "list-item", "checked": true, "children": [{ "type": "text", "text": "Set up project" }] },
-        { "type": "list-item", "checked": true, "children": [{ "type": "text", "text": "Implement renderer" }] },
-        { "type": "list-item", "checked": false, "children": [{ "type": "text", "text": "Write documentation" }] },
-        { "type": "list-item", "checked": false, "children": [{ "type": "text", "text": "Publish to npm" }] }
+        {
+          "type": "list-item",
+          "checked": true,
+          "children": [{ "type": "text", "text": "Set up project" }]
+        },
+        {
+          "type": "list-item",
+          "checked": true,
+          "children": [{ "type": "text", "text": "Implement renderer" }]
+        },
+        {
+          "type": "list-item",
+          "checked": false,
+          "children": [{ "type": "text", "text": "Write documentation" }]
+        },
+        {
+          "type": "list-item",
+          "checked": false,
+          "children": [{ "type": "text", "text": "Publish to npm" }]
+        }
       ]
     },
     {
@@ -317,16 +397,18 @@
     {
       "type": "quote",
       "children": [
-        { "type": "text", "text": "The best way to predict the future is to invent it.", "italic": true },
+        {
+          "type": "text",
+          "text": "The best way to predict the future is to invent it.",
+          "italic": true
+        },
         { "type": "text", "text": " — Alan Kay" }
       ]
     },
     {
       "type": "quote",
       "textAlign": "center",
-      "children": [
-        { "type": "text", "text": "Centered quote with alignment.", "italic": true }
-      ]
+      "children": [{ "type": "text", "text": "Centered quote with alignment.", "italic": true }]
     },
     {
       "type": "heading",
@@ -337,41 +419,59 @@
       "type": "code",
       "language": "typescript",
       "children": [
-        { "type": "text", "text": "import { BlocksRenderer } from '@k11k/better-blocks-react-renderer';\n\n<BlocksRenderer content={blocks} />" }
+        {
+          "type": "text",
+          "text": "import { BlocksRenderer } from '@k11k/better-blocks-react-renderer';\n\n<BlocksRenderer content={blocks} />"
+        }
       ]
     },
     {
       "type": "code",
       "language": "python",
       "children": [
-        { "type": "text", "text": "def greet(name: str) -> str:\n    return f\"Hello, {name}!\"\n\nprint(greet(\"world\"))" }
+        {
+          "type": "text",
+          "text": "def greet(name: str) -> str:\n    return f\"Hello, {name}!\"\n\nprint(greet(\"world\"))"
+        }
       ]
     },
     {
       "type": "code",
       "language": "bash",
       "children": [
-        { "type": "text", "text": "#!/usr/bin/env bash\nset -euo pipefail\nfor f in *.astro; do\n  echo \"Rendering $f\"\ndone" }
+        {
+          "type": "text",
+          "text": "#!/usr/bin/env bash\nset -euo pipefail\nfor f in *.astro; do\n  echo \"Rendering $f\"\ndone"
+        }
       ]
     },
     {
       "type": "code",
       "language": "rust",
       "children": [
-        { "type": "text", "text": "fn main() {\n    let blocks = vec![1, 2, 3];\n    let total: i32 = blocks.iter().sum();\n    println!(\"total = {total}\");\n}" }
+        {
+          "type": "text",
+          "text": "fn main() {\n    let blocks = vec![1, 2, 3];\n    let total: i32 = blocks.iter().sum();\n    println!(\"total = {total}\");\n}"
+        }
       ]
     },
     {
       "type": "code",
       "language": "json",
       "children": [
-        { "type": "text", "text": "{\n  \"type\": \"code\",\n  \"language\": \"json\",\n  \"children\": [{ \"type\": \"text\", \"text\": \"…\" }]\n}" }
+        {
+          "type": "text",
+          "text": "{\n  \"type\": \"code\",\n  \"language\": \"json\",\n  \"children\": [{ \"type\": \"text\", \"text\": \"…\" }]\n}"
+        }
       ]
     },
     {
       "type": "code",
       "children": [
-        { "type": "text", "text": "This block has no language set — it renders as themed plaintext (no syntax colors)." }
+        {
+          "type": "text",
+          "text": "This block has no language set — it renders as themed plaintext (no syntax colors)."
+        }
       ]
     },
     {
@@ -497,9 +597,7 @@
           "children": [
             {
               "type": "table-cell",
-              "children": [
-                { "type": "text", "text": "Merged cells", "italic": true }
-              ]
+              "children": [{ "type": "text", "text": "Merged cells", "italic": true }]
             },
             {
               "type": "table-cell",
@@ -952,9 +1050,7 @@
           "children": [
             {
               "type": "paragraph",
-              "children": [
-                { "type": "text", "text": "Details blocks can be arbitrarily nested." }
-              ]
+              "children": [{ "type": "text", "text": "Details blocks can be arbitrarily nested." }]
             }
           ]
         }

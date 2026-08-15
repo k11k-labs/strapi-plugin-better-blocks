@@ -9,12 +9,7 @@ import type { Core } from '@strapi/strapi';
  * -------------------------------------------------------------------------*/
 
 export type SocialPlatform =
-  | 'twitter'
-  | 'instagram'
-  | 'facebook'
-  | 'tiktok'
-  | 'linkedin'
-  | 'pinterest';
+  'twitter' | 'instagram' | 'facebook' | 'tiktok' | 'linkedin' | 'pinterest';
 
 export interface NormalisedOEmbed {
   platform: SocialPlatform;

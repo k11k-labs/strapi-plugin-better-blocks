@@ -220,9 +220,7 @@ function App() {
 
       {loading && <p>Loading articles...</p>}
       {error && (
-        <p style={{ color: 'red' }}>
-          Error: {error}. Make sure Strapi is running on port 1338.
-        </p>
+        <p style={{ color: 'red' }}>Error: {error}. Make sure Strapi is running on port 1338.</p>
       )}
       {!loading && !error && articles.length === 0 && (
         <p>
@@ -278,13 +276,13 @@ function App() {
                     letterSpacing: '0.05em',
                   }}
                 >
-                  ② Custom callout renderer &mdash; same callouts via the{' '}
-                  <code>blocks</code> override
+                  ② Custom callout renderer &mdash; same callouts via the <code>blocks</code>{' '}
+                  override
                 </h2>
                 <p style={{ color: '#666', fontSize: 14, marginTop: 0 }}>
-                  The callouts below are the exact same content as above, re-rendered with a
-                  custom <code>callout</code> component (purple boxes with emoji) instead of the
-                  built-in GitHub-style default.
+                  The callouts below are the exact same content as above, re-rendered with a custom{' '}
+                  <code>callout</code> component (purple boxes with emoji) instead of the built-in
+                  GitHub-style default.
                 </p>
                 <BlocksRenderer content={callouts} blocks={customBlocks} />
               </section>
@@ -310,8 +308,8 @@ function App() {
                   <code>.bb-details</code> CSS
                 </h2>
                 <p style={{ color: '#666', fontSize: 14, marginTop: 0 }}>
-                  The same details blocks as above, restyled to look like GitHub&rsquo;s
-                  collapsible sections purely via CSS on the default <code>bb-details</code> /{' '}
+                  The same details blocks as above, restyled to look like GitHub&rsquo;s collapsible
+                  sections purely via CSS on the default <code>bb-details</code> /{' '}
                   <code>bb-details-summary</code> classes &mdash; no <code>blocks</code> override.
                 </p>
                 <div className="gh-details">

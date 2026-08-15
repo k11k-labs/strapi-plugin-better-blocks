@@ -11,7 +11,7 @@ services:
     ports:
       # Host :1338 to avoid clashing with other Strapi stacks on :1337.
       # Container port stays 1337, so the internal `strapi:1337` DNS is unchanged.
-      - "1338:1337"
+      - '1338:1337'
     environment:
       HOST: 0.0.0.0
       PORT: 1337
@@ -30,7 +30,7 @@ services:
       context: ..
       dockerfile: playground/react-app/Dockerfile
     ports:
-      - "5173:5173"
+      - '5173:5173'
     environment:
       STRAPI_URL: http://strapi:1337
     depends_on:

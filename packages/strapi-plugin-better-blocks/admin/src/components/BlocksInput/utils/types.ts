@@ -161,11 +161,7 @@ export interface DiagramElement extends CustomElement {
 }
 
 export type CalloutVariant =
-  | 'note'
-  | 'tip'
-  | 'important'
-  | 'warning'
-  | 'caution';
+  'note' | 'tip' | 'important' | 'warning' | 'caution';
 
 export interface CalloutElement extends CustomElement {
   type: 'callout';
@@ -190,11 +186,7 @@ export type ButtonAlignment = 'left' | 'center' | 'right';
 export type ButtonMode = 'link' | 'file';
 export type ButtonLinkTarget = '_self' | '_blank' | '_parent' | '_top';
 export type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'outline'
-  | 'filled'
-  | 'custom';
+  'primary' | 'secondary' | 'outline' | 'filled' | 'custom';
 
 export interface ButtonStyle {
   /**
@@ -361,12 +353,7 @@ export const isButtonNode = (
 
 /** Social platforms supported by the social-embed block. */
 export type SocialPlatform =
-  | 'twitter'
-  | 'instagram'
-  | 'facebook'
-  | 'tiktok'
-  | 'linkedin'
-  | 'pinterest';
+  'twitter' | 'instagram' | 'facebook' | 'tiktok' | 'linkedin' | 'pinterest';
 
 export type SocialAlignment = 'left' | 'center' | 'right';
 
@@ -477,11 +464,7 @@ export const isEmbedNode = (element: CustomElement): element is EmbedElement =>
 
 /** Video hosting providers the video block understands. */
 export type VideoProvider =
-  | 'local'
-  | 'mux'
-  | 'api-video'
-  | 'cloudinary'
-  | 'custom';
+  'local' | 'mux' | 'api-video' | 'cloudinary' | 'custom';
 
 /** Player behaviour flags, mirrored onto the HTML5 `<video>` element. */
 export interface VideoPlayerSettings {

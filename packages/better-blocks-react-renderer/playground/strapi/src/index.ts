@@ -16,9 +16,7 @@ export default {
         .findOne({ where: { code: 'strapi-super-admin' } });
 
       if (superAdminRole) {
-        const hashedPassword = await strapi
-          .service('admin::auth')
-          .hashPassword('admin12#');
+        const hashedPassword = await strapi.service('admin::auth').hashPassword('admin12#');
         await strapi.db.query('admin::user').create({
           data: {
             username: 'admin',
@@ -32,9 +30,7 @@ export default {
             roles: [superAdminRole.id],
           },
         });
-        strapi.log.info(
-          'Created default admin user (admin@example.com / admin12#)'
-        );
+        strapi.log.info('Created default admin user (admin@example.com / admin12#)');
       }
     }
 
@@ -44,20 +40,15 @@ export default {
       .findOne({ where: { type: 'public' } });
 
     if (publicRole) {
-      const existing = await strapi.db
-        .query('plugin::users-permissions.permission')
-        .findMany({
-          where: {
-            role: publicRole.id,
-            action: { $startsWith: 'api::article' },
-          },
-        });
+      const existing = await strapi.db.query('plugin::users-permissions.permission').findMany({
+        where: {
+          role: publicRole.id,
+          action: { $startsWith: 'api::article' },
+        },
+      });
 
       if (existing.length === 0) {
-        const actions = [
-          'api::article.article.find',
-          'api::article.article.findOne',
-        ];
+        const actions = ['api::article.article.find', 'api::article.article.findOne'];
 
         for (const action of actions) {
           await strapi.db.query('plugin::users-permissions.permission').create({
@@ -121,14 +112,11 @@ export default {
       // Build article data, replacing placeholder image with uploaded one
       const articleData = JSON.parse(JSON.stringify(seedArticle));
       if (uploadedImage) {
-        const imageBlock = articleData.content.find(
-          (block: any) => block.type === 'image'
-        );
+        const imageBlock = articleData.content.find((block: any) => block.type === 'image');
         if (imageBlock) {
           imageBlock.image = {
             name: uploadedImage.name,
-            alternativeText:
-              uploadedImage.alternativeText || 'Better Blocks logo',
+            alternativeText: uploadedImage.alternativeText || 'Better Blocks logo',
             url: uploadedImage.url,
             width: uploadedImage.width || 600,
             height: uploadedImage.height || 200,
@@ -139,7 +127,6 @@ export default {
             size: uploadedImage.size,
           };
         }
-
       }
 
       // Point each file-download button at its matching uploaded asset (by the

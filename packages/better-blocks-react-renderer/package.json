@@ -40,12 +40,15 @@
     "react-dom": ">=17.0.0"
   },
   "devDependencies": {
+    "@k11k/eslint-config": "workspace:*",
+    "@k11k/tsconfig": "workspace:*",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.1.0",
     "@types/katex": "^0.16.7",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "eslint": "^10.8.1",
     "jsdom": "^25.0.1",
     "prettier": "^3.4.2",
     "react": "^19.0.0",
@@ -89,5 +92,10 @@
   "engines": {
     "node": ">=20.0.0 <=24.x.x",
     "npm": ">=6.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:renderer"
+    ]
   }
 }

@@ -1,0 +1,36 @@
+{
+  "name": "@k11k/eslint-config",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared ESLint configuration for the Better Blocks packages",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./base": "./base.js",
+    "./react": "./react.js",
+    "./astro": "./astro.js"
+  },
+  "files": [
+    "base.js",
+    "react.js",
+    "astro.js"
+  ],
+  "dependencies": {
+    "@eslint/js": "^10.0.1",
+    "@nx/eslint-plugin": "^23.1.1",
+    "eslint-plugin-astro": "^3.1.0",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.0",
+    "globals": "^17.11.0",
+    "typescript-eslint": "^8.67.0"
+  },
+  "peerDependencies": {
+    "eslint": "^10.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:tooling"
+    ]
+  }
+}

@@ -23,7 +23,9 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.3.3",
     "nx": "^23.1.1",
-    "prettier": "^3.5.3"
+    "prettier": "^3.5.3",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs,json,md,yml,yaml,css,astro}": "prettier --write"

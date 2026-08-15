@@ -110,8 +110,7 @@ const FloatingSelectionToolbar = () => {
 
     // Marks don't apply to code or void media blocks
     const anchorBlock = editor.children[selection.anchor.path[0]] as
-      | CustomElement
-      | undefined;
+      CustomElement | undefined;
     if (anchorBlock && UNFORMATTABLE_BLOCKS.includes(anchorBlock.type)) {
       return false;
     }

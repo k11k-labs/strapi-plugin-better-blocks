@@ -15,11 +15,11 @@
 
 ## Packages
 
-| Package | Description |
-|---|---|
-| [`@k11k/strapi-plugin-better-blocks`](./packages/strapi-plugin-better-blocks) | Strapi v5 custom field — an extended Blocks editor built on Slate: colors, tables, callouts, media embeds, code, math, diagrams and more. |
-| [`@k11k/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support. |
-| [`@k11k/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript. |
+| Package                                                                         | Description                                                                                                                               |
+| ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| [`@k11k/strapi-plugin-better-blocks`](./packages/strapi-plugin-better-blocks)   | Strapi v5 custom field — an extended Blocks editor built on Slate: colors, tables, callouts, media embeds, code, math, diagrams and more. |
+| [`@k11k/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support.                                                                 |
+| [`@k11k/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript.                                               |
 
 Each package has its own README, changelog and release cadence. Start with the package
 you need; the plugin README covers installation and configuration inside Strapi, the

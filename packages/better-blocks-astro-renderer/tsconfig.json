@@ -1,7 +1,6 @@
 {
-  "extends": "astro/tsconfigs/strict",
+  "extends": ["astro/tsconfigs/strict", "@k11k/tsconfig/base.json"],
   "compilerOptions": {
-    "skipLibCheck": true,
     "verbatimModuleSyntax": false
   },
   "include": ["src", "tests", "index.ts", "env.d.ts"],

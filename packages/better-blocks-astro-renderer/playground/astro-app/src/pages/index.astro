@@ -48,9 +48,7 @@ try {
 
       {
         error && (
-          <p style="color: red;">
-            Error: {error}. Make sure Strapi is running on port 1339.
-          </p>
+          <p style="color: red;">Error: {error}. Make sure Strapi is running on port 1339.</p>
         )
       }
 
@@ -128,7 +126,8 @@ try {
                     The same buttons as in the article above. Hover them — the
                     <code>hoverBackgroundColor</code> / <code>hoverTextColor</code> from the block
                     are exposed as CSS custom properties and wired up by the renderer's scoped
-                    stylesheet (zero client-side JavaScript). The file button downloads a real asset.
+                    stylesheet (zero client-side JavaScript). The file button downloads a real
+                    asset.
                   </p>
                   <BlocksRenderer content={buttons} />
 
@@ -157,18 +156,19 @@ try {
                     is re-processed via <code>tiktokEmbed.lib.render()</code>. Pinterest, Instagram,
                     and LinkedIn here return self-contained <code>&lt;iframe&gt;</code>s that render
                     without any widget script. Embeds with no
-                    <code>embedCode</code>/<code>oembed.html</code> degrade to
-                    a fallback card, which is a non-interactive <code>&lt;div&gt;</code> (not an empty
+                    <code>embedCode</code>/<code>oembed.html</code> degrade to a fallback card,
+                    which is a non-interactive <code>&lt;div&gt;</code> (not an empty
                     <code>&lt;a href=""&gt;</code>) when the node also has no post URL.
                   </p>
                   <BlocksRenderer content={socialEmbeds} />
 
                   <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 32px;">
-                    ⑧ Custom social-embed renderer — same embeds via the <code>blocks</code> override
+                    ⑧ Custom social-embed renderer — same embeds via the <code>blocks</code>{' '}
+                    override
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">
-                    The same embeds re-rendered with a custom <code>social-embed</code> component
-                    (a compact card that just links out) instead of the built-in default.
+                    The same embeds re-rendered with a custom <code>social-embed</code> component (a
+                    compact card that just links out) instead of the built-in default.
                   </p>
                   <BlocksRenderer
                     content={socialEmbeds}

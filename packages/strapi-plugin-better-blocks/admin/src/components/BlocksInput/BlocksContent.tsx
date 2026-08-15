@@ -87,10 +87,14 @@ const DropPlaceholder = styled<BoxComponent>(Box)<{
 
   // Show drop placeholder 8px above or below the drop target
   ${({ $dragDirection, theme, $placeholderMargin }) => css`
-    top: ${$dragDirection === DIRECTIONS.UPWARD &&
-    `-${theme.spaces[$placeholderMargin]}`};
-    bottom: ${$dragDirection === DIRECTIONS.DOWNWARD &&
-    `-${theme.spaces[$placeholderMargin]}`};
+    top: ${
+      $dragDirection === DIRECTIONS.UPWARD &&
+      `-${theme.spaces[$placeholderMargin]}`
+    };
+    bottom: ${
+      $dragDirection === DIRECTIONS.DOWNWARD &&
+      `-${theme.spaces[$placeholderMargin]}`
+    };
   `}
 `;
 

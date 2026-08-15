@@ -278,12 +278,7 @@ export type ButtonElement = {
  * lazy, deduped widget script (see `SOCIAL_SCRIPTS` in `utils.ts`).
  */
 export type SocialPlatform =
-  | 'twitter'
-  | 'instagram'
-  | 'facebook'
-  | 'tiktok'
-  | 'linkedin'
-  | 'pinterest';
+  'twitter' | 'instagram' | 'facebook' | 'tiktok' | 'linkedin' | 'pinterest';
 
 export type SocialEmbedAlignment = 'left' | 'center' | 'right';
 
@@ -381,13 +376,7 @@ export type MediaAspectRatio = '16:9' | '21:9' | '4:3' | '1:1' | 'custom';
 // ── Embed (generic iframe / URL) ─────────────────────────────────────
 
 export type EmbedProvider =
-  | 'youtube'
-  | 'vimeo'
-  | 'loom'
-  | 'wistia'
-  | 'dailymotion'
-  | 'api-video'
-  | 'generic';
+  'youtube' | 'vimeo' | 'loom' | 'wistia' | 'dailymotion' | 'api-video' | 'generic';
 
 /**
  * Generic third-party embed (YouTube, Vimeo, Loom, …). `embedHtml` is the only

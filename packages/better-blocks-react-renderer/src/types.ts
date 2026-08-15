@@ -154,12 +154,7 @@ export type DiagramNode = {
 };
 
 export type SocialPlatform =
-  | 'twitter'
-  | 'instagram'
-  | 'facebook'
-  | 'tiktok'
-  | 'linkedin'
-  | 'pinterest';
+  'twitter' | 'instagram' | 'facebook' | 'tiktok' | 'linkedin' | 'pinterest';
 
 export type SocialEmbedAlignment = 'left' | 'center' | 'right';
 
@@ -234,13 +229,7 @@ export type MediaAlignment = 'left' | 'center' | 'right' | 'none';
 export type AspectRatio = '16:9' | '21:9' | '4:3' | '1:1' | 'custom';
 
 export type EmbedProvider =
-  | 'youtube'
-  | 'vimeo'
-  | 'loom'
-  | 'wistia'
-  | 'dailymotion'
-  | 'api-video'
-  | 'generic';
+  'youtube' | 'vimeo' | 'loom' | 'wistia' | 'dailymotion' | 'api-video' | 'generic';
 
 /**
  * Generic embed — a share URL the plugin turned into an iframe, or a raw

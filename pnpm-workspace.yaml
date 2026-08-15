@@ -1,13 +1,13 @@
 packages:
-  - "packages/*"
-  - "tooling/*"
-  - "examples/*"
+  - 'packages/*'
+  - 'tooling/*'
+  - 'examples/*'
 
 # Dependencies whose install scripts are required for a working build:
 # native bindings (better-sqlite3, sharp, @swc/core, unrs-resolver) and
 # platform binaries (esbuild, nx). pnpm 10 blocks all install scripts by default.
 onlyBuiltDependencies:
-  - "@swc/core"
+  - '@swc/core'
   - better-sqlite3
   - core-js-pure
   - esbuild

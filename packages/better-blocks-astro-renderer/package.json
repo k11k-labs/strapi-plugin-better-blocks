@@ -35,8 +35,11 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
+    "@k11k/eslint-config": "workspace:*",
+    "@k11k/tsconfig": "workspace:*",
     "@types/katex": "^0.16.7",
     "astro": "^5.0.0",
+    "eslint": "^10.8.1",
     "linkedom": "^0.18.12",
     "prettier": "^3.4.2",
     "prettier-plugin-astro": "^0.14.1",
@@ -78,5 +81,10 @@
   "engines": {
     "node": ">=20.0.0 <=24.x.x",
     "npm": ">=6.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:renderer"
+    ]
   }
 }
