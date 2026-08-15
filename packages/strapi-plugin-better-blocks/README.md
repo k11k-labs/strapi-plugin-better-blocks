@@ -33,8 +33,9 @@
 6. [Custom Color Presets](#custom-color-presets)
 7. [Media Embeds (CSP Configuration)](#media-embeds-csp-configuration)
 8. [Frontend Rendering](#frontend-rendering)
-9. [Contributing](#contributing)
-10. [License](#license)
+9. [Adding Your Own Block Type](#adding-your-own-block-type)
+10. [Contributing](#contributing)
+11. [License](#license)
 
 ---
 
@@ -716,6 +717,78 @@ See the [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plug
 - **Node.js** &ge; 20.0.0
 - **Strapi** v5.x
 - **Slate** 0.94.1 (bundled with Strapi)
+
+## Adding Your Own Block Type
+
+Another Strapi plugin — or your own admin customization in
+`src/admin/app.tsx` — can add a block type to the editor. Call `registerBlock`
+from `register()`, which runs before any editor is mounted.
+
+```tsx
+import { registerBlock } from '@qkix/strapi-plugin-better-blocks/strapi-admin';
+import { Transforms } from 'slate';
+
+export default {
+  register() {
+    registerBlock({
+      type: 'key-figure',
+      // What it holds: 'void' (attributes only, the default), 'inline' (text),
+      // or 'blocks' (nested blocks). Slate's void handling follows from this.
+      content: 'void',
+
+      // Needed to be offered in the "+" Insert menu and the slash command. A
+      // block without all three still renders, it just is not offered.
+      icon: KeyFigureIcon,
+      label: 'Key figure',
+      insert: (editor) => {
+        Transforms.insertNodes(editor, {
+          type: 'key-figure',
+          value: '42',
+          // Slate refuses a document whose nodes are not elements, and an
+          // element is something with a children array. A void block saved
+          // without this placeholder takes the whole editor down.
+          children: [{ type: 'text', text: '' }],
+        });
+      },
+
+      renderElement: ({ attributes, children, element }) => (
+        <div {...attributes} contentEditable={false}>
+          {element.value}
+          {children}
+        </div>
+      ),
+    });
+  },
+};
+```
+
+Registering is the only supported way in. Editing this package to add a block is
+how the editor, both renderers and the validator ended up with four separate
+hardcoded lists of block types in the first place.
+
+`registerBlock` throws if the type shadows a built-in or is registered twice —
+either one would otherwise surface much later as a block that mysteriously does
+not appear.
+
+### The rest of the pipeline
+
+The same definition object is understood by the core and both renderers, so a
+package writes `type` and `content` once:
+
+| Where                                           | What it adds                                      |
+| ----------------------------------------------- | ------------------------------------------------- |
+| `registerBlock` here                            | the editor: rendering, Insert menu, slash command |
+| `validateDocument(doc, { blocks })` in the core | `validate`, so the block is not "unknown"         |
+| `migrateDocument(doc, { blocks })` in the core  | `migrate`, called for every node of the type      |
+| `blockPlugins` on either renderer               | `component`, so the front end draws it            |
+
+A renderer given no plugin for a type renders nothing for it — content authored
+with a registered block is not lost, it is simply not drawn until the front end
+knows about it too.
+
+See [`@qkix/better-blocks-core`](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-core#registering-a-block-type)
+for the definition shape, and `examples/strapi-app/src/admin/app.tsx` for a
+working registration.
 
 ## Contributing
 

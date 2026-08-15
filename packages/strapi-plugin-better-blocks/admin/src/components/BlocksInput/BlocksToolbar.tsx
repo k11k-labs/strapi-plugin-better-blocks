@@ -39,6 +39,7 @@ import { ReactEditor } from 'slate-react';
 import { css, styled } from 'styled-components';
 
 import { getTranslation } from '../../utils/getTranslation';
+import { getRegisteredBlocks, isOfferedInMenus } from '../../blockRegistry';
 
 import {
   type BlocksStore,
@@ -274,11 +275,13 @@ const getAnchorBlockKey = (
 
   if (!node || Editor.isEditor(node)) return null;
 
-  return (
-    getKeys(blocks).find((blockKey) =>
-      blocks[blockKey].matchNode(node as never)
-    ) ?? null
+  // Block keys are strings; `keyof` widens to `string | number` only because
+  // the store carries an index signature for registered types.
+  const match = getKeys(blocks).find((blockKey) =>
+    blocks[blockKey].matchNode(node as never)
   );
+
+  return match === undefined ? null : String(match);
 };
 
 const BlocksDropdown = () => {
@@ -980,11 +983,20 @@ const InsertBlockButton = ({ disabled }: { disabled: boolean }) => {
   const { formatMessage } = useIntl();
   const { modalElement, handleConversionResult } = useConversionModal();
 
-  const handleInsert = (key: SelectorBlockKey) => {
+  const handleInsert = (key: string) => {
     const maybeRenderModal = blocks[key].handleConvert?.(editor);
     handleConversionResult(maybeRenderModal);
     ReactEditor.focus(editor as ReactEditor);
   };
+
+  // Blocks other packages registered are appended after the built-in inserts,
+  // so the menu the user already knows keeps its order.
+  const insertKeys: string[] = [
+    ...INSERT_BLOCK_KEYS,
+    ...getRegisteredBlocks()
+      .filter(isOfferedInMenus)
+      .map((definition) => definition.type),
+  ];
 
   return (
     <>
@@ -1000,8 +1012,10 @@ const InsertBlockButton = ({ disabled }: { disabled: boolean }) => {
           })}
         />
         <Menu.Content>
-          {INSERT_BLOCK_KEYS.map((key) => {
-            const Icon = blocks[key].icon;
+          {insertKeys.map((key) => {
+            const block = blocks[key];
+            if (!block?.isInBlocksSelector) return null;
+            const Icon = block.icon;
             return (
               <StyledMenuItem
                 key={key}
@@ -1009,7 +1023,7 @@ const InsertBlockButton = ({ disabled }: { disabled: boolean }) => {
                 $isActive={false}
               >
                 <Icon />
-                {formatMessage(blocks[key].label)}
+                {formatMessage(block.label)}
               </StyledMenuItem>
             );
           })}
