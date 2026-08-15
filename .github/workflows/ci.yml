@@ -7,7 +7,10 @@ on:
     branches: [main]
 
 jobs:
-  ci:
+  # Keep this job id as `build`: branch protection on main requires the
+  # contexts "build (20)" and "build (22)", and renaming it silently makes
+  # those checks unsatisfiable — every PR sits BLOCKED with a green CI.
+  build:
     runs-on: ubuntu-latest
     strategy:
       matrix:
