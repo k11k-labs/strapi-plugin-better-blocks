@@ -28,6 +28,12 @@ export const ignores = {
  * leaf; renderers and plugins may reach into core but never into each other,
  * and nothing may ever depend on a strapi-plugin-* package — installing a
  * renderer must not drag an editor plugin along.
+ *
+ * Note when testing this rule: it only inspects imports it can resolve to a
+ * project. The Strapi plugin publishes no "." export, only ./strapi-admin and
+ * ./strapi-server, so a bare `import '@k11k/strapi-plugin-better-blocks'`
+ * resolves to nothing and is skipped — it would not build either. Verify with
+ * a real entry point, e.g. '@k11k/strapi-plugin-better-blocks/strapi-admin'.
  */
 export const boundaries = {
   files: ['**/*.ts', '**/*.tsx', '**/*.js', '**/*.jsx', '**/*.mjs', '**/*.cjs'],
