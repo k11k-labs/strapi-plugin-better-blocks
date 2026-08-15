@@ -35,6 +35,28 @@ examples/    runnable example applications
 
 The directory name of a package always matches its npm name without the `@k11k` scope.
 
+## Working on it
+
+A pnpm workspace driven by Nx. Node 20 or 22 — the Strapi SDK refuses 23+.
+
+```bash
+pnpm install
+pnpm build        # plugin + both renderers
+pnpm test
+pnpm lint
+pnpm graph        # dependency graph
+```
+
+Nx wraps each package's own build script rather than replacing it, so a package
+still builds on its own from its directory.
+
+To see a change running end to end, `docker compose up --build` brings up Strapi
+with the plugin plus both renderers on the same seeded content — see
+[examples/README.md](./examples/README.md).
+
+Releases go through `nx release`: independent versions, one changelog and tag
+per package. The release workflow is manual and defaults to a dry run.
+
 ## License
 
 [MIT](./LICENSE)
