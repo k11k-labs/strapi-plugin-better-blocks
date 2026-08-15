@@ -77,7 +77,12 @@ jobs:
         run: |
           set -euo pipefail
 
-          if git diff --quiet; then
+          # Stage everything first: a release can *create* files — a package
+          # getting its first changelog — and both `git diff` and `git commit -a`
+          # ignore untracked paths, so checking or committing before staging
+          # silently drops them.
+          git add -A
+          if git diff --cached --quiet; then
             echo "nx release changed nothing — there is nothing to release."
             exit 0
           fi
@@ -86,7 +91,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$branch"
-          git commit -am "chore: release"
+          git commit -m "chore: release"
           git push origin "$branch"
 
           # List what is about to be released, so the PR is reviewable at a glance.
