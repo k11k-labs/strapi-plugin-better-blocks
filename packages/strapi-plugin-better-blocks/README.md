@@ -709,7 +709,7 @@ const MyComponent = ({ content }) => {
 
 The renderer supports all Better Blocks features including text colors, background highlights, images, and all standard block types.
 
-See the [@k11k/better-blocks-react-renderer](https://github.com/k11k-labs/better-blocks-react-renderer) repository for full documentation.
+See the [@k11k/better-blocks-react-renderer](https://github.com/k11k-labs/strapi-plugin-better-blocks/tree/main/packages/better-blocks-react-renderer) documentation for details.
 
 ## Requirements
 
@@ -719,42 +719,60 @@ See the [@k11k/better-blocks-react-renderer](https://github.com/k11k-labs/better
 
 ## Contributing
 
-Contributions are welcome! The easiest way to get started is with Docker:
+Contributions are welcome! This package lives in a monorepo together with the
+React and Astro renderers. The easiest way to get started is with Docker:
 
 ```bash
 # Clone the repository
 git clone https://github.com/k11k-labs/strapi-plugin-better-blocks.git
 cd strapi-plugin-better-blocks
 
-# Start the playground with Docker
-docker compose up
+docker compose up --build
 ```
 
-This will automatically build the plugin and start a Strapi v5 app (SQLite) at `http://localhost:1337/admin`.
+That builds the plugin and starts a Strapi v5 app (SQLite) at
+`http://localhost:1337/admin`, seeded with showcase articles and an admin
+account (`admin@example.com` / `admin12#`). Both renderers come up alongside it
+on `http://localhost:5173` and `http://localhost:4321`, showing the same
+content.
 
-On first launch, create an admin account, then go to **Content-Type Builder** &rarr; **Add new field** &rarr; **CUSTOM** tab &rarr; **Better Blocks** to try it out.
+To see the field itself, open any article, or add it to your own content type
+via **Content-Type Builder** &rarr; **Add new field** &rarr; **CUSTOM** tab
+&rarr; **Better Blocks**.
 
 ### Development workflow
 
-1. Make changes to the plugin source in `admin/src/` or `server/src/`
-2. Restart the container to rebuild and pick up changes:
+1. Make changes to the plugin source in `packages/strapi-plugin-better-blocks/admin/src/` or `server/src/`
+2. Rebuild and restart:
    ```bash
-   docker compose restart
+   docker compose up --build
    ```
+   The plugin is compiled into the image, so a plain `restart` will not pick up
+   source changes.
 
 ### Full reset
 
-To wipe the database and node_modules and start fresh:
+To wipe the seeded database and uploaded media and start fresh:
 
 ```bash
-docker compose down -v && docker compose up
+docker compose down -v && docker compose up --build
 ```
 
 ### Without Docker
 
 ```bash
-yarn install && yarn build
-cd playground/strapi && npm install && npm run develop
+pnpm install
+pnpm build   # the plugin, the core and both renderers
+
+pnpm --filter @k11k/example-strapi-app develop
+```
+
+Run the checks the way CI does:
+
+```bash
+pnpm lint
+pnpm typecheck
+pnpm test
 ```
 
 ## Community & Support

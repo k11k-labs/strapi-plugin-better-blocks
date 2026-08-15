@@ -9,7 +9,7 @@
   <a href="https://www.npmjs.com/package/@k11k/better-blocks-react-renderer">
     <img alt="npm downloads" src="https://img.shields.io/npm/dm/@k11k/better-blocks-react-renderer.svg" />
   </a>
-  <a href="https://github.com/k11k-labs/better-blocks-react-renderer/blob/main/LICENSE">
+  <a href="https://github.com/k11k-labs/strapi-plugin-better-blocks/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/npm/l/@k11k/better-blocks-react-renderer.svg" />
   </a>
   <a href="https://buymeacoffee.com/k11k">
@@ -540,7 +540,7 @@ Cell `children` go through the same inline renderer as paragraphs, so marks (`bo
 
 These three blocks ship with GitHub-flavored defaults out of the box &mdash; no stylesheet to import. Each carries a stable `bb-*` class, and the styles are injected as a `<style>` tag only when the block actually appears in the content (and skipped entirely when you override the block). Everything is rethemable through CSS custom properties, so you can restyle without replacing any markup.
 
-The same classes and custom properties are used by the [Astro renderer](https://github.com/k11k-labs/better-blocks-astro-renderer), so one shared theme covers both.
+The same classes and custom properties are used by the [Astro renderer](https://github.com/k11k-labs/strapi-plugin-better-blocks/tree/main/packages/better-blocks-astro-renderer), so one shared theme covers both.
 
 | Block   | Default element                 | Custom properties                                                                        |
 | ------- | ------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -901,53 +901,54 @@ import type {
 
 ## Contributing
 
-Contributions are welcome! The easiest way to get started is with Docker:
+Contributions are welcome! This package lives in the
+[strapi-plugin-better-blocks](https://github.com/k11k-labs/strapi-plugin-better-blocks)
+monorepo, next to the Strapi plugin and the Astro renderer. The easiest way to
+get started is with Docker:
 
 ```bash
-# Clone the repository
-git clone https://github.com/k11k-labs/better-blocks-react-renderer.git
-cd better-blocks-react-renderer
+git clone https://github.com/k11k-labs/strapi-plugin-better-blocks.git
+cd strapi-plugin-better-blocks
 
-# Start the playground with Docker
-cd playground
-docker compose up
+docker compose up --build
 ```
 
-This will start a Strapi v5 instance with the Better Blocks plugin and a React app that renders the content &mdash; all pre-configured with a showcase article.
+That brings up a Strapi v5 instance running the Better Blocks plugin, seeded
+with the showcase articles, plus both renderers displaying the same content.
 
 - **Strapi admin:** http://localhost:1337/admin (login: `admin@example.com` / `admin12#`)
-- **React app:** http://localhost:5173
+- **React example:** http://localhost:5173
+- **Astro example:** http://localhost:4321
 
 ### Development workflow
 
-1. Make changes to the renderer source in `src/`
-2. Rebuild: `yarn build` (from repo root)
-3. The React app picks up the new build automatically
+1. Make changes to the renderer source in `packages/better-blocks-react-renderer/src/`
+2. Rebuild with `docker compose up --build` — the renderer is compiled into the image
+3. Editing `examples/react-app/src/` hot-reloads on its own, with no rebuild
 
 ### Without Docker
 
 ```bash
-# Build the renderer
-yarn install && yarn build
+pnpm install
+pnpm build   # the core, this renderer and the plugin
 
-# Start Strapi
-cd playground/strapi && cp .env.example .env && npm install && npm run dev
-
-# Start the React app (in another terminal)
-cd playground/react-app && npm install && npm run dev
+pnpm --filter @k11k/example-strapi-app develop
+pnpm --filter @k11k/example-react-app dev   # in another terminal
 ```
 
 ### Running tests
 
 ```bash
-yarn test        # Run tests
-yarn test:ts     # Type check
-yarn lint        # Check formatting
+pnpm test        # every package, from the repo root
+pnpm typecheck
+pnpm lint
+
+pnpm --filter @k11k/better-blocks-react-renderer test   # just this one
 ```
 
 ## Community & Support
 
-- [GitHub Issues](https://github.com/k11k-labs/better-blocks-react-renderer/issues) &mdash; Bug reports and feature requests
+- [GitHub Issues](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues) &mdash; Bug reports and feature requests
 
 ## Support this project
 
