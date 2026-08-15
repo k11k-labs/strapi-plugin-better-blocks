@@ -14,7 +14,7 @@ on:
         type: boolean
         default: true
       overrides:
-        description: 'Optional explicit versions, e.g. "@k11k/better-blocks-react-renderer=0.17.0 @k11k/better-blocks-astro-renderer=0.13.0". Applied after the conventional-commits pass, so they win.'
+        description: 'Optional explicit versions, e.g. "@qkix/better-blocks-react-renderer=0.17.0 @qkix/better-blocks-astro-renderer=0.13.0". Applied after the conventional-commits pass, so they win.'
         type: string
         required: false
         default: ''

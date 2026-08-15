@@ -12,7 +12,7 @@ export default defineConfig({
     // The renderer ships raw `.astro` source, so Vite must transform it instead
     // of treating the package as an opaque external dependency.
     ssr: {
-      noExternal: ['@k11k/better-blocks-astro-renderer'],
+      noExternal: ['@qkix/better-blocks-astro-renderer'],
     },
     // Proxy Strapi media so relative `/uploads/...` URLs in rendered content
     // resolve in the browser (mirrors the React playground's Vite proxy).

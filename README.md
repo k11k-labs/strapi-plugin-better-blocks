@@ -4,7 +4,7 @@
 
 <p align="center">
   <a href="./LICENSE">
-    <img alt="license" src="https://img.shields.io/npm/l/@k11k/strapi-plugin-better-blocks.svg" />
+    <img alt="license" src="https://img.shields.io/npm/l/@qkix/strapi-plugin-better-blocks.svg" />
   </a>
   <a href="https://buymeacoffee.com/k11k">
     <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" />
@@ -17,10 +17,10 @@
 
 | Package                                                                         | Description                                                                                                                               |
 | ------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| [`@k11k/strapi-plugin-better-blocks`](./packages/strapi-plugin-better-blocks)   | Strapi v5 custom field — an extended Blocks editor built on Slate: colors, tables, callouts, media embeds, code, math, diagrams and more. |
-| [`@k11k/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support.                                                                 |
-| [`@k11k/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript.                                               |
-| [`@k11k/better-blocks-core`](./packages/better-blocks-core)                     | The document types and the logic both renderers share. No runtime dependencies.                                                           |
+| [`@qkix/strapi-plugin-better-blocks`](./packages/strapi-plugin-better-blocks)   | Strapi v5 custom field — an extended Blocks editor built on Slate: colors, tables, callouts, media embeds, code, math, diagrams and more. |
+| [`@qkix/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support.                                                                 |
+| [`@qkix/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript.                                               |
+| [`@qkix/better-blocks-core`](./packages/better-blocks-core)                     | The document types and the logic both renderers share. No runtime dependencies.                                                           |
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use — the core exists to
@@ -38,7 +38,7 @@ tooling/     shared, private build and lint configuration
 examples/    runnable example applications
 ```
 
-The directory name of a package always matches its npm name without the `@k11k` scope.
+The directory name of a package always matches its npm name without the `@qkix` scope.
 
 ## Working on it
 

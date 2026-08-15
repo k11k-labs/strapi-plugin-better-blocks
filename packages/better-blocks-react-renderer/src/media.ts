@@ -4,10 +4,10 @@ import type { MediaAlignment } from './types';
 
 /**
  * Aspect-ratio resolution is shared with the Astro renderer and lives in
- * `@k11k/better-blocks-core`. Re-exported so this package's imports are
+ * `@qkix/better-blocks-core`. Re-exported so this package's imports are
  * unaffected.
  */
-export { getAspectRatio } from '@k11k/better-blocks-core';
+export { getAspectRatio } from '@qkix/better-blocks-core';
 
 // Alignment → flexbox cross-axis placement of the media box within its figure.
 // `none` stretches it to fill the available width. Mirrors the `audio` block.

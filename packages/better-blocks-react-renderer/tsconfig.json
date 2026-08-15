@@ -1,5 +1,5 @@
 {
-  "extends": "@k11k/tsconfig/react-library.json",
+  "extends": "@qkix/tsconfig/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"

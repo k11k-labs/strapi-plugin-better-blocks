@@ -19,7 +19,7 @@ import {
   getListStyleType,
   getModifierProps,
   getPlainText,
-} from '@k11k/better-blocks-core';
+} from '@qkix/better-blocks-core';
 
 import {
   MEDIA_CAPTION_STYLE,

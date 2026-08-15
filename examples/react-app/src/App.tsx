@@ -3,7 +3,7 @@ import {
   BlocksRenderer,
   type BlocksContent,
   type CustomBlocksConfig,
-} from '@k11k/better-blocks-react-renderer';
+} from '@qkix/better-blocks-react-renderer';
 
 interface Article {
   id: number;
@@ -68,7 +68,12 @@ const customBlocks: CustomBlocksConfig = {
   // A custom button renderer that fully replaces the default markup with a
   // pill-shaped CTA. It receives label, link/file, alignment, style, etc.
   button: ({ label, link, file, buttonType, alignment }) => (
-    <div style={{ textAlign: alignment === 'none' ? undefined : alignment, margin: '12px 0' }}>
+    <div
+      style={{
+        textAlign: alignment === 'none' ? undefined : alignment,
+        margin: '12px 0',
+      }}
+    >
       <a
         className="custom-button"
         href={buttonType === 'file' ? file?.url : link?.url}
@@ -212,23 +217,36 @@ function App() {
   }, []);
 
   return (
-    <div style={{ maxWidth: 720, margin: '0 auto', padding: 24, fontFamily: 'system-ui' }}>
+    <div
+      style={{
+        maxWidth: 720,
+        margin: '0 auto',
+        padding: 24,
+        fontFamily: 'system-ui',
+      }}
+    >
       <style>{playgroundCss}</style>
       <h1>Better Blocks — React renderer</h1>
       <p style={{ color: '#666', marginBottom: 32 }}>
         Every showcase article seeded into the Strapi example, rendered with{' '}
-        <code>@k11k/better-blocks-react-renderer</code>. The Astro example serves the
-        same content at <code>localhost:4321</code>.
+        <code>@qkix/better-blocks-react-renderer</code>. The Astro example
+        serves the same content at <code>localhost:4321</code>.
       </p>
 
       {loading && <p>Loading articles...</p>}
       {error && (
-        <p style={{ color: 'red' }}>Error: {error}. Make sure the Strapi example is running on port 1337.</p>
+        <p style={{ color: 'red' }}>
+          Error: {error}. Make sure the Strapi example is running on port 1337.
+        </p>
       )}
       {!loading && !error && articles.length === 0 && (
         <p>
           No published articles found. Create one in{' '}
-          <a href="http://localhost:1337/admin" target="_blank" rel="noopener noreferrer">
+          <a
+            href="http://localhost:1337/admin"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Strapi admin
           </a>{' '}
           and publish it.
@@ -238,9 +256,15 @@ function App() {
       {articles.map((article) => {
         // Pull just the callout blocks out so the custom-renderer demo below is
         // focused on callouts (not a second copy of the whole article).
-        const callouts = article.content.filter((block) => block.type === 'callout');
-        const details = article.content.filter((block) => block.type === 'details');
-        const buttons = article.content.filter((block) => block.type === 'button');
+        const callouts = article.content.filter(
+          (block) => block.type === 'callout'
+        );
+        const details = article.content.filter(
+          (block) => block.type === 'details'
+        );
+        const buttons = article.content.filter(
+          (block) => block.type === 'button'
+        );
 
         return (
           <article
@@ -280,13 +304,14 @@ function App() {
                     letterSpacing: '0.05em',
                   }}
                 >
-                  ② Custom callout renderer &mdash; same callouts via the <code>blocks</code>{' '}
-                  override
+                  ② Custom callout renderer &mdash; same callouts via the{' '}
+                  <code>blocks</code> override
                 </h2>
                 <p style={{ color: '#666', fontSize: 14, marginTop: 0 }}>
-                  The callouts below are the exact same content as above, re-rendered with a custom{' '}
-                  <code>callout</code> component (purple boxes with emoji) instead of the built-in
-                  GitHub-style default.
+                  The callouts below are the exact same content as above,
+                  re-rendered with a custom <code>callout</code> component
+                  (purple boxes with emoji) instead of the built-in GitHub-style
+                  default.
                 </p>
                 <BlocksRenderer content={callouts} blocks={customBlocks} />
               </section>
@@ -308,13 +333,15 @@ function App() {
                     letterSpacing: '0.05em',
                   }}
                 >
-                  ③ GitHub-style details &mdash; default markup themed with plain{' '}
-                  <code>.bb-details</code> CSS
+                  ③ GitHub-style details &mdash; default markup themed with
+                  plain <code>.bb-details</code> CSS
                 </h2>
                 <p style={{ color: '#666', fontSize: 14, marginTop: 0 }}>
-                  The same details blocks as above, restyled to look like GitHub&rsquo;s collapsible
-                  sections purely via CSS on the default <code>bb-details</code> /{' '}
-                  <code>bb-details-summary</code> classes &mdash; no <code>blocks</code> override.
+                  The same details blocks as above, restyled to look like
+                  GitHub&rsquo;s collapsible sections purely via CSS on the
+                  default <code>bb-details</code> /{' '}
+                  <code>bb-details-summary</code> classes &mdash; no{' '}
+                  <code>blocks</code> override.
                 </p>
                 <div className="gh-details">
                   <BlocksRenderer content={details} />
@@ -329,11 +356,13 @@ function App() {
                     marginTop: 32,
                   }}
                 >
-                  ④ Custom details renderer &mdash; via the <code>blocks</code> override
+                  ④ Custom details renderer &mdash; via the <code>blocks</code>{' '}
+                  override
                 </h2>
                 <p style={{ color: '#666', fontSize: 14, marginTop: 0 }}>
-                  The same details blocks re-rendered with a custom <code>details</code> component
-                  (purple box, emoji marker) instead of the built-in default.
+                  The same details blocks re-rendered with a custom{' '}
+                  <code>details</code> component (purple box, emoji marker)
+                  instead of the built-in default.
                 </p>
                 <BlocksRenderer content={details} blocks={customBlocks} />
               </section>
@@ -355,13 +384,16 @@ function App() {
                     letterSpacing: '0.05em',
                   }}
                 >
-                  ⑤ Buttons &mdash; default rendering (inline styles + hover via CSS variables)
+                  ⑤ Buttons &mdash; default rendering (inline styles + hover via
+                  CSS variables)
                 </h2>
                 <p style={{ color: '#666', fontSize: 14, marginTop: 0 }}>
-                  The same buttons as in the article above. Hover them &mdash; the{' '}
-                  <code>hoverBackgroundColor</code> / <code>hoverTextColor</code> from the block are
-                  exposed as CSS custom properties and wired up with a single{' '}
-                  <code>.bb-button:hover</code> rule. The file button downloads a real asset.
+                  The same buttons as in the article above. Hover them &mdash;
+                  the <code>hoverBackgroundColor</code> /{' '}
+                  <code>hoverTextColor</code> from the block are exposed as CSS
+                  custom properties and wired up with a single{' '}
+                  <code>.bb-button:hover</code> rule. The file button downloads
+                  a real asset.
                 </p>
                 <BlocksRenderer content={buttons} />
 
@@ -374,11 +406,13 @@ function App() {
                     marginTop: 32,
                   }}
                 >
-                  ⑥ Custom button renderer &mdash; via the <code>blocks</code> override
+                  ⑥ Custom button renderer &mdash; via the <code>blocks</code>{' '}
+                  override
                 </h2>
                 <p style={{ color: '#666', fontSize: 14, marginTop: 0 }}>
-                  The same buttons re-rendered with a custom <code>button</code> component
-                  (pill-shaped gradient CTA) instead of the built-in default.
+                  The same buttons re-rendered with a custom <code>button</code>{' '}
+                  component (pill-shaped gradient CTA) instead of the built-in
+                  default.
                 </p>
                 <BlocksRenderer content={buttons} blocks={customBlocks} />
               </section>
