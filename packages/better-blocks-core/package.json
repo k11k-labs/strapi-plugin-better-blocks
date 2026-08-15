@@ -66,5 +66,8 @@
     "tags": [
       "scope:core"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

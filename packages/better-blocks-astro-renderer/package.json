@@ -87,5 +87,8 @@
     "tags": [
       "scope:renderer"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }

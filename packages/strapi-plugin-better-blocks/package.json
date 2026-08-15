@@ -124,5 +124,8 @@
     "tags": [
       "scope:plugin"
     ]
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
