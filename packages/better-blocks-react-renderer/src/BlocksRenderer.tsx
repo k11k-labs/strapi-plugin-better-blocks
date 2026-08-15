@@ -32,9 +32,11 @@ import { MermaidDiagram } from './MermaidDiagram';
 import { SocialEmbed } from './SocialEmbed';
 import { Video } from './Video';
 import type {
+  AnyBlockNode,
   AudioAlignment,
   AudioNode,
   BlockNode,
+  BlockPlugin,
   BlocksRendererProps,
   ButtonElement,
   ButtonFile,
@@ -42,6 +44,7 @@ import type {
   CalloutNode,
   CalloutVariant,
   CodeNode,
+  CustomBlockNode,
   CustomBlocksConfig,
   CustomModifiersConfig,
   DetailsNode,
@@ -338,52 +341,106 @@ function isHeaderRow(row: TableRowNode | undefined): boolean {
 type RenderOptions = {
   codeTheme: string;
   codeCopyButton: boolean;
+  /**
+   * Registered block types, keyed by type. Carried in the options rather than
+   * as another parameter so nesting blocks — callout, details — thread it to
+   * their children for free, which is what makes a registered block work at
+   * any depth.
+   */
+  plugins?: ReadonlyMap<string, BlockPlugin>;
 };
 
-function renderBlock(
-  block: BlockNode,
+/**
+ * Draws a block from another package.
+ *
+ * The component owns its markup entirely; all this does is hand it the node and,
+ * when its content model says it holds content, the rendered children.
+ */
+function renderCustomBlock(
+  plugin: BlockPlugin,
+  block: CustomBlockNode,
   key: number,
   blocks?: CustomBlocksConfig,
   modifiers?: CustomModifiersConfig,
   options?: RenderOptions
 ): ReactNode {
-  switch (block.type) {
+  const { component: Component, content = 'void' } = plugin;
+  const children = Array.isArray(block.children) ? block.children : [];
+
+  if (content === 'blocks') {
+    return (
+      <Component key={key} node={block}>
+        {children.map((child, index) =>
+          renderBlock(child as AnyBlockNode, index, blocks, modifiers, options)
+        )}
+      </Component>
+    );
+  }
+
+  if (content === 'inline') {
+    return (
+      <Component key={key} node={block}>
+        {renderInlineContent(children as InlineNode[], blocks, modifiers)}
+      </Component>
+    );
+  }
+
+  return <Component key={key} node={block} />;
+}
+
+function renderBlock(
+  block: AnyBlockNode,
+  key: number,
+  blocks?: CustomBlocksConfig,
+  modifiers?: CustomModifiersConfig,
+  options?: RenderOptions
+): ReactNode {
+  // Registered types are checked first, and cannot shadow a built-in: the core
+  // registry rejects that at construction.
+  const plugin = options?.plugins?.get(block.type);
+  if (plugin) {
+    return renderCustomBlock(plugin, block as CustomBlockNode, key, blocks, modifiers, options);
+  }
+
+  const builtIn = block as BlockNode;
+
+  switch (builtIn.type) {
     case 'paragraph':
-      return renderParagraph(block, key, blocks, modifiers);
+      return renderParagraph(builtIn, key, blocks, modifiers);
     case 'heading':
-      return renderHeading(block, key, blocks, modifiers);
+      return renderHeading(builtIn, key, blocks, modifiers);
     case 'list':
-      return renderList(block, key, blocks, modifiers);
+      return renderList(builtIn, key, blocks, modifiers);
     case 'quote':
-      return renderQuote(block, key, blocks, modifiers);
+      return renderQuote(builtIn, key, blocks, modifiers);
     case 'code':
-      return renderCode(block, key, blocks, options);
+      return renderCode(builtIn, key, blocks, options);
     case 'image':
-      return renderImage(block, key, blocks);
+      return renderImage(builtIn, key, blocks);
     case 'horizontal-line':
-      return renderHorizontalLine(block, key, blocks);
+      return renderHorizontalLine(builtIn, key, blocks);
     case 'table':
-      return renderTable(block, key, blocks, modifiers);
+      return renderTable(builtIn, key, blocks, modifiers);
     case 'media-embed':
-      return renderMediaEmbed(block, key, blocks);
+      return renderMediaEmbed(builtIn, key, blocks);
     case 'embed':
-      return renderEmbed(block, key, blocks);
+      return renderEmbed(builtIn, key, blocks);
     case 'video':
-      return renderVideo(block, key, blocks);
+      return renderVideo(builtIn, key, blocks);
     case 'math':
-      return renderMath(block, key, blocks);
+      return renderMath(builtIn, key, blocks);
     case 'diagram':
-      return renderDiagram(block, key, blocks);
+      return renderDiagram(builtIn, key, blocks);
     case 'callout':
-      return renderCallout(block, key, blocks, modifiers, options);
+      return renderCallout(builtIn, key, blocks, modifiers, options);
     case 'details':
-      return renderDetails(block, key, blocks, modifiers, options);
+      return renderDetails(builtIn, key, blocks, modifiers, options);
     case 'button':
-      return renderButton(block, key, blocks);
+      return renderButton(builtIn, key, blocks);
     case 'social-embed':
-      return renderSocialEmbed(block, key, blocks);
+      return renderSocialEmbed(builtIn, key, blocks);
     case 'audio':
-      return renderAudio(block, key, blocks);
+      return renderAudio(builtIn, key, blocks);
     default:
       return null;
   }
@@ -1011,7 +1068,7 @@ const BUTTON_HOVER_CSS =
 // True if any block in the tree has the given type, so the styles that block
 // needs are only injected when it's actually rendered. Recurses into child
 // arrays (e.g. a button nested inside a details block).
-function contentHasBlock(nodes: BlockNode[], type: BlockNode['type']): boolean {
+function contentHasBlock(nodes: readonly AnyBlockNode[], type: BlockNode['type']): boolean {
   for (const node of nodes) {
     if (node.type === type) return true;
     const children = (node as { children?: unknown }).children;
@@ -1207,6 +1264,7 @@ export function BlocksRenderer({
   content,
   blocks,
   modifiers,
+  blockPlugins,
   codeTheme = DEFAULT_CODE_THEME,
   codeCopyButton = false,
 }: BlocksRendererProps): ReactNode {
@@ -1223,7 +1281,13 @@ export function BlocksRenderer({
   const needsQuoteCss = !blocks?.quote && contentHasBlock(content, 'quote');
   const needsCodeCss = !blocks?.code && contentHasBlock(content, 'code');
 
-  const options: RenderOptions = { codeTheme, codeCopyButton };
+  const options: RenderOptions = {
+    codeTheme,
+    codeCopyButton,
+    plugins: blockPlugins?.length
+      ? new Map(blockPlugins.map((plugin) => [plugin.type, plugin]))
+      : undefined,
+  };
 
   return (
     <>

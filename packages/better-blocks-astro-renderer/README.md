@@ -32,10 +32,11 @@
 5. [Supported Blocks](#supported-blocks)
 6. [Supported Modifiers](#supported-modifiers)
 7. [Custom Renderers](#custom-renderers)
-8. [TypeScript](#typescript)
-9. [Contributing](#contributing)
-10. [Support this project](#support-this-project)
-11. [License](#license)
+8. [Registered Block Types](#registered-block-types)
+9. [TypeScript](#typescript)
+10. [Contributing](#contributing)
+11. [Support this project](#support-this-project)
+12. [License](#license)
 
 ---
 
@@ -512,6 +513,53 @@ const { backgroundColor } = Astro.props;
 ```
 
 The color/size/font modifiers receive a value prop (`color`, `backgroundColor`, `fontFamily`, `fontSize`); the rest receive only their `<slot />`.
+
+## Registered Block Types
+
+`blocks` overrides how a **known** block is drawn. `blockPlugins` adds a block
+type this renderer has never heard of — one owned by another package, such as a
+chart.
+
+```astro
+---
+import { BlocksRenderer } from '@qkix/better-blocks-astro-renderer';
+import Chart from '../components/Chart.astro';
+
+const chart = {
+  type: 'chart',
+  // 'void' (attributes only, the default), 'inline' (text), or 'blocks' (nested blocks).
+  content: 'void',
+  component: Chart,
+};
+---
+
+<BlocksRenderer content={content} blockPlugins={[chart]} />
+```
+
+The component receives the whole node as `node` — this renderer does not know
+what attributes the block has, which is the point — and, when the content model
+is `inline` or `blocks`, its rendered children via the default `<slot />`:
+
+```astro
+---
+const { node } = Astro.props;
+---
+
+<figure class="chart" data-title={node.spec.title}>{/* … */}</figure>
+```
+
+A registered block works at any depth, including inside a callout or a details.
+
+An `AstroBlockPlugin` is a core `BlockDefinition` plus `component`, so the same
+object that teaches `validateDocument` and `migrateDocument` about the block
+also teaches this renderer to draw it. See
+[`@qkix/better-blocks-core`](../better-blocks-core#registering-a-block-type).
+
+Passing plugins explicitly, rather than registering them into a global, is
+deliberate: this renderer runs on servers handling concurrent requests, where
+mutable module state leaks one page's registrations into another's.
+
+A block type nobody registered renders nothing, exactly as before.
 
 ## TypeScript
 

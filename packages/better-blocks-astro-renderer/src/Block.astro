@@ -1,5 +1,14 @@
 ---
-import type { BlockNode, CustomBlocksConfig, CustomModifiersConfig, DiagramTheme } from './types';
+import type {
+  AnyBlockNode,
+  AstroBlockPlugin,
+  BlockNode,
+  CustomBlockNode,
+  CustomBlocksConfig,
+  CustomModifiersConfig,
+  DiagramTheme,
+  InlineNode,
+} from './types';
 import Inline from './Inline.astro';
 import List from './List.astro';
 import Table from './Table.astro';
@@ -17,7 +26,7 @@ import Video from './Video.astro';
 import { getBlockStyle } from './utils';
 
 interface Props {
-  block: BlockNode;
+  block: AnyBlockNode;
   blocks?: CustomBlocksConfig;
   modifiers?: CustomModifiersConfig;
   diagramTheme?: DiagramTheme;
@@ -27,9 +36,30 @@ interface Props {
   codeCopyButton?: boolean;
   /** Position among sibling blocks — forwarded to blocks that need a stable key. */
   index?: number;
+  /** Block types from other packages. Threaded down so they work at any depth. */
+  blockPlugins?: readonly AstroBlockPlugin[];
 }
 
-const { block, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton, index } = Astro.props;
+const {
+  block: node,
+  blocks,
+  modifiers,
+  diagramTheme,
+  codeTheme,
+  codeCopyButton,
+  index,
+  blockPlugins,
+} = Astro.props;
+
+// Registered types are checked first, and cannot shadow a built-in: the core
+// registry rejects that at construction. Everything below this dispatches over
+// the built-in union, so the node is narrowed once here.
+const plugin = blockPlugins?.find((candidate) => candidate.type === node.type);
+const block = node as BlockNode;
+const customBlock = node as CustomBlockNode;
+const PluginComp = plugin?.component as any;
+const pluginContent = plugin?.content ?? 'void';
+const pluginChildren = Array.isArray(customBlock.children) ? customBlock.children : [];
 
 const ParagraphComp = blocks?.paragraph as any;
 const HeadingComp = blocks?.heading as any;
@@ -37,6 +67,35 @@ const ImageComp = blocks?.image as any;
 const HrComp = blocks?.['horizontal-line'] as any;
 const EmbedComp = blocks?.['media-embed'] as any;
 ---
+
+{
+  plugin && (
+    <Fragment>
+      {pluginContent === 'blocks' ? (
+        <PluginComp node={customBlock}>
+          {pluginChildren.map((child, childIndex) => (
+            <Astro.self
+              block={child as AnyBlockNode}
+              blocks={blocks}
+              modifiers={modifiers}
+              diagramTheme={diagramTheme}
+              codeTheme={codeTheme}
+              codeCopyButton={codeCopyButton}
+              blockPlugins={blockPlugins}
+              index={childIndex}
+            />
+          ))}
+        </PluginComp>
+      ) : pluginContent === 'inline' ? (
+        <PluginComp node={customBlock}>
+          <Inline nodes={pluginChildren as InlineNode[]} blocks={blocks} modifiers={modifiers} />
+        </PluginComp>
+      ) : (
+        <PluginComp node={customBlock} />
+      )}
+    </Fragment>
+  )
+}
 
 {
   block.type === 'paragraph' && (
@@ -146,13 +205,29 @@ const EmbedComp = blocks?.['media-embed'] as any;
 
 {
   block.type === 'callout' && (
-    <Callout node={block} blocks={blocks} modifiers={modifiers} diagramTheme={diagramTheme} />
+    <Callout
+      node={block}
+      blocks={blocks}
+      modifiers={modifiers}
+      diagramTheme={diagramTheme}
+      codeTheme={codeTheme}
+      codeCopyButton={codeCopyButton}
+      blockPlugins={blockPlugins}
+    />
   )
 }
 
 {
   block.type === 'details' && (
-    <Details node={block} blocks={blocks} modifiers={modifiers} diagramTheme={diagramTheme} />
+    <Details
+      node={block}
+      blocks={blocks}
+      modifiers={modifiers}
+      diagramTheme={diagramTheme}
+      codeTheme={codeTheme}
+      codeCopyButton={codeCopyButton}
+      blockPlugins={blockPlugins}
+    />
   )
 }
 

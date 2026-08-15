@@ -1,15 +1,19 @@
 import type { ComponentType, CSSProperties, ReactNode } from 'react';
 
 import type {
+  AnyBlockNode,
   AspectRatio,
   AudioAlignment,
   AudioFile,
   AudioNode,
   AudioPlayer,
   AudioPreload,
+  BlockDefinition,
   BlockNode,
   BlockStyle,
   BlocksContent,
+  CustomBlockNode,
+  ExtendedBlocksContent,
   ButtonAlignment,
   ButtonElement,
   ButtonFile,
@@ -62,15 +66,19 @@ import type {
  * modifier components receive.
  */
 export type {
+  AnyBlockNode,
   AspectRatio,
   AudioAlignment,
   AudioFile,
   AudioNode,
   AudioPlayer,
   AudioPreload,
+  BlockDefinition,
   BlockNode,
   BlockStyle,
   BlocksContent,
+  CustomBlockNode,
+  ExtendedBlocksContent,
   ButtonAlignment,
   ButtonElement,
   ButtonFile,
@@ -258,12 +266,50 @@ export type CustomModifiersConfig = Partial<{
   fontSize: ComponentType<FontSizeModifierProps>;
 }>;
 
+// ── Registered Blocks ────────────────────────────────────────────────
+
+/**
+ * Props handed to a registered block's component.
+ *
+ * The whole node is passed rather than spread attributes, because this renderer
+ * does not know what attributes the block has — that is the point of it being
+ * registered elsewhere.
+ */
+export type CustomBlockProps = {
+  node: CustomBlockNode;
+  /**
+   * The rendered children, for a block whose content model is `inline` or
+   * `blocks`. Undefined for a `void` block, whose children are only the empty
+   * placeholder Slate requires.
+   */
+  children?: ReactNode;
+};
+
+/**
+ * A block type from another package, plus how React draws it.
+ *
+ * Extends the core {@link BlockDefinition} so one object serves validation,
+ * migration and rendering: a package publishes its definition once and adds
+ * `component` here.
+ */
+export type BlockPlugin = BlockDefinition & {
+  component: ComponentType<CustomBlockProps>;
+};
+
 // ── Component Props ──────────────────────────────────────────────────
 
 export type BlocksRendererProps = {
-  content: BlocksContent;
+  content: BlocksContent | ExtendedBlocksContent;
   blocks?: CustomBlocksConfig;
   modifiers?: CustomModifiersConfig;
+  /**
+   * Block types this renderer does not ship, supplied by another package.
+   * Passed explicitly rather than read from a global, so a server rendering
+   * concurrent requests cannot leak one page's registrations into another's.
+   *
+   * An unregistered block type renders nothing, exactly as before.
+   */
+  blockPlugins?: readonly BlockPlugin[];
   /**
    * Shiki theme for the default `code` block highlighting. Any bundled Shiki
    * theme name (e.g. `github-dark`, `github-light`, `dracula`, `nord`).

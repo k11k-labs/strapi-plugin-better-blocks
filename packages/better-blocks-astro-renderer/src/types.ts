@@ -8,15 +8,19 @@
  * shape.
  */
 export type {
+  AnyBlockNode,
   AspectRatio,
   AudioAlignment,
   AudioFile,
   AudioNode,
   AudioPlayer,
   AudioPreload,
+  BlockDefinition,
   BlockNode,
   BlockStyle,
   BlocksContent,
+  CustomBlockNode,
+  ExtendedBlocksContent,
   ButtonAlignment,
   ButtonElement,
   ButtonFile,
@@ -60,7 +64,13 @@ export type {
   VideoProvider,
 } from '@qkix/better-blocks-core';
 
-import type { TextNode, BlockNode, BlocksContent } from '@qkix/better-blocks-core';
+import type {
+  TextNode,
+  BlockDefinition,
+  BlockNode,
+  BlocksContent,
+  ExtendedBlocksContent,
+} from '@qkix/better-blocks-core';
 
 // ── Diagram Theming ──────────────────────────────────────────────────
 
@@ -204,12 +214,37 @@ export type CustomModifiersConfig = Partial<{
   fontSize: AstroComponentFactory;
 }>;
 
+// ── Registered Blocks ────────────────────────────────────────────────
+
+/**
+ * A block type from another package, plus the Astro component that draws it.
+ *
+ * Extends the core `BlockDefinition` so one object serves validation, migration
+ * and rendering: a package publishes its definition once and adds `component`
+ * here.
+ *
+ * The component receives `{ node }` — the whole block, since this renderer does
+ * not know what attributes it has — and, when the content model is `inline` or
+ * `blocks`, its rendered children via the default `<slot />`.
+ */
+export type AstroBlockPlugin = BlockDefinition & {
+  component: AstroComponentFactory;
+};
+
 // ── Component Props ──────────────────────────────────────────────────
 
 export type BlocksRendererProps = {
-  content: BlocksContent;
+  content: BlocksContent | ExtendedBlocksContent;
   blocks?: CustomBlocksConfig;
   modifiers?: CustomModifiersConfig;
+  /**
+   * Block types this renderer does not ship, supplied by another package.
+   * Passed explicitly rather than read from a global, so a server rendering
+   * concurrent requests cannot leak one page's registrations into another's.
+   *
+   * An unregistered block type renders nothing, exactly as before.
+   */
+  blockPlugins?: readonly AstroBlockPlugin[];
   /**
    * Color theme for `diagram` (Mermaid) blocks. Defaults to `github-light`.
    * Ignored when a custom `diagram` renderer is supplied via `blocks.diagram`.
