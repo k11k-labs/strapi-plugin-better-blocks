@@ -103,6 +103,11 @@ jobs:
             }
           ")
 
+          # A PR opened with GITHUB_TOKEN does not start workflows, so run CI
+          # against the release branch explicitly; its check runs land on this
+          # commit and satisfy the contexts main requires.
+          gh workflow run CI --ref "$branch"
+
           gh pr create \
             --base main \
             --head "$branch" \
