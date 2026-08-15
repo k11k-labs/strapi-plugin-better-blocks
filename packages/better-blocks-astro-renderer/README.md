@@ -12,7 +12,7 @@
   <a href="https://github.com/qkix/strapi-plugins/blob/main/LICENSE">
     <img alt="license" src="https://img.shields.io/npm/l/@qkix/better-blocks-astro-renderer.svg" />
   </a>
-  <a href="https://buymeacoffee.com/k11k">
+  <a href="https://buymeacoffee.com/qkix">
     <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" />
   </a>
 </p>
@@ -615,7 +615,7 @@ pnpm --filter @qkix/better-blocks-astro-renderer test   # just this one
 
 This package is built and maintained in my free time, and it's free for everyone. If it has saved you time on a project, you can help keep it caffeinated and actively developed:
 
-<a href="https://buymeacoffee.com/k11k">
+<a href="https://buymeacoffee.com/qkix">
   <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black&style=for-the-badge" />
 </a>
 

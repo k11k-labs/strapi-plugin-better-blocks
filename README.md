@@ -6,7 +6,7 @@
   <a href="./LICENSE">
     <img alt="license" src="https://img.shields.io/npm/l/@qkix/strapi-plugin-better-blocks.svg" />
   </a>
-  <a href="https://buymeacoffee.com/k11k">
+  <a href="https://buymeacoffee.com/qkix">
     <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" />
   </a>
 </p>
