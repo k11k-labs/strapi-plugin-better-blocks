@@ -1,3 +1,27 @@
+## 0.14.0 (2026-08-15)
+
+### 🚀 Features
+
+- ⚠️  move the packages to the @qkix scope ([#103](https://github.com/qkix/strapi-plugin-better-blocks/pull/103))
+- **examples:** one Strapi instance and both renderers on the same content ([66465a7](https://github.com/qkix/strapi-plugin-better-blocks/commit/66465a7))
+
+### 🩹 Fixes
+
+- publish scoped packages publicly ([#99](https://github.com/qkix/strapi-plugin-better-blocks/pull/99))
+- keep generated changelogs out of prettier's way ([#96](https://github.com/qkix/strapi-plugin-better-blocks/pull/96))
+
+### ⚠️  Breaking Changes
+
+- move the packages to the @qkix scope  ([#103](https://github.com/qkix/strapi-plugin-better-blocks/pull/103))
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-core to 0.2.0
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.13.0 (2026-08-15)
 
 ### 🚀 Features
