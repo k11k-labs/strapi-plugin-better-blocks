@@ -33,6 +33,22 @@ jobs:
       - name: Derive the base and head SHAs for nx affected
         uses: nrwl/nx-set-shas@v4
 
+      # Nx caches task results on disk. Carrying that cache between runs is what
+      # makes a second push to the same PR skip everything it did not touch —
+      # the local equivalent of the remote cache Nx Cloud sells, which this repo
+      # deliberately does not use.
+      - name: Restore the Nx task cache
+        uses: actions/cache@v4
+        with:
+          path: .nx/cache
+          key: nx-${{ runner.os }}-node${{ matrix.node-version }}-${{ github.sha }}
+          restore-keys: |
+            nx-${{ runner.os }}-node${{ matrix.node-version }}-
+
       - run: pnpm install --frozen-lockfile
 
-      - run: pnpm exec nx affected -t lint,typecheck,test,build
+      # Match the runner instead of guessing: more workers than cores makes the
+      # run slower, not faster. The ceiling here is modest anyway — the critical
+      # path is the plugin build followed by the example's admin build, and no
+      # amount of parallelism shortens a chain.
+      - run: pnpm exec nx affected -t lint,typecheck,test,build --parallel=$(nproc)
