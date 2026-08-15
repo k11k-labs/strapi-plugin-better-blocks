@@ -3,8 +3,16 @@ import type { Core } from '@strapi/strapi';
 const config = ({
   env,
 }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => ({
+  /**
+   * In a normal install Strapi finds this plugin on its own. Here it cannot:
+   * plugin discovery requires the package relative to @strapi/core in the root
+   * node_modules, and a workspace package is only linked into this app. An
+   * explicit `resolve` points Strapi straight at the source package, which is
+   * also what makes the example run against the working tree.
+   */
   'better-blocks': {
     enabled: true,
+    resolve: '../../packages/strapi-plugin-better-blocks',
   },
   /**
    * Mux Video Uploader — enables the "Mux" source button in the Better Blocks
