@@ -277,6 +277,73 @@ export const fixtures: Fixture[] = [
     },
   },
   {
+    id: 'pie',
+    breaks: 'a chart with no axes at all, and a legend naming slices not series',
+    spec: {
+      version: 1,
+      type: 'pie',
+      title: 'Traffic by source',
+      description: 'Search 45%, direct 25%, social 18%, referral 12%.',
+      data: {
+        source: 'inline',
+        labels: ['Search', 'Direct', 'Social', 'Referral'],
+        series: [{ name: 'Sessions', values: [4500, 2500, 1800, 1200] }],
+      },
+    },
+  },
+  {
+    id: 'donut',
+    breaks: 'the same, with the middle removed',
+    spec: {
+      version: 1,
+      type: 'donut',
+      title: 'Storage used',
+      data: {
+        source: 'inline',
+        labels: ['Images', 'Video', 'Documents', 'Other'],
+        series: [{ name: 'GB', values: [120, 340, 45, 25] }],
+      },
+    },
+  },
+  {
+    id: 'pie-slivers',
+    breaks: 'slices too thin to label, and a legend that must still name them',
+    spec: {
+      version: 1,
+      type: 'pie',
+      title: 'One dominant slice',
+      data: {
+        source: 'inline',
+        labels: ['Chrome', 'Safari', 'Firefox', 'Edge', 'Opera', 'Other'],
+        series: [{ name: 'Share', values: [880, 60, 30, 18, 7, 5] }],
+      },
+    },
+  },
+  {
+    id: 'pie-single-slice',
+    breaks: 'a whole made of one thing',
+    spec: {
+      version: 1,
+      type: 'pie',
+      title: 'All of it',
+      data: { source: 'inline', labels: ['Everything'], series: [{ name: 'All', values: [100] }] },
+    },
+  },
+  {
+    id: 'pie-all-zero',
+    breaks: 'nothing to divide up — a full circle here would be a lie',
+    spec: {
+      version: 1,
+      type: 'pie',
+      title: 'Nothing recorded yet',
+      data: {
+        source: 'inline',
+        labels: ['A', 'B', 'C'],
+        series: [{ name: 'Counts', values: [0, 0, 0] }],
+      },
+    },
+  },
+  {
     id: 'markup-in-labels',
     breaks: 'escaping — this is a stored XSS if any of it reaches the output raw',
     spec: {

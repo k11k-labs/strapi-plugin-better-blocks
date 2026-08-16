@@ -29,7 +29,7 @@ export type ChartValidationResult = {
  * naming a type that exists in the union but has no renderer yet is rejected
  * here, so it surfaces as a stated reason rather than an empty box.
  */
-const IMPLEMENTED_TYPES = new Set<ChartType>(['bar', 'line', 'area']);
+const IMPLEMENTED_TYPES = new Set<ChartType>(['bar', 'line', 'area', 'pie', 'donut']);
 
 const DATA_SOURCES = new Set(['inline', 'media']);
 
@@ -79,11 +79,48 @@ export function validateChartSpec(value: unknown): ChartValidationResult {
 
   validateData(value.data, fail);
 
+  if (typeof type === 'string') validateForType(type, value.data, fail);
+
   if (value.options !== undefined && !isObject(value.options)) {
     fail('options', 'options must be an object');
   }
 
   return { valid: issues.length === 0, issues };
+}
+
+/**
+ * The constraints that only apply to some chart types.
+ *
+ * A pie is the awkward one, and both rules exist so that bad input is refused
+ * rather than quietly reinterpreted: rendering the first of three series, or
+ * treating a negative as zero, loses data while looking like it worked.
+ */
+function validateForType(
+  type: string,
+  data: unknown,
+  fail: (path: string, message: string) => void
+): void {
+  if (type !== 'pie' && type !== 'donut') return;
+  if (!isObject(data) || !Array.isArray(data.series)) return;
+
+  if (data.series.length > 1) {
+    fail(
+      'data.series',
+      `a ${type} chart shows one series as shares of a whole, but got ${data.series.length}`
+    );
+  }
+
+  data.series.forEach((series, i) => {
+    if (!isObject(series) || !Array.isArray(series.values)) return;
+    series.values.forEach((value, j) => {
+      if (typeof value === 'number' && value < 0) {
+        fail(
+          `data.series[${i}].values[${j}]`,
+          `a ${type} slice cannot be negative — it is a share of a whole`
+        );
+      }
+    });
+  });
 }
 
 function validateData(data: unknown, fail: (path: string, message: string) => void): void {

@@ -91,6 +91,37 @@ fed back into the layout before the plot is sized — otherwise the chart with
 eight series, the one that most needs its legend, is exactly the one whose
 legend runs off the side.
 
+## Pie and donut
+
+`type: 'pie'` and `type: 'donut'`. These have no axes, no baseline and no
+categories along a scale, so they share almost nothing with the rest except the
+title, the legend and the accessible description.
+
+The colors mean something different too. In a bar or line chart a color is a
+**series**; in a pie there is one series and a color is a **category**, so the
+legend names the slices — it is the only thing that does.
+
+Two inputs are **refused** rather than reinterpreted, because quietly
+reinterpreting them loses data while looking like it worked:
+
+| Input                | Why it is rejected                                                              |
+| -------------------- | ------------------------------------------------------------------------------- |
+| more than one series | a pie shows shares of a whole; rendering only the first silently drops the rest |
+| a negative value     | a slice cannot have a negative share of anything                                |
+
+A zero or a `null` is simply no wedge. If **everything** is zero, nothing is
+drawn at all — a full circle in one arbitrary color would read as "all of it is
+this category", which is a lie about data that does not exist.
+
+Slices keep the author's order rather than being sorted by size, so slice order
+and legend order agree.
+
+A slice is labeled with its share only when the label **fits inside the wedge**.
+That is measured rather than guessed at from the angle: how much room a slice
+has depends on the radius and on how wide the text is, so a 6% slice on a large
+chart has room the same slice on a small one does not. Slices too thin to label
+are named by the legend.
+
 ## Theming
 
 | Property                  | Applies to               | Falls back to         |
