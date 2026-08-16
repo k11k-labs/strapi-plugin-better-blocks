@@ -1,3 +1,13 @@
+## 0.1.2 (2026-08-16)
+
+### 🚀 Features
+
+- **chartkit:** ship the Better Blocks block registration ready made ([#126](https://github.com/qkix/strapi-plugins/pull/126))
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.1.1 (2026-08-16)
 
 ### 🚀 Features
