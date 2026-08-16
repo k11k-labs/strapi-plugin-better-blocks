@@ -1,6 +1,6 @@
 {
   "name": "@qkix/chartkit-core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Chart specification and server-side SVG rendering for Chartkit \u2014 turns a ChartSpec into a finished SVG string with no DOM, no framework and no client-side JavaScript",
   "type": "commonjs",
   "main": "dist/index.js",
