@@ -1,5 +1,7 @@
 import type { Core } from '@strapi/strapi';
 
+import { createTtlCache, type TtlCache } from './ttlCache';
+
 /* ---------------------------------------------------------------------------
  * Social oEmbed proxy service
  *
@@ -29,6 +31,7 @@ export interface SocialConfig {
   platforms?: SocialPlatform[];
   cache?: boolean;
   cacheTTL?: number;
+  cacheMaxEntries?: number;
   instagram?: { accessToken?: string };
   facebook?: { accessToken?: string };
 }
@@ -98,7 +101,7 @@ export const buildEndpoint = (
  * rejects outright, so expand them to the canonical `/pin/<id>/` URL first.
  * Returns the original URL when it isn't a short link or can't be resolved.
  */
-const resolveShortUrl = async (url: string): Promise<string> => {
+export const resolveShortUrl = async (url: string): Promise<string> => {
   if (!/^https?:\/\/pin\.it\//i.test(url)) return url;
   try {
     const res = await fetch(url, { redirect: 'follow' });
@@ -169,14 +172,35 @@ export const normalize = (
 
 /* --- Service ---------------------------------------------------------------*/
 
-const cache = new Map<string, { expires: number; data: NormalisedOEmbed }>();
+/**
+ * Bounded so a long-running instance cannot accumulate one entry per social post
+ * ever embedded. 500 posts is far more than an editor touches in a TTL window,
+ * and `cacheMaxEntries` raises it for anyone who disagrees.
+ */
+export const DEFAULT_CACHE_MAX_ENTRIES = 500;
 
 const service = ({ strapi }: { strapi: Core.Strapi }) => {
   const getConfig = (): SocialConfig =>
     strapi.plugin('better-blocks').config('social', {}) as SocialConfig;
 
+  // Built on first use rather than at module load, so it can read the
+  // configured size — and so it belongs to this Strapi instance instead of the
+  // process, which matters the moment a test boots two of them.
+  let cache: TtlCache<NormalisedOEmbed> | null = null;
+  const getCache = (): TtlCache<NormalisedOEmbed> => {
+    if (!cache) {
+      cache = createTtlCache<NormalisedOEmbed>({
+        max: getConfig().cacheMaxEntries ?? DEFAULT_CACHE_MAX_ENTRIES,
+      });
+    }
+    return cache;
+  };
+
   return {
     detectPlatform,
+
+    /** Exposed for tests and for anyone who needs to drop cached embeds. */
+    clearCache: () => cache?.clear(),
 
     /**
      * Fetch (and cache) the normalized oEmbed for `url`. `platform` may be
@@ -210,8 +234,8 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
       const key = `${resolved}:${url}`;
 
       if (useCache) {
-        const hit = cache.get(key);
-        if (hit && hit.expires > Date.now()) return hit.data;
+        const hit = getCache().get(key);
+        if (hit) return hit;
       }
 
       let data: NormalisedOEmbed | null = null;
@@ -259,7 +283,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
       }
 
       if (useCache && ttl > 0) {
-        cache.set(key, { expires: Date.now() + ttl, data });
+        getCache().set(key, data, ttl);
       }
 
       return data;

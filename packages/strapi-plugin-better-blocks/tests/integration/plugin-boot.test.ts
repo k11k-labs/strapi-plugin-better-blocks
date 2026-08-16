@@ -60,6 +60,7 @@ describe('plugin config resolution', () => {
     expect(social.enabled).toBe(true);
     expect(social.platforms).toContain('twitter');
     expect(social.cacheTTL).toBe(86400);
+    expect(social.cacheMaxEntries).toBe(500);
     expect(social.instagram.accessToken).toBeUndefined();
   });
 });
