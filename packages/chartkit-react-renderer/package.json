@@ -1,0 +1,97 @@
+{
+  "name": "@qkix/chartkit-react-renderer",
+  "version": "0.0.0",
+  "description": "React renderer for Chartkit charts \u2014 server-rendered SVG with no client-side JavaScript, and the Better Blocks block plugin that draws a chart inside a document",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0",
+    "@qkix/better-blocks-react-renderer": ">=0.1.0"
+  },
+  "dependencies": {
+    "@qkix/chartkit-core": "workspace:^"
+  },
+  "devDependencies": {
+    "@qkix/better-blocks-core": "workspace:^",
+    "@qkix/better-blocks-react-renderer": "workspace:^",
+    "@qkix/eslint-config": "workspace:*",
+    "@qkix/tsconfig": "workspace:*",
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^10.8.1",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.4.2",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "keywords": [
+    "chart",
+    "charts",
+    "svg",
+    "react",
+    "chartkit",
+    "strapi",
+    "ssr"
+  ],
+  "license": "MIT",
+  "author": "qkix",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qkix/strapi-plugins.git",
+    "directory": "packages/chartkit-react-renderer"
+  },
+  "bugs": {
+    "url": "https://github.com/qkix/strapi-plugins/issues"
+  },
+  "homepage": "https://github.com/qkix/strapi-plugins#readme",
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:renderer-extension"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependenciesMeta": {
+    "@qkix/better-blocks-react-renderer": {
+      "optional": true
+    }
+  }
+}

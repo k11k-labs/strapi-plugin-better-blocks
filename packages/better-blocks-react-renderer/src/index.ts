@@ -58,4 +58,13 @@ export type {
   FontFamilyModifierProps,
   FontSizeModifierProps,
   BlockComponentProps,
+  // Registering a block type from another package. These were reachable only
+  // through the source before, which made `blockPlugins` a prop nobody outside
+  // could give a type to.
+  BlockPlugin,
+  CustomBlockProps,
+  BlockDefinition,
+  CustomBlockNode,
+  AnyBlockNode,
+  ExtendedBlocksContent,
 } from './types';

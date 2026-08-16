@@ -63,6 +63,24 @@ export const boundaries = {
             onlyDependOnLibsWithTags: ['scope:core', 'scope:tooling'],
           },
           {
+            // A renderer that extends another renderer of the same framework —
+            // Chartkit drawing a chart block inside a Better Blocks document.
+            // It needs that renderer's plugin types, and only as an *optional*
+            // peer: the package also works on its own, for a chart that is not
+            // in a document at all.
+            //
+            // Deliberately a separate tag rather than letting scope:renderer
+            // depend on itself, which would also permit the React renderer to
+            // reach into the Astro one. That is the case the original rule
+            // exists to prevent, and it still is prevented.
+            sourceTag: 'scope:renderer-extension',
+            onlyDependOnLibsWithTags: [
+              'scope:core',
+              'scope:renderer',
+              'scope:tooling',
+            ],
+          },
+          {
             sourceTag: 'scope:plugin',
             onlyDependOnLibsWithTags: ['scope:core', 'scope:tooling'],
           },
