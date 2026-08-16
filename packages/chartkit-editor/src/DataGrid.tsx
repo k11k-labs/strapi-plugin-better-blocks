@@ -12,20 +12,10 @@
  * feeling like typing.
  */
 
-import {
-  Box,
-  Button,
-  Flex,
-  IconButton,
-  Table,
-  Tbody,
-  Td,
-  Th,
-  Thead,
-  Tr,
-} from '@strapi/design-system';
+import { Box, Button, Flex, Table, Tbody, Td, Th, Thead, Tr } from '@strapi/design-system';
 import { Plus, Trash } from '@strapi/icons';
 import * as React from 'react';
+import { styled } from 'styled-components';
 
 import type { ChartSpec } from '@qkix/chartkit-core';
 
@@ -50,103 +40,107 @@ export function DataGrid({ spec, onChange, disabled }: DataGridProps) {
 
   return (
     <Box>
-      <Box overflow="auto" maxHeight="380px">
-        <Table colCount={series.length + 2} rowCount={labels.length + 1}>
-          <Thead>
-            <Tr>
-              <Th>
-                <ColumnHeading>Category</ColumnHeading>
-              </Th>
+      <HoverReveal>
+        <Box overflow="auto" maxHeight="380px">
+          <Table colCount={series.length + 2} rowCount={labels.length + 1}>
+            <Thead>
+              <Tr>
+                <Th>
+                  <ColumnHeading>Category</ColumnHeading>
+                </Th>
 
-              {series.map((one, seriesIndex) => (
-                <Th key={seriesIndex} style={{ borderLeft: COLUMN_RULE }}>
-                  {/* The delete button is taken out of the flow, so the name
+                {series.map((one, seriesIndex) => (
+                  <Th key={seriesIndex} style={{ borderLeft: COLUMN_RULE }}>
+                    {/* The delete button is taken out of the flow, so the name
                       input spans the whole cell and its right edge lands on the
                       same line as the numbers below it. Any button sharing the
                       row steals width from the input, and the heading drifts
                       away from the column it names. */}
-                  {/* `flex: 1` because Strapi's Th wraps its children in a
+                    {/* `flex: 1` because Strapi's Th wraps its children in a
                       flex row of its own: without it this shrinks to the width
                       of the text and the heading sits mid-column, nowhere near
                       the numbers it names. */}
-                  <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
-                    <CellInput
-                      value={one.name}
-                      align="right"
-                      aria-label={`Name of series ${seriesIndex + 1}`}
-                      disabled={disabled}
-                      onCommit={(text) => onChange(setSeriesName(spec, seriesIndex, text))}
-                    />
-                    <span
-                      style={{
-                        position: 'absolute',
-                        left: 0,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                      }}
-                    >
-                      <IconButton
-                        label={`Remove series ${one.name}`}
-                        variant="ghost"
-                        size="S"
-                        // The last series is not removable: a chart with none
-                        // has nothing to draw. Disabled rather than hidden, so
-                        // the control does not move as series come and go.
-                        disabled={disabled || series.length <= 1}
-                        onClick={() => onChange(removeSeries(spec, seriesIndex))}
+                    <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
+                      <CellInput
+                        value={one.name}
+                        align="right"
+                        aria-label={`Name of series ${seriesIndex + 1}`}
+                        disabled={disabled}
+                        onCommit={(text) => onChange(setSeriesName(spec, seriesIndex, text))}
+                      />
+                      <span
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: '50%',
+                          transform: 'translateY(-50%)',
+                        }}
                       >
-                        <Trash />
-                      </IconButton>
-                    </span>
-                  </div>
-                </Th>
-              ))}
-
-              <Th>
-                <ColumnHeading>&nbsp;</ColumnHeading>
-              </Th>
-            </Tr>
-          </Thead>
-
-          <Tbody>
-            {labels.map((label, rowIndex) => (
-              <Tr key={rowIndex}>
-                <Td>
-                  <CellInput
-                    value={label}
-                    aria-label={`Label of category ${rowIndex + 1}`}
-                    disabled={disabled}
-                    onCommit={(text) => onChange(setLabel(spec, rowIndex, text))}
-                  />
-                </Td>
-
-                {series.map((one, seriesIndex) => (
-                  <Td key={seriesIndex} style={{ borderLeft: COLUMN_RULE }}>
-                    <NumberCell
-                      value={one.values[rowIndex] ?? null}
-                      aria-label={`${one.name} at ${label}`}
-                      disabled={disabled}
-                      onCommit={(value) => onChange(setCell(spec, seriesIndex, rowIndex, value))}
-                    />
-                  </Td>
+                        <RemoveButton
+                          type="button"
+                          className="chartkit-remove"
+                          aria-label={`Remove series ${one.name}`}
+                          // The last series is not removable: a chart with none
+                          // has nothing to draw. Disabled rather than hidden, so
+                          // the control does not move as series come and go.
+                          disabled={disabled || series.length <= 1}
+                          onClick={() => onChange(removeSeries(spec, seriesIndex))}
+                        >
+                          <Trash />
+                        </RemoveButton>
+                      </span>
+                    </div>
+                  </Th>
                 ))}
 
-                <Td>
-                  <IconButton
-                    label={`Remove category ${label}`}
-                    variant="ghost"
-                    size="S"
-                    disabled={disabled}
-                    onClick={() => onChange(removeRow(spec, rowIndex))}
-                  >
-                    <Trash />
-                  </IconButton>
-                </Td>
+                <Th style={{ width: '1%' }}>
+                  <ColumnHeading>&nbsp;</ColumnHeading>
+                </Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+            </Thead>
+
+            <Tbody>
+              {labels.map((label, rowIndex) => (
+                <Tr key={rowIndex}>
+                  <Td>
+                    <CellInput
+                      value={label}
+                      aria-label={`Label of category ${rowIndex + 1}`}
+                      disabled={disabled}
+                      onCommit={(text) => onChange(setLabel(spec, rowIndex, text))}
+                    />
+                  </Td>
+
+                  {series.map((one, seriesIndex) => (
+                    <Td key={seriesIndex} style={{ borderLeft: COLUMN_RULE }}>
+                      <NumberCell
+                        value={one.values[rowIndex] ?? null}
+                        aria-label={`${one.name} at ${label}`}
+                        disabled={disabled}
+                        onCommit={(value) => onChange(setCell(spec, seriesIndex, rowIndex, value))}
+                      />
+                    </Td>
+                  ))}
+
+                  {/* Sized to its icon: `width: 1%` makes the table give this
+                    column the least it can, leaving the width to the data. */}
+                  <Td style={{ width: '1%', paddingLeft: 0, paddingRight: 8 }}>
+                    <RemoveButton
+                      type="button"
+                      className="chartkit-remove"
+                      aria-label={`Remove category ${label}`}
+                      disabled={disabled}
+                      onClick={() => onChange(removeRow(spec, rowIndex))}
+                    >
+                      <Trash />
+                    </RemoveButton>
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      </HoverReveal>
 
       <Flex gap={2} paddingTop={3}>
         <Button
@@ -171,6 +165,58 @@ export function DataGrid({ spec, onChange, disabled }: DataGridProps) {
     </Box>
   );
 }
+
+/**
+ * Reveals the delete controls on the row being pointed at.
+ *
+ * A hundred rows each carrying a visible button is a wall of chrome around the
+ * numbers, which are the point. Hidden until hover — and until keyboard focus,
+ * without which the control would exist only for people using a mouse.
+ */
+const HoverReveal = styled.div`
+  .chartkit-remove {
+    opacity: 0;
+    transition: opacity 100ms;
+  }
+
+  tr:hover .chartkit-remove,
+  .chartkit-remove:focus-visible {
+    opacity: 1;
+  }
+`;
+
+/**
+ * The delete affordance: an icon, and nothing else.
+ *
+ * Deliberately not the design system's IconButton, whose padding and background
+ * are right for a toolbar and far too much for something repeated once per row.
+ */
+const RemoveButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 0;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  line-height: 0;
+
+  svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  &:hover:not(:disabled) {
+    color: ${({ theme }) => theme.colors.danger600};
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+`;
 
 const ColumnHeading = ({ children }: { children: React.ReactNode }) => (
   <Box paddingLeft={2} paddingRight={2}>
