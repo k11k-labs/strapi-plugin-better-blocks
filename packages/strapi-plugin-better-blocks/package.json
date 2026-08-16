@@ -59,7 +59,7 @@
     "verify": "strapi-plugin verify",
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
-    "typecheck": "tsc -p admin/tsconfig.json && tsc -p server/tsconfig.json"
+    "typecheck": "tsc -p admin/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit"
   },
   "dependencies": {
     "@qkix/better-blocks-core": "workspace:^",
@@ -73,6 +73,7 @@
   },
   "devDependencies": {
     "@qkix/eslint-config": "workspace:*",
+    "@qkix/strapi-test-harness": "workspace:*",
     "@qkix/tsconfig": "workspace:*",
     "@strapi/sdk-plugin": "^5.3.2",
     "@strapi/strapi": "^5.12.5",

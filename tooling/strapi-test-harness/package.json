@@ -1,0 +1,51 @@
+{
+  "name": "@qkix/strapi-test-harness",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Boots a real Strapi instance against a throwaway SQLite database so plugin server code can be tested against the actual lifecycle, not a mock of it",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./vitest-preset": {
+      "types": "./src/vitest-preset.d.ts",
+      "default": "./src/vitest-preset.js"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@qkix/eslint-config": "workspace:*",
+    "@qkix/tsconfig": "workspace:*",
+    "@strapi/strapi": "^5.52.0",
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^20",
+    "better-sqlite3": "^12.6.2",
+    "eslint": "^10.8.1",
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "@strapi/strapi": "^5.0.0"
+  },
+  "engines": {
+    "node": ">=20.0.0 <23.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:tooling"
+    ]
+  }
+}

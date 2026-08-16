@@ -24,7 +24,7 @@ export interface NormalisedOEmbed {
   height?: number;
 }
 
-interface SocialConfig {
+export interface SocialConfig {
   enabled?: boolean;
   platforms?: SocialPlatform[];
   cache?: boolean;
@@ -58,7 +58,7 @@ export const detectPlatform = (url: string): SocialPlatform | null => {
  * Returns the platform oEmbed endpoint to call, or null when the platform has
  * no public oEmbed API (e.g. LinkedIn, which we render via a constructed iframe).
  */
-const buildEndpoint = (
+export const buildEndpoint = (
   platform: SocialPlatform,
   url: string,
   config: SocialConfig
@@ -112,7 +112,7 @@ const resolveShortUrl = async (url: string): Promise<string> => {
 };
 
 /** LinkedIn has no oEmbed API but exposes a stable iframe embed by URN. */
-const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
+export const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
   // Activity URN appears in share URLs, e.g. .../urn:li:activity:7000000000000000000
   const urnMatch = url.match(
     /(?:urn:li:)?(ugcPost|activity|share)[:-](\d{10,})/i
@@ -145,10 +145,10 @@ const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
  * never executes anyway — worse, its inert tag makes a renderer believe the
  * widget is already loaded. Strip it so the stored html is markup only.
  */
-const stripScripts = (html: string): string =>
+export const stripScripts = (html: string): string =>
   html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').trim();
 
-const normalize = (
+export const normalize = (
   platform: SocialPlatform,
   url: string,
   raw: Record<string, unknown>
