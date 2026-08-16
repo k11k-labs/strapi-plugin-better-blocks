@@ -16,6 +16,8 @@
   },
   "dependencies": {
     "@qkix/better-blocks-core": "workspace:^",
+    "@qkix/chartkit-core": "workspace:^",
+    "@qkix/chartkit-editor": "workspace:^",
     "@qkix/strapi-plugin-better-blocks": "workspace:*",
     "@strapi/plugin-cloud": "5.52.0",
     "@strapi/plugin-users-permissions": "5.52.0",

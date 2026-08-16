@@ -10,11 +10,11 @@
 import { bandScale, computeStackedDomain, computeValueDomain, type Domain } from '../scale';
 import { element, round, tag } from '../svg';
 import { seriesColor } from '../theme';
-import type { AxisBounds, BarMode, ChartData, Series } from '../types';
+import type { AxisBounds, StackMode, ChartData, Series } from '../types';
 
 export type BarRenderInput = {
   data: ChartData;
-  mode: BarMode;
+  mode: StackMode;
   x: ReturnType<typeof bandScale>;
   y: (value: number) => number;
   /** Where the baseline sits, in SVG coordinates. */
@@ -42,7 +42,7 @@ const MAX_BAR_WIDTH = 72;
  */
 export function barDomain(
   series: readonly Series[],
-  mode: BarMode,
+  mode: StackMode,
   bounds: AxisBounds | undefined
 ): Domain {
   return mode === 'stacked'

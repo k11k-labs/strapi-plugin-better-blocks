@@ -180,6 +180,17 @@ type Series = { name: string; values: (number | null)[] };
 
 Two things in there are deliberate.
 
+### Versions
+
+| Version | What changed                                                          |
+| ------- | --------------------------------------------------------------------- |
+| 1       | The first. `options.barMode` chose grouped or stacked bars.           |
+| 2       | `barMode` became `stackMode`, now that stacking applies to areas too. |
+
+`renderChart` migrates an older spec in memory before drawing it, so publishing
+a new Chartkit never blanks charts already in a database. Migrating the stored
+content is a separate, opt-in step.
+
 **`version` from the first commit.** A spec is stored nested inside a Better
 Blocks document, and Better Blocks knows nothing about its shape — it only knows
 to hand each chart node to `migrateChartSpec`. That contract has to exist before

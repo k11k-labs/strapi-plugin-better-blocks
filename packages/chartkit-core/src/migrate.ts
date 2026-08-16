@@ -1,14 +1,14 @@
 /**
  * Bringing an old spec up to the current version.
  *
- * There is nothing to migrate yet — version 1 is the first — and that is
- * exactly when this has to exist. A `ChartSpec` lives nested inside a Better
- * Blocks document, so migrating it is Better Blocks walking the document and
- * handing each chart node to this package. That contract has to be in place
- * before anyone stores a spec, because adding it afterwards means changing the
- * block registration API, which is a breaking change in someone else's package.
+ * A `ChartSpec` lives nested inside a Better Blocks document, so migrating one
+ * is Better Blocks walking the document and handing each chart node to this
+ * package — it never learns what a spec looks like.
  *
- * So the shape below is the point, not the (currently empty) list of steps.
+ * | Version | What changed |
+ * | ------- | ------------ |
+ * | 1       | The first. `options.barMode` chose grouped or stacked bars. |
+ * | 2       | `barMode` became `stackMode`, because stacking now applies to area charts too and an option named after bars that also governs areas misleads every reader of it. |
  */
 
 import { CHART_SPEC_VERSION } from './types';
@@ -52,11 +52,31 @@ export function migrateChartSpec(value: unknown): ChartMigrationResult {
     };
   }
 
-  // Unreachable while 1 is the only version: anything below it does not exist.
-  // The branch stays so that adding version 2 is a matter of filling in steps
-  // here rather than reshaping the function.
+  if (version === 1) return { status: 'migrated', spec: toVersion2(spec) };
+
   return {
     status: 'skipped',
     reason: `no migration path from chart spec version ${version}`,
   };
+}
+
+/**
+ * Version 1 to 2: `options.barMode` becomes `options.stackMode`.
+ *
+ * A rename only. The values are unchanged, so nothing about how a chart looks
+ * moves — which is the kind of migration worth doing eagerly rather than
+ * carrying a second name forever.
+ */
+function toVersion2(spec: Partial<ChartSpec> & { options?: Record<string, unknown> }): ChartSpec {
+  const { barMode, ...options } = spec.options ?? {};
+
+  return {
+    ...spec,
+    version: 2,
+    options: {
+      ...options,
+      // An existing stackMode wins, in the unlikely event a spec carries both.
+      ...(options.stackMode === undefined && barMode !== undefined ? { stackMode: barMode } : {}),
+    },
+  } as ChartSpec;
 }

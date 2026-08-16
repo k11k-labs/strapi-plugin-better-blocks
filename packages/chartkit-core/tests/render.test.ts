@@ -444,3 +444,72 @@ describe('migrateChartSpec', () => {
     });
   });
 });
+
+describe('spec version 2', () => {
+  it('renames barMode to stackMode, keeping the value', () => {
+    const v1 = {
+      version: 1,
+      type: 'bar',
+      data: { source: 'inline', labels: ['A'], series: [{ name: 'S', values: [1] }] },
+      options: { barMode: 'stacked', legend: false },
+    };
+
+    const result = migrateChartSpec(v1);
+
+    expect(result.status).toBe('migrated');
+    if (result.status !== 'migrated') return;
+    expect(result.spec.version).toBe(2);
+    expect(result.spec.options?.stackMode).toBe('stacked');
+    expect((result.spec.options as Record<string, unknown>).barMode).toBeUndefined();
+    // Everything else is carried across untouched.
+    expect(result.spec.options?.legend).toBe(false);
+  });
+
+  it('renders a version 1 spec rather than refusing it', () => {
+    // Publishing a new Chartkit must not blank every chart already stored.
+    const v1 = {
+      version: 1,
+      type: 'bar',
+      title: 'Old chart',
+      data: {
+        source: 'inline',
+        labels: ['A', 'B'],
+        series: [
+          { name: 'S', values: [1, 2] },
+          { name: 'T', values: [3, 4] },
+        ],
+      },
+      options: { barMode: 'stacked' },
+    };
+
+    const result = renderChart(v1, { locale: 'en-US' });
+
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.svg).toContain('chartkit-bar-stacked');
+  });
+});
+
+describe('stacked area', () => {
+  it('sizes the axis to the totals, not the tallest single band', () => {
+    const svg = svgOf(fixtureById('area-stacked').spec);
+    const ticks = axisLabels(svg).map(Number);
+
+    // Friday totals 310 + 160 + 70 = 540; the tallest single value is 310.
+    expect(Math.max(...ticks)).toBeGreaterThan(310 * 1.4);
+  });
+
+  it('stacks each band on the one below it', () => {
+    const svg = svgOf(fixtureById('area-stacked').spec);
+    const fills = [...svg.matchAll(/<path d="([^"]*)"[^>]*fill-opacity=/g)].map((m) => m[1]);
+
+    // One filled band per series, and they cannot all share the baseline.
+    expect(fills).toHaveLength(3);
+    expect(new Set(fills).size).toBe(3);
+  });
+
+  it('leaves an unstacked area sitting on the baseline', () => {
+    const svg = svgOf(fixtureById('area').spec);
+    expect(svg).toContain('chartkit-area');
+  });
+});

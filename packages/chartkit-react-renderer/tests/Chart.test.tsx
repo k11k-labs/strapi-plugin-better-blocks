@@ -8,7 +8,7 @@ import type { ChartSpec } from '@qkix/chartkit-core';
 import { Chart, chartBlockPlugin } from '../src';
 
 const spec: ChartSpec = {
-  version: 1,
+  version: 2,
   type: 'bar',
   title: 'Quarterly revenue',
   description: 'Revenue by quarter.',
@@ -102,7 +102,7 @@ describe('chartBlockPlugin', () => {
     const plugin = chartBlockPlugin();
     const issues: { path: string; message: string }[] = [];
 
-    plugin.validate?.({ type: 'chart', spec: { version: 1, type: 'bar' } } as never, {
+    plugin.validate?.({ type: 'chart', spec: { version: 2, type: 'bar' } } as never, {
       path: '[3]',
       fail: (path, message) => issues.push({ path, message }),
     });
@@ -117,5 +117,22 @@ describe('chartBlockPlugin', () => {
     const outcome = plugin.migrate?.({ type: 'chart', spec: { version: 99 } } as never);
 
     expect(outcome?.status).toBe('skipped');
+  });
+
+  it('upgrades a version 1 spec through the block migrator', () => {
+    // The path Better Blocks actually walks: it hands each chart node to this
+    // package and never learns what a spec is.
+    const plugin = chartBlockPlugin();
+    const outcome = plugin.migrate?.({
+      type: 'chart',
+      spec: { version: 1, type: 'bar', options: { barMode: 'stacked' } },
+    } as never);
+
+    expect(outcome?.status).toBe('migrated');
+    if (outcome?.status !== 'migrated') return;
+    const spec = (outcome.node as { spec: { version: number; options: Record<string, unknown> } })
+      .spec;
+    expect(spec.version).toBe(2);
+    expect(spec.options.stackMode).toBe('stacked');
   });
 });
