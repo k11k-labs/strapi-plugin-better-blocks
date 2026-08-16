@@ -22,3 +22,6 @@ export type {
 } from './types';
 
 export { seriesColor } from './theme';
+
+export { chartBlock, createChartBlock, CHART_BLOCK_TYPE } from './block';
+export type { ChartBlockNode } from './block';

@@ -1,0 +1,87 @@
+{
+  "name": "@qkix/chartkit-astro-renderer",
+  "version": "0.0.0",
+  "description": "Astro renderer for Chartkit charts \u2014 server-rendered SVG with zero client-side JavaScript, and the Better Blocks block plugin that draws a chart inside a document",
+  "type": "module",
+  "types": "./index.ts",
+  "exports": {
+    ".": {
+      "types": "./index.ts",
+      "default": "./index.ts"
+    },
+    "./Chart.astro": "./src/Chart.astro",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "index.ts",
+    "env.d.ts"
+  ],
+  "scripts": {
+    "build": "astro check",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@qkix/chartkit-core": "workspace:^"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@qkix/better-blocks-astro-renderer": "workspace:^",
+    "@qkix/better-blocks-core": "workspace:^",
+    "@qkix/eslint-config": "workspace:*",
+    "@qkix/tsconfig": "workspace:*",
+    "astro": "^5.0.0",
+    "eslint": "^10.8.1",
+    "linkedom": "^0.18.12",
+    "prettier": "^3.4.2",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript": "^5.7.2",
+    "vitest": "^3.0.0"
+  },
+  "peerDependencies": {
+    "astro": ">=4.0.0",
+    "@qkix/better-blocks-astro-renderer": ">=0.1.0"
+  },
+  "keywords": [
+    "chart",
+    "charts",
+    "svg",
+    "astro",
+    "chartkit",
+    "strapi",
+    "ssr",
+    "zero-js"
+  ],
+  "license": "MIT",
+  "author": "qkix",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qkix/strapi-plugins.git",
+    "directory": "packages/chartkit-astro-renderer"
+  },
+  "bugs": {
+    "url": "https://github.com/qkix/strapi-plugins/issues"
+  },
+  "homepage": "https://github.com/qkix/strapi-plugins#readme",
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:renderer-extension"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "peerDependenciesMeta": {
+    "@qkix/better-blocks-astro-renderer": {
+      "optional": true
+    }
+  }
+}

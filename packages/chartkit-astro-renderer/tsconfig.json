@@ -1,0 +1,8 @@
+{
+  "extends": ["astro/tsconfigs/strict", "@qkix/tsconfig/base.json"],
+  "compilerOptions": {
+    "verbatimModuleSyntax": false
+  },
+  "include": ["src", "tests", "index.ts", "env.d.ts"],
+  "exclude": ["node_modules", "playground"]
+}

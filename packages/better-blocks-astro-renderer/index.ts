@@ -56,4 +56,12 @@ export type {
   CustomBlocksConfig,
   CustomModifiersConfig,
   AstroComponentFactory,
+  // Registering a block type from another package. These were reachable only
+  // through the source before, which made `blockPlugins` a prop nobody outside
+  // could give a type to.
+  AstroBlockPlugin,
+  BlockDefinition,
+  CustomBlockNode,
+  AnyBlockNode,
+  ExtendedBlocksContent,
 } from './src/types';

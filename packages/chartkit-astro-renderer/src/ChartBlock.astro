@@ -1,0 +1,31 @@
+---
+/**
+ * Adapts a Better Blocks chart node to the Chart component.
+ *
+ * Better Blocks hands a registered block its whole node, since it cannot know
+ * what attributes the block has. Chart takes a spec. This is the one line
+ * between them — its React counterpart is an inline arrow in `blockPlugin.tsx`,
+ * but Astro components cannot be written inline, so it gets a file.
+ */
+import type { ChartSpec } from '@qkix/chartkit-core';
+
+import Chart from './Chart.astro';
+
+interface Props {
+  node: { spec?: ChartSpec; [attribute: string]: unknown };
+}
+
+const { node } = Astro.props;
+
+// Charts in one document must not share the ids their accessible names point
+// at. There is no node id to lean on, so the title is the most stable thing
+// available.
+const slug =
+  String(node.spec?.title ?? 'chart')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+    .slice(0, 40) || 'chart';
+---
+
+{node.spec && <Chart spec={node.spec} idPrefix={`chartkit-${slug}`} />}
