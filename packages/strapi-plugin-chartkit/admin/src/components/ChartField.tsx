@@ -66,63 +66,79 @@ const ChartField = React.forwardRef<HTMLDivElement, ChartFieldProps>((props, ref
   const editing = stored.status === 'ok' ? stored.spec : starter;
 
   return (
-    <Field.Root id={name} name={name} required={required} error={error} hint={hint}>
-      <Flex direction="column" alignItems="stretch" gap={1} ref={ref}>
-        <Field.Label>{label}</Field.Label>
+    <>
+      <Field.Root id={name} name={name} required={required} error={error} hint={hint}>
+        <Flex direction="column" alignItems="stretch" gap={1} ref={ref}>
+          <Field.Label>{label}</Field.Label>
 
-        {stored.status === 'ok' && (
-          <ChartPreview
-            spec={stored.spec}
-            locale={locale}
-            idPrefix={`chartkit-${name}`}
-            onClick={disabled ? undefined : () => setOpen(true)}
-          />
-        )}
+          {stored.status === 'ok' && (
+            <ChartPreview
+              spec={stored.spec}
+              locale={locale}
+              idPrefix={`chartkit-${name}`}
+              onClick={disabled ? undefined : () => setOpen(true)}
+            />
+          )}
 
-        {stored.status === 'empty' && (
-          <EmptyState disabled={disabled} onCreate={() => setOpen(true)} />
-        )}
+          {stored.status === 'empty' && (
+            <EmptyState
+              disabled={disabled}
+              hasError={Boolean(error)}
+              onCreate={() => setOpen(true)}
+            />
+          )}
 
-        {stored.status === 'unreadable' && (
-          <Box padding={4} background="danger100" hasRadius>
-            <Typography variant="pi" fontWeight="bold" textColor="danger600" tag="p">
-              {stored.reason}
-            </Typography>
-            <Box paddingTop={2}>
-              {/* No edit button. Opening the editor here would show the starter
-                chart over data that exists, and saving would overwrite it. */}
-              <Typography variant="pi" textColor="danger600">
-                Editing here would replace it, so the field is read-only until the value is fixed or
-                cleared.
+          {stored.status === 'unreadable' && (
+            <Box padding={4} background="danger100" hasRadius>
+              <Typography variant="pi" fontWeight="bold" textColor="danger600" tag="p">
+                {stored.reason}
               </Typography>
+              <Box paddingTop={2}>
+                {/* No edit button. Opening the editor here would show the starter
+                chart over data that exists, and saving would overwrite it. */}
+                <Typography variant="pi" textColor="danger600">
+                  Editing here would replace it, so the field is read-only until the value is fixed
+                  or cleared.
+                </Typography>
+              </Box>
             </Box>
-          </Box>
-        )}
+          )}
 
-        {stored.status === 'ok' && (
-          <Flex paddingTop={2} gap={2}>
-            <Button variant="secondary" size="S" disabled={disabled} onClick={() => setOpen(true)}>
-              Edit chart
-            </Button>
-          </Flex>
-        )}
+          {stored.status === 'ok' && (
+            <Flex paddingTop={2} gap={2}>
+              <Button
+                variant="secondary"
+                size="S"
+                disabled={disabled}
+                onClick={() => setOpen(true)}
+              >
+                Edit chart
+              </Button>
+            </Flex>
+          )}
 
-        {stored.status !== 'unreadable' && (
-          <ChartEditorDialog
-            spec={editing}
-            open={open}
-            onOpenChange={setOpen}
-            onSave={save}
-            locale={locale}
-            disabled={disabled}
-            title={label ? `Edit ${label}` : 'Edit chart'}
-          />
-        )}
+          <Field.Hint />
+          <Field.Error />
+        </Flex>
+      </Field.Root>
 
-        <Field.Hint />
-        <Field.Error />
-      </Flex>
-    </Field.Root>
+      {/* Outside `Field.Root` deliberately. A design-system control takes its
+        error styling from the nearest field context, and React context reaches
+        through the portal the modal renders into — so a dialog nested in the
+        field would paint its own inputs red whenever the *field* was invalid,
+        which for a required chart is its entire empty life. */}
+      {stored.status !== 'unreadable' && (
+        <ChartEditorDialog
+          spec={editing}
+          open={open}
+          onOpenChange={setOpen}
+          onSave={save}
+          locale={locale}
+          disabled={disabled}
+          title={label ? `Edit ${label}` : 'Edit chart'}
+        />
+      )}
+    </>
   );
 });
 
@@ -135,7 +151,15 @@ ChartField.displayName = 'ChartField';
  * chart will occupy. A form row that is one small button tall and then jumps to
  * full height on the first save reflows everything under it.
  */
-function EmptyState({ disabled, onCreate }: { disabled?: boolean; onCreate: () => void }) {
+function EmptyState({
+  disabled,
+  hasError,
+  onCreate,
+}: {
+  disabled?: boolean;
+  hasError?: boolean;
+  onCreate: () => void;
+}) {
   return (
     <Flex
       direction="column"
@@ -144,7 +168,10 @@ function EmptyState({ disabled, onCreate }: { disabled?: boolean; onCreate: () =
       hasRadius
       justifyContent="center"
       background="neutral100"
-      style={{ border: '1px dashed #dcdce4' }}
+      // Borders the error, because the message alone sits below a box the eye
+      // reads as fine. A required chart that has not been made is the one case
+      // where empty is a problem rather than a starting point.
+      style={{ border: `1px dashed ${hasError ? '#d02b20' : '#dcdce4'}` }}
     >
       <Typography variant="pi" textColor="neutral600">
         No chart yet.
