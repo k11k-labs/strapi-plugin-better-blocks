@@ -1,3 +1,13 @@
+## 0.2.1 (2026-08-16)
+
+### 🚀 Features
+
+- let packages outside Better Blocks register block types ([#108](https://github.com/qkix/strapi-plugins/pull/108))
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.2.0 (2026-08-15)
 
 ### 🚀 Features
