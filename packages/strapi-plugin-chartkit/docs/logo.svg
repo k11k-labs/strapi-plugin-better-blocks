@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Chartkit">
+  <rect width="512" height="512" rx="112" fill="#4945ff" />
+
+  <!--
+    Geometry, so this stays even if it is ever edited.
+
+    The axis is stroked at 14 with round caps, which extend 7px past each
+    endpoint. Drawn from (95,95) to (95,375) to (417,375), it covers 88..424
+    horizontally and 88..382 vertically: 88 of padding left, right and top, and
+    130 under the x-axis.
+
+    Every gap inside the axis is 22, on all four sides of the bar group:
+      - y-axis stroke (ends 102) to the first bar at 124
+      - between each pair of bars
+      - last bar (ends 402) to the end of the x-axis at 424
+      - bar feet at 346 to the x-axis stroke's top edge at 368
+
+    The plot spans 102..424 (322px); five 22px gaps leave 212 for four bars, so
+    each is 53 wide. The bars float above the baseline rather than standing on
+    it, which is what keeps the 22 consistent all the way round.
+  -->
+  <path
+    d="M95 95 V375 H417"
+    fill="none"
+    stroke="#ffffff"
+    stroke-opacity="0.4"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <g fill="#ffffff">
+    <rect x="124" y="245" width="53" height="101" rx="10" />
+    <rect x="199" y="175" width="53" height="171" rx="10" />
+    <rect x="274" y="205" width="53" height="141" rx="10" />
+  </g>
+  <rect x="349" y="120" width="53" height="226" rx="10" fill="#f0a500" />
+</svg>
