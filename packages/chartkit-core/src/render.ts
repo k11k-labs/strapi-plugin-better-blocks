@@ -6,7 +6,9 @@
  * CMS should not cost a static site a JavaScript bundle.
  */
 
-import { barValueTicks, renderBar } from './charts/bar';
+import { renderAxes } from './axes';
+import { barDomain, renderBar } from './charts/bar';
+import { lineDomain, renderLine } from './charts/line';
 import { createTickFormatter } from './format';
 import {
   DEFAULT_HEIGHT,
@@ -17,7 +19,7 @@ import {
   planCategoryLabels,
 } from './layout';
 import { NO_LEGEND, planLegend, renderLegend } from './legend';
-import { bandScale } from './scale';
+import { bandScale, linearScale } from './scale';
 import { element, escapeText, round, text } from './svg';
 import { TEXT_COLOR } from './theme';
 import { validateChartSpec } from './validate';
@@ -72,7 +74,17 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
 
   const mode = spec.options?.barMode ?? 'grouped';
 
-  const { ticks } = barValueTicks(spec.data, mode, spec.options?.yAxis);
+  // The domain depends on the chart type — a bar is measured from a baseline, a
+  // line is not. See lineDomain for why that is not a detail.
+  const domain =
+    spec.type === 'bar'
+      ? barDomain(spec.data.series, mode, spec.options?.yAxis)
+      : lineDomain(spec.data.series, spec.type, spec.options?.yAxis);
+
+  // Ticks depend only on the domain, so they are known before the plot is
+  // sized — which matters, because the left margin is sized from the widest
+  // tick label. The range here is a placeholder.
+  const { ticks } = linearScale(domain, [1, 0]);
   const formatValue = createTickFormatter(spec.options?.valueFormat, options.locale, ticks);
   const valueLabels = ticks.map(formatValue);
 
@@ -107,14 +119,31 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
     categoryLabelHeight: labelPlan.height,
   });
 
-  const body = renderBar({
-    data: spec.data,
-    mode,
+  const y = linearScale(domain, [plot.bottom, plot.top]);
+  const x = bandScale(spec.data.labels, [plot.left, plot.right]);
+
+  // Where zero sits. With an all-positive domain this is the plot floor; with
+  // negatives in the data it floats, and marks sit either side of it. Clamped,
+  // because a cropped axis can put zero outside the plot entirely.
+  const zero = clampToPlot(y(0), plot.top, plot.bottom);
+
+  const axes = renderAxes({
+    labels: spec.data.labels,
+    ticks,
+    x,
+    y,
     plot,
     chartHeight: height,
-    bounds: spec.options?.yAxis,
+    zero,
     formatValue,
   });
+
+  const marks =
+    spec.type === 'bar'
+      ? renderBar({ data: spec.data, mode, x, y, zero })
+      : renderLine({ data: spec.data, type: spec.type, x, y, zero });
+
+  const body = axes.behind + marks + axes.front;
 
   // Below the category labels, which sit directly under the plot.
   const legendMarkup = renderLegend(legend, plot.bottom + labelPlan.height, width);
@@ -149,7 +178,10 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
       // the aspect ratio and the page sets the size.
       width: '100%',
       height: 'auto',
-      class: `chartkit chartkit-bar chartkit-bar-${mode}`,
+      class:
+        spec.type === 'bar'
+          ? `chartkit chartkit-bar chartkit-bar-${mode}`
+          : `chartkit chartkit-${spec.type}`,
       // Announced as a single image with a name, instead of the screen reader
       // walking dozens of meaningless <rect> elements.
       role: 'img',
@@ -159,6 +191,12 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
     },
     accessibleText + heading + body + legendMarkup
   );
+}
+
+/** Keeps the baseline inside the plot when a cropped axis puts zero outside it. */
+function clampToPlot(value: number, top: number, bottom: number): number {
+  if (!Number.isFinite(value)) return bottom;
+  return Math.min(Math.max(value, top), bottom);
 }
 
 /** A dimension from the spec, falling back when it is missing or nonsensical. */
