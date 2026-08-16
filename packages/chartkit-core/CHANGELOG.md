@@ -1,48 +1,8 @@
-## 0.1.4 (2026-08-16)
+## 0.2.0 (2026-08-16)
 
 ### 🚀 Features
 
-- **chartkit:** React and Astro renderers ([#120](https://github.com/qkix/strapi-plugins/pull/120))
-
-### ❤️ Thank You
-
-- kkukielka
-
-## 0.1.3 (2026-08-16)
-
-### 🚀 Features
-
-- **chartkit:** pie and donut charts ([#118](https://github.com/qkix/strapi-plugins/pull/118))
-
-### ❤️ Thank You
-
-- kkukielka
-
-## 0.1.2 (2026-08-16)
-
-### 🚀 Features
-
-- **chartkit:** line and area charts ([#116](https://github.com/qkix/strapi-plugins/pull/116))
-
-### ❤️ Thank You
-
-- kkukielka
-
-## 0.1.1 (2026-08-16)
-
-### 🚀 Features
-
-- **chartkit:** grouped and stacked bars, with a legend ([#114](https://github.com/qkix/strapi-plugins/pull/114))
-
-### ❤️ Thank You
-
-- kkukielka
-
-## 0.1.0 (2026-08-16)
-
-### 🚀 Features
-
-- **chartkit:** chartkit-core — spec, SVG rendering, bar chart and gallery ([#110](https://github.com/qkix/strapi-plugins/pull/110))
+- **chartkit:** the chart editor, stacked areas, and stackMode ([#122](https://github.com/qkix/strapi-plugins/pull/122))
 
 ### ❤️ Thank You
 
