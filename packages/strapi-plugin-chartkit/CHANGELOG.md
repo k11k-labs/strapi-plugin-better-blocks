@@ -1,8 +1,12 @@
 ## 0.1.1 (2026-08-16)
 
-### 🚀 Features
+### 📖 Documentation
 
-- **chartkit:** ship the Better Blocks block registration ready made ([#126](https://github.com/qkix/strapi-plugins/pull/126))
+- **chartkit:** show the one-line block registration ([#126](https://github.com/qkix/strapi-plugins/pull/126))
+
+  No change to this plugin's code. Registering the chart block in a Better
+  Blocks document is now `registerBlock(chartBlockDefinition())` rather than
+  the file of Slate wiring the README used to point at.
 
 ### 🧱 Updated Dependencies
 
