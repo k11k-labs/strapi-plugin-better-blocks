@@ -5,16 +5,13 @@
  * wrong fails the run in a way that points somewhere else entirely. Kept here so
  * a package picking up the harness does not have to rediscover them.
  *
- *   import { defineConfig } from 'vitest/config';
- *   import { strapiTestOptions } from '@qkix/strapi-test-harness/vitest-preset';
+ * Plain JavaScript on purpose. Vite externalises bare imports from a
+ * `vitest.config.ts`, so this file is handed to Node as-is rather than
+ * transpiled. Node 22 strips types and would tolerate TypeScript here; Node 20
+ * does not, and the repo builds on both — a `.ts` preset fails there with a
+ * bare `SyntaxError` that names the config file, not this one.
  *
- *   export default defineConfig({
- *     test: {
- *       environment: 'node',
- *       include: ['tests/**\/*.test.ts'],
- *       ...strapiTestOptions,
- *     },
- *   });
+ * @type {{ testTimeout: number, hookTimeout: number, pool: 'threads' }}
  */
 export const strapiTestOptions = {
   /** Booting Strapi takes a couple of seconds; the 5s default trips over it. */
@@ -30,5 +27,5 @@ export const strapiTestOptions = {
    * assigns `global.strapi`, so two live instances in one worker clobber each
    * other. One booted instance per file.
    */
-  pool: 'threads' as const,
+  pool: 'threads',
 };

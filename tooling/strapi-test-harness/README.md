@@ -106,9 +106,22 @@ Each instance gets its own temp directory and SQLite file, both removed by
 
 ## Things that will bite you
 
-**Node 22, not 24.** `better-sqlite3` ships a native binding compiled for the
-Node version the repo pins (`engines: >=20 <23`). On Node 24 every boot dies with
-`NODE_MODULE_VERSION 127 … requires 137`. Use `nvm use 22`.
+**Node 20 or 22 — same as the rest of the repo.** Nothing in the harness objects
+to Node 24: `@strapi/strapi` allows up to 26 and `better-sqlite3` up to 25. The
+ceiling comes from `@strapi/sdk-plugin`, which builds both plugins and declares
+`node: >=18.0.0 <=22.x.x`, so the repo pins `engines: >=20 <23` and CI runs the
+20/22 matrix.
+
+What you will actually hit is a native binding compiled for a different Node than
+the one you are running — `better-sqlite3` builds at install time, so switching
+Node versions without reinstalling gives every boot
+`NODE_MODULE_VERSION 127 … requires 137`. `nvm use 22` (or reinstall) fixes it.
+
+**Keep the vitest preset in plain JavaScript.** Vite externalises bare imports
+from a `vitest.config.ts`, so `src/vitest-preset.js` is handed to Node as-is.
+Node 22 strips types and tolerates TypeScript there; Node 20 does not, and fails
+with a bare `SyntaxError` naming the _consumer's_ config file rather than the
+preset.
 
 **Threads, not forks.** Strapi leaves sockets open after `destroy()`; in a forked
 vitest worker that ends as an unhandled `Channel closed` rejection, failing a run
