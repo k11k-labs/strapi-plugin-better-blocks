@@ -23,7 +23,7 @@ const multi = (
   series: { name: string; values: (number | null)[] }[],
   options: ChartSpec['options'] = {}
 ): ChartSpec => ({
-  version: 1,
+  version: 2,
   type: 'bar',
   title,
   data: { source: 'inline', labels, series },
@@ -36,7 +36,7 @@ const bar = (
   values: (number | null)[],
   options: ChartSpec['options'] = {}
 ): ChartSpec => ({
-  version: 1,
+  version: 2,
   type: 'bar',
   title,
   data: { source: 'inline', labels, series: [{ name: 'Series 1', values }] },
@@ -130,7 +130,7 @@ export const fixtures: Fixture[] = [
         { name: 'South', values: [310, 480, 520, 400] },
         { name: 'East', values: [180, 220, 300, 510] },
       ],
-      { barMode: 'grouped' }
+      { stackMode: 'grouped' }
     ),
   },
   {
@@ -144,7 +144,7 @@ export const fixtures: Fixture[] = [
         { name: 'South', values: [310, 480, 520, 400] },
         { name: 'East', values: [180, 220, 300, 510] },
       ],
-      { barMode: 'stacked' }
+      { stackMode: 'stacked' }
     ),
   },
   {
@@ -159,7 +159,7 @@ export const fixtures: Fixture[] = [
         { name: 'Losses', values: [-30, -55, -12, -40] },
         { name: 'More losses', values: [-15, -10, -35, -20] },
       ],
-      { barMode: 'stacked' }
+      { stackMode: 'stacked' }
     ),
   },
   {
@@ -173,7 +173,7 @@ export const fixtures: Fixture[] = [
         { name: 'Beta', values: [null, 40, 25, null] },
         { name: 'Gamma', values: [15, 20, null, 35] },
       ],
-      { barMode: 'stacked' }
+      { stackMode: 'stacked' }
     ),
   },
   {
@@ -186,14 +186,14 @@ export const fixtures: Fixture[] = [
         name: `Series number ${i + 1}`,
         values: [20 + i * 6, 45 - i * 3, 30 + ((i * 7) % 25)],
       })),
-      { barMode: 'grouped' }
+      { stackMode: 'grouped' }
     ),
   },
   {
     id: 'line',
     breaks: 'a domain cropped to the data instead of anchored at zero',
     spec: {
-      version: 1,
+      version: 2,
       type: 'line',
       title: 'Line: server temperature',
       description: 'Temperature readings through the day, peaking at midday.',
@@ -208,7 +208,7 @@ export const fixtures: Fixture[] = [
     id: 'line-gaps',
     breaks: 'holes — the line must break, and a lone reading must still show',
     spec: {
-      version: 1,
+      version: 2,
       type: 'line',
       title: 'Line with gaps and a lone reading',
       data: {
@@ -224,7 +224,7 @@ export const fixtures: Fixture[] = [
     id: 'line-multi',
     breaks: 'several lines sharing a plot, and the legend above them',
     spec: {
-      version: 1,
+      version: 2,
       type: 'line',
       title: 'Three lines',
       data: {
@@ -242,7 +242,7 @@ export const fixtures: Fixture[] = [
     id: 'area',
     breaks: 'a fill measured from the baseline, so zero must be in the domain',
     spec: {
-      version: 1,
+      version: 2,
       type: 'area',
       title: 'Area: signups',
       data: {
@@ -256,7 +256,7 @@ export const fixtures: Fixture[] = [
     id: 'area-negative',
     breaks: 'a fill that has to hang below the baseline as well as sit on it',
     spec: {
-      version: 1,
+      version: 2,
       type: 'area',
       title: 'Area crossing zero',
       data: {
@@ -270,17 +270,55 @@ export const fixtures: Fixture[] = [
     id: 'line-single-point',
     breaks: 'a line with nothing to join to',
     spec: {
-      version: 1,
+      version: 2,
       type: 'line',
       title: 'One reading only',
       data: { source: 'inline', labels: ['Only'], series: [{ name: 'Reading', values: [42] }] },
     },
   },
   {
+    id: 'area-stacked',
+    breaks: 'bands sitting on each other, and an axis covering the totals',
+    spec: {
+      version: 2,
+      type: 'area',
+      title: 'Stacked area: traffic',
+      description: 'Search, direct and social traffic, stacked to show the total.',
+      data: {
+        source: 'inline',
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        series: [
+          { name: 'Search', values: [120, 180, 150, 260, 310] },
+          { name: 'Direct', values: [80, 90, 140, 120, 160] },
+          { name: 'Social', values: [40, 60, 30, 90, 70] },
+        ],
+      },
+      options: { stackMode: 'stacked' },
+    },
+  },
+  {
+    id: 'area-stacked-holes',
+    breaks: 'a gap low in the stack — the bands above it drop, because the total really did',
+    spec: {
+      version: 2,
+      type: 'area',
+      title: 'Stacked area with a gap',
+      data: {
+        source: 'inline',
+        labels: ['Mon', 'Tue', 'Wed', 'Thu'],
+        series: [
+          { name: 'Alpha', values: [40, null, 60, 30] },
+          { name: 'Beta', values: [20, 35, 25, 45] },
+        ],
+      },
+      options: { stackMode: 'stacked' },
+    },
+  },
+  {
     id: 'pie',
     breaks: 'a chart with no axes at all, and a legend naming slices not series',
     spec: {
-      version: 1,
+      version: 2,
       type: 'pie',
       title: 'Traffic by source',
       description: 'Search 45%, direct 25%, social 18%, referral 12%.',
@@ -295,7 +333,7 @@ export const fixtures: Fixture[] = [
     id: 'donut',
     breaks: 'the same, with the middle removed',
     spec: {
-      version: 1,
+      version: 2,
       type: 'donut',
       title: 'Storage used',
       data: {
@@ -309,7 +347,7 @@ export const fixtures: Fixture[] = [
     id: 'pie-slivers',
     breaks: 'slices too thin to label, and a legend that must still name them',
     spec: {
-      version: 1,
+      version: 2,
       type: 'pie',
       title: 'One dominant slice',
       data: {
@@ -323,7 +361,7 @@ export const fixtures: Fixture[] = [
     id: 'pie-single-slice',
     breaks: 'a whole made of one thing',
     spec: {
-      version: 1,
+      version: 2,
       type: 'pie',
       title: 'All of it',
       data: { source: 'inline', labels: ['Everything'], series: [{ name: 'All', values: [100] }] },
@@ -333,7 +371,7 @@ export const fixtures: Fixture[] = [
     id: 'pie-all-zero',
     breaks: 'nothing to divide up — a full circle here would be a lie',
     spec: {
-      version: 1,
+      version: 2,
       type: 'pie',
       title: 'Nothing recorded yet',
       data: {

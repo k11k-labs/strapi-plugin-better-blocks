@@ -40,6 +40,15 @@ export type ChartEditorProps = {
   locale?: string;
 };
 
+/**
+ * Types where stacking means something.
+ *
+ * A line is read value by value, so stacking it would turn it into a chart of
+ * cumulative totals while still looking like a chart of values. Pie and donut
+ * are already a whole divided up.
+ */
+const STACKABLE = new Set<ChartType>(['bar', 'area']);
+
 const TYPES: { value: ChartType; label: string }[] = [
   { value: 'bar', label: 'Bar' },
   { value: 'line', label: 'Line' },
@@ -101,12 +110,12 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
           </Field.Root>
         </Box>
 
-        {spec.type === 'bar' && (
+        {STACKABLE.has(spec.type) && (
           <Box>
             <Field.Root name="chart-stacked">
               <Field.Label>Stacked</Field.Label>
               <Toggle
-                checked={spec.options?.barMode === 'stacked'}
+                checked={spec.options?.stackMode === 'stacked'}
                 disabled={disabled}
                 onLabel="On"
                 offLabel="Off"
@@ -115,7 +124,7 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
                     ...spec,
                     options: {
                       ...spec.options,
-                      barMode: event.target.checked ? 'stacked' : 'grouped',
+                      stackMode: event.target.checked ? 'stacked' : 'grouped',
                     },
                   })
                 }

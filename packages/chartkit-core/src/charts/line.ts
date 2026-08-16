@@ -23,7 +23,7 @@
 
 import { area as d3Area, line as d3Line } from 'd3-shape';
 
-import { bandScale, computeValueDomain, type Domain } from '../scale';
+import { bandScale, computeStackedDomain, computeValueDomain, type Domain } from '../scale';
 import { element, round, tag } from '../svg';
 import { seriesColor } from '../theme';
 import type { AxisBounds, ChartData, ChartType, Series } from '../types';
@@ -31,6 +31,8 @@ import type { AxisBounds, ChartData, ChartType, Series } from '../types';
 export type LineRenderInput = {
   data: ChartData;
   type: ChartType;
+  /** Stacking applies to `area` only; a line is always read individually. */
+  stacked: boolean;
   x: ReturnType<typeof bandScale>;
   y: (value: number) => number;
   /** Where the baseline sits, in SVG coordinates. Only an area needs it. */
@@ -55,26 +57,47 @@ const AREA_OPACITY = 0.25;
 export function lineDomain(
   series: readonly Series[],
   type: ChartType,
-  bounds: AxisBounds | undefined
+  bounds: AxisBounds | undefined,
+  stacked = false
 ): Domain {
+  // A stacked area is measured by its totals, exactly like a stacked bar: three
+  // bands of 40 reach 120, and an axis topping out at 40 would draw two of them
+  // off the plot.
+  if (stacked && type === 'area') return computeStackedDomain(series, { bounds });
+
   return computeValueDomain(series, { includeZero: type === 'area', bounds });
 }
 
 /** The lines, and the fills beneath them when this is an area chart. */
 export function renderLine(input: LineRenderInput): string {
-  const { data, type, x, y, zero } = input;
+  const { data, type, stacked, x, y, zero } = input;
   if (data.series.length === 0) return '';
 
   // A line marks an instant, so it sits at the middle of its category's band
   // rather than spanning it.
   const centerOf = (label: string) => x(label) + x.bandwidth / 2;
 
+  const stacking = stacked && type === 'area';
+  // Running total per category, so each band is drawn on top of the ones below
+  // it. A missing value contributes nothing, which means the bands above it sit
+  // lower at that category — the total genuinely is smaller there. Holding them
+  // at the height they would have had would assert a reading nobody took.
+  const baselines = data.labels.map(() => 0);
+
   const drawn = data.series
     .map((series, seriesIndex) => {
-      const points = data.labels.map((label, i) => ({
-        cx: centerOf(label),
-        value: valueAt(series, i),
-      }));
+      const points = data.labels.map((label, i) => {
+        const value = valueAt(series, i);
+        const base = baselines[i];
+
+        if (stacking && value !== null) baselines[i] = base + value;
+
+        return {
+          cx: centerOf(label),
+          value: value === null ? null : stacking ? base + value : value,
+          base: stacking ? base : null,
+        };
+      });
 
       const defined = (point: (typeof points)[number]) => point.value !== null;
 
@@ -85,7 +108,9 @@ export function renderLine(input: LineRenderInput): string {
                 d3Area<(typeof points)[number]>()
                   .defined(defined)
                   .x((point) => point.cx)
-                  .y0(zero)
+                  // A stacked band sits on the one below it; an unstacked area
+                  // sits on the baseline.
+                  .y0((point) => (point.base === null ? zero : y(point.base)))
                   .y1((point) => y(point.value as number))(points) ?? ''
               ),
               fill: seriesColor(seriesIndex),

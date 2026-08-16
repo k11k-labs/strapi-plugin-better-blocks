@@ -20,9 +20,9 @@
  * package's migrator. Inferring the version from content, the way the document
  * format does, would mean re-deriving it from scratch on every schema change.
  */
-export const CHART_SPEC_VERSION = 1;
+export const CHART_SPEC_VERSION = 2;
 
-export type ChartSpecVersion = 1;
+export type ChartSpecVersion = 2;
 
 // ── Chart types ──────────────────────────────────────────────────────
 
@@ -105,18 +105,23 @@ export type AxisBounds = {
 };
 
 /**
- * How a bar chart with more than one series arranges them.
+ * How a chart with more than one series arranges them.
  *
- * - **`grouped`** — a bar per series, side by side within each category. Good
- *   for comparing series against each other.
- * - **`stacked`** — segments piled into one bar per category. Good for parts of
- *   a whole, and for a total that means something.
+ * - **`grouped`** — series drawn side by side, or overlaid, and read
+ *   individually.
+ * - **`stacked`** — series piled on each other, so the height at a category is
+ *   the total. Good for parts of a whole.
+ *
+ * Applies to `bar` and `area`. It has no meaning for `line` — stacked lines are
+ * read as cumulative totals, which is what an area chart says visually and a
+ * line does not — nor for `pie` and `donut`, which are already a whole divided
+ * up.
  *
  * Not a chart `type`, because it changes the arrangement rather than the mark:
- * everything else about a grouped and a stacked bar chart — axes, legend,
- * baseline — is identical, and a single-series chart looks the same either way.
+ * everything else — axes, legend, baseline — is identical, and a single-series
+ * chart looks the same either way.
  */
-export type BarMode = 'grouped' | 'stacked';
+export type StackMode = 'grouped' | 'stacked';
 
 export type ChartOptions = {
   /**
@@ -130,10 +135,12 @@ export type ChartOptions = {
   /** Draw the legend. Defaults to on when there is more than one series. */
   legend?: boolean;
   /**
-   * How multiple series are arranged. Defaults to `grouped`, and has no visible
-   * effect on a chart with a single series.
+   * How multiple series are arranged, for `bar` and `area`. Defaults to
+   * `grouped`, and has no visible effect on a chart with a single series.
+   *
+   * Was called `barMode` in spec version 1; {@link migrateChartSpec} renames it.
    */
-  barMode?: BarMode;
+  stackMode?: StackMode;
   /**
    * How values are written out, as an [Intl.NumberFormat][1] options object.
    * A plain object rather than a format string, because it is JSON that has to

@@ -16,7 +16,7 @@ beforeAll(async () => {
 });
 
 const spec: ChartSpec = {
-  version: 1,
+  version: 2,
   type: 'bar',
   title: 'Quarterly revenue',
   description: 'Revenue by quarter.',

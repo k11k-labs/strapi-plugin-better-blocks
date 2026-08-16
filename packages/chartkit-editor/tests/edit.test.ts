@@ -18,7 +18,7 @@ import {
 import { parseDelimited, toNumber } from '../src/csv';
 
 const spec = (): ChartSpec => ({
-  version: 1,
+  version: 2,
   type: 'bar',
   title: 'Revenue',
   data: {

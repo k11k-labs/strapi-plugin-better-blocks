@@ -11,6 +11,7 @@ import { barDomain, renderBar } from './charts/bar';
 import { lineDomain, renderLine } from './charts/line';
 import { renderPie } from './charts/pie';
 import { createTickFormatter } from './format';
+import { migrateChartSpec } from './migrate';
 import {
   DEFAULT_HEIGHT,
   DEFAULT_WIDTH,
@@ -53,10 +54,17 @@ export type RenderResult = { ok: true; svg: string } | { ok: false; issues: Char
  * build log — not disguised as an empty chart on a live page.
  */
 export function renderChart(spec: unknown, options: RenderOptions = {}): RenderResult {
-  const validation = validateChartSpec(spec);
+  // An older spec is brought up to date in memory first. Migrating stored
+  // content is opt-in and someone else's job, but a renderer handed a version 1
+  // chart should draw it rather than refuse it — the alternative is that
+  // publishing a new Chartkit blanks every chart already in a database.
+  const migration = migrateChartSpec(spec);
+  const current = migration.status === 'skipped' ? spec : migration.spec;
+
+  const validation = validateChartSpec(current);
   if (!validation.valid) return { ok: false, issues: validation.issues };
 
-  return { ok: true, svg: renderValidated(spec as ChartSpec, options) };
+  return { ok: true, svg: renderValidated(current as ChartSpec, options) };
 }
 
 /**
@@ -125,7 +133,7 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
     (spec.title ? element('title', { id: titleId }, escapeText(spec.title)) : '') +
     (spec.description ? element('desc', { id: descId }, escapeText(spec.description)) : '');
 
-  const mode = spec.options?.barMode ?? 'grouped';
+  const mode = spec.options?.stackMode ?? 'grouped';
 
   return element(
     'svg',
@@ -161,14 +169,14 @@ type Frame = {
 /** Bars, lines and areas: everything drawn against a pair of axes. */
 function renderCartesianBody(spec: ChartSpec, frame: Frame & { locale?: string }): string {
   const { width, height, titleHeight, legendHeight, locale } = frame;
-  const mode = spec.options?.barMode ?? 'grouped';
+  const mode = spec.options?.stackMode ?? 'grouped';
 
   // The domain depends on the chart type — a bar is measured from a baseline, a
   // line is not. See lineDomain for why that is not a detail.
   const domain =
     spec.type === 'bar'
       ? barDomain(spec.data.series, mode, spec.options?.yAxis)
-      : lineDomain(spec.data.series, spec.type, spec.options?.yAxis);
+      : lineDomain(spec.data.series, spec.type, spec.options?.yAxis, mode === 'stacked');
 
   // Ticks depend only on the domain, so they are known before the plot is
   // sized — which matters, because the left margin is sized from the widest
@@ -217,7 +225,14 @@ function renderCartesianBody(spec: ChartSpec, frame: Frame & { locale?: string }
   const marks =
     spec.type === 'bar'
       ? renderBar({ data: spec.data, mode, x, y, zero })
-      : renderLine({ data: spec.data, type: spec.type, x, y, zero });
+      : renderLine({
+          data: spec.data,
+          type: spec.type,
+          stacked: mode === 'stacked',
+          x,
+          y,
+          zero,
+        });
 
   return axes.behind + marks + axes.front;
 }
