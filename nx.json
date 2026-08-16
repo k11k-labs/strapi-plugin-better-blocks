@@ -27,10 +27,12 @@
     },
     "test": {
       "cache": true,
+      "dependsOn": ["^build"],
       "inputs": ["default", "^production"]
     },
     "typecheck": {
       "cache": true,
+      "dependsOn": ["^build"],
       "inputs": ["default", "^production"]
     },
     "lint": {
