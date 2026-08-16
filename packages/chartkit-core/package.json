@@ -1,0 +1,90 @@
+{
+  "name": "@qkix/chartkit-core",
+  "version": "0.1.0",
+  "description": "Chart specification and server-side SVG rendering for Chartkit \u2014 turns a ChartSpec into a finished SVG string with no DOM, no framework and no client-side JavaScript",
+  "type": "commonjs",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    },
+    "./fixtures": {
+      "import": {
+        "types": "./dist/fixtures.d.mts",
+        "default": "./dist/fixtures.mjs"
+      },
+      "require": {
+        "types": "./dist/fixtures.d.ts",
+        "default": "./dist/fixtures.js"
+      }
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "clean": "rm -rf dist",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@qkix/eslint-config": "workspace:*",
+    "@qkix/tsconfig": "workspace:*",
+    "d3-array": "^3.2.4",
+    "d3-scale": "^4.0.2",
+    "d3-shape": "^3.2.0",
+    "@types/d3-array": "^3.2.1",
+    "@types/d3-scale": "^4.0.8",
+    "@types/d3-shape": "^3.1.6",
+    "eslint": "^10.8.1",
+    "prettier": "^3.4.2",
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  },
+  "keywords": [
+    "chart",
+    "charts",
+    "svg",
+    "ssr",
+    "strapi",
+    "chartkit",
+    "dataviz"
+  ],
+  "license": "MIT",
+  "author": "qkix",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qkix/strapi-plugins.git",
+    "directory": "packages/chartkit-core"
+  },
+  "bugs": {
+    "url": "https://github.com/qkix/strapi-plugins/issues"
+  },
+  "homepage": "https://github.com/qkix/strapi-plugins#readme",
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:core"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

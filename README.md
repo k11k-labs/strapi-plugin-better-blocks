@@ -21,6 +21,7 @@
 | [`@qkix/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support.                                                                 |
 | [`@qkix/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript.                                               |
 | [`@qkix/better-blocks-core`](./packages/better-blocks-core)                     | The document types, the logic every package shares, and the block registration contract. No runtime dependencies.                         |
+| [`@qkix/chartkit-core`](./packages/chartkit-core)                               | Charts as server-rendered SVG — a `ChartSpec` in, a finished SVG string out. No DOM, no framework, no client-side JavaScript.             |
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use — for reading content,
