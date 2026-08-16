@@ -81,8 +81,20 @@ export const boundaries = {
             ],
           },
           {
-            sourceTag: 'scope:plugin',
+            // The chart editor: admin UI, shared by the standalone Chartkit
+            // plugin and the Better Blocks block. Its own tag because it is
+            // neither a leaf like core nor a plugin — it is the thing two
+            // plugins reuse, which is the entire reason it is a package.
+            sourceTag: 'scope:editor',
             onlyDependOnLibsWithTags: ['scope:core', 'scope:tooling'],
+          },
+          {
+            sourceTag: 'scope:plugin',
+            onlyDependOnLibsWithTags: [
+              'scope:core',
+              'scope:editor',
+              'scope:tooling',
+            ],
           },
           {
             sourceTag: 'scope:example',

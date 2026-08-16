@@ -36,6 +36,9 @@ than either one knowing the other's internals.
 | [`@qkix/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript.                                               |
 | [`@qkix/better-blocks-core`](./packages/better-blocks-core)                     | The document types, the logic every package shares, and the block registration contract. No runtime dependencies.                         |
 | [`@qkix/chartkit-core`](./packages/chartkit-core)                               | Charts as server-rendered SVG — a `ChartSpec` in, a finished SVG string out. No DOM, no framework, no client-side JavaScript.             |
+| [`@qkix/chartkit-react-renderer`](./packages/chartkit-react-renderer)           | React renderer for Chartkit charts, and the Better Blocks block plugin that draws one inside a document.                                  |
+| [`@qkix/chartkit-astro-renderer`](./packages/chartkit-astro-renderer)           | The same for Astro — zero client-side JavaScript.                                                                                         |
+| [`@qkix/chartkit-editor`](./packages/chartkit-editor)                           | The chart editor for the Strapi admin: preview, data grid and spreadsheet paste, shared by both Chartkit surfaces.                        |
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use — for reading content,
