@@ -103,7 +103,15 @@
   "nx": {
     "tags": [
       "scope:plugin"
-    ]
+    ],
+    "targets": {
+      "test": {
+        "dependsOn": [
+          "build",
+          "^build"
+        ]
+      }
+    }
   },
   "publishConfig": {
     "access": "public"

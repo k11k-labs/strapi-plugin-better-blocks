@@ -9,6 +9,10 @@ import type { TestStrapiInstance } from '@qkix/strapi-test-harness';
  * The server side of Chartkit is a single `customFields.register` call, so there
  * is exactly one thing worth asserting against a real boot — and it happens to
  * be the thing that cannot be walked back.
+ *
+ * Strapi loads a plugin through its `./strapi-server` export, which points at
+ * `dist/`, so the `test` target declares a dependency on `build` in
+ * package.json. Without it Strapi boots with the plugin silently absent.
  */
 
 const PLUGIN_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');

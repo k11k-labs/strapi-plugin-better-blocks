@@ -84,6 +84,10 @@ export default {
       ],
       cache: true,
       cacheTTL: 86400, // seconds (24h)
+      // Upper bound on cached embeds, evicted least-recently-used. Without one
+      // the cache keeps an entry for every post ever embedded, for the life of
+      // the process — expiry alone never frees anything nobody asks for again.
+      cacheMaxEntries: 500,
       instagram: { accessToken: undefined },
       facebook: { accessToken: undefined },
     },

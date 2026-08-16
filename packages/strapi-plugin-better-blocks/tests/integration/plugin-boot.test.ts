@@ -9,6 +9,12 @@ import type { TestStrapiInstance } from '@qkix/strapi-test-harness';
  * What can only be checked against a booted Strapi: the custom-field identifier
  * customers' content is bound to, how plugin config actually resolves, and that
  * the admin endpoint does not hand tokens to the browser.
+ *
+ * Strapi loads a plugin through its `./strapi-server` export, which points at
+ * `dist/` — so this exercises the built plugin, the same artefact customers
+ * install, and the `test` target declares a dependency on `build` in
+ * package.json. Without it Strapi boots with the plugin silently absent and
+ * every assertion here fails on `strapi.plugin(...)` being undefined.
  */
 
 const PLUGIN_ROOT = path.resolve(
@@ -60,6 +66,7 @@ describe('plugin config resolution', () => {
     expect(social.enabled).toBe(true);
     expect(social.platforms).toContain('twitter');
     expect(social.cacheTTL).toBe(86400);
+    expect(social.cacheMaxEntries).toBe(500);
     expect(social.instagram.accessToken).toBeUndefined();
   });
 });
