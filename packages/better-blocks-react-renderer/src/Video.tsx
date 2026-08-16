@@ -108,13 +108,13 @@ export function Video({
       return;
     }
 
-    let cancelled = false;
+    let canceled = false;
     void window.customElements.whenDefined('mux-player').then(() => {
-      if (!cancelled) setMuxDefined(true);
+      if (!canceled) setMuxDefined(true);
     });
 
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [wantsMux]);
 

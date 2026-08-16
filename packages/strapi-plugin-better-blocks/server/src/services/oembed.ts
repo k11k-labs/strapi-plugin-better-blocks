@@ -5,7 +5,7 @@ import type { Core } from '@strapi/strapi';
  *
  * Fetches a social post's official oEmbed payload server-side (so the admin
  * never talks to the platform directly and tokens stay on the server), and
- * caches the normalised result in-memory for `cacheTTL` seconds.
+ * caches the normalized result in-memory for `cacheTTL` seconds.
  * -------------------------------------------------------------------------*/
 
 export type SocialPlatform =
@@ -148,7 +148,7 @@ const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
 const stripScripts = (html: string): string =>
   html.replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '').trim();
 
-const normalise = (
+const normalize = (
   platform: SocialPlatform,
   url: string,
   raw: Record<string, unknown>
@@ -179,7 +179,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
     detectPlatform,
 
     /**
-     * Fetch (and cache) the normalised oEmbed for `url`. `platform` may be
+     * Fetch (and cache) the normalized oEmbed for `url`. `platform` may be
      * passed to skip auto-detection. Throws on an unsupported/unconfigured
      * platform or a failed upstream request.
      */
@@ -195,7 +195,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
 
       const resolved = platform ?? detectPlatform(url);
       if (!resolved) {
-        throw new Error(`Unsupported or unrecognised social URL: ${url}`);
+        throw new Error(`Unsupported or unrecognized social URL: ${url}`);
       }
 
       const allowed = config.platforms;
@@ -249,7 +249,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
           throw new Error(`${resolved} could not embed this URL: ${raw.error}`);
         }
 
-        data = normalise(resolved, target, raw);
+        data = normalize(resolved, target, raw);
 
         if (!data.html) {
           throw new Error(

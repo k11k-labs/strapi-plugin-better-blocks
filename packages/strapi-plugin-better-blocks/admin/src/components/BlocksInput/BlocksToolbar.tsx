@@ -400,7 +400,7 @@ const BlocksDropdown = () => {
   const preventSelectFocus = (e: Event) => e.preventDefault();
 
   /**
-   * Repairs the stray empty list-item that Slate's delete behaviour leaves
+   * Repairs the stray empty list-item that Slate's delete behavior leaves
    * behind instead of converting it to a paragraph.
    * Issue: https://github.com/ianstormtaylor/slate/issues/2500
    *

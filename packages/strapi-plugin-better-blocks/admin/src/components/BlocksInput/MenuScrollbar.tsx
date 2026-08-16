@@ -21,7 +21,7 @@ import { createGlobalStyle } from 'styled-components';
  *     scroll (defeating the purpose on macOS). We therefore do NOT set
  *     `scrollbar-color`; Firefox falls back to its own always-visible bar.
  *   - The track gets a real background so the channel stays visible even when the
- *     content fits and the thumb spans the full height; the colours are
+ *     content fits and the thumb spans the full height; the colors are
  *     mid-range neutrals that contrast with the menu background (`neutral0`) in
  *     both the light and dark themes.
  *   - `!important` / `display: block` are required to beat the design-system

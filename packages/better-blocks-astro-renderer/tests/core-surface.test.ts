@@ -16,7 +16,7 @@ import type { ButtonFile, InlineNode, TextNode } from '../src/types';
 
 /**
  * Characterization tests for the framework-independent helpers this renderer
- * shares with the React one. They pin down today's behaviour so extracting the
+ * shares with the React one. They pin down today's behavior so extracting the
  * shared core can be shown to change nothing: the same expectations run against
  * both renderers before the move and against the core package after it.
  */

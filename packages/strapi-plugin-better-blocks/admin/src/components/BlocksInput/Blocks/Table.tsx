@@ -337,7 +337,7 @@ const fillUncoveredSlots = (
 };
 
 /**
- * Protects the table's shape from Slate's generic editing behaviours (deleting
+ * Protects the table's shape from Slate's generic editing behaviors (deleting
  * across cells, normalizing rows away, converting a cell to a paragraph, …).
  *
  * Structural edits are performed by tableOperations, which lifts the guard via

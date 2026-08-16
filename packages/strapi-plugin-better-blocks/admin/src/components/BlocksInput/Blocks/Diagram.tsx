@@ -91,7 +91,7 @@ const MermaidContent = ({
   const [error, setError] = React.useState(false);
 
   React.useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
 
     if (value.trim() === '') {
       setSvg(null);
@@ -115,12 +115,12 @@ const MermaidContent = ({
           `bb-mermaid-${diagramRenderSeq}`,
           value
         );
-        if (!cancelled) {
+        if (!canceled) {
           setSvg(rendered);
           setError(false);
         }
       } catch {
-        if (!cancelled) {
+        if (!canceled) {
           setSvg(null);
           setError(true);
         }
@@ -128,7 +128,7 @@ const MermaidContent = ({
     })();
 
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [value, isDark]);
 

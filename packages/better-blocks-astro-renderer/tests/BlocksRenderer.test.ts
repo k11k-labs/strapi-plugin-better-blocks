@@ -1456,7 +1456,7 @@ describe('BlocksRenderer', () => {
 
   // ── Social Embed (Twitter/X, Instagram, TikTok, …) ───────────────
 
-  it('renders oembed.html verbatim inside an aligned, labelled figure', async () => {
+  it('renders oembed.html verbatim inside an aligned, labeled figure', async () => {
     const { container } = await render([
       {
         type: 'social-embed',

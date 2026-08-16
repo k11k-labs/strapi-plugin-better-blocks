@@ -212,7 +212,7 @@ export function createBlockRegistry(definitions: readonly BlockDefinition[] = []
 /** Accepted wherever a caller may pass either raw definitions or a built registry. */
 export type BlockRegistryInput = BlockRegistry | readonly BlockDefinition[];
 
-/** Normalises {@link BlockRegistryInput}, so callers can take either form. */
+/** Normalizes {@link BlockRegistryInput}, so callers can take either form. */
 export function toBlockRegistry(input?: BlockRegistryInput): BlockRegistry {
   if (!input) return createBlockRegistry();
   return Array.isArray(input) ? createBlockRegistry(input) : (input as BlockRegistry);
