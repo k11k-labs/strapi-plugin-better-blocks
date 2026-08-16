@@ -70,6 +70,26 @@ it('writes through the document service', async () => {
 });
 ```
 
+### Vitest config
+
+The options a Strapi-booting suite needs are exported as a preset, so consuming
+packages do not rediscover them:
+
+```ts
+import { defineConfig } from 'vitest/config';
+import { strapiTestOptions } from '@qkix/strapi-test-harness/vitest-preset';
+
+export default defineConfig({
+  test: {
+    environment: 'node',
+    include: ['tests/**/*.test.ts'],
+    ...strapiTestOptions,
+  },
+});
+```
+
+It sets the pool and the timeouts only — `environment` and `include` stay yours.
+
 ### Options
 
 | Option         | Purpose                                                                     |

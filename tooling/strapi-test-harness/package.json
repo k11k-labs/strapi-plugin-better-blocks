@@ -6,7 +6,8 @@
   "license": "MIT",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./vitest-preset": "./src/vitest-preset.ts"
   },
   "files": [
     "src"

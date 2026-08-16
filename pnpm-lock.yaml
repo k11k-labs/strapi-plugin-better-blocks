@@ -551,6 +551,9 @@ importers:
       '@qkix/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint-config
+      '@qkix/strapi-test-harness':
+        specifier: workspace:*
+        version: link:../../tooling/strapi-test-harness
       '@qkix/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
@@ -624,6 +627,9 @@ importers:
       '@qkix/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint-config
+      '@qkix/strapi-test-harness':
+        specifier: workspace:*
+        version: link:../../tooling/strapi-test-harness
       '@qkix/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
