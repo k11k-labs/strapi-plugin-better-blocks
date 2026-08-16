@@ -820,6 +820,68 @@ export interface PluginReviewWorkflowsWorkflowStage
   };
 }
 
+export interface PluginRewindVersion extends Struct.CollectionTypeSchema {
+  collectionName: 'rewind_versions';
+  info: {
+    description: 'One snapshot of one document, in one locale, at one point in time.';
+    displayName: 'Rewind Version';
+    pluralName: 'versions';
+    singularName: 'version';
+  };
+  options: {
+    comment: 'Managed by strapi-plugin-rewind. Do not edit manually.';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    contentHash: Schema.Attribute.String & Schema.Attribute.Required;
+    contentType: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    data: Schema.Attribute.JSON & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::rewind.version'
+    > &
+      Schema.Attribute.Private;
+    origin: Schema.Attribute.Enumeration<
+      [
+        'create',
+        'update',
+        'clone',
+        'publish',
+        'unpublish',
+        'discardDraft',
+        'restore',
+      ]
+    > &
+      Schema.Attribute.Required;
+    pinned: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    publishedAt: Schema.Attribute.DateTime;
+    relatedDocumentId: Schema.Attribute.String & Schema.Attribute.Required;
+    relations: Schema.Attribute.JSON;
+    schemaSnapshot: Schema.Attribute.JSON & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<['draft', 'published', 'modified']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    userId: Schema.Attribute.Integer;
+  };
+}
+
 export interface PluginUploadFile extends Struct.CollectionTypeSchema {
   collectionName: 'files';
   info: {
@@ -1102,6 +1164,7 @@ declare module '@strapi/strapi' {
       'plugin::mux-video-uploader.mux-text-track': PluginMuxVideoUploaderMuxTextTrack;
       'plugin::review-workflows.workflow': PluginReviewWorkflowsWorkflow;
       'plugin::review-workflows.workflow-stage': PluginReviewWorkflowsWorkflowStage;
+      'plugin::rewind.version': PluginRewindVersion;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;

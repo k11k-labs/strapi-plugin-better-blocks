@@ -20,6 +20,18 @@ const config = ({
     resolve: '../../packages/strapi-plugin-chartkit',
   },
   /**
+   * Rewind tracks nothing until it is told what to track — the default is an
+   * empty list, so that installing it cannot quietly start writing a row on
+   * every save. Here it watches the one content type this example has.
+   */
+  rewind: {
+    enabled: true,
+    resolve: '../../packages/strapi-plugin-rewind',
+    config: {
+      contentTypes: ['api::article.article'],
+    },
+  },
+  /**
    * Mux Video Uploader — enables the "Mux" source button in the Better Blocks
    * video block, which lists and searches Mux assets through this plugin's
    * admin API. Credentials come from a Mux **Access Token** (Mux dashboard →
