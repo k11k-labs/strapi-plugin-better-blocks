@@ -1,3 +1,13 @@
+## 0.1.2 (2026-08-16)
+
+### 📖 Documentation
+
+- **chartkit:** rewrite the README around real screenshots ([#128](https://github.com/qkix/strapi-plugins/pull/128))
+
+  No code changes. Published so the package page carries the new README: the
+  field in the edit view, the editor, a spreadsheet paste, a chart block in a
+  document, and every chart type as `renderChart` actually draws it.
+
 ## 0.1.1 (2026-08-16)
 
 ### 📖 Documentation
