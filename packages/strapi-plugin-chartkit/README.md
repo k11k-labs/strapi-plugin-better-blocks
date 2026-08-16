@@ -108,8 +108,22 @@ would be an offer to overwrite it.
 Chartkit is two surfaces over one editor. If you use
 [Better Blocks](https://www.npmjs.com/package/@qkix/strapi-plugin-better-blocks),
 charts can live inside a rich-text document as a block instead of, or as well
-as, in a field of their own — see `@qkix/chartkit-core`'s `chartBlock` and the
-`registerBlock` API.
+as, in a field of their own. Register it from your app's `src/admin/app.tsx`:
+
+```ts
+import { registerBlock } from '@qkix/strapi-plugin-better-blocks/strapi-admin';
+import { chartBlockDefinition } from '@qkix/chartkit-editor/block';
+
+export default {
+  register() {
+    registerBlock(chartBlockDefinition({ locale: 'en-US' }));
+  },
+};
+```
+
+The front end needs its own half — `chartBlockPlugin` from whichever renderer
+you use — or a chart authored in a document is stored correctly and drawn as
+nothing.
 
 ## Packages
 

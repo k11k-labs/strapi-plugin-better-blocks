@@ -13,97 +13,8 @@
  */
 
 import { registerBlock } from '@qkix/strapi-plugin-better-blocks/strapi-admin';
-import { chartBlock, createChartBlock } from '@qkix/chartkit-core';
-import type { ChartSpec } from '@qkix/chartkit-core';
-import { ChartEditorDialog, ChartPreview } from '@qkix/chartkit-editor';
-import * as React from 'react';
+import { chartBlockDefinition } from '@qkix/chartkit-editor/block';
 import { Transforms } from 'slate';
-import { useSlateStatic, ReactEditor } from 'slate-react';
-
-const ChartIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    aria-hidden="true"
-  >
-    <path
-      d="M2 14V2"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-    />
-    <path
-      d="M2 14h12"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-    />
-    <rect x="4" y="7" width="2.5" height="5" fill="currentColor" />
-    <rect x="8" y="4" width="2.5" height="8" fill="currentColor" />
-    <rect x="12" y="9" width="2.5" height="3" fill="currentColor" />
-  </svg>
-);
-
-/** A chart to start from, so a new block shows something rather than an empty box. */
-const STARTER: ChartSpec = {
-  version: 1,
-  type: 'bar',
-  title: 'New chart',
-  description: 'Revenue by quarter.',
-  data: {
-    source: 'inline',
-    labels: ['Q1', 'Q2', 'Q3', 'Q4'],
-    series: [{ name: 'Revenue', values: [420, 610, 385, 720] }],
-  },
-};
-
-/**
- * The chart block: a preview in the document, an editor in a dialog.
- *
- * The same shape every other rich block in Better Blocks uses — math, video,
- * embed. A chart editor inline would be most of a screen for something the
- * author is usually only reading.
- *
- * Slate owns the document, so a save goes back through it with
- * `Transforms.setNodes` at this element's path rather than into React state.
- */
-const ChartElement = ({ attributes, children, element }: any) => {
-  const editor = useSlateStatic();
-  const spec = (element as { spec?: ChartSpec }).spec;
-
-  // A block just inserted has nothing worth looking at, so it opens straight
-  // into the editor.
-  const [open, setOpen] = React.useState(false);
-
-  const save = (next: ChartSpec) => {
-    const path = ReactEditor.findPath(editor, element);
-    Transforms.setNodes(editor, { spec: next } as never, { at: path });
-  };
-
-  return (
-    <div {...attributes} contentEditable={false} style={{ margin: '8px 0' }}>
-      {spec && (
-        <>
-          <ChartPreview
-            spec={spec}
-            locale="en-US"
-            onClick={() => setOpen(true)}
-          />
-          <ChartEditorDialog
-            spec={spec}
-            open={open}
-            onOpenChange={setOpen}
-            onSave={save}
-            locale="en-US"
-          />
-        </>
-      )}
-      {children}
-    </div>
-  );
-};
 
 const KeyFigureIcon = () => (
   <svg
@@ -194,22 +105,14 @@ export default {
     });
 
     /**
-     * Chartkit as a Better Blocks block, with the real editor.
+     * Chartkit as a Better Blocks block.
      *
-     * `chartBlock` from chartkit-core carries the type, the validator and the
-     * migrator; `@qkix/chartkit-editor` carries the editing surface; and the
-     * preview inside it is `renderChart` — the same function the front-end
-     * renderers call, so the editor and the page cannot disagree.
+     * Everything this used to spell out by hand — the icon, the starter chart,
+     * finding the node's path and writing the edited spec back through Slate —
+     * now ships in `@qkix/chartkit-editor/block`. What is left is the choice a
+     * host actually has to make: the locale its numbers are formatted in.
      */
-    registerBlock({
-      ...chartBlock,
-      icon: ChartIcon,
-      label: 'Chart',
-      insert: (editor) => {
-        Transforms.insertNodes(editor, createChartBlock(STARTER) as never);
-      },
-      renderElement: (props) => <ChartElement {...props} />,
-    });
+    registerBlock(chartBlockDefinition({ locale: 'en-US' }));
   },
 
   bootstrap() {},

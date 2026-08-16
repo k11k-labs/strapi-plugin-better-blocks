@@ -101,6 +101,9 @@ export const boundaries = {
             onlyDependOnLibsWithTags: [
               'scope:core',
               'scope:renderer',
+              // The Strapi example registers the packaged chart block, which
+              // lives in the editor package.
+              'scope:editor',
               'scope:plugin',
               'scope:tooling',
             ],

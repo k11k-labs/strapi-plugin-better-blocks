@@ -1,7 +1,7 @@
 {
   "name": "@qkix/chartkit-editor",
   "version": "0.1.1",
-  "description": "The Chartkit chart editor for the Strapi admin — a data grid, CSV paste and live preview, shared by the standalone custom field and the Better Blocks block",
+  "description": "The Chartkit chart editor for the Strapi admin \u2014 a data grid, CSV paste and live preview, shared by the standalone custom field and the Better Blocks block",
   "type": "commonjs",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -15,6 +15,16 @@
       "require": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.js"
+      }
+    },
+    "./block": {
+      "import": {
+        "types": "./dist/block.d.mts",
+        "default": "./dist/block.mjs"
+      },
+      "require": {
+        "types": "./dist/block.d.ts",
+        "default": "./dist/block.js"
       }
     }
   },
@@ -38,7 +48,9 @@
     "@strapi/icons": "^2.0.0",
     "react": "^17.0.0 || ^18.0.0 || ^19.0.0",
     "styled-components": "^6.0.0",
-    "@strapi/admin": "^5.0.0"
+    "@strapi/admin": "^5.0.0",
+    "slate": "0.94.1",
+    "slate-react": "0.98.3"
   },
   "devDependencies": {
     "@qkix/eslint-config": "workspace:*",
@@ -57,6 +69,8 @@
     "prettier": "^3.4.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "slate": "0.94.1",
+    "slate-react": "0.98.3",
     "styled-components": "^6.1.17",
     "tsup": "^8.3.5",
     "typescript": "^5.7.2",
@@ -94,6 +108,12 @@
   },
   "peerDependenciesMeta": {
     "@strapi/admin": {
+      "optional": true
+    },
+    "slate": {
+      "optional": true
+    },
+    "slate-react": {
       "optional": true
     }
   }

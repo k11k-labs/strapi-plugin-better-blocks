@@ -454,6 +454,8 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     draftAndPublish: true;
   };
   attributes: {
+    chart: Schema.Attribute.JSON &
+      Schema.Attribute.CustomField<'plugin::chartkit.chart'>;
     content: Schema.Attribute.JSON &
       Schema.Attribute.CustomField<'plugin::better-blocks.better-blocks'>;
     createdAt: Schema.Attribute.DateTime;
