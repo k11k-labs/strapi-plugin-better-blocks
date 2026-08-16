@@ -1,0 +1,20 @@
+{
+  "name": "@qkix/example-chartkit-gallery",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Every Chartkit fixture rendered on one page, for looking at",
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs",
+    "dev": "node build.mjs && node serve.mjs",
+    "serve": "node serve.mjs"
+  },
+  "dependencies": {
+    "@qkix/chartkit-core": "workspace:*"
+  },
+  "nx": {
+    "tags": [
+      "scope:example"
+    ]
+  }
+}
