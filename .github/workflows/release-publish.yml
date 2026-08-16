@@ -72,6 +72,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           created=0
+          fresh=""
           for manifest in packages/*/package.json; do
             name=$(node -p "require('./$manifest').name")
             private=$(node -p "require('./$manifest').private === true")
@@ -79,10 +80,16 @@ jobs:
             version=$(node -p "require('./$manifest').version")
             tag="$name@$version"
 
+            # An existing tag means this exact version already shipped. That is
+            # the normal case for every package a release did not touch, and it
+            # is what keeps the publish step below from offering npm a version
+            # it already has.
             if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
               echo "  $tag already exists — skipping"
               continue
             fi
+
+            fresh="${fresh:+$fresh,}$name"
 
             if [ "$DRY_RUN" = "true" ]; then
               echo "  would tag $tag"
@@ -98,17 +105,33 @@ jobs:
           fi
 
           echo "created=$created" >> "$GITHUB_OUTPUT"
+          echo "projects=$fresh" >> "$GITHUB_OUTPUT"
 
       # No new tag means every version in the manifests is already released, so
       # there is nothing to push and npm would reject it anyway.
+      #
+      # Only the freshly tagged projects are published. A release may cover one
+      # package while the rest of the workspace keeps versions npm already has,
+      # and offering those again fails the whole job — so the tag step's list of
+      # what was actually new is what gets published.
       - name: Publish to npm
         if: ${{ github.event_name == 'workflow_dispatch' || steps.tag.outputs.created != '0' }}
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
+          PROJECTS: ${{ steps.tag.outputs.projects }}
         run: |
+          set -euo pipefail
+
+          if [ -z "$PROJECTS" ]; then
+            echo "Every version in the manifests is already on npm; nothing to publish."
+            exit 0
+          fi
+
+          echo "Publishing: $PROJECTS"
+
           if [ "$DRY_RUN" = "true" ]; then
-            pnpm exec nx release publish --dry-run
+            pnpm exec nx release publish --dry-run --projects="$PROJECTS"
           else
-            pnpm exec nx release publish
+            pnpm exec nx release publish --projects="$PROJECTS"
           fi

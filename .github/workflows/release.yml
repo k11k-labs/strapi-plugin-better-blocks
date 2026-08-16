@@ -18,6 +18,11 @@ on:
         type: string
         required: false
         default: ''
+      projects:
+        description: 'Optional comma-separated projects to release, e.g. "@qkix/chartkit-core". Everything else keeps its current version. Leave empty to release whatever changed.'
+        type: string
+        required: false
+        default: ''
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -51,13 +56,26 @@ jobs:
       # Note on 0.x versions: nx maps a "minor" bump to a patch increment and a
       # "major" bump to the middle number, so asking for "minor" on 0.12.0 gets
       # you 0.12.1. Pass an exact version in `overrides` when that matters.
+      # `projects` exists because nx attributes a change to a file outside every
+      # package — the root README, a shared config — to *all* of them, which
+      # then cascades to their dependents as "a dependency was bumped". A
+      # one-line README edit alongside work in one package therefore proposes a
+      # release of the entire workspace, with changelogs that say nothing.
+      # Naming the projects keeps such a release honest.
       - name: Version and changelog
         env:
           DRY: ${{ inputs.dry_run && '--dry-run' || '' }}
           OVERRIDES: ${{ inputs.overrides }}
+          PROJECTS: ${{ inputs.projects }}
         run: |
           set -euo pipefail
-          pnpm exec nx release --skip-publish $DRY
+          FILTER=""
+          if [ -n "$PROJECTS" ]; then
+            FILTER="--projects=$PROJECTS"
+            echo "Releasing only: $PROJECTS"
+          fi
+
+          pnpm exec nx release --skip-publish $FILTER $DRY
 
           for pair in $OVERRIDES; do
             project="${pair%%=*}"
