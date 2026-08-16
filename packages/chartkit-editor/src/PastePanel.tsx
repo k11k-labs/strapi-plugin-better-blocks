@@ -7,7 +7,16 @@
  * much worse than one they can see and cancel.
  */
 
-import { Box, Button, Modal, Textarea, Typography } from '@strapi/design-system';
+import {
+  Box,
+  Button,
+  Field,
+  Flex,
+  Modal,
+  Textarea,
+  Toggle,
+  Typography,
+} from '@strapi/design-system';
 import * as React from 'react';
 
 import type { ChartSpec } from '@qkix/chartkit-core';
@@ -23,7 +32,11 @@ export type PastePanelProps = {
 
 export function PastePanel({ spec, onApply, onCancel }: PastePanelProps) {
   const [text, setText] = React.useState('');
-  const parsed: ParseResult | null = text.trim() ? parseDelimited(text) : null;
+  // Undefined means "use the parser's guess". Touching the switch pins it.
+  const [header, setHeader] = React.useState<boolean | undefined>(undefined);
+
+  const parsed: ParseResult | null = text.trim() ? parseDelimited(text, { header }) : null;
+  const usedHeader = parsed?.ok ? parsed.table.usedHeader : false;
 
   return (
     <Modal.Root open onOpenChange={onCancel}>
@@ -58,6 +71,23 @@ export function PastePanel({ spec, onApply, onCancel }: PastePanelProps) {
 
           {parsed?.ok && (
             <Box paddingTop={3}>
+              <Flex gap={2} alignItems="center" paddingBottom={2}>
+                <Field.Root name="paste-header">
+                  <Toggle
+                    checked={usedHeader}
+                    onLabel="Yes"
+                    offLabel="No"
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                      setHeader(event.target.checked)
+                    }
+                  />
+                </Field.Root>
+                <Typography variant="pi">
+                  First row is a header
+                  {header === undefined && ' (detected)'}
+                </Typography>
+              </Flex>
+
               <Typography variant="pi" fontWeight="bold">
                 {parsed.table.labels.length} categories, {parsed.table.series.length} series:{' '}
                 {parsed.table.series.map((one) => one.name).join(', ')}

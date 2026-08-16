@@ -18,6 +18,21 @@ export type ParsedTable = {
   series: Series[];
   /** What the parser had to assume, so the editor can say so before committing. */
   notes: string[];
+  /** Whether the first row was treated as series names. */
+  usedHeader: boolean;
+};
+
+export type ParseOptions = {
+  /**
+   * Force the first row to be treated as a header, or not.
+   *
+   * Left undefined the parser guesses, and the guess is unreliable in one very
+   * common case: a header of years. `Region,2024,2025` is cells that all read
+   * as numbers, indistinguishable by type from a row of data. Rather than
+   * inventing a cleverer heuristic that is wrong in some other case, the paste
+   * panel shows its guess as a switch and the reader decides.
+   */
+  header?: boolean;
 };
 
 export type ParseResult = { ok: true; table: ParsedTable } | { ok: false; reason: string };
@@ -37,7 +52,7 @@ export type ParseResult = { ok: true; table: ParsedTable } | { ok: false; reason
  * row is used for series names when it is not numeric; without one the series
  * are named `Series 1`, `Series 2` and so on.
  */
-export function parseDelimited(input: string): ParseResult {
+export function parseDelimited(input: string, options: ParseOptions = {}): ParseResult {
   // Blank lines off each end only. A full trim would eat the leading tab of a
   // spreadsheet header row — `\tRevenue\tCosts` — taking the empty first cell
   // with it, and the header would then be read as a row of data.
@@ -64,13 +79,14 @@ export function parseDelimited(input: string): ParseResult {
 
   // A first row whose data cells are not numbers is a header. Guessing wrong
   // either way costs a row of data or a row of nonsense names, so it is decided
-  // by what the cells actually contain rather than by a setting nobody will
-  // find.
-  const hasHeader = rows[0].slice(1).some((cell) => cell.trim() !== '' && !isNumeric(cell));
+  // by what the cells actually contain — and then offered to the reader to
+  // override, because a header of years defeats any such rule.
+  const guessed = rows[0].slice(1).some((cell) => cell.trim() !== '' && !isNumeric(cell));
+  const hasHeader = options.header ?? guessed;
   const header = hasHeader ? rows[0] : null;
   const body = hasHeader ? rows.slice(1) : rows;
 
-  if (!hasHeader) notes.push('No header row found, so the series are numbered.');
+  if (!hasHeader) notes.push('No header row, so the series are numbered.');
   if (body.length === 0) return { ok: false, reason: 'No data rows found below the header.' };
 
   const labels = body.map((row, i) => {
@@ -98,7 +114,7 @@ export function parseDelimited(input: string): ParseResult {
     );
   }
 
-  return { ok: true, table: { labels, series, notes } };
+  return { ok: true, table: { labels, series, notes, usedHeader: hasHeader } };
 }
 
 /**

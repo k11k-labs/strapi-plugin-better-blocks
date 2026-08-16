@@ -59,27 +59,46 @@ export function DataGrid({ spec, onChange, disabled }: DataGridProps) {
               </Th>
 
               {series.map((one, seriesIndex) => (
-                <Th key={seriesIndex}>
-                  <Flex gap={1} alignItems="center">
+                <Th key={seriesIndex} style={{ borderLeft: COLUMN_RULE }}>
+                  {/* The delete button is taken out of the flow, so the name
+                      input spans the whole cell and its right edge lands on the
+                      same line as the numbers below it. Any button sharing the
+                      row steals width from the input, and the heading drifts
+                      away from the column it names. */}
+                  {/* `flex: 1` because Strapi's Th wraps its children in a
+                      flex row of its own: without it this shrinks to the width
+                      of the text and the heading sits mid-column, nowhere near
+                      the numbers it names. */}
+                  <div style={{ position: 'relative', flex: 1, minWidth: 0 }}>
                     <CellInput
                       value={one.name}
+                      align="right"
                       aria-label={`Name of series ${seriesIndex + 1}`}
                       disabled={disabled}
                       onCommit={(text) => onChange(setSeriesName(spec, seriesIndex, text))}
                     />
-                    <IconButton
-                      label={`Remove series ${one.name}`}
-                      variant="ghost"
-                      size="S"
-                      // The last series is not removable: a chart with none has
-                      // nothing to draw. Disabled rather than hidden, so the
-                      // control does not move around as series come and go.
-                      disabled={disabled || series.length <= 1}
-                      onClick={() => onChange(removeSeries(spec, seriesIndex))}
+                    <span
+                      style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: '50%',
+                        transform: 'translateY(-50%)',
+                      }}
                     >
-                      <Trash />
-                    </IconButton>
-                  </Flex>
+                      <IconButton
+                        label={`Remove series ${one.name}`}
+                        variant="ghost"
+                        size="S"
+                        // The last series is not removable: a chart with none
+                        // has nothing to draw. Disabled rather than hidden, so
+                        // the control does not move as series come and go.
+                        disabled={disabled || series.length <= 1}
+                        onClick={() => onChange(removeSeries(spec, seriesIndex))}
+                      >
+                        <Trash />
+                      </IconButton>
+                    </span>
+                  </div>
                 </Th>
               ))}
 
@@ -102,7 +121,7 @@ export function DataGrid({ spec, onChange, disabled }: DataGridProps) {
                 </Td>
 
                 {series.map((one, seriesIndex) => (
-                  <Td key={seriesIndex}>
+                  <Td key={seriesIndex} style={{ borderLeft: COLUMN_RULE }}>
                     <NumberCell
                       value={one.values[rowIndex] ?? null}
                       aria-label={`${one.name} at ${label}`}
@@ -169,11 +188,13 @@ function CellInput({
   value,
   onCommit,
   disabled,
+  align = 'left',
   ...rest
 }: {
   value: string;
   onCommit: (value: string) => void;
   disabled?: boolean;
+  align?: 'left' | 'right';
   'aria-label': string;
 }) {
   const [draft, setDraft] = React.useState(value);
@@ -193,7 +214,7 @@ function CellInput({
         if (event.key === 'Enter') event.currentTarget.blur();
         if (event.key === 'Escape') setDraft(value);
       }}
-      style={CELL_STYLE}
+      style={{ ...CELL_STYLE, textAlign: align }}
     />
   );
 }
@@ -255,6 +276,16 @@ function NumberCell({
  * bordered form controls with labels and hint slots. The colors are inherited,
  * so this follows the admin's theme.
  */
+/**
+ * A rule between columns.
+ *
+ * With four series and a hundred rows, a grid of bare numbers is genuinely hard
+ * to read — the eye loses which column it is in halfway down. `currentColor` at
+ * low opacity keeps the rule subtle and correct in either admin theme, rather
+ * than picking a grey that is invisible on one of them.
+ */
+const COLUMN_RULE = '1px solid color-mix(in srgb, currentColor 15%, transparent)';
+
 const CELL_STYLE: React.CSSProperties = {
   width: '100%',
   minWidth: '72px',
