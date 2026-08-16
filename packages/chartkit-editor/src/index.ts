@@ -1,6 +1,12 @@
 export { ChartEditor } from './ChartEditor';
 export type { ChartEditorProps } from './ChartEditor';
 
+export { ChartEditorDialog } from './ChartEditorDialog';
+export type { ChartEditorDialogProps } from './ChartEditorDialog';
+
+export { ChartPreview } from './ChartPreview';
+export type { ChartPreviewProps } from './ChartPreview';
+
 export { DataGrid } from './DataGrid';
 export type { DataGridProps } from './DataGrid';
 

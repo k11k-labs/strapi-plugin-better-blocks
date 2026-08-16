@@ -24,9 +24,10 @@ import {
   Toggle,
   Typography,
 } from '@strapi/design-system';
-import { renderChart, type ChartSpec, type ChartType } from '@qkix/chartkit-core';
+import type { ChartSpec, ChartType } from '@qkix/chartkit-core';
 import * as React from 'react';
 
+import { ChartPreview } from './ChartPreview';
 import { DataGrid } from './DataGrid';
 import { PastePanel } from './PastePanel';
 import { normalizeShape, setType, typeChangeDiscardsSeries } from './edit';
@@ -65,11 +66,9 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
     update(setType(spec, type));
   };
 
-  const preview = renderChart(spec, { locale, idPrefix: 'chartkit-editor' });
-
   return (
     <Flex direction="column" alignItems="stretch" gap={4}>
-      <Preview result={preview} />
+      <ChartPreview spec={spec} locale={locale} idPrefix="chartkit-editor" />
 
       <Flex gap={4} alignItems="flex-end" wrap="wrap">
         <Box minWidth="160px">
@@ -199,49 +198,5 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
         </Dialog.Content>
       </Dialog.Root>
     </Flex>
-  );
-}
-
-/**
- * The preview, or the reasons there is not one.
- *
- * A spec that will not render is shown as its validation issues rather than as
- * an empty frame. The author is the only person who can fix it, and this is the
- * one moment they are looking.
- */
-function Preview({ result }: { result: ReturnType<typeof renderChart> }) {
-  if (!result.ok) {
-    return (
-      <Box padding={4} background="danger100" hasRadius>
-        <Typography variant="pi" fontWeight="bold" textColor="danger600">
-          This chart will not render yet
-        </Typography>
-        <Box paddingTop={2}>
-          {result.issues.map((issue) => (
-            <Typography key={issue.path} variant="pi" textColor="danger600" tag="p">
-              {issue.path}: {issue.message}
-            </Typography>
-          ))}
-        </Box>
-      </Box>
-    );
-  }
-
-  return (
-    <Box
-      padding={3}
-      hasRadius
-      style={{
-        // Both, always. The chart's text and axes are
-        // `var(--chart-text, currentColor)` by design, so a background without
-        // a matching color leaves them inheriting the admin's theme — which on
-        // the dark one is white text on white paper.
-        background: '#ffffff',
-        color: '#32324a',
-        border: '1px solid #dcdce4',
-      }}
-      // chartkit-core's own output, escaped on the way in by its string builder.
-      dangerouslySetInnerHTML={{ __html: result.svg }}
-    />
   );
 }

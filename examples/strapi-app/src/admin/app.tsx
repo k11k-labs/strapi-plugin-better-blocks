@@ -15,7 +15,8 @@
 import { registerBlock } from '@qkix/strapi-plugin-better-blocks/strapi-admin';
 import { chartBlock, createChartBlock } from '@qkix/chartkit-core';
 import type { ChartSpec } from '@qkix/chartkit-core';
-import { ChartEditor } from '@qkix/chartkit-editor';
+import { ChartEditorDialog, ChartPreview } from '@qkix/chartkit-editor';
+import * as React from 'react';
 import { Transforms } from 'slate';
 import { useSlateStatic, ReactEditor } from 'slate-react';
 
@@ -59,27 +60,46 @@ const STARTER: ChartSpec = {
 };
 
 /**
- * The chart block, editable in place.
+ * The chart block: a preview in the document, an editor in a dialog.
  *
- * Slate owns the document, so an edit has to go back through it —
- * `Transforms.setNodes` at this element's path — rather than into React state.
+ * The same shape every other rich block in Better Blocks uses — math, video,
+ * embed. A chart editor inline would be most of a screen for something the
+ * author is usually only reading.
+ *
+ * Slate owns the document, so a save goes back through it with
+ * `Transforms.setNodes` at this element's path rather than into React state.
  */
 const ChartElement = ({ attributes, children, element }: any) => {
   const editor = useSlateStatic();
   const spec = (element as { spec?: ChartSpec }).spec;
 
+  // A block just inserted has nothing worth looking at, so it opens straight
+  // into the editor.
+  const [open, setOpen] = React.useState(false);
+
+  const save = (next: ChartSpec) => {
+    const path = ReactEditor.findPath(editor, element);
+    Transforms.setNodes(editor, { spec: next } as never, { at: path });
+  };
+
   return (
     <div {...attributes} contentEditable={false} style={{ margin: '8px 0' }}>
-      {spec ? (
-        <ChartEditor
-          spec={spec}
-          locale="en-US"
-          onChange={(next) => {
-            const path = ReactEditor.findPath(editor, element);
-            Transforms.setNodes(editor, { spec: next } as never, { at: path });
-          }}
-        />
-      ) : null}
+      {spec && (
+        <>
+          <ChartPreview
+            spec={spec}
+            locale="en-US"
+            onClick={() => setOpen(true)}
+          />
+          <ChartEditorDialog
+            spec={spec}
+            open={open}
+            onOpenChange={setOpen}
+            onSave={save}
+            locale="en-US"
+          />
+        </>
+      )}
       {children}
     </div>
   );
