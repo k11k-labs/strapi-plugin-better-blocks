@@ -11,7 +11,13 @@ export { DataGrid } from './DataGrid';
 export type { DataGridProps } from './DataGrid';
 
 export { PastePanel } from './PastePanel';
-export type { PastePanelProps } from './PastePanel';
+export type { PastePanelProps, PasteOrigin } from './PastePanel';
+
+export { readAssetText } from './media';
+export type { MediaAsset, ReadResult } from './media';
+
+export { useMediaLibraryDialog } from './useMediaLibrary';
+export type { MediaLibraryDialogProps } from './useMediaLibrary';
 
 // The edit operations are exported because they are the whole data model of the
 // editor: a host that wants its own controls can drive a spec with these rather

@@ -24,14 +24,29 @@ import type { ChartSpec } from '@qkix/chartkit-core';
 import { parseDelimited, type ParseResult } from './csv';
 import { replaceData } from './edit';
 
+/** Where the text came from, when it was not typed. */
+export type PasteOrigin = {
+  fileId?: number;
+  url?: string;
+  name?: string;
+};
+
 export type PastePanelProps = {
   spec: ChartSpec;
   onApply: (spec: ChartSpec) => void;
   onCancel: () => void;
+  /** Pre-filled content, for a file read from the Media Library. */
+  initialText?: string;
+  /**
+   * The file the text came from. Recorded on the spec so the editor can say
+   * where the numbers came from and offer to read it again — the values
+   * themselves are written in, so nothing has to be fetched at render time.
+   */
+  origin?: PasteOrigin;
 };
 
-export function PastePanel({ spec, onApply, onCancel }: PastePanelProps) {
-  const [text, setText] = React.useState('');
+export function PastePanel({ spec, onApply, onCancel, initialText = '', origin }: PastePanelProps) {
+  const [text, setText] = React.useState(initialText);
   // Undefined means "use the parser's guess". Touching the switch pins it.
   const [header, setHeader] = React.useState<boolean | undefined>(undefined);
 
@@ -42,7 +57,9 @@ export function PastePanel({ spec, onApply, onCancel }: PastePanelProps) {
     <Modal.Root open onOpenChange={onCancel}>
       <Modal.Content>
         <Modal.Header>
-          <Modal.Title>Paste from a spreadsheet</Modal.Title>
+          <Modal.Title>
+            {origin?.name ? `Import ${origin.name}` : 'Paste from a spreadsheet'}
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -116,7 +133,22 @@ export function PastePanel({ spec, onApply, onCancel }: PastePanelProps) {
             disabled={!parsed?.ok}
             onClick={() => {
               if (!parsed?.ok) return;
-              onApply(replaceData(spec, parsed.table.labels, parsed.table.series));
+              onApply(
+                replaceData(
+                  spec,
+                  parsed.table.labels,
+                  parsed.table.series,
+                  origin
+                    ? {
+                        source: 'media',
+                        fileId: origin.fileId,
+                        url: origin.url,
+                        name: origin.name,
+                        importedAt: new Date().toISOString(),
+                      }
+                    : { source: 'inline' }
+                )
+              );
             }}
           >
             Replace data

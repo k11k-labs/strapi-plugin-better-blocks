@@ -76,10 +76,42 @@ collapses to `1` and the cursor jumps behind the dot the moment anyone types
 of a whole and the core refuses more, so the switch discards data. Doing it
 silently would be a deletion disguised as a conversion.
 
-## Not yet
+## From the Media Library
 
-Reading data from a file in the **Media Library** — the third input path — is
-still to come.
+The third way in: pick a CSV, TSV or text file already uploaded to Strapi.
+
+It goes through **exactly the same panel** as a paste — same parser, same
+preview, same header switch, same confirm before anything is replaced. A file
+is no more trustworthy than typed text: the header guess and the number formats
+are the same problem either way.
+
+The values are **written into the spec**, alongside a note of which file they
+came from:
+
+```ts
+data: {
+  source: 'media',
+  fileId: 42,
+  url: '/uploads/quarterly.csv',
+  name: 'quarterly.csv',
+  importedAt: '2026-08-16T13:51:00.000Z',
+  labels: [...],
+  series: [...],
+}
+```
+
+So nothing is fetched when the chart renders — no resolver, no request at page
+load, and no permission model to get wrong. The reference is kept so the editor
+can say where the numbers came from and offer to read the file again, which is
+an explicit action rather than something that happens behind a reader's back.
+
+A file whose extension is not `.csv`, `.tsv`, `.txt` or `.tab` is refused
+before it is even fetched. Handing a PDF to a CSV parser produces a confident
+table of nonsense, which is worse than a refusal.
+
+`readAssetText` imports nothing from Strapi, so it is testable on its own; only
+`useMediaLibraryDialog` touches the admin's component registry, and it returns
+`undefined` — disabling the button — on a build that has no Media Library.
 
 ## License
 

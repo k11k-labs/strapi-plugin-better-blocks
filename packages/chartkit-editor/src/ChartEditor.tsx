@@ -29,7 +29,9 @@ import * as React from 'react';
 
 import { ChartPreview } from './ChartPreview';
 import { DataGrid } from './DataGrid';
-import { PastePanel } from './PastePanel';
+import { PastePanel, type PasteOrigin } from './PastePanel';
+import { readAssetText, type MediaAsset } from './media';
+import { useMediaLibraryDialog } from './useMediaLibrary';
 import { normalizeShape, setType, typeChangeDiscardsSeries } from './edit';
 
 export type ChartEditorProps = {
@@ -60,6 +62,35 @@ const TYPES: { value: ChartType; label: string }[] = [
 export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorProps) {
   const [pendingType, setPendingType] = React.useState<ChartType | null>(null);
   const [pasteOpen, setPasteOpen] = React.useState(false);
+
+  // A file read from the Media Library lands here and then goes through the
+  // same confirm panel as a paste — a file is no more trustworthy than typed
+  // text, and the header guess is the same problem either way.
+  const [imported, setImported] = React.useState<{ text: string; origin: PasteOrigin } | null>(
+    null
+  );
+  const [pickerOpen, setPickerOpen] = React.useState(false);
+  const [importError, setImportError] = React.useState<string | null>(null);
+
+  const MediaLibraryDialog = useMediaLibraryDialog();
+
+  const takeAsset = async (assets: Record<string, unknown>[]) => {
+    setPickerOpen(false);
+    const asset = assets[0] as MediaAsset | undefined;
+    if (!asset) return;
+
+    const result = await readAssetText(asset);
+    if (!result.ok) {
+      setImportError(result.reason);
+      return;
+    }
+
+    setImportError(null);
+    setImported({
+      text: result.text,
+      origin: { fileId: asset.id, url: asset.url, name: asset.name },
+    });
+  };
 
   // Every edit goes out through here, so a spec can never leave the editor
   // ragged — a series shorter than the labels makes every later edit ambiguous.
@@ -167,14 +198,38 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
         <DataGrid spec={spec} onChange={update} disabled={disabled} />
       </Box>
 
-      {pasteOpen && (
+      {importError && (
+        <Box padding={3} background="danger100" hasRadius>
+          <Typography variant="pi" textColor="danger600">
+            {importError}
+          </Typography>
+        </Box>
+      )}
+
+      {(pasteOpen || imported) && (
         <PastePanel
           spec={spec}
-          onCancel={() => setPasteOpen(false)}
+          initialText={imported?.text}
+          origin={imported?.origin}
+          onCancel={() => {
+            setPasteOpen(false);
+            setImported(null);
+          }}
           onApply={(next) => {
             update(next);
             setPasteOpen(false);
+            setImported(null);
           }}
+        />
+      )}
+
+      {pickerOpen && MediaLibraryDialog && (
+        <MediaLibraryDialog
+          // Data files, not images. The reader checks the extension too, since
+          // this only narrows what the dialog offers.
+          allowedTypes={['files']}
+          onClose={() => setPickerOpen(false)}
+          onSelectAssets={takeAsset}
         />
       )}
 
