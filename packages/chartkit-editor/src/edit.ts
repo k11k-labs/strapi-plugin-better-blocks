@@ -129,6 +129,19 @@ export function setType(spec: ChartSpec, type: ChartType): ChartSpec {
   return { ...spec, type, data: { ...spec.data, series: spec.data.series.slice(0, 1) } };
 }
 
+/**
+ * Whether the spec has a single number anywhere in it.
+ *
+ * Not a validity check — a spec with none is perfectly valid and renders an
+ * empty frame. It is the difference between a chart worth drawing and one worth
+ * describing in words, which is a question the preview has to answer.
+ */
+export function hasAnyValue(spec: ChartSpec): boolean {
+  return spec.data.series.some((one) =>
+    one.values.some((value) => typeof value === 'number' && Number.isFinite(value))
+  );
+}
+
 /** Whether switching to `type` would discard data. */
 export function typeChangeDiscardsSeries(spec: ChartSpec, type: ChartType): boolean {
   return (type === 'pie' || type === 'donut') && spec.data.series.length > 1;

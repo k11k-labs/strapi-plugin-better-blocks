@@ -5,6 +5,7 @@ import type { ChartSpec } from '@qkix/chartkit-core';
 import {
   addRow,
   addSeries,
+  hasAnyValue,
   normalizeShape,
   removeRow,
   removeSeries,
@@ -128,6 +129,25 @@ describe('edits', () => {
     expect(next.data.labels).toEqual(['Q1', 'Second quarter']);
     expect(next.data.series[1].name).toBe('Southern');
     expect(next.data.series[1].values).toEqual([null, 40]);
+  });
+
+  it('knows whether there is anything worth drawing', () => {
+    // A spec with categories but no readings renders an empty frame rather than
+    // failing, so the preview needs to ask this before drawing one.
+    expect(hasAnyValue(spec())).toBe(true);
+
+    const blank: ChartSpec = {
+      ...spec(),
+      data: {
+        source: 'inline',
+        labels: ['Q1', 'Q2'],
+        series: [{ name: 'North', values: [null, null] }],
+      },
+    };
+
+    expect(hasAnyValue(blank)).toBe(false);
+    // One number anywhere is enough — a chart of a single reading is a chart.
+    expect(hasAnyValue(setCell(blank, 0, 1, 0))).toBe(true);
   });
 
   it('keeps the chart settings when the data is replaced wholesale', () => {

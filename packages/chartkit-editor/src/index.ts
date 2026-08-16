@@ -25,6 +25,7 @@ export type { MediaLibraryDialogProps } from './useMediaLibrary';
 export {
   addRow,
   addSeries,
+  hasAnyValue,
   normalizeShape,
   removeRow,
   removeSeries,

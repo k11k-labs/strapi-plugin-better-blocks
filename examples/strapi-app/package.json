@@ -19,6 +19,7 @@
     "@qkix/chartkit-core": "workspace:^",
     "@qkix/chartkit-editor": "workspace:^",
     "@qkix/strapi-plugin-better-blocks": "workspace:*",
+    "@qkix/strapi-plugin-chartkit": "workspace:*",
     "@strapi/plugin-cloud": "5.52.0",
     "@strapi/plugin-users-permissions": "5.52.0",
     "@strapi/strapi": "5.52.0",

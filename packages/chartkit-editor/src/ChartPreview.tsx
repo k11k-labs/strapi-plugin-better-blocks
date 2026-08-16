@@ -10,6 +10,8 @@ import { Box, Typography } from '@strapi/design-system';
 import { renderChart, type ChartSpec } from '@qkix/chartkit-core';
 import * as React from 'react';
 
+import { hasAnyValue } from './edit';
+
 export type ChartPreviewProps = {
   spec: ChartSpec;
   locale?: string;
@@ -20,6 +22,26 @@ export type ChartPreviewProps = {
 
 export function ChartPreview({ spec, locale, idPrefix, onClick }: ChartPreviewProps) {
   const result = renderChart(spec, { locale, idPrefix: idPrefix ?? 'chartkit-preview' });
+
+  // A chart with categories but no readings renders perfectly happily: axes,
+  // ticks, a 0-to-1 scale invented out of nothing, and no marks. It is valid,
+  // and it is useless to look at — so say it in words instead of drawing an
+  // empty frame.
+  if (result.ok && !hasAnyValue(spec)) {
+    return (
+      <Box
+        padding={6}
+        hasRadius
+        onClick={onClick}
+        background="neutral100"
+        style={{ textAlign: 'center', cursor: onClick ? 'pointer' : undefined }}
+      >
+        <Typography variant="pi" textColor="neutral600">
+          Nothing to draw yet — this chart has no numbers in it.
+        </Typography>
+      </Box>
+    );
+  }
 
   if (!result.ok) {
     return (

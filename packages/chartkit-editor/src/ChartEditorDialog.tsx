@@ -15,6 +15,7 @@ import type { ChartSpec } from '@qkix/chartkit-core';
 import * as React from 'react';
 
 import { ChartEditor } from './ChartEditor';
+import { useDraftSpec } from './useDraftSpec';
 
 export type ChartEditorDialogProps = {
   spec: ChartSpec;
@@ -36,13 +37,7 @@ export function ChartEditorDialog({
   disabled,
   title = 'Edit chart',
 }: ChartEditorDialogProps) {
-  const [draft, setDraft] = React.useState(spec);
-
-  // Reset whenever the dialog opens, so reopening after a cancel starts from
-  // what is actually stored rather than from the abandoned edit.
-  React.useEffect(() => {
-    if (open) setDraft(spec);
-  }, [open, spec]);
+  const [draft, setDraft] = useDraftSpec(spec, open);
 
   return (
     <Modal.Root open={open} onOpenChange={onOpenChange}>
