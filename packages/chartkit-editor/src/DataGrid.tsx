@@ -195,7 +195,7 @@ const RemoveButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px;
+  padding: 4px;
   border: 0;
   border-radius: 4px;
   background: none;
@@ -204,8 +204,8 @@ const RemoveButton = styled.button`
   line-height: 0;
 
   svg {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
   }
 
   &:hover:not(:disabled) {
