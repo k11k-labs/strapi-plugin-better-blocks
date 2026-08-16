@@ -14,6 +14,11 @@ const config = ({
     enabled: true,
     resolve: '../../packages/strapi-plugin-better-blocks',
   },
+  /** Same reason as above: a workspace package needs pointing at explicitly. */
+  chartkit: {
+    enabled: true,
+    resolve: '../../packages/strapi-plugin-chartkit',
+  },
   /**
    * Mux Video Uploader — enables the "Mux" source button in the Better Blocks
    * video block, which lists and searches Mux assets through this plugin's

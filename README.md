@@ -19,9 +19,10 @@
 (Blocks) editor for Strapi v5, plus the React and Astro renderers that display what it
 writes. Colors, tables, callouts, media embeds, code, math and diagrams.
 
-**[Chartkit](./packages/chartkit-core)** — charts rendered as SVG on the server, so a
-page gets a chart without a byte of client-side JavaScript. Early: the spec, the
-rendering pipeline and the bar chart are in place.
+**[Chartkit](./packages/strapi-plugin-chartkit)** — charts rendered as SVG on the
+server, so a page gets a chart without a byte of client-side JavaScript. Authored in
+Strapi as a field of its own or as a block inside a Better Blocks document, from a data
+grid, a spreadsheet paste or a file in the Media Library.
 
 They are separate products that share a workspace, and increasingly an interface:
 Chartkit registers itself as a Better Blocks block type through a public API rather
@@ -35,6 +36,7 @@ than either one knowing the other's internals.
 | [`@qkix/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support.                                                                 |
 | [`@qkix/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript.                                               |
 | [`@qkix/better-blocks-core`](./packages/better-blocks-core)                     | The document types, the logic every package shares, and the block registration contract. No runtime dependencies.                         |
+| [`@qkix/strapi-plugin-chartkit`](./packages/strapi-plugin-chartkit)             | Strapi v5 custom field — a chart, edited in a data grid and stored as a spec. Works with or without Better Blocks.                        |
 | [`@qkix/chartkit-core`](./packages/chartkit-core)                               | Charts as server-rendered SVG — a `ChartSpec` in, a finished SVG string out. No DOM, no framework, no client-side JavaScript.             |
 | [`@qkix/chartkit-react-renderer`](./packages/chartkit-react-renderer)           | React renderer for Chartkit charts, and the Better Blocks block plugin that draws one inside a document.                                  |
 | [`@qkix/chartkit-astro-renderer`](./packages/chartkit-astro-renderer)           | The same for Astro — zero client-side JavaScript.                                                                                         |

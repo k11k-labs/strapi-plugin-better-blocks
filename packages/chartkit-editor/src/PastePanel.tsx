@@ -69,13 +69,21 @@ export function PastePanel({ spec, onApply, onCancel, initialText = '', origin }
           </Typography>
 
           <Box paddingTop={3}>
-            <Textarea
-              value={text}
-              placeholder={'\tRevenue\tCosts\nQ1\t420\t310\nQ2\t610\t480'}
-              onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
-                setText(event.target.value)
-              }
-            />
+            {/* Its own `Field.Root`, which is not decoration. A design-system
+              control takes its error styling from the nearest field context,
+              and React context reaches through the portal this panel renders
+              into — so without one, a textarea sitting inside a chart field
+              that happens to be invalid paints itself red about someone else's
+              problem. */}
+            <Field.Root name="paste-text">
+              <Textarea
+                value={text}
+                placeholder={'\tRevenue\tCosts\nQ1\t420\t310\nQ2\t610\t480'}
+                onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setText(event.target.value)
+                }
+              />
+            </Field.Root>
           </Box>
 
           {parsed && !parsed.ok && (

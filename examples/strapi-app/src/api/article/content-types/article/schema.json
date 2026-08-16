@@ -17,6 +17,10 @@
     "content": {
       "type": "customField",
       "customField": "plugin::better-blocks.better-blocks"
+    },
+    "chart": {
+      "type": "customField",
+      "customField": "plugin::chartkit.chart"
     }
   }
 }
