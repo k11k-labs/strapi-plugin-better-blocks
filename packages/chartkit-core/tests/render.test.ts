@@ -275,6 +275,85 @@ describe('renderChart', () => {
     expect(svgOf(fixtureById('area').spec)).toContain('class="chartkit chartkit-area"');
   });
 
+  it('draws no axes for a pie', () => {
+    const svg = svgOf(fixtureById('pie').spec);
+
+    expect(svg).not.toContain('chartkit-axis');
+    expect(svg).not.toContain('chartkit-grid');
+    expect(svg).toContain('chartkit-pie');
+  });
+
+  it('names slices in the legend, since nothing else does', () => {
+    const svg = svgOf(fixtureById('pie').spec);
+
+    // One series, four categories — so the legend carries the category labels,
+    // not the series name.
+    expect(svg).toContain('Search');
+    expect(svg).toContain('Referral');
+    expect(svg).not.toContain('>Sessions<');
+  });
+
+  it('keeps slices in the author order rather than sorting by size', () => {
+    // d3 sorts by value unless told not to, which would break the
+    // correspondence between slice color and legend entry.
+    const svg = svgOf(fixtureById('pie-slivers').spec);
+    const fills = [...svg.matchAll(/<path[^>]*fill="var\(--chart-series-(\d+)/g)].map((m) =>
+      Number(m[1])
+    );
+
+    expect(fills).toEqual([1, 2, 3, 4, 5, 6]);
+  });
+
+  it('cuts a hole in a donut but not in a pie', () => {
+    const donut = svgOf(fixtureById('donut').spec);
+    const pie = svgOf(fixtureById('pie').spec);
+
+    // An annulus path doubles back to trace its inner edge, so it carries more
+    // arc commands than a solid wedge.
+    const arcsIn = (svg: string) => (svg.match(/A/g) ?? []).length;
+    expect(arcsIn(donut)).toBeGreaterThan(arcsIn(pie));
+  });
+
+  it('labels slices with room and leaves slivers to the legend', () => {
+    const svg = svgOf(fixtureById('pie-slivers').spec);
+    const labels = [...svg.matchAll(/<text[^>]*paint-order="stroke"[^>]*>([^<]*)</g)].map(
+      (m) => m[1]
+    );
+
+    // Six slices, but only the ones with room get a label — text spilling out
+    // of a sliver onto its neighbors is worse than no text.
+    expect(labels.length).toBeGreaterThan(0);
+    expect(labels.length).toBeLessThan(6);
+    expect(labels.some((l) => l.endsWith('%'))).toBe(true);
+  });
+
+  it('draws nothing when there is nothing to divide up', () => {
+    // A full circle of one arbitrary color would read as "all of it is A".
+    const svg = svgOf(fixtureById('pie-all-zero').spec);
+    expect(svg).not.toContain('<path');
+  });
+
+  it('refuses a pie of several series rather than drawing the first', () => {
+    const spec = { ...fixtureById('grouped').spec, type: 'pie' as const };
+    const issues = validateChartSpec(spec).issues;
+
+    expect(issues.some((i) => i.path === 'data.series')).toBe(true);
+    expect(issues[0].message).toContain('shares of a whole');
+  });
+
+  it('refuses a negative slice rather than treating it as zero', () => {
+    const spec = {
+      ...fixtureById('pie').spec,
+      data: {
+        source: 'inline' as const,
+        labels: ['A', 'B'],
+        series: [{ name: 'x', values: [5, -3] }],
+      },
+    };
+
+    expect(validateChartSpec(spec).issues[0]?.message).toContain('cannot be negative');
+  });
+
   it('reports why it will not render, rather than drawing something wrong', () => {
     const result = renderChart({
       version: 1,
@@ -298,8 +377,11 @@ describe('validateChartSpec', () => {
     }
   });
 
-  it('rejects a chart type that has no renderer yet', () => {
-    const spec = { ...fixtureById('ordinary').spec, type: 'pie' as const };
+  it('rejects a chart type it does not know', () => {
+    // Every type in the union now has a renderer, so this guards the other
+    // direction: a spec from a newer editor must fail loudly rather than
+    // rendering as a blank box.
+    const spec = { ...fixtureById('ordinary').spec, type: 'sunburst' as never };
     expect(validateChartSpec(spec).issues[0]?.path).toBe('type');
   });
 
