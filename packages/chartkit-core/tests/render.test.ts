@@ -11,6 +11,17 @@ const svgOf = (spec: ChartSpec): string => {
   return result.svg;
 };
 
+/** The value-axis label texts, in order. */
+const axisLabels = (svg: string): string[] =>
+  [
+    ...(/chartkit-axis-value[^>]*>(.*?)<\/g>/s.exec(svg)?.[1] ?? '').matchAll(
+      /<text[^>]*>([^<]*)<\/text>/g
+    ),
+  ].map((m) => m[1].replace(/,/g, ''));
+
+/** The first path `d` in the markup. */
+const pathOf = (svg: string): string => /<path[^>]*d="([^"]*)"/.exec(svg)?.[1] ?? '';
+
 describe('renderChart', () => {
   it.each(fixtures.map((f) => [f.id, f] as const))(
     'renders the %s fixture to stable markup',
@@ -191,6 +202,77 @@ describe('renderChart', () => {
     // wrapping they run off the side of the viewBox.
     expect(rows.size).toBeGreaterThan(1);
     expect(legend.match(/<rect/g)).toHaveLength(8);
+  });
+
+  it('crops a line axis to the data instead of anchoring it at zero', () => {
+    const svg = svgOf(fixtureById('line').spec);
+    const ticks = axisLabels(svg).map(Number);
+
+    // Readings run 21.1–24.6. An axis from zero would squash the whole shape
+    // into the top tenth of the plot; cropping is what makes a line readable.
+    expect(Math.min(...ticks)).toBeGreaterThan(15);
+  });
+
+  it('anchors an area axis at zero, because its fill is measured from there', () => {
+    const svg = svgOf(fixtureById('area').spec);
+    const ticks = axisLabels(svg).map(Number);
+
+    // Values run 120–310, but the fill is meaningless without the baseline.
+    expect(Math.min(...ticks)).toBe(0);
+  });
+
+  it('breaks the line at a hole rather than joining across it', () => {
+    const svg = svgOf(fixtureById('line-gaps').spec);
+    const d = /<path[^>]*stroke-width="2"[^>]*d="([^"]*)"/.exec(svg)?.[1] ?? pathOf(svg);
+
+    // Each break starts a new subpath, so an M after the first one is the
+    // evidence the line stopped instead of inventing a reading.
+    expect((d.match(/M/g) ?? []).length).toBeGreaterThan(1);
+  });
+
+  it('draws a dot for a reading with no neighbor to join to', () => {
+    // Apr sits between two holes. A path through one point has no segment, so
+    // without this the value is simply invisible.
+    const svg = svgOf(fixtureById('line-gaps').spec);
+    expect(svg).toContain('<circle');
+
+    // And a line whose points all have neighbors needs no dots.
+    expect(svgOf(fixtureById('line').spec)).not.toContain('<circle');
+  });
+
+  it('shows a single-point line, which has no segment at all', () => {
+    const svg = svgOf(fixtureById('line-single-point').spec);
+    expect(svg).toContain('<circle');
+  });
+
+  it('fills an area on both sides of the baseline', () => {
+    const svg = svgOf(fixtureById('area-negative').spec);
+    const fill = /<path d="([^"]*)"[^>]*fill-opacity=/.exec(svg)?.[1] ?? '';
+    const baseline = Number(/chartkit-axis-category[^>]*><line[^>]*y1="([\d.]+)"/.exec(svg)?.[1]);
+
+    // Values run -20 to 22, so the filled region hinges on the baseline and has
+    // to carry coordinates on both sides of it. y grows downward in SVG, so
+    // "above the baseline" is a smaller number.
+    const ys = [...fill.matchAll(/[ML,]\s*-?[\d.]+,(-?[\d.]+)/g)].map((m) => Number(m[1]));
+
+    expect(ys.length).toBeGreaterThan(0);
+    expect(ys.some((y) => y < baseline - 1)).toBe(true);
+    expect(ys.some((y) => y > baseline + 1)).toBe(true);
+  });
+
+  it('gives every line its own color and a legend to name them', () => {
+    const svg = svgOf(fixtureById('line-multi').spec);
+    const strokes = new Set(
+      [...svg.matchAll(/stroke="(var\(--chart-series-[^"]*)"/g)].map((m) => m[1])
+    );
+
+    expect(strokes.size).toBe(3);
+    expect(svg).toContain('chartkit-legend');
+  });
+
+  it('marks the chart type on the root element', () => {
+    expect(svgOf(fixtureById('line').spec)).toContain('class="chartkit chartkit-line"');
+    expect(svgOf(fixtureById('area').spec)).toContain('class="chartkit chartkit-area"');
   });
 
   it('reports why it will not render, rather than drawing something wrong', () => {

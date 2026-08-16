@@ -29,7 +29,7 @@ export type ChartValidationResult = {
  * naming a type that exists in the union but has no renderer yet is rejected
  * here, so it surfaces as a stated reason rather than an empty box.
  */
-const IMPLEMENTED_TYPES = new Set<ChartType>(['bar']);
+const IMPLEMENTED_TYPES = new Set<ChartType>(['bar', 'line', 'area']);
 
 const DATA_SOURCES = new Set(['inline', 'media']);
 

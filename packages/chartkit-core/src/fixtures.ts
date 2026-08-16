@@ -190,6 +190,93 @@ export const fixtures: Fixture[] = [
     ),
   },
   {
+    id: 'line',
+    breaks: 'a domain cropped to the data instead of anchored at zero',
+    spec: {
+      version: 1,
+      type: 'line',
+      title: 'Line: server temperature',
+      description: 'Temperature readings through the day, peaking at midday.',
+      data: {
+        source: 'inline',
+        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00'],
+        series: [{ name: 'Rack A', values: [21.4, 21.1, 22.8, 24.6, 23.9, 22.2] }],
+      },
+    },
+  },
+  {
+    id: 'line-gaps',
+    breaks: 'holes — the line must break, and a lone reading must still show',
+    spec: {
+      version: 1,
+      type: 'line',
+      title: 'Line with gaps and a lone reading',
+      data: {
+        source: 'inline',
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+        // Apr is isolated: both neighbors are holes, so a path through it draws
+        // no segment at all and the value would vanish.
+        series: [{ name: 'Readings', values: [12, 18, null, 26, null, 9, 14] }],
+      },
+    },
+  },
+  {
+    id: 'line-multi',
+    breaks: 'several lines sharing a plot, and the legend above them',
+    spec: {
+      version: 1,
+      type: 'line',
+      title: 'Three lines',
+      data: {
+        source: 'inline',
+        labels: ['Q1', 'Q2', 'Q3', 'Q4'],
+        series: [
+          { name: 'North', values: [420, 610, 385, 720] },
+          { name: 'South', values: [310, 480, 520, 400] },
+          { name: 'East', values: [180, 220, 300, 510] },
+        ],
+      },
+    },
+  },
+  {
+    id: 'area',
+    breaks: 'a fill measured from the baseline, so zero must be in the domain',
+    spec: {
+      version: 1,
+      type: 'area',
+      title: 'Area: signups',
+      data: {
+        source: 'inline',
+        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+        series: [{ name: 'Signups', values: [120, 180, 150, 260, 310] }],
+      },
+    },
+  },
+  {
+    id: 'area-negative',
+    breaks: 'a fill that has to hang below the baseline as well as sit on it',
+    spec: {
+      version: 1,
+      type: 'area',
+      title: 'Area crossing zero',
+      data: {
+        source: 'inline',
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+        series: [{ name: 'Net', values: [18, 6, -12, -20, 4, 22] }],
+      },
+    },
+  },
+  {
+    id: 'line-single-point',
+    breaks: 'a line with nothing to join to',
+    spec: {
+      version: 1,
+      type: 'line',
+      title: 'One reading only',
+      data: { source: 'inline', labels: ['Only'], series: [{ name: 'Reading', values: [42] }] },
+    },
+  },
+  {
     id: 'markup-in-labels',
     breaks: 'escaping — this is a stored XSS if any of it reaches the output raw',
     spec: {
