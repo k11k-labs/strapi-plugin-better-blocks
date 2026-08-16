@@ -38,6 +38,12 @@ import { videoBlocks, withVideo } from './Blocks/Video';
 import { paragraphBlocks } from './Blocks/Paragraph';
 import { quoteBlocks } from './Blocks/Quote';
 import { tableBlocks, withTables } from './Blocks/Table';
+import {
+  blockLabelDescriptor,
+  getRegisteredBlocks,
+  isOfferedInMenus,
+  withRegisteredBlocks,
+} from '../../blockRegistry';
 import { BlocksContent, type BlocksContentProps } from './BlocksContent';
 import { BlocksToolbar } from './BlocksToolbar';
 import { EditorLayout } from './EditorLayout';
@@ -122,10 +128,18 @@ const isSelectorBlockKey = (key: unknown): key is SelectorBlockKey => {
   );
 };
 
+/**
+ * The built-in keys are spelled out so `blocks.paragraph` stays typed, while
+ * the index signature leaves room for the types other packages register — see
+ * `registerBlock`. Without it, every consumer that walks the store would have
+ * to widen at the call site.
+ */
 type BlocksStore = {
   [K in SelectorBlockKey]: SelectorBlock;
 } & {
   [K in NonSelectorBlockKey]: NonSelectorBlock;
+} & {
+  [key: string]: SelectorBlock | NonSelectorBlock;
 };
 
 interface BlocksEditorContextValue {
@@ -266,6 +280,9 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         withDiagram,
         withCallout,
         withDetails,
+        // After the built-ins, so a registered block's isVoid check falls
+        // through to theirs rather than shadowing them.
+        withRegisteredBlocks,
         withAutoTransform
       )(createEditor())
     );
@@ -348,6 +365,48 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
       }
     }, [editor, value]);
 
+    /**
+     * Turns each registered definition into the shape the editor's block store
+     * expects. `matchNode` is derived from the type rather than asked for —
+     * every built-in writes the same one-line comparison, and letting a
+     * registration supply its own only invites one that disagrees with the
+     * `type` it registered under.
+     */
+    const registeredBlocks = React.useMemo(
+      () =>
+        Object.fromEntries(
+          getRegisteredBlocks().map((definition) => {
+            const base = {
+              renderElement: definition.renderElement,
+              matchNode: (node: Schema.Attribute.BlocksNode) =>
+                (node as { type?: string }).type === definition.type,
+              snippets: definition.snippets,
+              dragHandleTopMargin: definition.dragHandleTopMargin,
+              ...(definition.insert
+                ? {
+                    handleConvert: (editor: Editor) => {
+                      definition.insert?.(editor);
+                    },
+                  }
+                : {}),
+            };
+
+            return [
+              definition.type,
+              isOfferedInMenus(definition)
+                ? {
+                    ...base,
+                    isInBlocksSelector: true as const,
+                    icon: definition.icon!,
+                    label: blockLabelDescriptor(definition),
+                  }
+                : { ...base, isInBlocksSelector: false as const },
+            ];
+          })
+        ),
+      []
+    );
+
     const blocks = React.useMemo(
       () => ({
         ...paragraphBlocks,
@@ -369,8 +428,12 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...embedBlocks,
         ...videoBlocks,
         ...socialEmbedBlocks,
+        // Types other packages registered. Last, so a registration can never
+        // quietly replace a built-in — `registerBlock` rejects that outright,
+        // and this ordering means a bug there cannot become a silent override.
+        ...registeredBlocks,
       }),
-      []
+      [registeredBlocks]
     ) satisfies BlocksStore;
 
     return (

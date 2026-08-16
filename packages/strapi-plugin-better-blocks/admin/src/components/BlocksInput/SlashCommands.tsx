@@ -28,6 +28,11 @@ import { insertHorizontalLine } from './Blocks/HorizontalLine';
 import { setBlockMath, MathIcon } from './Blocks/Math';
 import { insertTable } from './Blocks/Table';
 import { insertVideo } from './Blocks/Video';
+import {
+  blockLabelDescriptor,
+  getRegisteredBlocks,
+  isOfferedInMenus,
+} from '../../blockRegistry';
 
 interface SlashCommand {
   id: string;
@@ -250,14 +255,33 @@ const SlashCommandMenu = () => {
   const [position, setPosition] = React.useState({ top: 0, left: 0 });
   const menuRef = React.useRef<HTMLDivElement>(null);
 
+  // Blocks other packages registered are appended after the built-ins, so the
+  // list the user already knows keeps its order.
+  const commands = React.useMemo(
+    () => [
+      ...COMMANDS,
+      ...getRegisteredBlocks()
+        .filter(isOfferedInMenus)
+        .map((definition): SlashCommand => ({
+          id: definition.type,
+          label: String(
+            blockLabelDescriptor(definition).defaultMessage ?? definition.type
+          ),
+          icon: definition.icon!,
+          action: (editor) => definition.insert?.(editor),
+        })),
+    ],
+    []
+  );
+
   const filtered = React.useMemo(
     () =>
       search
-        ? COMMANDS.filter((c) =>
+        ? commands.filter((c) =>
             c.label.toLowerCase().includes(search.toLowerCase())
           )
-        : COMMANDS,
-    [search]
+        : commands,
+    [commands, search]
   );
 
   // Detect "/" at start of empty block

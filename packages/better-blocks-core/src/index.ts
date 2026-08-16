@@ -4,9 +4,21 @@ export { getListStyleType } from './list';
 export { getAspectRatio } from './media';
 export { getBlockStyle } from './style';
 export { validateDocument, isBlocksContent } from './validate';
-export type { ValidationIssue, ValidationResult } from './validate';
+export type { ValidationIssue, ValidationResult, ValidateOptions } from './validate';
 export { CURRENT_SCHEMA_VERSION, detectSchemaVersion, migrateDocument } from './migrate';
-export type { SchemaVersion, MigrationResult } from './migrate';
+export type { SchemaVersion, MigrationResult, MigrateOptions } from './migrate';
+export { createBlockRegistry, toBlockRegistry, isBuiltInBlockType } from './registry';
+export type {
+  AnyBlockNode,
+  BlockContentModel,
+  BlockDefinition,
+  BlockMigrationOutcome,
+  BlockRegistry,
+  BlockRegistryInput,
+  BlockValidateContext,
+  CustomBlockNode,
+  ExtendedBlocksContent,
+} from './registry';
 export { getPlainText, buildTextMarks, getDefaultMarkRender, getModifierProps } from './text';
 export type { Mark } from './text';
 

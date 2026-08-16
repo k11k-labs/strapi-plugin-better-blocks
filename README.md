@@ -20,11 +20,17 @@
 | [`@qkix/strapi-plugin-better-blocks`](./packages/strapi-plugin-better-blocks)   | Strapi v5 custom field — an extended Blocks editor built on Slate: colors, tables, callouts, media embeds, code, math, diagrams and more. |
 | [`@qkix/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support.                                                                 |
 | [`@qkix/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content — native Astro components, zero client-side JavaScript.                                               |
-| [`@qkix/better-blocks-core`](./packages/better-blocks-core)                     | The document types and the logic both renderers share. No runtime dependencies.                                                           |
+| [`@qkix/better-blocks-core`](./packages/better-blocks-core)                     | The document types, the logic every package shares, and the block registration contract. No runtime dependencies.                         |
 
 The renderers re-export the document types, so consumers keep importing
-`BlocksContent` from whichever renderer they already use — the core exists to
-keep the two in step, not to be depended on directly.
+`BlocksContent` from whichever renderer they already use — for reading content,
+the core stays an implementation detail that keeps the two in step.
+
+Packages that **add a block type** are the exception, and depend on the core
+directly. A `BlockDefinition` is the vocabulary the editor, the validator, the
+migrator and both renderers all speak, so a package that contributes a block
+writes it once and hands the same object to each. See
+[Registering a block type](./packages/better-blocks-core#registering-a-block-type).
 
 Each package has its own README, changelog and release cadence. Start with the package
 you need; the plugin README covers installation and configuration inside Strapi, the

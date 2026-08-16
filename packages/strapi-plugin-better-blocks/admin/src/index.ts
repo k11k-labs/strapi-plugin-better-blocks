@@ -292,3 +292,15 @@ export default {
     );
   },
 };
+
+/**
+ * The extension surface. Another Strapi plugin adds a block type by calling
+ * `registerBlock` from its own `register()`, which runs before any editor is
+ * mounted.
+ */
+export {
+  registerBlock,
+  getRegisteredBlocks,
+  clearRegisteredBlocks,
+} from './blockRegistry';
+export type { EditorBlockDefinition } from './blockRegistry';

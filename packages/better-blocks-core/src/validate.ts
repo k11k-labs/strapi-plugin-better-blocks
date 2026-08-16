@@ -1,3 +1,5 @@
+import { toBlockRegistry } from './registry';
+import type { BlockRegistryInput, CustomBlockNode } from './registry';
 import type { BlocksContent } from './types';
 
 // ── Document Validation ──────────────────────────────────────────────
@@ -12,6 +14,16 @@ export type ValidationIssue = {
 export type ValidationResult = {
   valid: boolean;
   issues: ValidationIssue[];
+};
+
+/** Options shared by {@link validateDocument} and {@link isBlocksContent}. */
+export type ValidateOptions = {
+  /**
+   * Block types registered by another package. Without these, a document
+   * containing one is reported as invalid — which is the correct answer for a
+   * caller that has not opted in, since it has no way to render it either.
+   */
+  blocks?: BlockRegistryInput;
 };
 
 /**
@@ -70,9 +82,13 @@ const isObject = (v: unknown): v is Record<string, unknown> =>
  * dispatches over, and the child shapes it walks into. Optional presentation
  * attributes are left alone, because an unknown one is forward compatibility
  * rather than corruption.
+ *
+ * Block types from other packages are accepted only when passed in through
+ * `options.blocks` — see {@link ValidateOptions}.
  */
-export function validateDocument(value: unknown): ValidationResult {
+export function validateDocument(value: unknown, options?: ValidateOptions): ValidationResult {
   const issues: ValidationIssue[] = [];
+  const registry = toBlockRegistry(options?.blocks);
 
   const fail = (path: string, message: string) => {
     issues.push({ path, message });
@@ -150,7 +166,22 @@ export function validateDocument(value: unknown): ValidationResult {
 
     const type = node.type;
     if (typeof type !== 'string') return fail(`${path}.type`, 'block type must be a string');
-    if (!BLOCK_TYPES.has(type)) return fail(`${path}.type`, `unknown block type "${type}"`);
+
+    if (!BLOCK_TYPES.has(type)) {
+      const definition = registry.get(type);
+      if (!definition) return fail(`${path}.type`, `unknown block type "${type}"`);
+
+      // A registered block owns its attributes; the core only walks its
+      // children, according to the content model it declared.
+      if (definition.content === 'blocks') {
+        checkChildren(node, path, checkBlock);
+      } else {
+        checkChildren(node, path, checkInline);
+      }
+
+      definition.validate?.(node as CustomBlockNode, { path, fail });
+      return;
+    }
 
     if (type === 'heading') {
       const level = node.level;
@@ -197,6 +228,6 @@ export function validateDocument(value: unknown): ValidationResult {
 }
 
 /** Narrowing form of {@link validateDocument}, for use at a trust boundary. */
-export function isBlocksContent(value: unknown): value is BlocksContent {
-  return validateDocument(value).valid;
+export function isBlocksContent(value: unknown, options?: ValidateOptions): value is BlocksContent {
+  return validateDocument(value, options).valid;
 }

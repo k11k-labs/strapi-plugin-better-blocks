@@ -33,10 +33,11 @@
 6. [Supported Blocks](#supported-blocks)
 7. [Supported Modifiers](#supported-modifiers)
 8. [Custom Renderers](#custom-renderers)
-9. [TypeScript](#typescript)
-10. [Contributing](#contributing)
-11. [Support this project](#support-this-project)
-12. [License](#license)
+9. [Registered Block Types](#registered-block-types)
+10. [TypeScript](#typescript)
+11. [Contributing](#contributing)
+12. [Support this project](#support-this-project)
+13. [License](#license)
 
 ---
 
@@ -848,6 +849,42 @@ Override any text modifier with your own component:
   }}
 />
 ```
+
+## Registered Block Types
+
+`blocks` overrides how a **known** block is drawn. `blockPlugins` adds a block
+type this renderer has never heard of — one owned by another package, such as a
+chart.
+
+```tsx
+import { BlocksRenderer } from '@qkix/better-blocks-react-renderer';
+import type { BlockPlugin } from '@qkix/better-blocks-react-renderer';
+
+const chart: BlockPlugin = {
+  type: 'chart',
+  // 'void' (attributes only, the default), 'inline' (text), or 'blocks' (nested blocks).
+  content: 'void',
+  component: ({ node }) => <MyChart spec={node.spec} />,
+};
+
+<BlocksRenderer content={content} blockPlugins={[chart]} />;
+```
+
+The component receives the whole `node` — this renderer does not know what
+attributes the block has, which is the point — and, when the content model is
+`inline` or `blocks`, its rendered `children`. A registered block works at any
+depth, including inside a callout or a details.
+
+A `BlockPlugin` is a core `BlockDefinition` plus `component`, so the same object
+that teaches `validateDocument` and `migrateDocument` about the block also
+teaches this renderer to draw it. See
+[`@qkix/better-blocks-core`](../better-blocks-core#registering-a-block-type).
+
+Passing plugins explicitly, rather than registering them into a global, is
+deliberate: this renderer runs on servers handling concurrent requests, where
+mutable module state leaks one page's registrations into another's.
+
+A block type nobody registered renders nothing, exactly as before.
 
 ## TypeScript
 

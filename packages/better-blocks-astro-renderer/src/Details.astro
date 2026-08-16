@@ -1,5 +1,11 @@
 ---
-import type { DetailsNode, CustomBlocksConfig, CustomModifiersConfig, DiagramTheme } from './types';
+import type {
+  AstroBlockPlugin,
+  DetailsNode,
+  CustomBlocksConfig,
+  CustomModifiersConfig,
+  DiagramTheme,
+} from './types';
 import Block from './Block.astro';
 
 interface Props {
@@ -9,9 +15,11 @@ interface Props {
   diagramTheme?: DiagramTheme;
   codeTheme?: string;
   codeCopyButton?: boolean;
+  blockPlugins?: readonly AstroBlockPlugin[];
 }
 
-const { node, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton } = Astro.props;
+const { node, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton, blockPlugins } =
+  Astro.props;
 
 const DetailsComp = blocks?.details as any;
 ---
@@ -27,6 +35,7 @@ const DetailsComp = blocks?.details as any;
           diagramTheme={diagramTheme}
           codeTheme={codeTheme}
           codeCopyButton={codeCopyButton}
+          blockPlugins={blockPlugins}
           index={index}
         />
       ))}
@@ -43,6 +52,7 @@ const DetailsComp = blocks?.details as any;
             diagramTheme={diagramTheme}
             codeTheme={codeTheme}
             codeCopyButton={codeCopyButton}
+            blockPlugins={blockPlugins}
             index={index}
           />
         ))}

@@ -111,6 +111,23 @@ describe('migrateDocument', () => {
     expect(result.content[2]).toBe(paragraph);
   });
 
+  it('reaches a media-embed nested inside a callout', () => {
+    // The walk used to stop at the top level, so a media-embed inside a
+    // callout or details was detected as current and never migrated.
+    const content = [
+      { type: 'callout', variant: 'info', children: [mediaEmbed('https://example.com/e')] },
+    ] as unknown as BlocksContent;
+
+    expect(detectSchemaVersion(content)).toBe(1);
+
+    const result = migrateDocument(content);
+    const nested = (result.content[0] as { children: { type: string }[] }).children[0];
+
+    expect(result.changed).toBe(true);
+    expect(nested.type).toBe('embed');
+    expect(detectSchemaVersion(result.content)).toBe(CURRENT_SCHEMA_VERSION);
+  });
+
   it('produces a document that validates, and is then already current', () => {
     const result = migrateDocument([mediaEmbed('https://example.com/e')]);
     expect(validateDocument(result.content).valid).toBe(true);
