@@ -1,3 +1,13 @@
+## 0.1.3 (2026-08-16)
+
+### 🚀 Features
+
+- **chartkit:** pie and donut charts ([#118](https://github.com/qkix/strapi-plugins/pull/118))
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.1.2 (2026-08-16)
 
 ### 🚀 Features
