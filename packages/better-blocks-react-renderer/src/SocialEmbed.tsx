@@ -270,15 +270,15 @@ export function SocialEmbed({
     const widget = WIDGET_SCRIPTS[platform];
     if (!widget) return;
 
-    let cancelled = false;
+    let canceled = false;
     void loadWidgetScript(widget.src, platform).then(() => {
       const container = containerRef.current;
-      if (cancelled || !container) return;
+      if (canceled || !container) return;
       if (!widget.process(container)) reinjectWidgetScript(widget.src, platform);
     });
 
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [platform, html]);
 

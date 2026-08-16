@@ -129,7 +129,7 @@ const inlineMathText = (value: string): string => {
  * Fence info strings use short aliases (```ts, ```py, ```sh) while the plugin's
  * code block stores the canonical values from `codeLanguages`. Without this map
  * a pasted fence keeps an id the language dropdown cannot display, so the block
- * renders with no selectable language. Anything unrecognised falls back to
+ * renders with no selectable language. Anything unrecognized falls back to
  * `plaintext` rather than persisting a value the UI does not know.
  */
 const CODE_LANGUAGE_ALIASES: Record<string, string> = {

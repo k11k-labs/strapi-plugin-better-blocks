@@ -124,7 +124,7 @@ function migrateMediaEmbed(node: MediaEmbedNode): EmbedNode | null {
  * registered block to its own migrator on the way through.
  *
  * This is opt-in. Both renderers still handle `media-embed`, so nothing breaks
- * if you never run it — it is for normalising stored content, e.g. in a Strapi
+ * if you never run it — it is for normalizing stored content, e.g. in a Strapi
  * migration or a one-off script.
  *
  * Better Blocks does not know the schema of a registered block and does not

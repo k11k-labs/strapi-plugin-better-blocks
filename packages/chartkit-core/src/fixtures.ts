@@ -17,6 +17,19 @@ export type Fixture = {
   spec: ChartSpec;
 };
 
+const multi = (
+  title: string,
+  labels: string[],
+  series: { name: string; values: (number | null)[] }[],
+  options: ChartSpec['options'] = {}
+): ChartSpec => ({
+  version: 1,
+  type: 'bar',
+  title,
+  data: { source: 'inline', labels, series },
+  options,
+});
+
 const bar = (
   title: string,
   labels: string[],
@@ -105,6 +118,76 @@ export const fixtures: Fixture[] = [
     spec: bar('Cropped axis', ['A', 'B', 'C'], [96, 98, 97], {
       yAxis: { min: 95, max: 100 },
     }),
+  },
+  {
+    id: 'grouped',
+    breaks: 'sharing a band between series, and the legend',
+    spec: multi(
+      'Grouped: revenue by region',
+      ['Q1', 'Q2', 'Q3', 'Q4'],
+      [
+        { name: 'North', values: [420, 610, 385, 720] },
+        { name: 'South', values: [310, 480, 520, 400] },
+        { name: 'East', values: [180, 220, 300, 510] },
+      ],
+      { barMode: 'grouped' }
+    ),
+  },
+  {
+    id: 'stacked',
+    breaks: 'the axis covering totals rather than values, and segment offsets',
+    spec: multi(
+      'Stacked: revenue by region',
+      ['Q1', 'Q2', 'Q3', 'Q4'],
+      [
+        { name: 'North', values: [420, 610, 385, 720] },
+        { name: 'South', values: [310, 480, 520, 400] },
+        { name: 'East', values: [180, 220, 300, 510] },
+      ],
+      { barMode: 'stacked' }
+    ),
+  },
+  {
+    id: 'stacked-diverging',
+    breaks: 'positive and negative stacking away from the baseline separately',
+    spec: multi(
+      'Stacked with losses',
+      ['Jan', 'Feb', 'Mar', 'Apr'],
+      [
+        { name: 'Gains', values: [40, 25, 60, 15] },
+        { name: 'More gains', values: [20, 35, 10, 45] },
+        { name: 'Losses', values: [-30, -55, -12, -40] },
+        { name: 'More losses', values: [-15, -10, -35, -20] },
+      ],
+      { barMode: 'stacked' }
+    ),
+  },
+  {
+    id: 'stacked-holes',
+    breaks: 'a stack where some series are missing a value',
+    spec: multi(
+      'Stacked with gaps',
+      ['Q1', 'Q2', 'Q3', 'Q4'],
+      [
+        { name: 'Alpha', values: [30, null, 45, 20] },
+        { name: 'Beta', values: [null, 40, 25, null] },
+        { name: 'Gamma', values: [15, 20, null, 35] },
+      ],
+      { barMode: 'stacked' }
+    ),
+  },
+  {
+    id: 'eight-series',
+    breaks: 'palette exhaustion and legend wrapping',
+    spec: multi(
+      'Eight series at once',
+      ['Q1', 'Q2', 'Q3'],
+      Array.from({ length: 8 }, (_, i) => ({
+        name: `Series number ${i + 1}`,
+        values: [20 + i * 6, 45 - i * 3, 30 + ((i * 7) % 25)],
+      })),
+      { barMode: 'grouped' }
+    ),
   },
   {
     id: 'markup-in-labels',

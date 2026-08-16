@@ -62,7 +62,7 @@ type DropCollectedProps = {
 
 /**
  * A utility hook abstracting the general drag and drop hooks from react-dnd.
- * Centralising the same behaviours and by default offering keyboard support.
+ * Centralising the same behaviors and by default offering keyboard support.
  */
 const useDragAndDrop = <
   TIndex extends number | Array<number>,

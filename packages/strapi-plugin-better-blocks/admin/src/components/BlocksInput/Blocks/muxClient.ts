@@ -76,7 +76,7 @@ export const useMuxAssets = (enabled: boolean): UseMuxAssetsResult => {
 
   React.useEffect(() => {
     if (!enabled) return;
-    let cancelled = false;
+    let canceled = false;
 
     const timer = setTimeout(
       async () => {
@@ -95,18 +95,18 @@ export const useMuxAssets = (enabled: boolean): UseMuxAssetsResult => {
           const { data } = await get<MuxAssetListResponse>(
             `/${MUX_PLUGIN_ID}/mux-asset?${params.toString()}`
           );
-          if (cancelled) return;
+          if (canceled) return;
           setAssets(data?.items ?? []);
           setTotalCount(data?.totalCount ?? 0);
           setAvailable(true);
         } catch {
-          if (cancelled) return;
+          if (canceled) return;
           // A failure here means the plugin is absent or unreachable; either
           // way there's nothing to pick, so the whole Mux UI stays hidden.
           setAvailable(false);
           setError('Could not load Mux assets.');
         } finally {
-          if (!cancelled) setLoading(false);
+          if (!canceled) setLoading(false);
         }
       },
       // Debounce so typing in the search box doesn't spam the API.
@@ -114,7 +114,7 @@ export const useMuxAssets = (enabled: boolean): UseMuxAssetsResult => {
     );
 
     return () => {
-      cancelled = true;
+      canceled = true;
       clearTimeout(timer);
     };
   }, [enabled, query, get]);

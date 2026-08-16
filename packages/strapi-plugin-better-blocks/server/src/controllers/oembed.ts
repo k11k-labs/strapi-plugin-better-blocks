@@ -14,7 +14,7 @@ const VALID_PLATFORMS: SocialPlatform[] = [
 const oembed = ({ strapi }: { strapi: Core.Strapi }) => ({
   /**
    * GET /better-blocks/oembed?url=...&platform=...
-   * Proxies the platform oEmbed request server-side and returns the normalised
+   * Proxies the platform oEmbed request server-side and returns the normalized
    * payload used by the social-embed block.
    */
   async fetch(ctx) {

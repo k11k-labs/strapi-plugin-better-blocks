@@ -236,7 +236,7 @@ const cellAtPoint = (
  * linear, so everything between r2c1 and r3c2 includes the whole tail of row 2
  * — taking the bounding box of every touched cell would turn a 2x2 pick into a
  * full-width 2x5 one. Treating anchor and focus as opposite corners gives the
- * 2D behaviour authors expect from a table.
+ * 2D behavior authors expect from a table.
  */
 export const getSelectedRange = (
   editor: Editor,

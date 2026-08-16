@@ -7,12 +7,12 @@ import { migrateDocument } from '@qkix/better-blocks-core';
 import type { BlocksContent } from '../src';
 
 /**
- * Characterization tests for the framework-independent behaviour this renderer
+ * Characterization tests for the framework-independent behavior this renderer
  * shares with the Astro one. They pin down today's output so extracting the
  * shared core can be shown to change nothing: the same expectations run against
  * both renderers before the move and against the core package after it.
  *
- * Most of these helpers are module-private here, so the shared behaviour is
+ * Most of these helpers are module-private here, so the shared behavior is
  * asserted through rendered markup rather than by calling them directly.
  */
 

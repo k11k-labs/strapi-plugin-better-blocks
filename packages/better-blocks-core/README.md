@@ -11,7 +11,7 @@ does not depend on how it is displayed:
 
 - **Document and block types** — the shape the Strapi plugin stores. Single
   source of truth for every renderer.
-- **Attribute mapping** — alignment, line-height, indent, colours, background
+- **Attribute mapping** — alignment, line-height, indent, colors, background
   and font marks resolved to a neutral representation each renderer turns into
   its own markup.
 - **Shared resolution rules** — code language → highlighter grammar, aspect
@@ -57,7 +57,7 @@ const { content, changed, skipped } = migrateDocument(document);
 ```
 
 **Migrating is opt-in.** Both renderers still handle `media-embed`, so nothing
-breaks if you never run it — this is for normalising stored content, say in a
+breaks if you never run it — this is for normalizing stored content, say in a
 Strapi migration or a one-off script. The input is never mutated, and blocks
 that need no change are carried over by reference.
 

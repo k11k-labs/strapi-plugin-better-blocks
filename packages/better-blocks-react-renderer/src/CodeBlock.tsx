@@ -86,7 +86,7 @@ export function CodeBlock({
   const [html, setHtml] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
     setHtml(null);
 
     if (!plainText) return;
@@ -96,15 +96,15 @@ export function CodeBlock({
     loadHighlighter(theme, lang)
       .then((highlighter) => highlighter.codeToHtml(plainText, { lang, theme }))
       .then((highlighted) => {
-        if (!cancelled) setHtml(highlighted);
+        if (!canceled) setHtml(highlighted);
       })
       .catch(() => {
         // Leave the plain-source fallback in place on load/parse errors.
-        if (!cancelled) setHtml(null);
+        if (!canceled) setHtml(null);
       });
 
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [plainText, language, theme]);
 

@@ -101,7 +101,7 @@ export interface ImageElement extends CustomElement {
 export type AudioAlignment = 'left' | 'center' | 'right' | 'none';
 export type AudioPreload = 'none' | 'metadata' | 'auto';
 
-/** Player behaviour flags, mirrored 1:1 onto the HTML5 `<audio>` element. */
+/** Player behavior flags, mirrored 1:1 onto the HTML5 `<audio>` element. */
 export interface AudioPlayerSettings {
   autoplay: boolean;
   loop: boolean;
@@ -112,7 +112,7 @@ export interface AudioPlayerSettings {
 /**
  * Audio block. A void block referencing a Strapi Media Library asset (or an
  * external URL). Stores the file metadata plus a display title, caption, player
- * behaviour flags and alignment. The frontend renderer turns this into a native
+ * behavior flags and alignment. The frontend renderer turns this into a native
  * HTML5 `<audio>` player — see issue #43 for the renderer contract.
  */
 export interface AudioElement extends CustomElement {
@@ -358,7 +358,7 @@ export type SocialPlatform =
 export type SocialAlignment = 'left' | 'center' | 'right';
 
 /**
- * Normalised oEmbed payload fetched from the platform via the plugin's server
+ * Normalized oEmbed payload fetched from the platform via the plugin's server
  * oEmbed proxy (`GET /better-blocks/oembed`). Stored on the node so the frontend
  * renderer can render the embed without itself calling the platform at runtime.
  */
@@ -466,7 +466,7 @@ export const isEmbedNode = (element: CustomElement): element is EmbedElement =>
 export type VideoProvider =
   'local' | 'mux' | 'api-video' | 'cloudinary' | 'custom';
 
-/** Player behaviour flags, mirrored onto the HTML5 `<video>` element. */
+/** Player behavior flags, mirrored onto the HTML5 `<video>` element. */
 export interface VideoPlayerSettings {
   autoplay: boolean;
   loop: boolean;

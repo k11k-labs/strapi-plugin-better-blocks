@@ -110,6 +110,89 @@ describe('renderChart', () => {
     expect(new Set(labels).size).toBe(labels.length);
   });
 
+  it('gives each series its own color when grouped', () => {
+    const svg = svgOf(fixtureById('grouped').spec);
+    const fills = new Set(
+      [...svg.matchAll(/fill="(var\(--chart-series-[^"]*)"/g)].map((m) => m[1])
+    );
+
+    // Three series, three distinct swatch variables — a shared one would make
+    // the grouping unreadable.
+    expect(fills.size).toBe(3);
+    expect(svg).toContain('--chart-series-1');
+    expect(svg).toContain('--chart-series-3');
+  });
+
+  it('sizes the stacked axis to the totals, not the largest single value', () => {
+    const stacked = svgOf(fixtureById('stacked').spec);
+    const labels = [
+      ...(/chartkit-axis-value[^>]*>(.*?)<\/g>/s.exec(stacked)?.[1] ?? '').matchAll(
+        /<text[^>]*>([^<]*)<\/text>/g
+      ),
+    ].map((m) => Number(m[1].replace(/,/g, '')));
+
+    // Q4 totals 720 + 400 + 510 = 1630. The top tick need not reach the domain
+    // max — d3 picks round numbers — but it must be far above the largest
+    // single value (720), or the axis is scaled to values instead of totals and
+    // two thirds of the stack is drawn off the plot.
+    expect(Math.max(...labels)).toBeGreaterThan(720 * 1.5);
+
+    // And nothing may escape the top of the viewBox.
+    const tops = [...stacked.matchAll(/<rect[^>]*y="([\d.]+)"/g)].map((m) => +m[1]);
+    expect(Math.min(...tops)).toBeGreaterThanOrEqual(0);
+  });
+
+  it('stacks positive and negative segments away from the baseline separately', () => {
+    const svg = svgOf(fixtureById('stacked-diverging').spec);
+    const zero = Number(/chartkit-axis-category[^>]*><line[^>]*y1="([\d.]+)"/.exec(svg)?.[1]);
+
+    const rects = [...svg.matchAll(/<rect x="([\d.]+)" y="([\d.]+)"[^>]*height="([\d.]+)"/g)].map(
+      (m) => ({ x: +m[1], top: +m[2], height: +m[3] })
+    );
+
+    // Every segment sits wholly on one side of the baseline. A shared running
+    // offset would let a loss cancel a gain and land a segment across it.
+    for (const rect of rects) {
+      const straddles = rect.top < zero - 0.5 && rect.top + rect.height > zero + 0.5;
+      expect(straddles, `segment at x=${rect.x} straddles the baseline`).toBe(false);
+    }
+
+    expect(rects.some((r) => r.top + r.height <= zero + 0.5)).toBe(true);
+    expect(rects.some((r) => r.top >= zero - 0.5)).toBe(true);
+  });
+
+  it('leaves no gap in a stack where a series has no value', () => {
+    // Q1 has Alpha 30 and Gamma 15 but no Beta, so the two segments must sit
+    // flush: a hole closes up rather than leaving a floating segment.
+    const svg = svgOf(fixtureById('stacked-holes').spec);
+    const all = [...svg.matchAll(/<rect x="([\d.]+)" y="([\d.]+)"[^>]*height="([\d.]+)"/g)].map(
+      (m) => ({ x: +m[1], top: +m[2], height: +m[3] })
+    );
+
+    const leftmost = Math.min(...all.map((r) => r.x));
+    const firstColumn = all.filter((r) => r.x === leftmost).sort((a, b) => b.top - a.top);
+
+    expect(firstColumn).toHaveLength(2);
+    const [lower, upper] = firstColumn;
+    expect(upper.top + upper.height).toBeCloseTo(lower.top, 1);
+  });
+
+  it('draws a legend only when there is more than one series', () => {
+    expect(svgOf(fixtureById('grouped').spec)).toContain('chartkit-legend');
+    expect(svgOf(fixtureById('ordinary').spec)).not.toContain('chartkit-legend');
+  });
+
+  it('wraps a legend that will not fit on one row', () => {
+    const svg = svgOf(fixtureById('eight-series').spec);
+    const legend = /chartkit-legend[^>]*>(.*?)<\/g>/s.exec(svg)?.[1] ?? '';
+    const rows = new Set([...legend.matchAll(/<text[^>]*y="([\d.]+)"/g)].map((m) => m[1]));
+
+    // Eight long names cannot sit on one row at 640 units wide; without
+    // wrapping they run off the side of the viewBox.
+    expect(rows.size).toBeGreaterThan(1);
+    expect(legend.match(/<rect/g)).toHaveLength(8);
+  });
+
   it('reports why it will not render, rather than drawing something wrong', () => {
     const result = renderChart({
       version: 1,

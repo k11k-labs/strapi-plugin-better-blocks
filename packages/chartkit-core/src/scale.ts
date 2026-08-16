@@ -81,6 +81,51 @@ export function computeValueDomain(
 }
 
 /**
+ * The value domain for a stacked chart.
+ *
+ * The axis has to cover the *totals*, not the individual values — a category
+ * whose three series each read 40 reaches 120, and an axis topping out at 40
+ * would draw two of the segments off the top of the plot.
+ *
+ * Positive and negative values stack in opposite directions from the baseline,
+ * so they are accumulated separately. Mixing them into one sum would let a −50
+ * cancel a +50 and shrink the axis below the height the bar actually needs.
+ *
+ * Zero is always included: a stack is measured from the baseline, so the
+ * baseline has to be on the chart.
+ */
+export function computeStackedDomain(
+  series: readonly Series[],
+  options: { bounds?: AxisBounds } = {}
+): Domain {
+  const length = series.reduce((longest, one) => Math.max(longest, one.values.length), 0);
+
+  let min = 0;
+  let max = 0;
+
+  for (let i = 0; i < length; i++) {
+    let positive = 0;
+    let negative = 0;
+
+    for (const one of series) {
+      const value = one.values[i];
+      if (typeof value !== 'number' || !Number.isFinite(value)) continue;
+      if (value >= 0) positive += value;
+      else negative += value;
+    }
+
+    max = Math.max(max, positive);
+    min = Math.min(min, negative);
+  }
+
+  const { bounds } = options;
+  if (bounds?.min !== undefined && Number.isFinite(bounds.min)) min = bounds.min;
+  if (bounds?.max !== undefined && Number.isFinite(bounds.max)) max = bounds.max;
+
+  return padDegenerate(min, max);
+}
+
+/**
  * Gives a domain width when it has none.
  *
  * Three cases reach this, and they want different answers:

@@ -102,7 +102,7 @@ export const getProviderLabel = (provider?: EmbedProvider): string =>
   PROVIDERS.find((p) => p.provider === provider)?.label ??
   (provider === 'generic' ? 'Embed' : 'Embed');
 
-/** Detected provider for a share URL, or `generic` when unrecognised. */
+/** Detected provider for a share URL, or `generic` when unrecognized. */
 export const detectProvider = (url: string): EmbedProvider => {
   const found = matchProvider(url);
   return found ? found.spec.provider : 'generic';
@@ -242,7 +242,7 @@ const escapeAttr = (value: string): string =>
     .replace(/>/g, '&gt;');
 
 /**
- * Build the iframe markup for a recognised share URL. Returns null when the URL
+ * Build the iframe markup for a recognized share URL. Returns null when the URL
  * isn't one of the known providers — the author then has to use embed-code mode.
  */
 export const buildUrlEmbed = (

@@ -34,7 +34,7 @@ export function MermaidDiagram({ value }: { value: string }): ReactNode {
   const [svg, setSvg] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    let canceled = false;
     setSvg(null);
 
     if (!value) return;
@@ -42,15 +42,15 @@ export function MermaidDiagram({ value }: { value: string }): ReactNode {
     loadMermaid()
       .then((mermaid) => mermaid.render(`bb-mermaid-${renderCount++}`, value))
       .then(({ svg }) => {
-        if (!cancelled) setSvg(svg);
+        if (!canceled) setSvg(svg);
       })
       .catch(() => {
         // Leave the raw-source fallback in place on parse/render errors.
-        if (!cancelled) setSvg(null);
+        if (!canceled) setSvg(null);
       });
 
     return () => {
-      cancelled = true;
+      canceled = true;
     };
   }, [value]);
 

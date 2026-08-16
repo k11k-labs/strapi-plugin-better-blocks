@@ -16,6 +16,7 @@ import {
   computePlotArea,
   planCategoryLabels,
 } from './layout';
+import { NO_LEGEND, planLegend, renderLegend } from './legend';
 import { bandScale } from './scale';
 import { element, escapeText, round, text } from './svg';
 import { TEXT_COLOR } from './theme';
@@ -69,7 +70,9 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
   const width = positive(spec.options?.width, DEFAULT_WIDTH);
   const height = positive(spec.options?.height, DEFAULT_HEIGHT);
 
-  const { ticks } = barValueTicks(spec.data, spec.options?.yAxis);
+  const mode = spec.options?.barMode ?? 'grouped';
+
+  const { ticks } = barValueTicks(spec.data, mode, spec.options?.yAxis);
   const formatValue = createTickFormatter(spec.options?.valueFormat, options.locale, ticks);
   const valueLabels = ticks.map(formatValue);
 
@@ -84,22 +87,37 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
   const provisionalStep = bandScale(spec.data.labels, [0, width]).step;
   const labelPlan = planCategoryLabels(spec.data.labels, provisionalStep, height);
 
+  // A legend only earns its space when there is more than one series to tell
+  // apart; with one, the title already says what the bars are. An explicit
+  // `legend: false` turns it off even then.
+  const wantsLegend = spec.options?.legend ?? spec.data.series.length > 1;
+  const legend = wantsLegend
+    ? planLegend(
+        spec.data.series.map((one) => one.name),
+        width
+      )
+    : NO_LEGEND;
+
   const plot = computePlotArea({
     width,
     height,
     valueLabels,
     titleHeight,
-    legendHeight: 0,
+    legendHeight: legend.height,
     categoryLabelHeight: labelPlan.height,
   });
 
   const body = renderBar({
     data: spec.data,
+    mode,
     plot,
     chartHeight: height,
     bounds: spec.options?.yAxis,
     formatValue,
   });
+
+  // Below the category labels, which sit directly under the plot.
+  const legendMarkup = renderLegend(legend, plot.bottom + labelPlan.height, width);
 
   const prefix = options.idPrefix ?? 'chartkit';
   const titleId = `${prefix}-title`;
@@ -131,7 +149,7 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
       // the aspect ratio and the page sets the size.
       width: '100%',
       height: 'auto',
-      class: 'chartkit chartkit-bar',
+      class: `chartkit chartkit-bar chartkit-bar-${mode}`,
       // Announced as a single image with a name, instead of the screen reader
       // walking dozens of meaningless <rect> elements.
       role: 'img',
@@ -139,7 +157,7 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
       'font-size': LABEL_FONT_SIZE,
       'font-family': 'inherit',
     },
-    accessibleText + heading + body
+    accessibleText + heading + body + legendMarkup
   );
 }
 
