@@ -185,14 +185,26 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
           <Typography variant="delta" tag="h3">
             Data
           </Typography>
-          <Button
-            variant="tertiary"
-            size="S"
-            disabled={disabled}
-            onClick={() => setPasteOpen(true)}
-          >
-            Paste from a spreadsheet
-          </Button>
+          <Flex gap={2}>
+            <Button
+              variant="tertiary"
+              size="S"
+              // Undefined on a build of the admin with no Media Library, which
+              // is a reason to disable the button rather than to crash.
+              disabled={disabled || !MediaLibraryDialog}
+              onClick={() => setPickerOpen(true)}
+            >
+              From Media Library
+            </Button>
+            <Button
+              variant="tertiary"
+              size="S"
+              disabled={disabled}
+              onClick={() => setPasteOpen(true)}
+            >
+              Paste from a spreadsheet
+            </Button>
+          </Flex>
         </Flex>
 
         <DataGrid spec={spec} onChange={update} disabled={disabled} />
