@@ -3,7 +3,7 @@
  *
  * The bar is the same one Better Blocks' document validator sets: verify what a
  * renderer will crash or lie on, and leave alone what it can survive not
- * knowing. An unrecognised option is forward compatibility — a newer editor
+ * knowing. An unrecognized option is forward compatibility — a newer editor
  * wrote it — while a series holding strings is corruption, because the geometry
  * is computed from those numbers.
  */

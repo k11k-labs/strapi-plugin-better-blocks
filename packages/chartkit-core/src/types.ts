@@ -104,6 +104,20 @@ export type AxisBounds = {
   max?: number;
 };
 
+/**
+ * How a bar chart with more than one series arranges them.
+ *
+ * - **`grouped`** — a bar per series, side by side within each category. Good
+ *   for comparing series against each other.
+ * - **`stacked`** — segments piled into one bar per category. Good for parts of
+ *   a whole, and for a total that means something.
+ *
+ * Not a chart `type`, because it changes the arrangement rather than the mark:
+ * everything else about a grouped and a stacked bar chart — axes, legend,
+ * baseline — is identical, and a single-series chart looks the same either way.
+ */
+export type BarMode = 'grouped' | 'stacked';
+
 export type ChartOptions = {
   /**
    * viewBox width, not pixels. The rendered SVG scales to its container; this
@@ -115,6 +129,11 @@ export type ChartOptions = {
   height?: number;
   /** Draw the legend. Defaults to on when there is more than one series. */
   legend?: boolean;
+  /**
+   * How multiple series are arranged. Defaults to `grouped`, and has no visible
+   * effect on a chart with a single series.
+   */
+  barMode?: BarMode;
   /**
    * How values are written out, as an [Intl.NumberFormat][1] options object.
    * A plain object rather than a format string, because it is JSON that has to

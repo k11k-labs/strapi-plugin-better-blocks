@@ -3,9 +3,9 @@
 Charts as server-rendered SVG. A `ChartSpec` goes in, a finished SVG string
 comes out — no DOM, no framework, and nothing for the browser to run.
 
-> **Status: early.** The spec, the rendering pipeline and the bar chart are in
-> place. Line, area, pie and donut are not yet — `validateChartSpec` rejects
-> them rather than drawing a blank box.
+> **Status: early.** The spec, the rendering pipeline and the bar chart — grouped
+> and stacked — are in place. Line, area, pie and donut are not yet;
+> `validateChartSpec` rejects them rather than drawing a blank box.
 
 ## What this is
 
@@ -31,16 +31,16 @@ if (result.ok) {
 
 ## Why not wrap an existing chart library
 
-Because of colour, which sounds trivial and is not.
+Because of color, which sounds trivial and is not.
 
-Chart libraries that render on a server bake their colours into the markup, so
-the colours are chosen where the chart is built. But a reader's light or dark
+Chart libraries that render on a server bake their colors into the markup, so
+the colors are chosen where the chart is built. But a reader's light or dark
 preference is known in the _browser_ — usually as a class on `<html>` that a
-toggle flips. Baked colours cannot follow that: you end up rendering two copies
+toggle flips. Baked colors cannot follow that: you end up rendering two copies
 and swapping them, or falling back to `prefers-color-scheme` and ignoring the
 toggle your own site ships.
 
-Every colour here is a CSS custom property with a fallback:
+Every color here is a CSS custom property with a fallback:
 
 ```
 fill="var(--chart-series-1, #4269d0)"
@@ -51,6 +51,45 @@ So a chart inherits the page's theme by doing nothing, and a site restyles every
 chart it has ever published by setting a few properties — no rebuild, no
 re-render. For a CMS plugin that is the difference between a widget pasted onto
 a page and part of the design.
+
+## Several series
+
+`barMode` decides what happens inside a category band. It is an option rather
+than a chart `type`, because it changes the arrangement and not the mark —
+axes, legend and baseline are identical either way, and a single-series chart
+looks the same in both.
+
+```ts
+options: {
+  barMode: 'grouped';
+} // one bar per series, side by side — the default
+options: {
+  barMode: 'stacked';
+} // series piled into one bar per category
+```
+
+The difference is not only visual. A **grouped** axis spans the values, because
+each bar is read on its own. A **stacked** axis spans the _totals_: three series
+each reading 40 reach 120, and an axis topping out at 40 would draw two of the
+segments off the plot.
+
+Positive and negative values stack away from the baseline in opposite
+directions, each with its own running offset. Sharing one would let a −50 cancel
+a +50, hiding a segment and shrinking the axis below the height the bar actually
+needs.
+
+A series with no value at a category contributes nothing and the stack closes
+up — segments keep their own color rather than inheriting the missing one's.
+
+### Legend
+
+Drawn automatically when there is more than one series, and suppressed with
+`legend: false`. With a single series the title already says what the bars are.
+
+Entries wrap onto as many rows as they need, and the height that falls out is
+fed back into the layout before the plot is sized — otherwise the chart with
+eight series, the one that most needs its legend, is exactly the one whose
+legend runs off the side.
 
 ## Theming
 

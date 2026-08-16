@@ -194,7 +194,7 @@ export function computePlotArea(input: {
 
   const left = widestValue + GUTTER * 2;
   const top = titleHeight + GUTTER;
-  // Room on the right so the last category label, drawn centred on the final
+  // Room on the right so the last category label, drawn centered on the final
   // band, does not overhang the viewBox.
   const rightMargin = GUTTER * 2;
   const bottomMargin = categoryLabelHeight + legendHeight + GUTTER;

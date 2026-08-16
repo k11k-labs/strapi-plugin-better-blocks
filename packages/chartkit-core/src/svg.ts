@@ -83,7 +83,7 @@ export function text(content: string, attributes: Attributes = {}): string {
  * resolves.
  *
  * `+value.toFixed(2)` rather than `Math.round(value * 100) / 100` so `-0`
- * normalises to `0`; `-0` and `0` are the same point but different strings.
+ * normalizes to `0`; `-0` and `0` are the same point but different strings.
  */
 export function round(value: number): number {
   if (!Number.isFinite(value)) return 0;
