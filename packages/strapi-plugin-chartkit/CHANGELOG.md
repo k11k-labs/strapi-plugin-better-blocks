@@ -1,3 +1,18 @@
+## 0.1.3 (2026-08-16)
+
+### 🩹 Fixes
+
+- **better-blocks:** bound the oEmbed cache and cover the network path ([#132](https://github.com/qkix/strapi-plugins/pull/132))
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/chartkit-editor to 0.1.3
+- Updated @qkix/chartkit-core to 0.2.1
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.1.2 (2026-08-16)
 
 ### 📖 Documentation
