@@ -1,6 +1,6 @@
-<h1 align="center">Better Blocks</h1>
+<h1 align="center">qkix / strapi-plugins</h1>
 
-<p align="center">An enhanced Rich Text (Blocks) editor for Strapi v5 — and the renderers that display its output.</p>
+<p align="center">Plugins and renderers for Strapi v5. Two products, one workspace.</p>
 
 <p align="center">
   <a href="./LICENSE">
@@ -12,6 +12,20 @@
 </p>
 
 ---
+
+## Products
+
+**[Better Blocks](./packages/strapi-plugin-better-blocks)** — an enhanced Rich Text
+(Blocks) editor for Strapi v5, plus the React and Astro renderers that display what it
+writes. Colors, tables, callouts, media embeds, code, math and diagrams.
+
+**[Chartkit](./packages/chartkit-core)** — charts rendered as SVG on the server, so a
+page gets a chart without a byte of client-side JavaScript. Early: the spec, the
+rendering pipeline and the bar chart are in place.
+
+They are separate products that share a workspace, and increasingly an interface:
+Chartkit registers itself as a Better Blocks block type through a public API rather
+than either one knowing the other's internals.
 
 ## Packages
 
@@ -33,8 +47,9 @@ migrator and both renderers all speak, so a package that contributes a block
 writes it once and hands the same object to each. See
 [Registering a block type](./packages/better-blocks-core#registering-a-block-type).
 
-Each package has its own README, changelog and release cadence. Start with the package
-you need; the plugin README covers installation and configuration inside Strapi, the
+Each package has its own README, changelog and release cadence — nothing is versioned
+in lockstep, and a release names the packages it covers. Start with the package you
+need: the plugin README covers installation and configuration inside Strapi, and the
 renderer READMEs cover consuming the content on the frontend.
 
 ## Repository layout
@@ -53,7 +68,7 @@ A pnpm workspace driven by Nx. Node 20 or 22 — the Strapi SDK refuses 23+.
 
 ```bash
 pnpm install
-pnpm build        # plugin + both renderers
+pnpm build        # every package
 pnpm test
 pnpm lint
 pnpm graph        # dependency graph
@@ -62,9 +77,11 @@ pnpm graph        # dependency graph
 Nx wraps each package's own build script rather than replacing it, so a package
 still builds on its own from its directory.
 
-To see a change running end to end, `docker compose up --build` brings up Strapi
-with the plugin plus both renderers on the same seeded content — see
-[examples/README.md](./examples/README.md).
+To see a change running end to end, `docker compose up --build` brings up Strapi with
+the plugin plus both renderers on the same seeded content — see
+[examples/README.md](./examples/README.md). Chartkit has its own page,
+[examples/chartkit-gallery](./examples/chartkit-gallery), which renders every fixture at
+once: charts cannot be reviewed in a diff, so there has to be somewhere to look at them.
 
 Releases go through `nx release`: independent versions, one changelog and tag
 per package. The release workflow is manual and defaults to a dry run.
