@@ -1,3 +1,21 @@
+## 0.23.2 (2026-08-16)
+
+### 🚀 Features
+
+- **chartkit:** grouped and stacked bars, with a legend ([#114](https://github.com/qkix/strapi-plugins/pull/114))
+
+### 🩹 Fixes
+
+- **better-blocks:** bound the oEmbed cache and cover the network path ([#132](https://github.com/qkix/strapi-plugins/pull/132))
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-core to 0.2.2
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.23.1 (2026-08-16)
 
 ### 🚀 Features
