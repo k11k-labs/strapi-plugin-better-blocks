@@ -113,6 +113,41 @@ table of nonsense, which is worse than a refusal.
 `useMediaLibraryDialog` touches the admin's component registry, and it returns
 `undefined` — disabling the button — on a build that has no Media Library.
 
+## The Better Blocks block, ready made
+
+`@qkix/chartkit-editor/block` exports the whole registration, so putting charts
+in a rich-text document is one line rather than a file:
+
+```ts
+import { registerBlock } from '@qkix/strapi-plugin-better-blocks/strapi-admin';
+import { chartBlockDefinition } from '@qkix/chartkit-editor/block';
+
+registerBlock(chartBlockDefinition({ locale: 'en-US' }));
+```
+
+| Option    | Default             |
+| --------- | ------------------- |
+| `locale`  | the browser's       |
+| `label`   | `'Chart'`           |
+| `icon`    | a small bar chart   |
+| `starter` | four empty quarters |
+
+It used to take about eighty lines in every app that wanted it: find the node's
+path, write the edited spec back with `Transforms.setNodes`, remember
+`contentEditable={false}`, remember the empty text child Slate demands of a
+void. Identical every time, and four chances to get a detail wrong.
+
+**Why a separate entry point.** This is the only module here that imports Slate,
+and the standalone custom field uses this package without it. Exporting it from
+the package root would make every consumer install an editor framework to get a
+data grid, so `slate` and `slate-react` are optional peers and you only need
+them if you import `/block`.
+
+The definition is structurally an `EditorBlockDefinition` without importing
+Better Blocks — a chart editor has no business depending on a rich-text plugin.
+The two shapes meet at your `registerBlock` call, which is where TypeScript
+checks them against each other.
+
 ## License
 
 MIT
