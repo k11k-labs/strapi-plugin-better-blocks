@@ -21,6 +21,7 @@
     "@qkix/chartkit-editor": "workspace:^",
     "@qkix/strapi-plugin-better-blocks": "workspace:*",
     "@qkix/strapi-plugin-chartkit": "workspace:*",
+    "@qkix/strapi-plugin-rewind": "workspace:*",
     "@strapi/plugin-cloud": "5.52.0",
     "@strapi/plugin-users-permissions": "5.52.0",
     "@strapi/strapi": "5.52.0",

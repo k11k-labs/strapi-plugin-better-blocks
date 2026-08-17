@@ -1,0 +1,73 @@
+{
+  "kind": "collectionType",
+  "collectionName": "rewind_versions",
+  "info": {
+    "singularName": "version",
+    "pluralName": "versions",
+    "displayName": "Rewind Version",
+    "description": "One snapshot of one document, in one locale, at one point in time."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": "Managed by strapi-plugin-rewind. Do not edit manually."
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    },
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "contentType": {
+      "type": "string",
+      "required": true
+    },
+    "relatedDocumentId": {
+      "type": "string",
+      "required": true
+    },
+    "locale": {
+      "type": "string"
+    },
+    "status": {
+      "type": "enumeration",
+      "enum": ["draft", "published", "modified"],
+      "required": true
+    },
+    "label": {
+      "type": "string"
+    },
+    "data": {
+      "type": "json",
+      "required": true
+    },
+    "schemaSnapshot": {
+      "type": "json",
+      "required": true
+    },
+    "relations": {
+      "type": "json"
+    },
+    "contentHash": {
+      "type": "string",
+      "required": true
+    },
+    "origin": {
+      "type": "enumeration",
+      "enum": ["create", "update", "clone", "publish", "unpublish", "discardDraft", "restore"],
+      "required": true
+    },
+    "pinned": {
+      "type": "boolean",
+      "default": false
+    },
+    "userId": {
+      "type": "integer"
+    }
+  }
+}
