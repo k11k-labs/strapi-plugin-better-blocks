@@ -32,6 +32,18 @@ const config = ({
     },
   },
   /**
+   * Greenlight holds a document at its review stage until it is approved, and
+   * refuses to publish it before then. Same `resolve` reason as above.
+   *
+   * Nothing is under review until a workflow says so — that lives in the
+   * database and is edited from the admin panel, not here — so enabling it in
+   * the playground changes nothing until a workflow exists.
+   */
+  greenlight: {
+    enabled: true,
+    resolve: '../../packages/strapi-plugin-greenlight',
+  },
+  /**
    * Mux Video Uploader — enables the "Mux" source button in the Better Blocks
    * video block, which lists and searches Mux assets through this plugin's
    * admin API. Credentials come from a Mux **Access Token** (Mux dashboard →

@@ -20,6 +20,7 @@ body:
         - '@qkix/strapi-plugin-better-blocks — the rich text editor plugin'
         - '@qkix/strapi-plugin-chartkit — the chart field plugin'
         - '@qkix/strapi-plugin-rewind — document version history'
+        - '@qkix/strapi-plugin-greenlight — review stages and the publish gate'
         - '@qkix/better-blocks-core'
         - '@qkix/better-blocks-react-renderer'
         - '@qkix/better-blocks-astro-renderer'
