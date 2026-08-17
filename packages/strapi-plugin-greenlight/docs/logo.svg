@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Greenlight">
+  <rect width="512" height="512" rx="112" fill="#4945ff" />
+
+  <!--
+    Geometry, so this stays even if it is ever edited.
+
+    One shape: the check that lets a document out. Green rather than the amber
+    Rewind and Chartkit use for their accent, because here the colour *is* the
+    name — a greenlight is the thing being given.
+
+    The path is stroked at 44 with round caps and joins, so the drawn mark
+    extends 22 past every endpoint. Points are (145,268) → (217,340) → (367,172),
+    which puts the visual box at:
+
+      x  123..389   midpoint 256
+      y  150..362   midpoint 256
+
+    Centred on the canvas in both axes by construction rather than by eye, with
+    123 of padding left and right and 150 top and bottom. A check is
+    asymmetric, so the padding is deliberately uneven between the axes: matching
+    them would make the mark look small.
+  -->
+  <path
+    d="M145 268 L217 340 L367 172"
+    fill="none"
+    stroke="#4ade80"
+    stroke-width="44"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
