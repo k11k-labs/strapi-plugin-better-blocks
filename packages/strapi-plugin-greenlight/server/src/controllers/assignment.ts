@@ -6,6 +6,20 @@ import type { AdminUser, Assignment, Stage, Workflow } from '../types';
 
 const service = (strapi: Core.Strapi, name: string) => strapi.plugin(PLUGIN_ID).service(name);
 
+/**
+ * The list view caps its page size at 100. The headroom is for a caller that
+ * batches two pages; past this the `IN (...)` stops being a sensible query and
+ * saying so beats letting the database decide.
+ */
+const MAX_BATCH = 200;
+
+/** `?documentIds=a,b` and `?documentIds[]=a&documentIds[]=b` both arrive here. */
+const parseDocumentIds = (raw: unknown): string[] => {
+  const list = Array.isArray(raw) ? raw : typeof raw === 'string' ? raw.split(',') : [];
+
+  return [...new Set(list.map((value) => String(value).trim()).filter(Boolean))];
+};
+
 const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
   /**
    * Everything the edit-view panel needs, in one call.
@@ -61,8 +75,75 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
         : null,
       currentStage,
       availableTargets: targets,
-      /** Drives the disabled state of the Publish button. */
-      isPublishable: Boolean(currentStage?.isTerminal) || !wf.enforcePublishGate,
+      /**
+       * Drives the disabled state of the Publish button, and comes from the gate
+       * itself rather than from a second reading of the same rules — see
+       * `gate.publishable`.
+       */
+      isPublishable: service(strapi, 'gate').publishable(wf, current),
+    };
+  },
+
+  /**
+   * The batch sibling of `find`: one answer per document, for a page of them.
+   *
+   * Both the list view's stage column and its Publish buttons read this. They
+   * used to ask separately and per row — the column would have been one request
+   * per page and the buttons one per row, for the same documents.
+   *
+   * There is an entry for **every** id asked about, including documents with no
+   * assignment at all, because "no row in the table" is not the same answer as
+   * "not under review" and the caller cannot tell them apart from silence.
+   */
+  async findMany(ctx: any) {
+    const { uid } = ctx.params;
+    const documentIds = parseDocumentIds(ctx.query?.documentIds);
+    const locale = normalizeLocale(ctx.query?.locale ?? null);
+
+    if (documentIds.length > MAX_BATCH) {
+      return ctx.badRequest(`documentIds is limited to ${MAX_BATCH} per request`);
+    }
+
+    const wf = (await service(strapi, 'workflow').resolveForContentType(uid)) as Workflow | null;
+
+    // Not under review: no column, and no opinion about publishing.
+    if (!wf) {
+      ctx.body = { workflow: null, documents: {} };
+      return;
+    }
+
+    const rows = (await service(strapi, 'assignment').getMany(uid, documentIds)) as Assignment[];
+    const byDocument = new Map<string, Assignment>();
+    for (const row of rows) {
+      if (row.locale === locale) byDocument.set(row.relatedDocumentId, row);
+    }
+
+    const gate = service(strapi, 'gate');
+    const documents: Record<string, unknown> = {};
+
+    for (const documentId of documentIds) {
+      const current = byDocument.get(documentId) ?? null;
+      const stage = gate.effectiveStage(wf, current) as Stage | null;
+
+      documents[documentId] = {
+        assigned: current !== null,
+        stageId: stage?.id ?? null,
+        stageName: stage?.name ?? null,
+        stageColor: stage?.color ?? null,
+        assigneeId: current?.assigneeId ?? null,
+        publishable: gate.publishable(wf, current),
+      };
+    }
+
+    ctx.body = {
+      workflow: {
+        id: wf.id,
+        name: wf.name,
+        enforcePublishGate: wf.enforcePublishGate,
+        onMissingAssignment: wf.onMissingAssignment,
+        stages: wf.stages,
+      },
+      documents,
     };
   },
 

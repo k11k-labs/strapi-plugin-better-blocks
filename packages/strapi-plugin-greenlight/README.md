@@ -106,6 +106,42 @@ Two reviewers with the same panel open cannot silently overwrite each other: eac
 transition carries the version the panel was rendered with, and the second one gets a 409
 telling it to refresh.
 
+## On the list view
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-greenlight/docs/list-view.png" alt="The Content Manager's list view with a Review stage column, showing one document in review and the rest greyed out in the first stage" width="900" />
+</p>
+
+Every collection covered by a workflow gets a **Review stage** column and a filter to go
+with it, and no field is added to your content type to make either appear. A document that
+has never been through the workflow is shown greyed out, in the stage the gate would treat
+it as being in — so a collection that predates the plugin reads honestly rather than
+blank.
+
+The whole page is answered in one request. The column and the greyed-out Publish buttons
+share it, so a page of rows asks once in total rather than once per row.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-greenlight/docs/list-filter.png" alt="The same list filtered to Review stage is Draft, returning nine of ten documents" width="900" />
+</p>
+
+Filtering by a stage finds the documents implied to be in it too, not only the ones put
+there — which is why filtering by the first stage above returns nine of the ten, and not
+just the one that was actually moved into it.
+
+Three limits worth knowing. The column does not **sort** — sorting happens inside the
+Content Manager's own query, which cannot see this plugin's table. The filter offers only
+**is** and **is not**; every other operator would either mean nothing for a stage or have
+to be answered with a scan. And on the very first list view opened in a new browser
+session, the column and filter can be missing until you navigate once: the hooks that add
+them have to answer synchronously, and which content types are under review is a database
+answer, cached per session.
+
+The filter is answered by resolving the stage to a set of documents before the query runs,
+which caps out: past **5,000** documents in one stage it returns an error naming the limit
+rather than a quietly incomplete list. Narrow the list with another filter first, or use
+**My reviews**.
+
 ## Permissions
 
 Three plugin permissions, set per role in **Settings → Administration panel → Roles**:
@@ -154,11 +190,12 @@ decision that has already been written.
 
 ## Known limitations
 
-**No stage column or filter in the list view.** Strapi gives a plugin no way to add either
-without modifying your content types' schemas, which this plugin will not do — your data
-stays yours. The **My reviews** page is the answer instead, and is arguably the better
-one: one list of everything waiting on you, across every content type, rather than a
-filter you have to remember to apply per collection.
+**The stage filter is resolved before the query, not inside it.** The Content Manager
+validates every filter against your content type's schema and rejects whatever is not an
+attribute on it, so a stage — which lives in this plugin's own table, not in your schema —
+cannot be filtered directly. Greenlight answers the stage question first and hands the
+Content Manager a `documentId` filter instead. That is why the 5,000-document limit above
+exists, and why the filter cannot be combined with a sort on the stage.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-greenlight/docs/queue.png" alt="My reviews: every document waiting on a decision, across content types, filtered by reviewer and stage" width="900" />

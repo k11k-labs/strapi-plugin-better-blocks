@@ -16,6 +16,12 @@ export default {
   routes: [
     {
       method: 'GET',
+      path: '/assignments/:uid',
+      handler: 'assignment.findMany',
+      config: { policies: policy('canRead') },
+    },
+    {
+      method: 'GET',
       path: '/assignments/:uid/:documentId',
       handler: 'assignment.find',
       config: { policies: policy('canRead') },

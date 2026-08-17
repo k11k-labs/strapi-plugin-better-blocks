@@ -22,6 +22,7 @@ import { ArrowDown, ArrowUp, Duplicate, Plus, Trash } from '@strapi/icons';
 
 import { routes } from '../api';
 import type { Stage, Workflow } from '../api';
+import { primeCoverage } from '../coverage';
 
 interface Role {
   id: number;
@@ -229,6 +230,9 @@ export const SettingsPage = () => {
         setSelectedId(data.workflow.id);
       }
       notify('success', 'Workflow saved');
+      // The list view's column and filter decide whether to exist from a cached
+      // copy of this. Saving is the moment it goes stale.
+      await primeCoverage({ force: true });
       await reload();
     } catch (error: any) {
       notify('danger', error?.response?.data?.error?.message ?? 'Could not save the workflow');
@@ -258,6 +262,7 @@ export const SettingsPage = () => {
       await del(routes.workflow(selectedId));
       setSelectedId(null);
       notify('success', 'Workflow deleted');
+      await primeCoverage({ force: true });
       await reload();
     } catch (error: any) {
       notify('danger', error?.response?.data?.error?.message ?? 'Could not delete the workflow');

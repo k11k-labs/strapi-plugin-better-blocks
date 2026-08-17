@@ -54,7 +54,31 @@ export interface QueueItem {
   lastTransitionAt: string | null;
 }
 
+/** The gate's answer for one document, already decided on the server. */
+export interface DocumentReviewState {
+  /** False when the document has never been through the workflow. */
+  assigned: boolean;
+  /** The stage it counts as being in, which may be implied rather than set. */
+  stageId: number | null;
+  stageName: string | null;
+  stageColor: string | null;
+  assigneeId: number | null;
+  publishable: boolean;
+}
+
+/** What the list view reads, for a whole page of rows at once. */
+export interface AssignmentsPage {
+  workflow:
+    | (Pick<Workflow, 'id' | 'name' | 'enforcePublishGate' | 'onMissingAssignment'> & {
+        stages: Stage[];
+      })
+    | null;
+  /** Keyed by documentId, with an entry for every id asked about. */
+  documents: Record<string, DocumentReviewState>;
+}
+
 export const routes = {
+  assignments: (uid: string) => `/${PLUGIN_ID}/assignments/${uid}`,
   assignment: (uid: string, documentId: string) => `/${PLUGIN_ID}/assignments/${uid}/${documentId}`,
   stage: (uid: string, documentId: string) =>
     `/${PLUGIN_ID}/assignments/${uid}/${documentId}/stage`,

@@ -1,5 +1,6 @@
 import type { Core } from '@strapi/strapi';
 
+import { stageFilter } from './middlewares/stageFilter';
 import { TABLES } from './uids';
 import { createIndexes } from './utils/indexes';
 import { persistTables } from './utils/persistTable';
@@ -9,6 +10,16 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
   // the workflow configuration with it, and the gate comes back up gating nothing.
   await persistTables(strapi, TABLES);
   await createIndexes(strapi);
+
+  /**
+   * The list view's review-stage filter.
+   *
+   * Registered here rather than in `register()` on purpose. Strapi adds its own
+   * application middlewares during bootstrap but *before* plugin bootstraps run,
+   * and mounts the router only when the server starts listening — so this lands
+   * after authentication and error formatting, and still ahead of every route.
+   */
+  strapi.server.use(stageFilter(strapi));
 
   warnIfEnterpriseFeatureActive(strapi);
 };

@@ -47,6 +47,22 @@ const assignment = ({ strapi }: { strapi: Core.Strapi }) => {
     },
 
     /**
+     * Every assignment for a page of documents, in one query.
+     *
+     * The list view draws a stage per row, so asking per row would be a request
+     * per row. Locale is deliberately *not* a filter here: the caller keys the
+     * result by document and locale together and picks per row, which costs
+     * nothing and stays right if a page ever mixes locales.
+     */
+    async getMany(uid: string, documentIds: string[]): Promise<Assignment[]> {
+      if (documentIds.length === 0) return [];
+
+      return (await strapi.db.query(ASSIGNMENT_UID).findMany({
+        where: { contentTypeUid: uid, relatedDocumentId: { $in: documentIds } },
+      })) as Assignment[];
+    },
+
+    /**
      * The assignment for a document, creating it in the first stage if it has
      * none.
      *
