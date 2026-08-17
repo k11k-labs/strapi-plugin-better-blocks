@@ -19,6 +19,12 @@ export default {
     },
     {
       method: 'GET',
+      path: '/versions/:id/diff',
+      handler: 'version.diff',
+      config: { policies: ['admin::isAuthenticatedAdmin'] },
+    },
+    {
+      method: 'GET',
       path: '/versions/:id/preview',
       handler: 'version.preview',
       config: { policies: ['admin::isAuthenticatedAdmin'] },

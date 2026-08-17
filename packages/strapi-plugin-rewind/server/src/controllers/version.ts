@@ -68,6 +68,22 @@ const version = ({ strapi }: { strapi: Core.Strapi }) => ({
     ctx.body = { data: (await withUserNames(strapi, [row]))[0] };
   },
 
+  async diff(ctx: any) {
+    const { against } = ctx.query;
+    try {
+      ctx.body = {
+        data: await strapi
+          .plugin('rewind')
+          .service('diff')
+          .between(Number(ctx.params.id), against ? Number(against) : undefined),
+      };
+    } catch (error) {
+      return ctx.badRequest(
+        error instanceof Error ? error.message : 'Could not compare these versions.'
+      );
+    }
+  },
+
   async preview(ctx: any) {
     try {
       ctx.body = {

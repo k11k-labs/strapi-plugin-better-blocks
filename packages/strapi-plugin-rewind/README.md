@@ -99,6 +99,35 @@ part of a restore is what it will _not_ do:
   field physically has one value. The dialog names those fields and counts the
   locales before you commit.
 
+## Seeing what changed
+
+Every entry in the panel has a **What changed** link, comparing that version
+with the one saved immediately before it.
+
+Scalars are shown as a plain before and after. Prose — including rich text
+stored as JSON — is compared word by word, with the unchanged stretches
+collapsed, so a one-word edit in a long article reads as one word rather than
+as the whole article with something green in it somewhere. Relations are
+reported as linked and unlinked.
+
+Where a field's stored value changed but its readable text did not — a mark
+applied, blocks reordered — it says so, rather than showing an empty diff.
+
+### Rendering a field type properly
+
+Pulling the words out of a rich-text field tells an editor _that_ a paragraph
+changed, and nothing about a block moving or an image being swapped. Only the
+package that owns the format can show that, so the mapping is a registry:
+
+```ts
+import { registerDiffRenderer } from '@qkix/strapi-plugin-rewind/strapi-admin';
+
+registerDiffRenderer('plugin::better-blocks.better-blocks', BlocksDiff);
+```
+
+Keyed by a custom field's uid, or by an attribute `type`. A uid wins over a
+type, since every custom field stores itself as `json`.
+
 ## Configuration
 
 | Option           | Default | Meaning                                                                                                         |
@@ -110,8 +139,6 @@ part of a restore is what it will _not_ do:
 
 Worth knowing before you install it, not after:
 
-- **No diff view yet.** The panel lists versions and restores them; it does not
-  yet show you what changed between two of them.
 - **No retention yet.** The table grows. A thinning policy is the next thing
   planned, but today nothing prunes old versions.
 - **Polymorphic relations are skipped**, and reported as unsupported in the

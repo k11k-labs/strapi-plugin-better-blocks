@@ -9,8 +9,11 @@ import {
   Divider,
   Flex,
   Loader,
+  TextButton,
   Typography,
 } from '@strapi/design-system';
+
+import { ChangesDialog, type VersionDiff } from './ChangesDialog';
 
 import { PLUGIN_ID } from '../pluginId';
 
@@ -102,6 +105,10 @@ const PanelContent = ({
   } | null>(null);
   const [restoring, setRestoring] = React.useState(false);
 
+  const [changesOpen, setChangesOpen] = React.useState(false);
+  const [changes, setChanges] = React.useState<VersionDiff | null>(null);
+  const [changesLoading, setChangesLoading] = React.useState(false);
+
   const load = React.useCallback(
     async (nextPage: number) => {
       setLoading(true);
@@ -133,6 +140,22 @@ const PanelContent = ({
   React.useEffect(() => {
     load(1);
   }, [load, updatedAt]);
+
+  const showChanges = async (version: VersionRow) => {
+    setChangesOpen(true);
+    setChangesLoading(true);
+    setChanges(null);
+    try {
+      const { data } = await get<{ data: VersionDiff }>(
+        `/${PLUGIN_ID}/versions/${version.id}/diff`
+      );
+      setChanges(data.data);
+    } catch {
+      setChanges(null);
+    } finally {
+      setChangesLoading(false);
+    }
+  };
 
   const askToRestore = async (version: VersionRow) => {
     try {
@@ -219,6 +242,7 @@ const PanelContent = ({
                 {formatWhen(version.createdAt)}
                 {version.user ? ` · ${version.user.name}` : ''}
               </Typography>
+              <TextButton onClick={() => showChanges(version)}>What changed</TextButton>
             </Flex>
 
             <Box shrink={0}>
@@ -243,6 +267,14 @@ const PanelContent = ({
         <Typography variant="pi" textColor="danger600">
           {error}
         </Typography>
+      ) : null}
+
+      {changesOpen ? (
+        <ChangesDialog
+          diff={changes}
+          loading={changesLoading}
+          onClose={() => setChangesOpen(false)}
+        />
       ) : null}
 
       <Dialog.Root open={pending !== null} onOpenChange={() => setPending(null)}>
