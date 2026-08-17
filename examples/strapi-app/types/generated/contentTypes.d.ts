@@ -568,6 +568,203 @@ export interface PluginContentReleasesReleaseAction
   };
 }
 
+export interface PluginGreenlightAssignment
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'greenlight_assignments';
+  info: {
+    description: 'Where one document, in one locale, currently sits in its workflow.';
+    displayName: 'Greenlight Assignment';
+    pluralName: 'assignments';
+    singularName: 'assignment';
+  };
+  options: {
+    comment: 'Managed by strapi-plugin-greenlight. Do not edit manually.';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    assigneeId: Schema.Attribute.Integer;
+    contentTypeUid: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::greenlight.assignment'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    relatedDocumentId: Schema.Attribute.String & Schema.Attribute.Required;
+    stageId: Schema.Attribute.Integer & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    version: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+  };
+}
+
+export interface PluginGreenlightStage extends Struct.CollectionTypeSchema {
+  collectionName: 'greenlight_stages';
+  info: {
+    description: 'One step in a workflow, with the roles allowed to leave it and to enter it.';
+    displayName: 'Greenlight Stage';
+    pluralName: 'stages';
+    singularName: 'stage';
+  };
+  options: {
+    comment: 'Managed by strapi-plugin-greenlight. Do not edit manually.';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    color: Schema.Attribute.String & Schema.Attribute.DefaultTo<'#4945FF'>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    isTerminal: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::greenlight.stage'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.Required;
+    publishedAt: Schema.Attribute.DateTime;
+    rolesCanMoveFrom: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    rolesCanMoveTo: Schema.Attribute.JSON & Schema.Attribute.DefaultTo<[]>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    workflow: Schema.Attribute.Relation<
+      'manyToOne',
+      'plugin::greenlight.workflow'
+    >;
+  };
+}
+
+export interface PluginGreenlightTransition
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'greenlight_transitions';
+  info: {
+    description: 'Append-only log of stage changes. Never updated, never deleted outside retention.';
+    displayName: 'Greenlight Transition';
+    pluralName: 'transitions';
+    singularName: 'transition';
+  };
+  options: {
+    comment: 'Managed by strapi-plugin-greenlight. Do not edit manually.';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    byUserId: Schema.Attribute.Integer;
+    byUserName: Schema.Attribute.String;
+    comment: Schema.Attribute.Text;
+    contentTypeUid: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    fromStageId: Schema.Attribute.Integer;
+    fromStageName: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::greenlight.transition'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    relatedDocumentId: Schema.Attribute.String & Schema.Attribute.Required;
+    toStageId: Schema.Attribute.Integer & Schema.Attribute.Required;
+    toStageName: Schema.Attribute.String & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface PluginGreenlightWorkflow extends Struct.CollectionTypeSchema {
+  collectionName: 'greenlight_workflows';
+  info: {
+    description: 'A set of review stages, and the content types that move through them.';
+    displayName: 'Greenlight Workflow';
+    pluralName: 'workflows';
+    singularName: 'workflow';
+  };
+  options: {
+    comment: 'Managed by strapi-plugin-greenlight. Do not edit manually.';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    contentTypes: Schema.Attribute.JSON &
+      Schema.Attribute.Required &
+      Schema.Attribute.DefaultTo<[]>;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    enforcePublishGate: Schema.Attribute.Boolean &
+      Schema.Attribute.DefaultTo<true>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::greenlight.workflow'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    onMissingAssignment: Schema.Attribute.Enumeration<['firstStage', 'allow']> &
+      Schema.Attribute.DefaultTo<'firstStage'>;
+    publishedAt: Schema.Attribute.DateTime;
+    stages: Schema.Attribute.Relation<'oneToMany', 'plugin::greenlight.stage'>;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface PluginI18NLocale extends Struct.CollectionTypeSchema {
   collectionName: 'i18n_locale';
   info: {
@@ -817,6 +1014,69 @@ export interface PluginReviewWorkflowsWorkflowStage
       'manyToOne',
       'plugin::review-workflows.workflow'
     >;
+  };
+}
+
+export interface PluginRewindVersion extends Struct.CollectionTypeSchema {
+  collectionName: 'rewind_versions';
+  info: {
+    description: 'One snapshot of one document, in one locale, at one point in time.';
+    displayName: 'Rewind Version';
+    pluralName: 'versions';
+    singularName: 'version';
+  };
+  options: {
+    comment: 'Managed by strapi-plugin-rewind. Do not edit manually.';
+    draftAndPublish: false;
+  };
+  pluginOptions: {
+    'content-manager': {
+      visible: false;
+    };
+    'content-type-builder': {
+      visible: false;
+    };
+    i18n: {
+      localized: false;
+    };
+  };
+  attributes: {
+    contentHash: Schema.Attribute.String & Schema.Attribute.Required;
+    contentType: Schema.Attribute.String & Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    data: Schema.Attribute.JSON & Schema.Attribute.Required;
+    label: Schema.Attribute.String;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'plugin::rewind.version'
+    > &
+      Schema.Attribute.Private;
+    origin: Schema.Attribute.Enumeration<
+      [
+        'create',
+        'update',
+        'clone',
+        'publish',
+        'unpublish',
+        'discardDraft',
+        'restore',
+      ]
+    > &
+      Schema.Attribute.Required;
+    pinned: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    publishedAt: Schema.Attribute.DateTime;
+    relatedDocumentId: Schema.Attribute.String & Schema.Attribute.Required;
+    relations: Schema.Attribute.JSON;
+    schemaSnapshot: Schema.Attribute.JSON & Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<['draft', 'published', 'modified']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    userId: Schema.Attribute.Integer;
   };
 }
 
@@ -1097,11 +1357,16 @@ declare module '@strapi/strapi' {
       'api::article.article': ApiArticleArticle;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
+      'plugin::greenlight.assignment': PluginGreenlightAssignment;
+      'plugin::greenlight.stage': PluginGreenlightStage;
+      'plugin::greenlight.transition': PluginGreenlightTransition;
+      'plugin::greenlight.workflow': PluginGreenlightWorkflow;
       'plugin::i18n.locale': PluginI18NLocale;
       'plugin::mux-video-uploader.mux-asset': PluginMuxVideoUploaderMuxAsset;
       'plugin::mux-video-uploader.mux-text-track': PluginMuxVideoUploaderMuxTextTrack;
       'plugin::review-workflows.workflow': PluginReviewWorkflowsWorkflow;
       'plugin::review-workflows.workflow-stage': PluginReviewWorkflowsWorkflowStage;
+      'plugin::rewind.version': PluginRewindVersion;
       'plugin::upload.file': PluginUploadFile;
       'plugin::upload.folder': PluginUploadFolder;
       'plugin::users-permissions.permission': PluginUsersPermissionsPermission;
