@@ -1,3 +1,9 @@
+## 0.18.4 (2026-08-17)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-core to 0.2.3
+
 ## 0.18.3 (2026-08-16)
 
 ### 🧱 Updated Dependencies
