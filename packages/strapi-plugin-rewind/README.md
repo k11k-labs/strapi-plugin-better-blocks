@@ -1,9 +1,25 @@
-# Rewind
+<h1 align="center">Rewind for Strapi</h1>
 
-Document version history for Strapi 5. Every save is snapshotted, and any
-snapshot can be put back.
+<p align="center">Document version history for Strapi v5. Every save is snapshotted, and any snapshot can be <strong>put back</strong>.</p>
 
-<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/edit-view.png" alt="The history panel beside a document in the Strapi edit view" width="900" />
+<p align="center">
+  <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-rewind">
+    <img alt="npm version" src="https://img.shields.io/npm/v/@qkix/strapi-plugin-rewind.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-rewind">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dm/@qkix/strapi-plugin-rewind.svg" />
+  </a>
+  <a href="https://github.com/qkix/strapi-plugins/blob/main/LICENSE">
+    <img alt="license" src="https://img.shields.io/npm/l/@qkix/strapi-plugin-rewind.svg" />
+  </a>
+  <a href="https://buymeacoffee.com/qkix">
+    <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" />
+  </a>
+</p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/edit-view.png" alt="The history panel beside a document in the Strapi edit view" width="900" />
+</p>
 
 The panel sits in the edit view, next to the document it belongs to. Each entry
 is a point you can go back to: what the document said, when, and who saved it.
