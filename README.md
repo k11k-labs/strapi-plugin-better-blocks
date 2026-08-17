@@ -1,6 +1,6 @@
 <h1 align="center">qkix / strapi-plugins</h1>
 
-<p align="center">Plugins and renderers for Strapi v5. Four products, one workspace.</p>
+<p align="center">Plugins and renderers for Strapi v5. Six products, one workspace.</p>
 
 <p align="center">
   <a href="./LICENSE">
@@ -37,6 +37,11 @@ including the components and dynamic zones every other schema visualiser leaves 
 Rendered as real SVG on the server, so the same drawing works in the admin panel, in a
 README and in a docs build.
 
+**[Ferry](./packages/strapi-plugin-ferry)** - import and export content as JSON or CSV,
+with relations, components and dynamic zones that survive the trip. Everything is
+resolved and reported before a single row is written, and an import that hits a problem
+rolls back rather than leaving half of it applied.
+
 They are separate products that share a workspace, and increasingly an interface:
 Chartkit registers itself as a Better Blocks block type through a public API rather
 than either one knowing the other's internals.
@@ -57,6 +62,7 @@ than either one knowing the other's internals.
 | [`@qkix/strapi-plugin-rewind`](./packages/strapi-plugin-rewind)                 | Strapi v5 plugin - document version history: a snapshot on every save, a diff between any two, and restore.                               |
 | [`@qkix/strapi-plugin-greenlight`](./packages/strapi-plugin-greenlight)         | Strapi v5 plugin - multi-stage content review with a publish gate: nothing goes live until it is approved.                                |
 | [`@qkix/strapi-plugin-blueprint`](./packages/strapi-plugin-blueprint)           | Strapi v5 plugin - a schema diagram covering content types, components and dynamic zones, rendered as SVG on the server.                  |
+| [`@qkix/strapi-plugin-ferry`](./packages/strapi-plugin-ferry)                   | Strapi v5 plugin - import and export as JSON or CSV, keyed on documentId, with a dry run before anything is written.                      |
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use - for reading content,

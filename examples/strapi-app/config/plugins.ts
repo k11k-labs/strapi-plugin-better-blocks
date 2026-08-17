@@ -52,6 +52,15 @@ const config = ({
     resolve: '../../packages/strapi-plugin-blueprint',
   },
   /**
+   * Ferry moves content in and out as JSON or CSV. Nothing to configure: it
+   * carries whatever content types exist, and `exclude` is for projects that
+   * have something which must not leave. Same `resolve` reason as above.
+   */
+  ferry: {
+    enabled: true,
+    resolve: '../../packages/strapi-plugin-ferry',
+  },
+  /**
    * Mux Video Uploader - enables the "Mux" source button in the Better Blocks
    * video block, which lists and searches Mux assets through this plugin's
    * admin API. Credentials come from a Mux **Access Token** (Mux dashboard →

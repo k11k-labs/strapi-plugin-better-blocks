@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Ferry">
+  <rect width="512" height="512" rx="112" fill="#4945ff" />
+
+  <!--
+    Geometry, so this stays even if it is ever edited.
+
+    Two arrows, one each way: content leaving and content arriving, which is the
+    whole plugin. Deliberately not a boat, and not a single arrow - one arrow
+    would name one direction and make the mark half of what the thing does.
+
+    The lower arrow is amber - the inbound one, the import. Amber for the one
+    that matters is the family's convention (Rewind's leading triangle,
+    Chartkit's leading bar, Greenlight's final check segment, Blueprint's
+    component), and here it points at the direction every other plugin in this
+    category gets wrong: relations that do not arrive, components that do not
+    come back. Two amber arrows would make it a colour scheme; one makes it a
+    statement.
+
+      upper arrow   shaft x  96..336   head apex x 416   centre y 190
+      lower arrow   shaft x 416..176   head apex x  96   centre y 322
+
+    Both arrows span x 96..416, so the mark has 96 of padding left and right and
+    is symmetric about x 256 by construction. The heads are 110 tall, reaching y
+    135 and y 377, which puts the vertical midpoint on 256 as well.
+
+    Shafts are drawn with round caps, so the tail of each arrow is a soft end
+    rather than a cut edge; the far end runs under its head, where the join is
+    covered by the triangle rather than mitred to it.
+  -->
+  <path d="M96 190 H336" fill="none" stroke="#ffffff" stroke-width="28" stroke-linecap="round" />
+  <path d="M330 135 L416 190 L330 245 Z" fill="#ffffff" />
+
+  <path d="M416 322 H176" fill="none" stroke="#f0a500" stroke-width="28" stroke-linecap="round" />
+  <path d="M182 267 L96 322 L182 377 Z" fill="#f0a500" />
+</svg>
