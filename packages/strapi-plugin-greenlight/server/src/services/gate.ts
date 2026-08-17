@@ -88,6 +88,46 @@ const gate = ({ strapi }: { strapi: Core.Strapi }) => {
     },
 
     /**
+     * Would `assertPublishable` let this one through?
+     *
+     * The same decision, for one locale, without the I/O or the throw — so the
+     * edit view's Publish button and the list view's rows answer with the gate
+     * rather than with their own guess at it. Every branch below mirrors one in
+     * `assertPublishable`; if that gains a rule, this needs the same rule or the
+     * UI starts lying about what will happen.
+     *
+     * The `onMissingAssignment` branch is the one worth naming: a document with
+     * no assignment under a workflow set to `allow` **can** be published, and
+     * anything deriving publishability from "is there a terminal stage here"
+     * alone gets that backwards.
+     */
+    publishable(wf: Workflow | null, assignment: Assignment | null): boolean {
+      if (!wf) return true;
+      if (!wf.enforcePublishGate) return true;
+      if (!assignment) return wf.onMissingAssignment === 'allow';
+
+      return assignment.stageId === (plugin().service('workflow').terminalStage(wf) as Stage).id;
+    },
+
+    /**
+     * The stage a document counts as being in, which is not always one it has
+     * been put in: with `onMissingAssignment: 'firstStage'` a document that has
+     * never been reviewed is treated as sitting in the first stage, and the gate
+     * blocks it there.
+     */
+    effectiveStage(wf: Workflow | null, assignment: Assignment | null): Stage | null {
+      if (!wf) return null;
+
+      if (assignment) {
+        return wf.stages.find((stage) => stage.id === assignment.stageId) ?? null;
+      }
+
+      return wf.onMissingAssignment === 'firstStage'
+        ? (plugin().service('workflow').firstStage(wf) as Stage)
+        : null;
+    },
+
+    /**
      * Throws unless every locale being published has reached its terminal stage.
      *
      * Called from the document-service middleware before `next()`, so throwing

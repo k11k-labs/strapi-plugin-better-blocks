@@ -2,11 +2,25 @@ import { CheckCircle } from '@strapi/icons';
 
 import { ReviewPanel } from './components/ReviewPanel';
 import { withPublishGuard } from './components/publishGuard';
+import {
+  INJECT_COLUMN_IN_TABLE,
+  INJECT_LIST_VIEW_FILTERS,
+  injectStageColumn,
+  injectStageFilter,
+} from './components/stageColumn';
+import { primeCoverage } from './coverage';
 import { PLUGIN_ID } from './pluginId';
 
 export default {
   register(app: any) {
     app.registerPlugin({ id: PLUGIN_ID, name: PLUGIN_ID, isReady: true });
+
+    /**
+     * Start reading which content types are under review now, so the list
+     * view's stage column can decide synchronously later. See stageColumn.tsx —
+     * this runs before login on a cold boot and is expected to fail there.
+     */
+    void primeCoverage();
 
     /** The reviewer's own list, which is half the value of the product. */
     app.addMenuLink({
@@ -42,6 +56,10 @@ export default {
 
   bootstrap(app: any) {
     const contentManager = app.getPlugin('content-manager');
+
+    /** The stage, on every row of the list view, and a filter for it. */
+    app.registerHook(INJECT_COLUMN_IN_TABLE, injectStageColumn);
+    app.registerHook(INJECT_LIST_VIEW_FILTERS, injectStageFilter);
 
     /** Where the stage, the reviewer and the history live. */
     contentManager.apis.addEditViewSidePanel([ReviewPanel]);

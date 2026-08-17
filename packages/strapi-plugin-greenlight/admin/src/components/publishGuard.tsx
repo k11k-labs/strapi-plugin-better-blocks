@@ -2,61 +2,29 @@ import * as React from 'react';
 
 import { useFetchClient } from '@strapi/admin/strapi-admin';
 
-import { REVIEW_CHANGED, routes } from '../api';
-import type { AssignmentState } from '../api';
-
-type Fetcher = ReturnType<typeof useFetchClient>['get'];
+import { REVIEW_CHANGED } from '../api';
+import { loadReviewState } from '../reviewBatch';
+import type { ReviewEntry } from '../reviewBatch';
 
 /**
- * One in-flight request per document, shared by every caller.
+ * Whether the gate will let this document be published, and what is holding it.
  *
- * The Content Manager renders document actions once per row in the list view as
- * well as once in the edit view, and re-renders them freely. Without this cache a
- * ten-row page produced two hundred requests for the same handful of documents —
- * measured, not theorised.
+ * The answer comes from the server rather than from re-reading the workflow's
+ * rules here: `onMissingAssignment` alone means a document with no stage at all
+ * can be perfectly publishable, and any second implementation of that gets it
+ * wrong eventually. See `gate.publishable`.
  *
- * Cleared wholesale on a stage change rather than surgically: the entries are
- * cheap to refetch and a stale "approved" is the one state worth never showing.
+ * Requests are batched and cached in `reviewBatch` — shared with the list
+ * view's stage column, so a page of rows asks once in total rather than once
+ * per row per feature.
  */
-const cache = new Map<string, Promise<AssignmentState | null>>();
-
-const keyOf = (uid: string, documentId: string, locale?: string | null) =>
-  `${uid}|${documentId}|${locale ?? ''}`;
-
-const fetchState = (
-  get: Fetcher,
-  uid: string,
-  documentId: string,
-  locale?: string | null
-): Promise<AssignmentState | null> => {
-  const key = keyOf(uid, documentId, locale);
-  const hit = cache.get(key);
-  if (hit) return hit;
-
-  const request = get<AssignmentState>(routes.assignment(uid, documentId), {
-    params: locale ? { locale } : {},
-  })
-    .then(({ data }) => data)
-    // Never disable the button because a request failed. The server-side gate is
-    // the real enforcement, and a broken panel must not also break publishing
-    // for content that is not under review at all.
-    .catch(() => null);
-
-  cache.set(key, request);
-  return request;
-};
-
-if (typeof window !== 'undefined') {
-  window.addEventListener(REVIEW_CHANGED, () => cache.clear());
-}
-
 const usePublishable = (
   model?: string,
   documentId?: string,
   locale?: string | null
 ): { known: boolean; publishable: boolean; stageName?: string } => {
   const { get } = useFetchClient();
-  const [state, setState] = React.useState<AssignmentState | null>(null);
+  const [entry, setEntry] = React.useState<ReviewEntry | null>(null);
   const [known, setKnown] = React.useState(false);
   /** Bumped on a stage change, to re-read after the cache is cleared. */
   const [nonce, setNonce] = React.useState(0);
@@ -74,9 +42,9 @@ const usePublishable = (
       return;
     }
 
-    fetchState(get, model, documentId, locale).then((data) => {
+    loadReviewState(get, model, documentId, locale).then((data) => {
       if (cancelled) return;
-      setState(data);
+      setEntry(data);
       setKnown(true);
     });
 
@@ -85,12 +53,14 @@ const usePublishable = (
     };
   }, [get, model, documentId, locale, nonce]);
 
-  if (!state?.workflow) return { known, publishable: true };
+  // No workflow, or a request that failed: no opinion, and the button stays as
+  // the Content Manager drew it. The server-side gate is the real enforcement.
+  if (!entry?.workflow || !entry.state) return { known, publishable: true };
 
   return {
     known,
-    publishable: state.isPublishable,
-    stageName: state.currentStage?.name,
+    publishable: entry.state.publishable,
+    stageName: entry.state.stageName ?? undefined,
   };
 };
 

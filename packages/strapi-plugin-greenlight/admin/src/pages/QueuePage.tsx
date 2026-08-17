@@ -26,11 +26,11 @@ import type { QueueItem, Workflow } from '../api';
 /**
  * "My reviews".
  *
- * Strapi gives a plugin no way to add a column or a filter to the Content
- * Manager's list view without editing the user's own content types, which this
- * plugin will not do. That constraint turned out to be a better design anyway: a
- * reviewer wants one list of everything waiting on them across every content
- * type, not a filter they have to remember to apply collection by collection.
+ * The list view has a stage column of its own, but it is per collection and per
+ * page, and it cannot be filtered — a filter would have to be a query against
+ * the user's content type, and a stage is not a field on it. This page is the
+ * answer to the question a reviewer actually has: everything waiting on them,
+ * across every content type, in one list.
  */
 export const QueuePage = () => {
   const { get } = useFetchClient();

@@ -19,11 +19,10 @@ export interface QueueItem {
 /**
  * The "My reviews" page.
  *
- * Strapi gives a plugin no way to add a column or a filter to the Content
- * Manager's list view without modifying the user's own content types, which this
- * plugin will not do. So the queue is its own page — which is the better answer
- * anyway: a reviewer wants one list of everything waiting on them, across content
- * types, not a filter they have to remember to apply per collection.
+ * The list view carries a stage column too, but it is per collection and per
+ * page. This is the cross-cutting view: everything waiting on one reviewer, in
+ * every content type at once, which is the question a reviewer actually opens
+ * the admin to ask.
  */
 const queue = ({ strapi }: { strapi: Core.Strapi }) => {
   const self = {
