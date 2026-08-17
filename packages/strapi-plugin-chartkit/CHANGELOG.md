@@ -1,3 +1,10 @@
+## 0.1.6 (2026-08-17)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/chartkit-editor to 0.1.5
+- Updated @qkix/chartkit-core to 0.2.3
+
 ## 0.1.5 (2026-08-17)
 
 This was a version bump only for @qkix/strapi-plugin-chartkit to align it with other projects, there were no code changes.

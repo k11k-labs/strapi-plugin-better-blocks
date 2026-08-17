@@ -1,3 +1,9 @@
+## 0.23.5 (2026-08-17)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-core to 0.2.4
+
 ## 0.23.4 (2026-08-17)
 
 This was a version bump only for @qkix/strapi-plugin-better-blocks to align it with other projects, there were no code changes.
