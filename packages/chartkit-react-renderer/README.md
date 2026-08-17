@@ -1,6 +1,6 @@
 # @qkix/chartkit-react-renderer
 
-React renderer for [Chartkit](../chartkit-core) charts. A `ChartSpec` in, an SVG
+React renderer for [Chartkit](https://www.npmjs.com/package/@qkix/chartkit-core) charts. A `ChartSpec` in, an SVG
 on the page, and **nothing for the browser to run**.
 
 ```bash

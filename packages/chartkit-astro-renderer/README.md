@@ -1,6 +1,6 @@
 # @qkix/chartkit-astro-renderer
 
-Astro renderer for [Chartkit](../chartkit-core) charts. **Zero client-side
+Astro renderer for [Chartkit](https://www.npmjs.com/package/@qkix/chartkit-core) charts. **Zero client-side
 JavaScript** — an Astro page with a chart on it ships exactly as much script as
 one without.
 

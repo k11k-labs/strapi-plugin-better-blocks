@@ -553,7 +553,7 @@ A registered block works at any depth, including inside a callout or a details.
 An `AstroBlockPlugin` is a core `BlockDefinition` plus `component`, so the same
 object that teaches `validateDocument` and `migrateDocument` about the block
 also teaches this renderer to draw it. See
-[`@qkix/better-blocks-core`](../better-blocks-core#registering-a-block-type).
+[`@qkix/better-blocks-core`](https://www.npmjs.com/package/@qkix/better-blocks-core#registering-a-block-type).
 
 Passing plugins explicitly, rather than registering them into a global, is
 deliberate: this renderer runs on servers handling concurrent requests, where

@@ -34,9 +34,14 @@ const renderers = new Map<string, DiffRenderer>();
  * the type-to-component mapping is a registry rather than a switch:
  *
  *   import { registerDiffRenderer } from '@qkix/strapi-plugin-rewind/strapi-admin';
- *   registerDiffRenderer('plugin::better-blocks.better-blocks', BlocksDiff);
+ *   registerDiffRenderer('plugin::better-blocks.better-blocks', MyBlocksDiff);
  *
  * Keyed by the attribute's `type`, or by a custom field's uid.
+ *
+ * `MyBlocksDiff` above is the caller's own component. No @qkix package exports
+ * one today — this is the hook for writing it, not a wiring instruction for
+ * something that already exists. Without a renderer registered, the field falls
+ * back to the generic text diff.
  */
 export const registerDiffRenderer = (type: string, renderer: DiffRenderer): void => {
   renderers.set(type, renderer);

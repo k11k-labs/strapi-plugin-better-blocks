@@ -47,43 +47,43 @@
 
 ### Text color & background highlight
 
-![Text color & highlight](./docs/features/feature-text-color-highlight.gif)
+![Text color & highlight](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-text-color-highlight.gif)
 
 ### Tables
 
-![Tables](./docs/features/feature-tables.gif)
+![Tables](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-tables.gif)
 
 ### Nested lists
 
-![Nested lists](./docs/features/feature-nested-lists.gif)
+![Nested lists](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-nested-lists.gif)
 
 ### Media embeds (YouTube / Vimeo)
 
-![Media embeds](./docs/features/feature-media-embeds.gif)
+![Media embeds](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-media-embeds.gif)
 
 ### Text alignment
 
-![Text alignment](./docs/features/feature-text-alignment.gif)
+![Text alignment](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-text-alignment.gif)
 
 ### Line height & indentation
 
-![Line height & indentation](./docs/features/feature-line-height-indent.gif)
+![Line height & indentation](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-line-height-indent.gif)
 
 ### Image captions & alignment
 
-![Image captions](./docs/features/feature-image-captions.gif)
+![Image captions](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-image-captions.gif)
 
 ### Emoji & special character pickers
 
-![Emoji & special characters](./docs/features/feature-emoji-special-chars.gif)
+![Emoji & special characters](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-emoji-special-chars.gif)
 
 ### Find & replace
 
-![Find and replace](./docs/features/feature-find-replace.gif)
+![Find and replace](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-find-replace.gif)
 
 ### Undo / redo, remove formatting & word count
 
-![Undo/redo, word count](./docs/features/feature-undo-redo-wordcount.gif)
+![Undo/redo, word count](https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/features/feature-undo-redo-wordcount.gif)
 
 ## Features
 
@@ -130,7 +130,10 @@
 
 | Strapi Version | Plugin Version |
 | -------------- | -------------- |
-| v5.x           | v0.1.x         |
+| v5.x           | v0.x           |
+
+Strapi v5 only. The plugin is built against the v5 Document Service and the v5
+admin APIs, and there is no v4 branch.
 
 ## Installation
 
