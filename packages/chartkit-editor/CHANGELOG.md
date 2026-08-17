@@ -1,3 +1,9 @@
+## 0.1.5 (2026-08-17)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/chartkit-core to 0.2.3
+
 ## 0.1.4 (2026-08-17)
 
 ### 🧱 Updated Dependencies

@@ -1,6 +1,6 @@
 {
   "name": "@qkix/chartkit-editor",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "The Chartkit chart editor for the Strapi admin — a data grid, CSV paste and live preview, shared by the standalone custom field and the Better Blocks block",
   "type": "commonjs",
   "main": "dist/index.js",

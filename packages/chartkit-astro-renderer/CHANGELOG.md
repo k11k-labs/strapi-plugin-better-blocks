@@ -1,3 +1,11 @@
+## 0.2.3 (2026-08-17)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-astro-renderer to 0.14.5
+- Updated @qkix/better-blocks-core to 0.2.4
+- Updated @qkix/chartkit-core to 0.2.3
+
 ## 0.2.2 (2026-08-17)
 
 ### 🧱 Updated Dependencies
