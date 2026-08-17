@@ -1,0 +1,57 @@
+{
+  "kind": "collectionType",
+  "collectionName": "greenlight_stages",
+  "info": {
+    "singularName": "stage",
+    "pluralName": "stages",
+    "displayName": "Greenlight Stage",
+    "description": "One step in a workflow, with the roles allowed to leave it and to enter it."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": "Managed by strapi-plugin-greenlight. Do not edit manually."
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    },
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "color": {
+      "type": "string",
+      "default": "#4945FF"
+    },
+    "order": {
+      "type": "integer",
+      "required": true
+    },
+    "isTerminal": {
+      "type": "boolean",
+      "default": false
+    },
+    "rolesCanMoveFrom": {
+      "type": "json",
+      "default": []
+    },
+    "rolesCanMoveTo": {
+      "type": "json",
+      "default": []
+    },
+    "workflow": {
+      "type": "relation",
+      "relation": "manyToOne",
+      "target": "plugin::greenlight.workflow",
+      "inversedBy": "stages"
+    }
+  }
+}

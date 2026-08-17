@@ -691,6 +691,9 @@ importers:
       '@qkix/eslint-config':
         specifier: workspace:*
         version: link:../../tooling/eslint-config
+      '@qkix/strapi-test-harness':
+        specifier: workspace:*
+        version: link:../../tooling/strapi-test-harness
       '@qkix/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/tsconfig
@@ -727,6 +730,9 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.9.3
+      vitest:
+        specifier: ^3.2.4
+        version: 3.2.7(@types/debug@4.1.13)(@types/node@26.2.0)(jsdom@25.0.1)(terser@5.50.0)(yaml@2.9.0)
 
   packages/strapi-plugin-rewind:
     dependencies:

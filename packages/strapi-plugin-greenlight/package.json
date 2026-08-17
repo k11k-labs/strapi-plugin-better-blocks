@@ -51,7 +51,9 @@
     "verify": "strapi-plugin verify",
     "watch": "strapi-plugin watch",
     "watch:link": "strapi-plugin watch:link",
-    "typecheck": "tsc -p admin/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit"
+    "typecheck": "tsc -p admin/tsconfig.json --noEmit && tsc -p server/tsconfig.json --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@qkix/eslint-config": "workspace:*",
@@ -66,7 +68,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "styled-components": "^6.1.17",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "@qkix/strapi-test-harness": "workspace:*",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "@strapi/admin": "^5.0.0",
@@ -96,7 +100,15 @@
   "nx": {
     "tags": [
       "scope:plugin"
-    ]
+    ],
+    "targets": {
+      "test": {
+        "dependsOn": [
+          "build",
+          "^build"
+        ]
+      }
+    }
   },
   "publishConfig": {
     "access": "public"

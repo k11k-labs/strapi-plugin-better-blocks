@@ -1,0 +1,63 @@
+{
+  "kind": "collectionType",
+  "collectionName": "greenlight_transitions",
+  "info": {
+    "singularName": "transition",
+    "pluralName": "transitions",
+    "displayName": "Greenlight Transition",
+    "description": "Append-only log of stage changes. Never updated, never deleted outside retention."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": "Managed by strapi-plugin-greenlight. Do not edit manually."
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    },
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "relatedDocumentId": {
+      "type": "string",
+      "required": true
+    },
+    "contentTypeUid": {
+      "type": "string",
+      "required": true
+    },
+    "locale": {
+      "type": "string",
+      "required": true,
+      "default": ""
+    },
+    "fromStageId": {
+      "type": "integer"
+    },
+    "toStageId": {
+      "type": "integer",
+      "required": true
+    },
+    "fromStageName": {
+      "type": "string"
+    },
+    "toStageName": {
+      "type": "string",
+      "required": true
+    },
+    "byUserId": {
+      "type": "integer"
+    },
+    "byUserName": {
+      "type": "string"
+    },
+    "comment": {
+      "type": "text"
+    }
+  }
+}
