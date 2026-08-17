@@ -1,3 +1,7 @@
+## 0.14.6 (2026-08-17)
+
+This was a version bump only for @qkix/better-blocks-astro-renderer to align it with other projects, there were no code changes.
+
 ## 0.14.5 (2026-08-17)
 
 ### 🧱 Updated Dependencies

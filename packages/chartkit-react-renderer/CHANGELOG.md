@@ -1,3 +1,10 @@
+## 0.2.4 (2026-08-17)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-react-renderer to 0.18.6
+- Updated @qkix/better-blocks-core to 0.2.5
+
 ## 0.2.3 (2026-08-17)
 
 ### 🧱 Updated Dependencies
