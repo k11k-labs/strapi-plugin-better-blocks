@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Better Blocks">
+  <rect width="512" height="512" rx="112" fill="#4945ff" />
+
+  <!--
+    Geometry, so this stays even if it is ever edited.
+
+    Four pills for four lines of a paragraph, ragged on the right the way real
+    text is. Each is 44 tall with rx 22, so the ends are fully round rather than
+    merely softened.
+
+      y 120, 196, 272, 348 — 44 tall, 32 between, 272 in total
+      x from 96, longest 320 wide, so the block spans 96..416
+
+    That leaves 96 of padding left and right and 120 top and bottom: the mark is
+    centred on the canvas, and looks it, because nothing about it is asymmetric.
+
+    The second line is amber, and shorter than the ones around it, so it reads
+    as a highlighted phrase rather than a coloured row — which is the plugin's
+    signature feature and the same one-accent rhythm Chartkit and Rewind use.
+  -->
+  <g fill="#ffffff">
+    <rect x="96" y="120" width="320" height="44" rx="22" />
+    <rect x="96" y="272" width="320" height="44" rx="22" />
+    <rect x="96" y="348" width="196" height="44" rx="22" />
+  </g>
+  <rect x="96" y="196" width="268" height="44" rx="22" fill="#f0a500" />
+</svg>

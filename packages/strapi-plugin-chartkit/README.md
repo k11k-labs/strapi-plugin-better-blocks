@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-chartkit/docs/logo.png" alt="Chartkit" width="120" />
+</p>
+
 <h1 align="center">Chartkit for Strapi</h1>
 
 <p align="center">Charts for Strapi v5, rendered as server-side SVG. Your pages ship <strong>zero client-side JavaScript</strong> to draw them.</p>
