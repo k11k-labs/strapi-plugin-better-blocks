@@ -16,6 +16,7 @@ const LIST_FIELDS = [
   'relatedDocumentId',
   'locale',
   'status',
+  'label',
   'origin',
   'userId',
   'pinned',

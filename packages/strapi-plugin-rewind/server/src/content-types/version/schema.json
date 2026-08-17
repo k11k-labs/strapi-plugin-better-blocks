@@ -39,6 +39,9 @@
       "enum": ["draft", "published", "modified"],
       "required": true
     },
+    "label": {
+      "type": "string"
+    },
     "data": {
       "type": "json",
       "required": true

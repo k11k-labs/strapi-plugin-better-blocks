@@ -18,6 +18,8 @@ interface VersionRow {
   id: number;
   locale: string | null;
   status: 'draft' | 'published' | 'modified';
+  /** The entry's title at that point, so a row says what is inside it. */
+  label: string | null;
   origin: string;
   pinned: boolean;
   createdAt: string;
@@ -35,7 +37,14 @@ interface RestorePreview {
   affectedLocales: string[];
 }
 
-/** What each origin is called in the panel. */
+/**
+ * What each origin is called in the panel.
+ *
+ * These name what happened to the document, not what the plugin did. "Replaced
+ * by restore" in particular: that version holds the state a restore was about
+ * to overwrite, so it is the undo point for that restore — "Before restore"
+ * read as a moment in time rather than a state you can go back to.
+ */
 const ORIGIN_LABEL: Record<string, string> = {
   create: 'Created',
   update: 'Edited',
@@ -43,7 +52,7 @@ const ORIGIN_LABEL: Record<string, string> = {
   publish: 'Published',
   unpublish: 'Unpublished',
   discardDraft: 'Draft discarded',
-  restore: 'Before restore',
+  restore: 'Replaced by restore',
 };
 
 /**
@@ -194,6 +203,11 @@ const PanelContent = ({
                   </Typography>
                 ) : null}
               </Flex>
+              {version.label ? (
+                <Typography variant="omega" textColor="neutral800" ellipsis>
+                  {version.label}
+                </Typography>
+              ) : null}
               <Typography variant="pi" textColor="neutral600">
                 {formatWhen(version.createdAt)}
                 {version.user ? ` · ${version.user.name}` : ''}

@@ -74,6 +74,40 @@ const snapshot = ({ strapi }: { strapi: Core.Strapi }) => {
     }
   };
 
+  /**
+   * A short, human-readable stand-in for the version's content.
+   *
+   * Without it every row in the panel is a badge and a timestamp, which tells
+   * an editor nothing about which version they are looking at or what pressing
+   * Restore would give them. Stored rather than derived on read, because the
+   * list endpoint deliberately does not return `data` — a document with a rich
+   * text body runs to 100+ KB and the panel asks for ten at a time.
+   *
+   * The field is whatever the Content Manager shows as the entry's title, which
+   * is the same thing the editor sees everywhere else in the admin.
+   */
+  const labelFor = async (uid: string, data: Record<string, unknown>): Promise<string | null> => {
+    let mainField: string | undefined;
+
+    try {
+      const config = await strapi
+        .plugin('content-manager')
+        .service('content-types')
+        .findConfiguration(strapi.contentTypes[uid]);
+      mainField = config?.settings?.mainField;
+    } catch {
+      // No configuration yet — fall through to guessing.
+    }
+
+    const candidates = [mainField, 'title', 'name', 'label'].filter(Boolean) as string[];
+    for (const field of candidates) {
+      const value = data[field];
+      if (typeof value === 'string' && value.trim()) return value.slice(0, 255);
+    }
+
+    return null;
+  };
+
   const lastVersion = async (uid: string, relatedDocumentId: string, locale: string | null) =>
     strapi.db.query(VERSION_UID).findOne({
       where: { contentType: uid, relatedDocumentId, locale },
@@ -120,6 +154,7 @@ const snapshot = ({ strapi }: { strapi: Core.Strapi }) => {
             relatedDocumentId,
             locale: rowLocale,
             status: await statusOf(uid, row),
+            label: await labelFor(uid, data),
             data,
             relations,
             schemaSnapshot,
