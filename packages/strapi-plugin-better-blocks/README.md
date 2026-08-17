@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-better-blocks/docs/logo.png" alt="Better Blocks" width="120" />
+</p>
+
 <h1 align="center">Strapi - Better Blocks Plugin</h1>
 
 <p align="center">An enhanced Rich Text (Blocks) editor for Strapi v5 with inline text color, background highlight, and more.</p>

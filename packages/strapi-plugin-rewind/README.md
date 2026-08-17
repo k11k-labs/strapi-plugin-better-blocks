@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/logo.png" alt="Rewind" width="120" />
+</p>
+
 <h1 align="center">Rewind for Strapi</h1>
 
 <p align="center">Document version history for Strapi v5. Every save is snapshotted, and any snapshot can be <strong>put back</strong>.</p>
