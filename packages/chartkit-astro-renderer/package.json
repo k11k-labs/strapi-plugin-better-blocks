@@ -1,6 +1,6 @@
 {
   "name": "@qkix/chartkit-astro-renderer",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Astro renderer for Chartkit charts — server-rendered SVG with zero client-side JavaScript, and the Better Blocks block plugin that draws a chart inside a document",
   "type": "module",
   "types": "./index.ts",

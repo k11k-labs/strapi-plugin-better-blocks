@@ -1,3 +1,9 @@
+## 0.2.4 (2026-08-17)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-astro-renderer to 0.14.6
+
 ## 0.2.3 (2026-08-17)
 
 ### 🧱 Updated Dependencies
