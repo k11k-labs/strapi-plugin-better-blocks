@@ -1,0 +1,35 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pages",
+  "info": {
+    "singularName": "page",
+    "pluralName": "pages",
+    "displayName": "Page",
+    "description": "Demonstrates components, a dynamic zone and a relation — the shapes Blueprint draws."
+  },
+  "options": { "draftAndPublish": true },
+  "pluginOptions": {},
+  "attributes": {
+    "title": { "type": "string", "required": true },
+    "slug": { "type": "uid", "targetField": "title" },
+    "seo": {
+      "type": "component",
+      "component": "shared.seo",
+      "repeatable": false
+    },
+    "navigation": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": true
+    },
+    "blocks": {
+      "type": "dynamiczone",
+      "components": ["shared.quote", "shared.link"]
+    },
+    "featured": {
+      "type": "relation",
+      "relation": "oneToOne",
+      "target": "api::article.article"
+    }
+  }
+}

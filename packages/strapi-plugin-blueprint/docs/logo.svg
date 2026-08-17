@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Blueprint">
+  <rect width="512" height="512" rx="112" fill="#4945ff" />
+
+  <!--
+    Geometry, so this stays even if it is ever edited.
+
+    Three boxes and the lines between them: one content type above, two things it
+    is made of below. The smallest shape that reads as a schema diagram rather
+    than as an org chart or a folder tree.
+
+    The right-hand child is amber — the component. Amber for the one that matters
+    is the family's convention (Rewind's leading triangle, Chartkit's leading bar,
+    Greenlight's final check segment), and here it points at the thing this plugin
+    draws that no other one in its category does. Two amber children would make it
+    a colour scheme; one makes it a statement.
+
+    Boxes are 152 x 88, all three the same size — different widths would read as a
+    hierarchy of importance, which is not what a schema is.
+
+      parent        x 180..332   y 104..192   centre x 256
+      left child    x  88..240   y 320..408   centre x 164
+      right child   x 272..424   y 320..408   centre x 348
+
+    Gap between the children is 32, the same as the gap between Rewind's pair.
+
+    The mark spans x 88..424 and y 104..408: 88 of padding left and right, 104 top
+    and bottom, and both midpoints land on 256. Centred by construction rather
+    than by eye, which a symmetric shape has earned.
+
+    The connectors drop from the parent's bottom edge to y 256 — the canvas
+    midpoint, which is where the elbow wants to be anyway — then run out to each
+    child's centre and down to its top edge. Drawn before the boxes so that the
+    round caps at both ends are covered by the shapes they join, rather than
+    poking out as dots.
+  -->
+  <path
+    d="M256 192 V256 H164 V320 M256 192 V256 H348 V320"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="20"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <rect x="180" y="104" width="152" height="88" rx="16" fill="#ffffff" />
+  <rect x="88" y="320" width="152" height="88" rx="16" fill="#ffffff" />
+  <rect x="272" y="320" width="152" height="88" rx="16" fill="#f0a500" />
+</svg>

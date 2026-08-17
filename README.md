@@ -32,6 +32,11 @@ document in the edit view.
 the stage is a gate rather than a label: a document outside its approved stage is refused
 at publish time, whichever route the publish came in by.
 
+**[Blueprint](./packages/strapi-plugin-blueprint)** — a diagram of your content types,
+including the components and dynamic zones every other schema visualiser leaves out.
+Rendered as real SVG on the server, so the same drawing works in the admin panel, in a
+README and in a docs build.
+
 They are separate products that share a workspace, and increasingly an interface:
 Chartkit registers itself as a Better Blocks block type through a public API rather
 than either one knowing the other's internals.
@@ -51,6 +56,7 @@ than either one knowing the other's internals.
 | [`@qkix/chartkit-editor`](./packages/chartkit-editor)                           | The chart editor for the Strapi admin: preview, data grid and spreadsheet paste, shared by both Chartkit surfaces.                        |
 | [`@qkix/strapi-plugin-rewind`](./packages/strapi-plugin-rewind)                 | Strapi v5 plugin — document version history: a snapshot on every save, a diff between any two, and restore.                               |
 | [`@qkix/strapi-plugin-greenlight`](./packages/strapi-plugin-greenlight)         | Strapi v5 plugin — multi-stage content review with a publish gate: nothing goes live until it is approved.                                |
+| [`@qkix/strapi-plugin-blueprint`](./packages/strapi-plugin-blueprint)           | Strapi v5 plugin — a schema diagram covering content types, components and dynamic zones, rendered as SVG on the server.                  |
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use — for reading content,
