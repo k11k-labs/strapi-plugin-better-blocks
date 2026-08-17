@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import type { Core } from '@strapi/strapi';
 
 import { buildDeepPopulate, split } from './serializer';
+import { createLabeller } from '../utils/versionLabel';
 import type { SnapshotIntent } from '../utils/captureContext';
 
 export const VERSION_UID = 'plugin::rewind.version';
@@ -20,6 +21,8 @@ const hash = (payload: unknown): string =>
   createHash('sha256').update(JSON.stringify(payload)).digest('hex');
 
 const snapshot = ({ strapi }: { strapi: Core.Strapi }) => {
+  const labelFor = createLabeller(strapi);
+
   const hasDraftAndPublish = (uid: string): boolean =>
     Boolean((strapi.contentTypes[uid] as any)?.options?.draftAndPublish);
 
@@ -72,40 +75,6 @@ const snapshot = ({ strapi }: { strapi: Core.Strapi }) => {
       // A content type without draft & publish has no status to speak of.
       return 'draft';
     }
-  };
-
-  /**
-   * A short, human-readable stand-in for the version's content.
-   *
-   * Without it every row in the panel is a badge and a timestamp, which tells
-   * an editor nothing about which version they are looking at or what pressing
-   * Restore would give them. Stored rather than derived on read, because the
-   * list endpoint deliberately does not return `data` — a document with a rich
-   * text body runs to 100+ KB and the panel asks for ten at a time.
-   *
-   * The field is whatever the Content Manager shows as the entry's title, which
-   * is the same thing the editor sees everywhere else in the admin.
-   */
-  const labelFor = async (uid: string, data: Record<string, unknown>): Promise<string | null> => {
-    let mainField: string | undefined;
-
-    try {
-      const config = await strapi
-        .plugin('content-manager')
-        .service('content-types')
-        .findConfiguration(strapi.contentTypes[uid]);
-      mainField = config?.settings?.mainField;
-    } catch {
-      // No configuration yet — fall through to guessing.
-    }
-
-    const candidates = [mainField, 'title', 'name', 'label'].filter(Boolean) as string[];
-    for (const field of candidates) {
-      const value = data[field];
-      if (typeof value === 'string' && value.trim()) return value.slice(0, 255);
-    }
-
-    return null;
   };
 
   const lastVersion = async (uid: string, relatedDocumentId: string, locale: string | null) =>

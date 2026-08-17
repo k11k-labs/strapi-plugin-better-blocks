@@ -189,7 +189,12 @@ const PanelContent = ({
       {versions.map((version) => (
         <Box key={version.id} paddingBottom={2}>
           <Flex justifyContent="space-between" alignItems="center" gap={2}>
-            <Flex direction="column" alignItems="flex-start" gap={1}>
+            {/*
+              minWidth 0 is what makes the title truncate instead of growing:
+              a flex child defaults to min-width auto, so a long title widens
+              this column and pushes the Restore button out of the panel.
+            */}
+            <Flex direction="column" alignItems="flex-start" gap={1} grow={1} minWidth={0}>
               <Flex gap={2} alignItems="center">
                 <Badge
                   backgroundColor={ANCHOR_ORIGINS.has(version.origin) ? 'primary100' : 'neutral150'}
@@ -204,9 +209,11 @@ const PanelContent = ({
                 ) : null}
               </Flex>
               {version.label ? (
-                <Typography variant="omega" textColor="neutral800" ellipsis>
-                  {version.label}
-                </Typography>
+                <Box width="100%">
+                  <Typography variant="omega" textColor="neutral800" ellipsis>
+                    {version.label}
+                  </Typography>
+                </Box>
               ) : null}
               <Typography variant="pi" textColor="neutral600">
                 {formatWhen(version.createdAt)}
@@ -214,9 +221,11 @@ const PanelContent = ({
               </Typography>
             </Flex>
 
-            <Button size="S" variant="tertiary" onClick={() => askToRestore(version)}>
-              Restore
-            </Button>
+            <Box shrink={0}>
+              <Button size="S" variant="tertiary" onClick={() => askToRestore(version)}>
+                Restore
+              </Button>
+            </Box>
           </Flex>
           <Box paddingTop={2}>
             <Divider />

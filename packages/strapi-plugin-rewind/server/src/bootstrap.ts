@@ -3,6 +3,7 @@ import type { Core } from '@strapi/strapi';
 import { VERSION_UID } from './services/snapshot';
 import { bufferFor, coalesce, isRestoreInProgress } from './utils/captureContext';
 import type { Origin } from './utils/captureContext';
+import { backfillLabels } from './utils/backfillLabels';
 import { persistVersionsTable } from './utils/persistTable';
 
 const TRACKED_ACTIONS: Origin[] = [
@@ -24,6 +25,16 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
 
   await persistVersionsTable(strapi, 'rewind_versions');
   await createLookupIndex(strapi);
+
+  // Detached on purpose — see backfillLabels. A boot must not wait on a
+  // cosmetic column, and nothing else depends on it having finished.
+  void backfillLabels(strapi, VERSION_UID).catch((error: unknown) =>
+    strapi.log.warn(
+      `[rewind] could not label older versions: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    )
+  );
 
   const service = () => strapi.plugin('rewind').service('snapshot');
 
