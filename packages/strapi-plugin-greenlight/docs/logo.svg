@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Greenlight">
+  <rect width="512" height="512" rx="112" fill="#4945ff" />
+
+  <!--
+    Geometry, so this stays even if it is ever edited.
+
+    A check drawn in three segments: the stages a document passes through, and the
+    last one amber — the greenlight it is finally given. Amber for the destination
+    is the family's convention, the same as Rewind's leading triangle and
+    Chartkit's leading bar.
+
+    Deliberately NOT green, despite the name. Saturated green against #4945ff sits
+    at almost the same luminance, and two saturated hues at equal value vibrate
+    against each other; it was genuinely unpleasant to look at. Amber and white are
+    both far brighter than the plate, so they read as figure against ground rather
+    than fighting it. The name carries the meaning; the logo does not have to.
+
+    White draws all three segments with a dash array; amber then redraws the last
+    one as its own short path, laid exactly over the third dash. Both approaches
+    that looked simpler are wrong: a second dashed path phased with a leading
+    `0` dash puts a zero-length dash at the path start, and a zero-length dash with
+    a round cap paints a full circle — a stray amber dot on the bottom tip. And
+    splitting the check into two stroked sub-paths puts a round cap on the vertex,
+    which extends 22 past its endpoint in the direction of travel and pokes out
+    past the corner where no linejoin can contain it.
+
+    The amber segment is safe to draw separately only because it ends at the free
+    tip C rather than at the corner, so its round caps are the ones the dash would
+    have drawn anyway.
+
+    Path length is 101.82 (short leg) + 225.22 (long leg) = 327.04. The dash array
+    is 112 / 56 / 51.52 / 56 / 51.52, which sums to exactly that so the pattern
+    fits the path with no remainder. The first dash is 112 rather than an even
+    third because the corner sits at 101.82 — a third of the way along — and even
+    thirds put the corner inside a gap, which loses the elbow and leaves three
+    loose diagonal dashes that no longer read as a check at all. Swallowing the
+    corner in dash one keeps the tick legible down to about 20px.
+
+    Round caps add 22 to each end of every dash, so the mark spans:
+      x  123..389   midpoint 256
+      y  150..362   midpoint 256
+
+    Centred by construction rather than by eye: 123 of padding left and right, 150
+    top and bottom. The axes differ on purpose — matching them would make an
+    asymmetric mark look undersized.
+  -->
+  <path
+    d="M145 268 L217 340 L367 172"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="44"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-dasharray="112 56 51.52 56 51.52"
+  />
+  <!--
+    The third dash starts 275.52 along the path, which is 173.70 along the long leg,
+    i.e. (217,340) + 173.70 * (150,-168)/225.22 = (332.68,210.43). Its length back
+    to C is 51.53, matching the 51.52 dash it covers.
+  -->
+  <path
+    d="M332.68 210.43 L367 172"
+    fill="none"
+    stroke="#f0a500"
+    stroke-width="44"
+    stroke-linecap="round"
+  />
+</svg>

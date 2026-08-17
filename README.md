@@ -1,6 +1,6 @@
 <h1 align="center">qkix / strapi-plugins</h1>
 
-<p align="center">Plugins and renderers for Strapi v5. Two products, one workspace.</p>
+<p align="center">Plugins and renderers for Strapi v5. Four products, one workspace.</p>
 
 <p align="center">
   <a href="./LICENSE">
@@ -24,6 +24,14 @@ server, so a page gets a chart without a byte of client-side JavaScript. Authore
 Strapi as a field of its own or as a block inside a Better Blocks document, from a data
 grid, a spreadsheet paste or a file in the Media Library.
 
+**[Rewind](./packages/strapi-plugin-rewind)** — document version history for Strapi v5.
+Every save is snapshotted, and any snapshot can be put back, from a panel beside the
+document in the edit view.
+
+**[Greenlight](./packages/strapi-plugin-greenlight)** — multi-stage content review, where
+the stage is a gate rather than a label: a document outside its approved stage is refused
+at publish time, whichever route the publish came in by.
+
 They are separate products that share a workspace, and increasingly an interface:
 Chartkit registers itself as a Better Blocks block type through a public API rather
 than either one knowing the other's internals.
@@ -41,6 +49,8 @@ than either one knowing the other's internals.
 | [`@qkix/chartkit-react-renderer`](./packages/chartkit-react-renderer)           | React renderer for Chartkit charts, and the Better Blocks block plugin that draws one inside a document.                                  |
 | [`@qkix/chartkit-astro-renderer`](./packages/chartkit-astro-renderer)           | The same for Astro — zero client-side JavaScript.                                                                                         |
 | [`@qkix/chartkit-editor`](./packages/chartkit-editor)                           | The chart editor for the Strapi admin: preview, data grid and spreadsheet paste, shared by both Chartkit surfaces.                        |
+| [`@qkix/strapi-plugin-rewind`](./packages/strapi-plugin-rewind)                 | Strapi v5 plugin — document version history: a snapshot on every save, a diff between any two, and restore.                               |
+| [`@qkix/strapi-plugin-greenlight`](./packages/strapi-plugin-greenlight)         | Strapi v5 plugin — multi-stage content review with a publish gate: nothing goes live until it is approved.                                |
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use — for reading content,

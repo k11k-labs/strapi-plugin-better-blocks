@@ -40,6 +40,10 @@
   - changed-files:
       - any-glob-to-any-file: 'packages/strapi-plugin-rewind/**'
 
+'pkg: greenlight':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/strapi-plugin-greenlight/**'
+
 'pkg: tooling':
   - changed-files:
       - any-glob-to-any-file:

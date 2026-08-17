@@ -1,0 +1,52 @@
+{
+  "kind": "collectionType",
+  "collectionName": "greenlight_workflows",
+  "info": {
+    "singularName": "workflow",
+    "pluralName": "workflows",
+    "displayName": "Greenlight Workflow",
+    "description": "A set of review stages, and the content types that move through them."
+  },
+  "options": {
+    "draftAndPublish": false,
+    "comment": "Managed by strapi-plugin-greenlight. Do not edit manually."
+  },
+  "pluginOptions": {
+    "content-manager": {
+      "visible": false
+    },
+    "content-type-builder": {
+      "visible": false
+    },
+    "i18n": {
+      "localized": false
+    }
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true,
+      "unique": true
+    },
+    "contentTypes": {
+      "type": "json",
+      "required": true,
+      "default": []
+    },
+    "enforcePublishGate": {
+      "type": "boolean",
+      "default": true
+    },
+    "onMissingAssignment": {
+      "type": "enumeration",
+      "enum": ["firstStage", "allow"],
+      "default": "firstStage"
+    },
+    "stages": {
+      "type": "relation",
+      "relation": "oneToMany",
+      "target": "plugin::greenlight.stage",
+      "mappedBy": "workflow"
+    }
+  }
+}
