@@ -1,23 +1,47 @@
-name: Feature Request
-description: Suggest a new feature for the Better Blocks plugin
-labels: ['enhancement']
+name: Feature request
+description: Suggest something one of the packages should do
+labels: ['enhancement', 'needs triage']
 body:
+  - type: dropdown
+    id: package
+    attributes:
+      label: Which package?
+      options:
+        - '@qkix/strapi-plugin-better-blocks — the rich text editor plugin'
+        - '@qkix/strapi-plugin-chartkit — the chart field plugin'
+        - '@qkix/strapi-plugin-rewind — document version history'
+        - '@qkix/better-blocks-core'
+        - '@qkix/better-blocks-react-renderer'
+        - '@qkix/better-blocks-astro-renderer'
+        - '@qkix/chartkit-core'
+        - '@qkix/chartkit-editor'
+        - '@qkix/chartkit-react-renderer'
+        - '@qkix/chartkit-astro-renderer'
+        - 'Something new / not sure'
+    validations:
+      required: true
+
   - type: textarea
     id: problem
     attributes:
-      label: Problem
-      description: What problem does this feature solve?
+      label: The problem
+      description: |
+        What you were trying to do, and where it got awkward. A description of
+        the problem is worth more than a description of the solution — it leaves
+        room for a better one.
     validations:
       required: true
+
   - type: textarea
     id: solution
     attributes:
-      label: Proposed solution
-      description: Describe the solution you'd like.
-    validations:
-      required: true
+      label: What you have in mind
+      description: Optional. If you already have a shape in mind, describe it.
+
   - type: textarea
     id: alternatives
     attributes:
-      label: Alternatives considered
-      description: Any alternative solutions or features you've considered.
+      label: What you tried instead
+      description: |
+        Workarounds you are using today, or other packages you looked at. Useful
+        for judging how much the gap actually costs.

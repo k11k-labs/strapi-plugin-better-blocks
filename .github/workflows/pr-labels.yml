@@ -1,0 +1,23 @@
+name: Label pull requests by package
+
+# `pull_request_target` so the labels also land on pull requests from forks,
+# which the read-only `pull_request` token cannot do. Safe here because nothing
+# is checked out or executed from the branch — the job only reads the file list
+# and applies labels from `.github/labeler.yml` as it exists on the base branch.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/labeler@v5
+        with:
+          configuration-path: .github/labeler.yml
+          # A pull request that stops touching a package should lose its label.
+          sync-labels: true

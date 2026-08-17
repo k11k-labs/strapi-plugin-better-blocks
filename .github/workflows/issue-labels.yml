@@ -1,0 +1,74 @@
+name: Label issues by package
+
+# The issue form asks which package the report is about, but a form can only
+# apply fixed labels — the answer would otherwise sit in the body as prose and
+# every issue would still need sorting by hand. This reads the answer and
+# applies the matching `pkg:` label.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body || '';
+
+            // The form renders each answer as a section under its question.
+            const match = body.match(/###\s*Which package\?\s*\n+([^\n]+)/i);
+            if (!match) {
+              core.info('No package question in this issue — nothing to label.');
+              return;
+            }
+
+            const answer = match[1].trim();
+
+            // Most specific first: "strapi-plugin-better-blocks" also contains
+            // "better-blocks", so a loose order would label the plugin as its
+            // own core library.
+            const MAP = [
+              ['strapi-plugin-better-blocks', 'pkg: better-blocks'],
+              ['strapi-plugin-chartkit', 'pkg: chartkit'],
+              ['strapi-plugin-rewind', 'pkg: rewind'],
+              ['better-blocks-react-renderer', 'pkg: better-blocks-react'],
+              ['better-blocks-astro-renderer', 'pkg: better-blocks-astro'],
+              ['better-blocks-core', 'pkg: better-blocks-core'],
+              ['chartkit-react-renderer', 'pkg: chartkit-react'],
+              ['chartkit-astro-renderer', 'pkg: chartkit-astro'],
+              ['chartkit-editor', 'pkg: chartkit-editor'],
+              ['chartkit-core', 'pkg: chartkit-core'],
+            ];
+
+            const wanted = MAP.find(([needle]) => answer.includes(needle))?.[1];
+            if (!wanted) {
+              core.info(`No package matched "${answer}" — leaving it for triage.`);
+              return;
+            }
+
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.issue.number;
+            const current = context.payload.issue.labels.map((l) => l.name);
+
+            // On an edit the answer may have changed, so drop any package label
+            // that no longer applies rather than accumulating them.
+            for (const stale of current.filter(
+              (name) => name.startsWith('pkg: ') && name !== wanted
+            )) {
+              await github.rest.issues.removeLabel({
+                owner, repo, issue_number, name: stale,
+              });
+              core.info(`Removed ${stale}`);
+            }
+
+            if (!current.includes(wanted)) {
+              await github.rest.issues.addLabels({
+                owner, repo, issue_number, labels: [wanted],
+              });
+              core.info(`Added ${wanted}`);
+            }

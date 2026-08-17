@@ -1,0 +1,59 @@
+# Which package a pull request touches, worked out from the paths it changes.
+# The same labels the issue form applies, so a bug and its fix filter together.
+'pkg: better-blocks':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/strapi-plugin-better-blocks/**'
+
+'pkg: better-blocks-core':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/better-blocks-core/**'
+
+'pkg: better-blocks-react':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/better-blocks-react-renderer/**'
+
+'pkg: better-blocks-astro':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/better-blocks-astro-renderer/**'
+
+'pkg: chartkit':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/strapi-plugin-chartkit/**'
+
+'pkg: chartkit-core':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/chartkit-core/**'
+
+'pkg: chartkit-editor':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/chartkit-editor/**'
+
+'pkg: chartkit-react':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/chartkit-react-renderer/**'
+
+'pkg: chartkit-astro':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/chartkit-astro-renderer/**'
+
+'pkg: rewind':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/strapi-plugin-rewind/**'
+
+'pkg: tooling':
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'tooling/**'
+          - '.github/**'
+          - 'nx.json'
+          - 'pnpm-workspace.yaml'
+
+'pkg: examples':
+  - changed-files:
+      - any-glob-to-any-file: 'examples/**'
+
+documentation:
+  - changed-files:
+      - any-glob-to-any-file:
+          - '**/*.md'
+          - '**/docs/**'
