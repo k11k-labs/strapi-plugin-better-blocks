@@ -1,0 +1,10 @@
+{
+  "collectionName": "components_shared_links",
+  "info": { "displayName": "Link", "icon": "link" },
+  "options": {},
+  "attributes": {
+    "label": { "type": "string" },
+    "href": { "type": "string", "required": true },
+    "newTab": { "type": "boolean", "default": false }
+  }
+}

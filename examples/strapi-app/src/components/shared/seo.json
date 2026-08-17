@@ -1,0 +1,14 @@
+{
+  "collectionName": "components_shared_seos",
+  "info": { "displayName": "Seo", "icon": "search" },
+  "options": {},
+  "attributes": {
+    "metaTitle": { "type": "string", "required": true },
+    "metaDescription": { "type": "text" },
+    "canonical": {
+      "type": "component",
+      "component": "shared.link",
+      "repeatable": false
+    }
+  }
+}

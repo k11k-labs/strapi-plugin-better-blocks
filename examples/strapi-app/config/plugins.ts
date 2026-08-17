@@ -44,6 +44,14 @@ const config = ({
     resolve: '../../packages/strapi-plugin-greenlight',
   },
   /**
+   * Blueprint draws the schema — content types, components and dynamic zones —
+   * as SVG. Nothing to configure; it only reads. Same `resolve` reason as above.
+   */
+  blueprint: {
+    enabled: true,
+    resolve: '../../packages/strapi-plugin-blueprint',
+  },
+  /**
    * Mux Video Uploader — enables the "Mux" source button in the Better Blocks
    * video block, which lists and searches Mux assets through this plugin's
    * admin API. Credentials come from a Mux **Access Token** (Mux dashboard →
