@@ -1,0 +1,10 @@
+# A blank issue is still allowed: not every report fits a form, and a form that
+# turns people away costs more than the tidiness it buys.
+blank_issues_enabled: true
+contact_links:
+  - name: Question or idea
+    url: https://github.com/qkix/strapi-plugins/discussions
+    about: For "how do I…", or an idea that is not yet a request. Faster than an issue.
+  - name: Strapi itself is broken
+    url: https://github.com/strapi/strapi/issues
+    about: If the same thing happens with the plugins removed, it belongs upstream.

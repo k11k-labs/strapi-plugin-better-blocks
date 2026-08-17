@@ -1,59 +1,117 @@
-name: Bug Report
-description: Report a bug with the Better Blocks plugin
-labels: ['bug']
+name: Bug report
+description: Something in one of the packages does not work
+labels: ['bug', 'needs triage']
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug! Please fill out the details below.
+        Thanks for reporting this. The first field is the one that matters most —
+        this repository publishes ten packages, and knowing which one you are
+        using is what makes a report actionable.
+
+  - type: dropdown
+    id: package
+    attributes:
+      label: Which package?
+      description: |
+        The one you installed. If the problem shows up in the Strapi admin, it is
+        almost certainly one of the three plugins.
+      options:
+        - '@qkix/strapi-plugin-better-blocks — the rich text editor plugin'
+        - '@qkix/strapi-plugin-chartkit — the chart field plugin'
+        - '@qkix/strapi-plugin-rewind — document version history'
+        - '@qkix/better-blocks-core'
+        - '@qkix/better-blocks-react-renderer'
+        - '@qkix/better-blocks-astro-renderer'
+        - '@qkix/chartkit-core'
+        - '@qkix/chartkit-editor'
+        - '@qkix/chartkit-react-renderer'
+        - '@qkix/chartkit-astro-renderer'
+        - "I'm not sure"
+    validations:
+      required: true
+
+  - type: input
+    id: package-version
+    attributes:
+      label: Package version
+      description: From your `package.json`, or `npm ls @qkix/<package>`.
+      placeholder: e.g. 0.23.3
+    validations:
+      required: true
+
   - type: input
     id: strapi-version
     attributes:
       label: Strapi version
-      placeholder: e.g. 5.39.0
-    validations:
-      required: true
-  - type: input
-    id: plugin-version
-    attributes:
-      label: Plugin version
-      placeholder: e.g. 0.1.0
-    validations:
-      required: true
+      description: Leave blank if this is a renderer issue with no Strapi involved.
+      placeholder: e.g. 5.52.0
+
   - type: input
     id: node-version
     attributes:
       label: Node.js version
-      placeholder: e.g. 20.11.0
+      placeholder: e.g. 22.11.0
     validations:
       required: true
+
+  - type: dropdown
+    id: database
+    attributes:
+      label: Database
+      description: Only relevant for the plugins. Several bugs only show up on one.
+      options:
+        - 'Not relevant / not a plugin issue'
+        - SQLite
+        - PostgreSQL
+        - MySQL or MariaDB
+    validations:
+      required: false
+
   - type: textarea
     id: description
     attributes:
-      label: Description
-      description: A clear description of the bug.
+      label: What happens
+      description: What you saw, and what you expected instead.
     validations:
       required: true
+
   - type: textarea
     id: steps
     attributes:
       label: Steps to reproduce
-      description: Steps to reproduce the behavior.
+      description: |
+        The shortest path from a fresh install to the problem. If you can, say
+        which content type and field types are involved — a lot of behaviour
+        depends on components, dynamic zones, relations and i18n.
       value: |
-        1. Go to '...'
-        2. Click on '...'
-        3. See error
+        1.
+        2.
+        3.
     validations:
       required: true
+
   - type: textarea
-    id: expected
+    id: logs
     attributes:
-      label: Expected behavior
-      description: What you expected to happen.
-    validations:
-      required: true
+      label: Errors
+      description: |
+        Anything from the Strapi server log or the browser console. Paste the
+        whole stack trace rather than the last line.
+      render: shell
+
   - type: textarea
     id: screenshots
     attributes:
       label: Screenshots
-      description: If applicable, add screenshots or GIFs to help explain the problem.
+      description: Optional, and worth a lot for anything visual.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before submitting
+      options:
+        - label: I am on the latest version of the package, or have said above why not
+          required: true
+        - label: I searched the existing issues
+          required: true
