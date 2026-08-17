@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Rewind">
+  <rect width="512" height="512" rx="112" fill="#4945ff" />
+
+  <!--
+    Geometry, so this stays even if it is ever edited.
+
+    Two transport-control triangles pointing back. Each is drawn as a path and
+    stroked in its own fill at 16 with round joins, which is what rounds the
+    corners — so every coordinate below is inset by 8 from the shape you
+    actually see.
+
+    Visual boxes:
+      leading triangle  x 104..240
+      trailing triangle x 272..408
+      both              y 172..340
+
+    That leaves 104 of padding left and right and 172 top and bottom, and a
+    32 gap between the pair. The mark spans 104..408, whose midpoint is 256:
+    centred on the canvas rather than optically nudged, because a symmetric
+    shape does not need it.
+
+    The leading triangle is amber — the one you land on, and the same accent
+    Chartkit uses for the bar that matters.
+  -->
+  <path
+    d="M232 180 L232 332 L112 256 Z"
+    fill="#f0a500"
+    stroke="#f0a500"
+    stroke-width="16"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M400 180 L400 332 L280 256 Z"
+    fill="#ffffff"
+    stroke="#ffffff"
+    stroke-width="16"
+    stroke-linejoin="round"
+  />
+</svg>
