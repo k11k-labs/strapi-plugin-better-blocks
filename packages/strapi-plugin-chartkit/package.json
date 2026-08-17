@@ -1,6 +1,6 @@
 {
   "name": "@qkix/strapi-plugin-chartkit",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Charts for Strapi v5, rendered as server-side SVG with no client-side JavaScript",
   "strapi": {
     "kind": "plugin",

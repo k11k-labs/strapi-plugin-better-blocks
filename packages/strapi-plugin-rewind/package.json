@@ -1,12 +1,12 @@
 {
   "name": "@qkix/strapi-plugin-rewind",
-  "version": "0.0.0",
-  "description": "Document version history for Strapi v5 \u2014 snapshots on every save, with restore",
+  "version": "0.1.0",
+  "description": "Document version history for Strapi v5 — snapshots on every save, with restore",
   "strapi": {
     "kind": "plugin",
     "name": "rewind",
     "displayName": "Rewind",
-    "description": "Document version history for Strapi v5 \u2014 snapshots on every save, with restore"
+    "description": "Document version history for Strapi v5 — snapshots on every save, with restore"
   },
   "keywords": [
     "strapi",
