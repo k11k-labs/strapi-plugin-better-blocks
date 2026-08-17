@@ -1,3 +1,7 @@
+## 0.1.5 (2026-08-17)
+
+This was a version bump only for @qkix/strapi-plugin-chartkit to align it with other projects, there were no code changes.
+
 ## 0.1.4 (2026-08-17)
 
 ### 🧱 Updated Dependencies
