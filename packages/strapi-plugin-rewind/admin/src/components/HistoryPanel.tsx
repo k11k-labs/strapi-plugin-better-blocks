@@ -64,7 +64,21 @@ const formatWhen = (iso: string): string => {
   return date.toLocaleString();
 };
 
-const PanelContent = ({ model, documentId }: { model: string; documentId: string }) => {
+const PanelContent = ({
+  model,
+  documentId,
+  /**
+   * Changes whenever the Content Manager re-reads the document, which is what
+   * it does after a save. Used purely as a refresh signal: without it the panel
+   * fetches once on mount and then quietly goes stale, so the version you just
+   * created by saving does not show up until the page is reloaded.
+   */
+  updatedAt,
+}: {
+  model: string;
+  documentId: string;
+  updatedAt?: string;
+}) => {
   const { get, post } = useFetchClient();
 
   const [versions, setVersions] = React.useState<VersionRow[]>([]);
@@ -109,7 +123,7 @@ const PanelContent = ({ model, documentId }: { model: string; documentId: string
 
   React.useEffect(() => {
     load(1);
-  }, [load]);
+  }, [load, updatedAt]);
 
   const askToRestore = async (version: VersionRow) => {
     try {
@@ -273,11 +287,19 @@ const PanelContent = ({ model, documentId }: { model: string; documentId: string
  * Returning null while there is no `documentId` keeps it out of the way on the
  * create screen, where there is nothing to have a history of yet.
  */
-export const HistoryPanel = ({ model, documentId }: { model: string; documentId?: string }) => {
+export const HistoryPanel = ({
+  model,
+  documentId,
+  document,
+}: {
+  model: string;
+  documentId?: string;
+  document?: { updatedAt?: string };
+}) => {
   if (!documentId) return null;
 
   return {
     title: 'History',
-    content: <PanelContent model={model} documentId={documentId} />,
+    content: <PanelContent model={model} documentId={documentId} updatedAt={document?.updatedAt} />,
   };
 };
