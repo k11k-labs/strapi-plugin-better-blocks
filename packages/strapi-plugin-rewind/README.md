@@ -139,13 +139,13 @@ type, since every custom field stores itself as `json`.
 
 Worth knowing before you install it, not after:
 
-- **No retention yet.** The table grows. A thinning policy is the next thing
-  planned, but today nothing prunes old versions.
 - **Polymorphic relations are skipped**, and reported as unsupported in the
   restore preview rather than silently mangled.
 - **Only the Document Service is visible.** Writes made through
   `strapi.db.query()` or the legacy entity service bypass the middleware
   entirely and cannot be captured at any setting.
+- **Nothing pins a version from the panel yet.** The column is there and prune
+  honours it, but there is no button; pin by setting `pinned` on the row.
 - **Deleted relation targets lose their names.** A version stores which document
   a relation pointed at, not what it was called, so a link to something since
   deleted shows as missing rather than as "the article it used to be".

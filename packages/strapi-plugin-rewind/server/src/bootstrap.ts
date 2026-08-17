@@ -18,6 +18,8 @@ const TRACKED_ACTIONS: Origin[] = [
 interface PluginConfig {
   contentTypes: string[];
   trackApiWrites: boolean;
+  retention?: { enabled?: boolean };
+  cron?: string;
 }
 
 const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
@@ -35,6 +37,8 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
       }`
     )
   );
+
+  scheduleThinning(strapi, config);
 
   const service = () => strapi.plugin('rewind').service('snapshot');
 
@@ -148,3 +152,36 @@ const createLookupIndex = async (strapi: Core.Strapi): Promise<void> => {
 };
 
 export default bootstrap;
+
+/**
+ * Runs the thinning nightly, once across the whole deployment.
+ *
+ * The lock matters because every instance behind a load balancer runs this same
+ * cron: without it they all start the same scan at the same time.
+ */
+const scheduleThinning = (strapi: Core.Strapi, config: PluginConfig): void => {
+  if (config.retention?.enabled === false) return;
+
+  strapi.cron.add({
+    rewindPrune: {
+      async task() {
+        const lock = strapi.plugin('rewind').service('lock');
+        if (!(await lock.acquire('prune', 30 * 60 * 1000))) return;
+
+        try {
+          const result = await strapi.plugin('rewind').service('retention').prune();
+          if (result.deleted > 0) {
+            strapi.log.info(
+              `[rewind] thinned ${result.deleted} version(s) across ${result.documents} document(s)`
+            );
+          }
+        } catch (error) {
+          strapi.log.error('[rewind] thinning failed', error);
+        } finally {
+          await lock.release('prune');
+        }
+      },
+      options: { rule: config.cron ?? '0 3 * * *' },
+    },
+  });
+};
