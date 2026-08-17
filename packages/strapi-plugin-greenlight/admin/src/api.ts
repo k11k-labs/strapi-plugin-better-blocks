@@ -70,6 +70,21 @@ export const routes = {
   roles: `/${PLUGIN_ID}/workflows/roles`,
 };
 
+/**
+ * Broadcast when a document's review state changes.
+ *
+ * The side panel and the Publish button are two separate Content Manager
+ * extension points with no shared state and no way to pass props between them —
+ * so without this the panel updates on a stage change and the button carries on
+ * showing "needs approval" until the page is reloaded. A window event is the only
+ * channel the two actually share.
+ */
+export const REVIEW_CHANGED = 'greenlight:review-changed';
+
+export const notifyReviewChanged = (): void => {
+  window.dispatchEvent(new CustomEvent(REVIEW_CHANGED));
+};
+
 export const formatWhen = (iso: string | null): string => {
   if (!iso) return '—';
   const date = new Date(iso);

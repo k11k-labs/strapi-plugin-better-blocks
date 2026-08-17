@@ -17,7 +17,7 @@ import {
   Typography,
 } from '@strapi/design-system';
 
-import { formatWhen, routes } from '../api';
+import { formatWhen, notifyReviewChanged, routes } from '../api';
 import type { AssignmentState, TransitionRow } from '../api';
 
 interface Reviewer {
@@ -78,9 +78,7 @@ const PanelContent = ({
       .catch(() => setReviewers([]));
   }, [get]);
 
-  const loadHistory = async () => {
-    setHistoryOpen((open) => !open);
-    if (history.length > 0) return;
+  const fetchHistory = React.useCallback(async () => {
     try {
       const { data } = await get<{ history: TransitionRow[] }>(routes.history(model, documentId), {
         params: locale ? { locale } : {},
@@ -89,6 +87,12 @@ const PanelContent = ({
     } catch {
       setHistory([]);
     }
+  }, [get, model, documentId, locale]);
+
+  const toggleHistory = () => {
+    const opening = !historyOpen;
+    setHistoryOpen(opening);
+    if (opening) void fetchHistory();
   };
 
   /**
@@ -107,8 +111,12 @@ const PanelContent = ({
         locale: locale ?? null,
       });
       setComment('');
-      setHistory([]);
       await load();
+      // Open history has to be refilled, not cleared: the move that just
+      // happened is the entry the reviewer is looking for.
+      if (historyOpen) await fetchHistory();
+      // Tells the Publish button to re-read; it is a separate extension point.
+      notifyReviewChanged();
     } catch (err: any) {
       // 409 is the one worth spelling out: someone else moved it while this
       // panel was open, and the fix is to look again rather than to retry.
@@ -133,6 +141,7 @@ const PanelContent = ({
         locale: locale ?? null,
       });
       await load();
+      notifyReviewChanged();
     } catch (err: any) {
       setError(err?.response?.data?.error?.message ?? 'Could not set the reviewer.');
     } finally {
@@ -166,9 +175,17 @@ const PanelContent = ({
           Stage
         </Typography>
         <Flex gap={2} alignItems="center">
-          <Badge backgroundColor={stage?.color ?? 'neutral150'} textColor="neutral0">
-            {stage?.name ?? 'Not started'}
-          </Badge>
+          {/* Without a stage there is no configured colour to use, and the
+              default one is white-on-light-grey — unreadable. */}
+          {stage ? (
+            <Badge backgroundColor={stage.color} textColor="neutral0">
+              {stage.name}
+            </Badge>
+          ) : (
+            <Badge backgroundColor="neutral150" textColor="neutral700">
+              Not started
+            </Badge>
+          )}
           {stage?.isTerminal ? (
             <Typography variant="pi" textColor="success600">
               Approved — can be published
@@ -239,7 +256,7 @@ const PanelContent = ({
       ) : null}
 
       <Box>
-        <TextButton onClick={loadHistory}>
+        <TextButton onClick={toggleHistory}>
           {historyOpen ? 'Hide history' : 'Show history'}
         </TextButton>
       </Box>

@@ -2,15 +2,54 @@ import * as React from 'react';
 
 import { useFetchClient } from '@strapi/admin/strapi-admin';
 
-import { routes } from '../api';
+import { REVIEW_CHANGED, routes } from '../api';
 import type { AssignmentState } from '../api';
 
+type Fetcher = ReturnType<typeof useFetchClient>['get'];
+
 /**
- * Whether this document is allowed to be published, according to the server.
+ * One in-flight request per document, shared by every caller.
  *
- * `undefined` while unknown, so a caller can tell "not loaded yet" from "no",
- * and never disables a button on a guess.
+ * The Content Manager renders document actions once per row in the list view as
+ * well as once in the edit view, and re-renders them freely. Without this cache a
+ * ten-row page produced two hundred requests for the same handful of documents —
+ * measured, not theorised.
+ *
+ * Cleared wholesale on a stage change rather than surgically: the entries are
+ * cheap to refetch and a stale "approved" is the one state worth never showing.
  */
+const cache = new Map<string, Promise<AssignmentState | null>>();
+
+const keyOf = (uid: string, documentId: string, locale?: string | null) =>
+  `${uid}|${documentId}|${locale ?? ''}`;
+
+const fetchState = (
+  get: Fetcher,
+  uid: string,
+  documentId: string,
+  locale?: string | null
+): Promise<AssignmentState | null> => {
+  const key = keyOf(uid, documentId, locale);
+  const hit = cache.get(key);
+  if (hit) return hit;
+
+  const request = get<AssignmentState>(routes.assignment(uid, documentId), {
+    params: locale ? { locale } : {},
+  })
+    .then(({ data }) => data)
+    // Never disable the button because a request failed. The server-side gate is
+    // the real enforcement, and a broken panel must not also break publishing
+    // for content that is not under review at all.
+    .catch(() => null);
+
+  cache.set(key, request);
+  return request;
+};
+
+if (typeof window !== 'undefined') {
+  window.addEventListener(REVIEW_CHANGED, () => cache.clear());
+}
+
 const usePublishable = (
   model?: string,
   documentId?: string,
@@ -19,6 +58,14 @@ const usePublishable = (
   const { get } = useFetchClient();
   const [state, setState] = React.useState<AssignmentState | null>(null);
   const [known, setKnown] = React.useState(false);
+  /** Bumped on a stage change, to re-read after the cache is cleared. */
+  const [nonce, setNonce] = React.useState(0);
+
+  React.useEffect(() => {
+    const onChanged = () => setNonce((value) => value + 1);
+    window.addEventListener(REVIEW_CHANGED, onChanged);
+    return () => window.removeEventListener(REVIEW_CHANGED, onChanged);
+  }, []);
 
   React.useEffect(() => {
     let cancelled = false;
@@ -27,25 +74,16 @@ const usePublishable = (
       return;
     }
 
-    get<AssignmentState>(routes.assignment(model, documentId), {
-      params: locale ? { locale } : {},
-    })
-      .then(({ data }) => {
-        if (cancelled) return;
-        setState(data);
-        setKnown(true);
-      })
-      .catch(() => {
-        // Never disable the button because a request failed — the server-side
-        // gate is the real enforcement, and a broken panel must not also break
-        // publishing for content that is not under review at all.
-        if (!cancelled) setKnown(true);
-      });
+    fetchState(get, model, documentId, locale).then((data) => {
+      if (cancelled) return;
+      setState(data);
+      setKnown(true);
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [get, model, documentId, locale]);
+  }, [get, model, documentId, locale, nonce]);
 
   if (!state?.workflow) return { known, publishable: true };
 
@@ -59,11 +97,11 @@ const usePublishable = (
 /**
  * Disables the Publish button when the document has not been approved.
  *
- * This is a courtesy, not the enforcement. The gate lives in a document-service
- * middleware on the server and applies to every route in — the edit view, the
- * list view, the REST admin API, and anyone's own code. Disabling the button
- * only saves the editor from a click that was always going to fail, which is
- * the same reason the panel hides stages a role may not move into.
+ * A courtesy, not the enforcement. The gate is a document-service middleware on
+ * the server and applies to every route in — the edit view, the list view, the
+ * REST admin API and anyone's own code. Disabling the button only saves the
+ * editor a click that was always going to fail, which is the same reason the
+ * panel hides stages their role cannot move into.
  */
 export const withPublishGuard = (actions: any[]): any[] =>
   actions.map((action) => {
@@ -85,7 +123,7 @@ export const withPublishGuard = (actions: any[]): any[] =>
       };
     };
 
-    // The Content Manager reads these off the component itself.
+    // The Content Manager reads type/position off the component itself.
     Object.assign(wrapped, action);
     return wrapped;
   });

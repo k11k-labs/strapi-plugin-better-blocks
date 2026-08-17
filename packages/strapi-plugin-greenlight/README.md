@@ -136,12 +136,16 @@ stays yours. The **My reviews** page is the answer instead, and is arguably the 
 one: one list of everything waiting on you, across every content type, rather than a
 filter you have to remember to apply per collection.
 
-**Bulk publish is all-or-nothing, and the error names one document.** If any selected
-entry has not been approved, Strapi's bulk publish rolls the whole batch back. The
-confirmation dialog warns you how many will be refused before you confirm, which is the
-only useful moment to say so. (Precisely how much of a batch survives a refusal is a race
-inside Strapi's transaction bookkeeping; Greenlight's error message deliberately makes no
-claim about the other documents, because no claim would be safe.)
+**Bulk publish fails as a batch, and the error names one document.** If any selected entry
+has not been approved, Strapi's bulk publish rolls the whole batch back and reports the
+first refusal. There is no warning beforehand: the Content Manager declares a
+`publishModalAdditionalInfos` injection zone that would have been the right place for one,
+but nothing renders it in Strapi 5.52, so the feature cannot be built today. The per-row
+Publish action is disabled for unapproved entries, which is the closest available warning.
+
+(Precisely how much of a batch survives a refusal is a race inside Strapi's transaction
+bookkeeping, so Greenlight's error message deliberately makes no claim about the other
+documents — no claim would be safe.)
 
 **Documents that predate the plugin have no stage.** By default they are put in the first
 stage and blocked, which is the honest behaviour: the alternative is that installing the

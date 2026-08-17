@@ -1,4 +1,5 @@
-import { BulkPublishNotice } from './components/BulkPublishNotice';
+import { CheckCircle } from '@strapi/icons';
+
 import { ReviewPanel } from './components/ReviewPanel';
 import { withPublishGuard } from './components/publishGuard';
 import { PLUGIN_ID } from './pluginId';
@@ -10,7 +11,7 @@ export default {
     /** The reviewer's own list, which is half the value of the product. */
     app.addMenuLink({
       to: `/plugins/${PLUGIN_ID}`,
-      icon: () => null,
+      icon: CheckCircle,
       intlLabel: { id: `${PLUGIN_ID}.menu.label`, defaultMessage: 'My reviews' },
       Component: async () => {
         const { QueuePage } = await import('./pages/QueuePage');
@@ -53,14 +54,13 @@ export default {
     contentManager.apis.addDocumentAction(withPublishGuard);
 
     /**
-     * Injected into the bulk-publish confirmation dialog. A refused document
-     * fails the whole call, so the only kind moment to say so is before the
-     * editor confirms rather than in the error afterwards.
+     * There is deliberately no warning inside the bulk-publish confirmation
+     * dialog. `listView.publishModalAdditionalInfos` is declared in the Content
+     * Manager's injection zones but nothing renders it in Strapi 5.52 — only
+     * `editView.right-links`, `listView.actions` and `preview.actions` are live —
+     * so a component registered there would silently never appear. Better to not
+     * ship the feature than to ship one that looks registered and does nothing.
      */
-    app.injectContentManagerComponent?.('listView', 'publishModalAdditionalInfos', {
-      name: `${PLUGIN_ID}-bulk-notice`,
-      Component: BulkPublishNotice,
-    });
   },
 
   async registerTrads({ locales }: { locales: string[] }) {
