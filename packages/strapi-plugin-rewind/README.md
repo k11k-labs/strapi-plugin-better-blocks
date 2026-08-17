@@ -3,6 +3,11 @@
 Document version history for Strapi 5. Every save is snapshotted, and any
 snapshot can be put back.
 
+<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/edit-view.png" alt="The history panel beside a document in the Strapi edit view" width="900" />
+
+The panel sits in the edit view, next to the document it belongs to. Each entry
+is a point you can go back to: what the document said, when, and who saved it.
+
 ## What this is, and what it is not
 
 Strapi sells a feature called **Content History** on its Growth and Enterprise
@@ -78,7 +83,14 @@ saves the draft and publishes it as two separate operations.
 
 A save that is rolled back records nothing.
 
+<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/panel.png" alt="History entries labelled Replaced by restore, Draft discarded and Edited" width="320" />
+
+The badge says what happened to the document. **Replaced by restore** marks the
+state a restore was about to overwrite — the undo point for that restore.
+
 ## Restoring
+
+<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/restore.png" alt="The restore confirmation dialog" width="400" />
 
 Restore writes to the **draft only**. The document moves to _Modified_, and
 publishing stays something a person decides to do.
@@ -103,6 +115,8 @@ part of a restore is what it will _not_ do:
 
 Every entry in the panel has a **What changed** link, comparing that version
 with the one saved immediately before it.
+
+<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/changes.png" alt="A word-level diff: 'put back' struck through and replaced by 'restored in one click', and 'ten' by 'twelve'" width="760" />
 
 Scalars are shown as a plain before and after. Prose — including rich text
 stored as JSON — is compared word by word, with the unchanged stretches
