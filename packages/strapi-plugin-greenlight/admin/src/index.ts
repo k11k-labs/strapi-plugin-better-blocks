@@ -1,8 +1,66 @@
+import { BulkPublishNotice } from './components/BulkPublishNotice';
+import { ReviewPanel } from './components/ReviewPanel';
+import { withPublishGuard } from './components/publishGuard';
 import { PLUGIN_ID } from './pluginId';
 
 export default {
   register(app: any) {
     app.registerPlugin({ id: PLUGIN_ID, name: PLUGIN_ID, isReady: true });
+
+    /** The reviewer's own list, which is half the value of the product. */
+    app.addMenuLink({
+      to: `/plugins/${PLUGIN_ID}`,
+      icon: () => null,
+      intlLabel: { id: `${PLUGIN_ID}.menu.label`, defaultMessage: 'My reviews' },
+      Component: async () => {
+        const { QueuePage } = await import('./pages/QueuePage');
+        return { default: QueuePage };
+      },
+      permissions: [{ action: `plugin::${PLUGIN_ID}.read`, subject: null }],
+    });
+
+    app.createSettingSection(
+      {
+        id: PLUGIN_ID,
+        intlLabel: { id: `${PLUGIN_ID}.settings.section`, defaultMessage: 'Greenlight' },
+      },
+      [
+        {
+          id: `${PLUGIN_ID}-workflows`,
+          to: `/settings/${PLUGIN_ID}`,
+          intlLabel: { id: `${PLUGIN_ID}.settings.link`, defaultMessage: 'Review workflows' },
+          Component: async () => {
+            const { SettingsPage } = await import('./pages/SettingsPage');
+            return { default: SettingsPage };
+          },
+          permissions: [{ action: `plugin::${PLUGIN_ID}.settings.configure`, subject: null }],
+        },
+      ]
+    );
+  },
+
+  bootstrap(app: any) {
+    const contentManager = app.getPlugin('content-manager');
+
+    /** Where the stage, the reviewer and the history live. */
+    contentManager.apis.addEditViewSidePanel([ReviewPanel]);
+
+    /**
+     * Disabling the Publish button is a courtesy — the enforcement is a
+     * document-service middleware on the server, which covers every route in
+     * rather than only this one. Both exist on purpose.
+     */
+    contentManager.apis.addDocumentAction(withPublishGuard);
+
+    /**
+     * Injected into the bulk-publish confirmation dialog. A refused document
+     * fails the whole call, so the only kind moment to say so is before the
+     * editor confirms rather than in the error afterwards.
+     */
+    app.injectContentManagerComponent?.('listView', 'publishModalAdditionalInfos', {
+      name: `${PLUGIN_ID}-bulk-notice`,
+      Component: BulkPublishNotice,
+    });
   },
 
   async registerTrads({ locales }: { locales: string[] }) {
