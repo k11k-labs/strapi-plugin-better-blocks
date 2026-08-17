@@ -131,10 +131,10 @@ can depend on it without pulling a framework along.
 
 ## Who uses it
 
-| Package                                                                 | Uses core for                                 |
-| ----------------------------------------------------------------------- | --------------------------------------------- |
-| [`@qkix/better-blocks-react-renderer`](../better-blocks-react-renderer) | types, marks, and the shared resolution rules |
-| [`@qkix/better-blocks-astro-renderer`](../better-blocks-astro-renderer) | the same                                      |
+| Package                                                                                                  | Uses core for                                 |
+| -------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| [`@qkix/better-blocks-react-renderer`](https://www.npmjs.com/package/@qkix/better-blocks-react-renderer) | types, marks, and the shared resolution rules |
+| [`@qkix/better-blocks-astro-renderer`](https://www.npmjs.com/package/@qkix/better-blocks-astro-renderer) | the same                                      |
 
 Both renderers re-export the document types, so consumers keep importing
 `BlocksContent` from the renderer they already use.
@@ -158,4 +158,4 @@ document.
 
 ## License
 
-[MIT](../../LICENSE)
+[MIT](https://github.com/qkix/strapi-plugins/blob/main/LICENSE)

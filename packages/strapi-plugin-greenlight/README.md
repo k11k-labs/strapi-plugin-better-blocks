@@ -183,7 +183,7 @@ plugin changes nothing for existing content and somebody discovers that in produ
 ## Working alongside other plugins
 
 Greenlight registers its publish gate in `register()` rather than `bootstrap()`, so it runs
-outside plugins that snapshot documents — [Rewind](../strapi-plugin-rewind), for one. A
+outside plugins that snapshot documents — [Rewind](https://www.npmjs.com/package/@qkix/strapi-plugin-rewind), for one. A
 publish that is refused never reaches them, and no version is recorded for something that
 did not happen.
 

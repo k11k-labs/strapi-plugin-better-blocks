@@ -3,17 +3,13 @@
 Charts as server-rendered SVG. A `ChartSpec` goes in, a finished SVG string
 comes out — no DOM, no framework, and nothing for the browser to run.
 
-> **Status: early.** The spec, the rendering pipeline and the bar chart — grouped
-> and stacked — are in place. Line, area, pie and donut are not yet;
-> `validateChartSpec` rejects them rather than drawing a blank box.
-
 ## What this is
 
 ```ts
 import { renderChart } from '@qkix/chartkit-core';
 
 const result = renderChart({
-  version: 1,
+  version: 2,
   type: 'bar',
   title: 'Quarterly revenue',
   description: 'Revenue by quarter, rising to a peak in Q4.',
@@ -54,19 +50,22 @@ a page and part of the design.
 
 ## Several series
 
-`barMode` decides what happens inside a category band. It is an option rather
+`stackMode` decides what happens inside a category band. It is an option rather
 than a chart `type`, because it changes the arrangement and not the mark —
 axes, legend and baseline are identical either way, and a single-series chart
 looks the same in both.
 
 ```ts
 options: {
-  barMode: 'grouped';
+  stackMode: 'grouped';
 } // one bar per series, side by side — the default
 options: {
-  barMode: 'stacked';
+  stackMode: 'stacked';
 } // series piled into one bar per category
 ```
+
+Specs written against version 1 used `barMode`. They still render — `renderChart`
+migrates them in memory — but new specs should be written with `stackMode`.
 
 The difference is not only visual. A **grouped** axis spans the values, because
 each bar is read on its own. A **stacked** axis spans the _totals_: three series
@@ -160,7 +159,7 @@ path, because fixing a pasted spreadsheet one error per attempt is miserable.
 
 ```ts
 type ChartSpec = {
-  version: 1;
+  version: 2; // CHART_SPEC_VERSION
   type: 'bar' | 'line' | 'area' | 'pie' | 'donut';
   title?: string;
   description?: string; // → <desc>, for screen readers
@@ -172,6 +171,7 @@ type ChartSpec = {
     height?: number;
     valueFormat?: ValueFormat; // Intl.NumberFormat options
     yAxis?: { min?: number; max?: number };
+    stackMode?: 'grouped' | 'stacked'; // was `barMode` in version 1
   };
 };
 
@@ -182,10 +182,10 @@ Two things in there are deliberate.
 
 ### Versions
 
-| Version | What changed                                                          |
-| ------- | --------------------------------------------------------------------- |
-| 1       | The first. `options.barMode` chose grouped or stacked bars.           |
-| 2       | `barMode` became `stackMode`, now that stacking applies to areas too. |
+| Version     | What changed                                                          |
+| ----------- | --------------------------------------------------------------------- |
+| 1           | The first. `options.barMode` chose grouped or stacked bars.           |
+| 2 (current) | `barMode` became `stackMode`, now that stacking applies to areas too. |
 
 `renderChart` migrates an older spec in memory before drawing it, so publishing
 a new Chartkit never blanks charts already in a database. Migrating the stored

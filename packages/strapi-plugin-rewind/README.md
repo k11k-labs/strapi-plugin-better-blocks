@@ -156,18 +156,42 @@ package that owns the format can show that, so the mapping is a registry:
 ```ts
 import { registerDiffRenderer } from '@qkix/strapi-plugin-rewind/strapi-admin';
 
-registerDiffRenderer('plugin::better-blocks.better-blocks', BlocksDiff);
+import { MyBlocksDiff } from './MyBlocksDiff'; // yours — see below
+
+registerDiffRenderer('plugin::better-blocks.better-blocks', MyBlocksDiff);
 ```
 
 Keyed by a custom field's uid, or by an attribute `type`. A uid wins over a
 type, since every custom field stores itself as `json`.
 
+> **Bring your own renderer.** Rewind ships the registry, not the renderers. No
+> `@qkix` package currently exports a block-aware diff component — including
+> Better Blocks — so the component above is one you write. A renderer receives
+> the two values and returns the `FieldChange` shape exported alongside
+> `registerDiffRenderer`; without one registered, a field falls back to the
+> generic text diff. A ready-made renderer for Better Blocks documents is
+> wanted, and not yet written.
+
 ## Configuration
 
-| Option           | Default | Meaning                                                                                                         |
-| ---------------- | ------- | --------------------------------------------------------------------------------------------------------------- |
-| `contentTypes`   | `[]`    | Which content types to version. Empty means none.                                                               |
-| `trackApiWrites` | `false` | Also version writes from outside the Content Manager (REST, GraphQL, programmatic). `userId` is null for those. |
+| Option                     | Default       | Meaning                                                                                                         |
+| -------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------- |
+| `contentTypes`             | `[]`          | Which content types to version. Empty means none.                                                               |
+| `trackApiWrites`           | `false`       | Also version writes from outside the Content Manager (REST, GraphQL, programmatic). `userId` is null for those. |
+| `retention.enabled`        | `true`        | Thin old versions on a schedule. `false` keeps everything forever and leaves the table to you.                  |
+| `retention.keepAllDays`    | `7`           | Keep every version this many days back.                                                                         |
+| `retention.dailyUntilDays` | `30`          | Then keep one a day, up to this age.                                                                            |
+| `retention.maxAgeDays`     | `365`         | Then keep one a week, and drop anything older.                                                                  |
+| `retention.keepAnchors`    | `true`        | Never thin publish, unpublish, discard or restore versions, whatever their age.                                 |
+| `cron`                     | `'0 3 * * *'` | When the thinning runs, in the server's timezone.                                                               |
+
+The three windows must widen in order — `keepAllDays <= dailyUntilDays <=
+maxAgeDays` — and the plugin refuses to boot rather than delete on a guess if
+they do not. Pinned versions are never thinned either, independently of
+`keepAnchors`.
+
+So out of the box a year of history costs roughly: every save for a week, one a
+day for a month, one a week after that, plus every publish and every pin.
 
 ## Limits
 
