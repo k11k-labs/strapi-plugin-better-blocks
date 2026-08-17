@@ -30,8 +30,7 @@ document in the edit view.
 
 **[Greenlight](./packages/strapi-plugin-greenlight)** — multi-stage content review, where
 the stage is a gate rather than a label: a document outside its approved stage is refused
-at publish time, whichever route the publish came in by. _In development, not yet
-published._
+at publish time, whichever route the publish came in by.
 
 They are separate products that share a workspace, and increasingly an interface:
 Chartkit registers itself as a Better Blocks block type through a public API rather
@@ -51,7 +50,7 @@ than either one knowing the other's internals.
 | [`@qkix/chartkit-astro-renderer`](./packages/chartkit-astro-renderer)           | The same for Astro — zero client-side JavaScript.                                                                                         |
 | [`@qkix/chartkit-editor`](./packages/chartkit-editor)                           | The chart editor for the Strapi admin: preview, data grid and spreadsheet paste, shared by both Chartkit surfaces.                        |
 | [`@qkix/strapi-plugin-rewind`](./packages/strapi-plugin-rewind)                 | Strapi v5 plugin — document version history: a snapshot on every save, a diff between any two, and restore.                               |
-| [`@qkix/strapi-plugin-greenlight`](./packages/strapi-plugin-greenlight)         | Strapi v5 plugin — multi-stage content review with a publish gate. In development, not yet published.                                     |
+| [`@qkix/strapi-plugin-greenlight`](./packages/strapi-plugin-greenlight)         | Strapi v5 plugin — multi-stage content review with a publish gate: nothing goes live until it is approved.                                |
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use — for reading content,

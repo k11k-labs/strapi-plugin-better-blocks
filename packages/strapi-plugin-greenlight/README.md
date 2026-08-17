@@ -7,8 +7,14 @@
 <p align="center">Multi-stage content review for Strapi v5 — and <strong>nothing goes live until it has been approved</strong>.</p>
 
 <p align="center">
+  <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-greenlight">
+    <img alt="npm version" src="https://img.shields.io/npm/v/@qkix/strapi-plugin-greenlight.svg" />
+  </a>
+  <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-greenlight">
+    <img alt="npm downloads" src="https://img.shields.io/npm/dm/@qkix/strapi-plugin-greenlight.svg" />
+  </a>
   <a href="https://github.com/qkix/strapi-plugins/blob/main/LICENSE">
-    <img alt="license" src="https://img.shields.io/badge/license-MIT-blue.svg" />
+    <img alt="license" src="https://img.shields.io/npm/l/@qkix/strapi-plugin-greenlight.svg" />
   </a>
   <a href="https://buymeacoffee.com/qkix">
     <img alt="Buy Me a Coffee" src="https://img.shields.io/badge/Buy%20Me%20a%20Coffee-support-FFDD00?logo=buymeacoffee&logoColor=black" />
@@ -18,9 +24,6 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-greenlight/docs/edit-view.png" alt="The review panel beside a document, with Publish disabled until the document is approved" width="900" />
 </p>
-
-> **Status: in development, not yet published to npm.** The server, the gate and the
-> admin panel are built and tested; nothing here is a stable interface yet.
 
 A document moves through stages — _Draft_, _In review_, _Approved_ — each with a reviewer
 and its own rules about who may move it where. Until it reaches the approved stage, **it
