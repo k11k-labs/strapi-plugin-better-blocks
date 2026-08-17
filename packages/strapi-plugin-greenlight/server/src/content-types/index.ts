@@ -7,8 +7,8 @@ import workflow from './workflow/schema.json';
  * The four tables.
  *
  * `relatedDocumentId`, not `documentId`: Strapi injects a `documentId` into every
- * content type and refuses the name outright — "The attribute "documentId" is
- * reserved and cannot be used in a model" — at boot, before anything else runs.
+ * content type and refuses the name outright - "The attribute "documentId" is
+ * reserved and cannot be used in a model" - at boot, before anything else runs.
  * Rewind's version model carries the same name for the same reason. The related
  * trap is `createdById`, which collides with the `createdBy` relation Strapi adds
  * itself, and is why the reviewer here is `assigneeId` and the author of a

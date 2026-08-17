@@ -78,7 +78,7 @@ describe('what ends up on the diagram', () => {
 });
 
 describe('components and dynamic zones', () => {
-  it('6. puts components on the diagram — the thing no other plugin in this category does', () => {
+  it('6. puts components on the diagram - the thing no other plugin in this category does', () => {
     const graph = build();
 
     expect(uids(graph)).toEqual(expect.arrayContaining([SEO, QUOTE, LINK]));
@@ -146,7 +146,7 @@ describe('what a click can reach', () => {
   it('20. marks a plugin’s internal tables as not openable', () => {
     const graph = build({ includeForeign: true });
 
-    // upload's folders, i18n's locales, everything under admin:: — real content
+    // upload's folders, i18n's locales, everything under admin:: - real content
     // types, on the diagram, with no page in the Content-Type Builder to open.
     const hidden = graph.nodes.filter((node) => node.uid.startsWith('admin::'));
 

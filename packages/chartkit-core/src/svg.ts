@@ -5,7 +5,7 @@
  * package is that a chart can be produced on a server, or at build time, and
  * arrive at the browser as finished markup.
  *
- * Everything author-controlled — titles, axis labels, series names — is escaped
+ * Everything author-controlled - titles, axis labels, series names - is escaped
  * on the way in. A chart is rendered from content someone typed into a CMS, and
  * that content reaches a page as markup, so an unescaped `</text><script>` is a
  * stored XSS. The escaping lives in one place so it cannot be forgotten at a
@@ -61,7 +61,7 @@ export function tag(name: string, attributes: Attributes = {}): string {
 /**
  * An element with children.
  *
- * `children` is raw markup and is **not** escaped — it is the output of other
+ * `children` is raw markup and is **not** escaped - it is the output of other
  * builders in this file. Text content goes through {@link text}, which escapes.
  */
 export function element(name: string, attributes: Attributes, children: string): string {
@@ -78,7 +78,7 @@ export function text(content: string, attributes: Attributes = {}): string {
  *
  * Floating point noise from scale arithmetic produces things like
  * `x="43.00000000000001"`, which makes the output larger and, worse, makes
- * snapshot diffs unreadable — a one-pixel layout change should not rewrite
+ * snapshot diffs unreadable - a one-pixel layout change should not rewrite
  * every number in the file. Two decimals is far below what any renderer
  * resolves.
  *

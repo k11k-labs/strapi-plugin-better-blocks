@@ -25,7 +25,7 @@ export type BarRenderInput = {
  * Widest a single bar is allowed to get, in user units.
  *
  * Without a cap, a chart of one category gives that category the whole plot and
- * draws a bar the width of the chart — which reads as a filled panel rather
+ * draws a bar the width of the chart - which reads as a filled panel rather
  * than a measurement, because there is no baseline width to compare it against.
  * The cap keeps a one-bar chart looking like a bar chart.
  */
@@ -35,7 +35,7 @@ const MAX_BAR_WIDTH = 72;
  * The value domain, which depends on the arrangement.
  *
  * Grouped bars are measured individually, so the domain spans the values.
- * Stacked bars are measured as totals, so it spans the sums — see
+ * Stacked bars are measured as totals, so it spans the sums - see
  * {@link computeStackedDomain}. Either way zero is included: a bar encodes
  * magnitude by length from the baseline, so an axis starting at 90 makes a 2%
  * difference look like a tenfold one.
@@ -61,7 +61,7 @@ export function renderBar(input: BarRenderInput): string {
  * Bars side by side within each category.
  *
  * The category band is subdivided once per series. With one series that is the
- * band itself, so this is also the single-series path — there is no separate
+ * band itself, so this is also the single-series path - there is no separate
  * case for it, and therefore no way for the two to drift apart.
  */
 function renderGroupedBars(

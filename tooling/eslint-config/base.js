@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint';
 /**
  * ESLint exists in this repo for one reason: to enforce the dependency
  * direction between packages mechanically instead of describing it in a README.
- * The rule set is deliberately small — this was added to a codebase that had
+ * The rule set is deliberately small - this was added to a codebase that had
  * never run ESLint, so switching on the full recommended sets would bury the
  * boundary violations we actually care about under thousands of pre-existing
  * findings. Style is prettier's job; correctness is TypeScript's.
@@ -26,13 +26,13 @@ export const ignores = {
 /**
  * Every package may only depend on packages its tag allows. `scope:core` is a
  * leaf; renderers and plugins may reach into core but never into each other,
- * and nothing may ever depend on a strapi-plugin-* package — installing a
+ * and nothing may ever depend on a strapi-plugin-* package - installing a
  * renderer must not drag an editor plugin along.
  *
  * Note when testing this rule: it only inspects imports it can resolve to a
  * project. The Strapi plugin publishes no "." export, only ./strapi-admin and
  * ./strapi-server, so a bare `import '@qkix/strapi-plugin-better-blocks'`
- * resolves to nothing and is skipped — it would not build either. Verify with
+ * resolves to nothing and is skipped - it would not build either. Verify with
  * a real entry point, e.g. '@qkix/strapi-plugin-better-blocks/strapi-admin'.
  */
 export const boundaries = {
@@ -63,7 +63,7 @@ export const boundaries = {
             onlyDependOnLibsWithTags: ['scope:core', 'scope:tooling'],
           },
           {
-            // A renderer that extends another renderer of the same framework —
+            // A renderer that extends another renderer of the same framework -
             // Chartkit drawing a chart block inside a Better Blocks document.
             // It needs that renderer's plugin types, and only as an *optional*
             // peer: the package also works on its own, for a chart that is not
@@ -83,7 +83,7 @@ export const boundaries = {
           {
             // The chart editor: admin UI, shared by the standalone Chartkit
             // plugin and the Better Blocks block. Its own tag because it is
-            // neither a leaf like core nor a plugin — it is the thing two
+            // neither a leaf like core nor a plugin - it is the thing two
             // plugins reuse, which is the entire reason it is a package.
             sourceTag: 'scope:editor',
             onlyDependOnLibsWithTags: ['scope:core', 'scope:tooling'],
@@ -125,7 +125,7 @@ export default [
     },
   },
   js.configs.recommended,
-  // The parser only — not the recommended rule set. See the note above.
+  // The parser only - not the recommended rule set. See the note above.
   tseslint.configs.base,
   boundaries,
   {
@@ -146,7 +146,7 @@ export default [
   {
     rules: {
       // Flags `let x = <initial>` that every branch immediately overwrites.
-      // That pattern reads fine and the rule finds no bugs here — it only
+      // That pattern reads fine and the rule finds no bugs here - it only
       // asks for source churn in code this stage is not meant to touch.
       'no-useless-assignment': 'off',
     },

@@ -54,7 +54,7 @@ const insertEmbed = (editor: Editor, initial?: Partial<EmbedElement>) => {
 };
 
 /**
- * Insert a ready-to-render embed straight from a share URL — used by the
+ * Insert a ready-to-render embed straight from a share URL - used by the
  * toolbar's media button, which takes the URL up front and so can skip the
  * modal entirely. Returns false when the URL isn't one we can embed.
  *
@@ -307,7 +307,7 @@ const EmbedElementComponent = ({
           <EmptyState alignItems="center" gap={2}>
             <CodeIcon />
             <Typography variant="pi">
-              Embed — click to add a URL or embed code.
+              Embed - click to add a URL or embed code.
             </Typography>
           </EmptyState>
         )}

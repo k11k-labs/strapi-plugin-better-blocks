@@ -33,7 +33,7 @@ type HlsConstructor = {
   isSupported?: () => boolean;
 };
 
-// hls.js is picked up from `window.Hls` — set either by its UMD build loaded
+// hls.js is picked up from `window.Hls` - set either by its UMD build loaded
 // from a <script> tag, or by a one-liner in the consumer's app entry:
 //   import Hls from 'hls.js'; window.Hls = Hls;
 // Resolving it at runtime rather than importing it keeps the dependency
@@ -52,7 +52,7 @@ const MuxPlayer = 'mux-player' as unknown as ComponentType<Record<string, unknow
  * Renders a Better Blocks `video` node.
  *
  * Direct file URLs (`provider: "local"` / `"custom"`) use a native `<video>`.
- * HLS/DASH manifests — most Mux assets — only play natively in Safari, so this
+ * HLS/DASH manifests - most Mux assets - only play natively in Safari, so this
  * component opportunistically upgrades them without taking on a dependency:
  *
  * - `provider: "mux"` with a `playbackId` renders `<mux-player>` when the
@@ -140,7 +140,7 @@ export function Video({
       instance.loadSource(url);
       instance.attachMedia(video);
     } catch {
-      // A broken/incompatible build shouldn't take the page down — the poster
+      // A broken/incompatible build shouldn't take the page down - the poster
       // stays visible, same as when hls.js isn't present at all.
       instance?.destroy();
       instance = undefined;

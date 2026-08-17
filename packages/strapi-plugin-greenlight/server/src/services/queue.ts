@@ -64,7 +64,7 @@ const queue = ({ strapi }: { strapi: Core.Strapi }) => {
       };
     },
 
-    /** Every stage in every workflow, by id — a queue page spans workflows. */
+    /** Every stage in every workflow, by id - a queue page spans workflows. */
     async stageIndex(): Promise<Map<number, Stage>> {
       const workflows = (await strapi
         .plugin(PLUGIN_ID)

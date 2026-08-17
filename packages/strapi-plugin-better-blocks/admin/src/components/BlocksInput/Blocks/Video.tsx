@@ -333,7 +333,7 @@ const VideoElementComponent = ({
           <EmptyState alignItems="center" gap={2}>
             <Play />
             <Typography variant="pi">
-              Video — click to choose a file, paste a URL, or add a Mux playback
+              Video - click to choose a file, paste a URL, or add a Mux playback
               ID.
             </Typography>
           </EmptyState>

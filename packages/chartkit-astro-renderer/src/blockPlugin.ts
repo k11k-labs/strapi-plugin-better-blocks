@@ -1,7 +1,7 @@
 /**
  * Chartkit as a Better Blocks block plugin.
  *
- * `chartBlock` in `@qkix/chartkit-core` carries the framework-free half — the
+ * `chartBlock` in `@qkix/chartkit-core` carries the framework-free half - the
  * type, the validator, the migrator. This adds the Astro component.
  *
  * The `satisfies` below is the load-bearing line: chartkit-core writes its

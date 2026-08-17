@@ -1,12 +1,12 @@
 {
   "name": "@qkix/strapi-plugin-blueprint",
   "version": "0.1.0",
-  "description": "A diagram of your Strapi v5 content types, components and dynamic zones — rendered as real SVG",
+  "description": "A diagram of your Strapi v5 content types, components and dynamic zones - rendered as real SVG",
   "strapi": {
     "kind": "plugin",
     "name": "blueprint",
     "displayName": "Blueprint",
-    "description": "A diagram of your Strapi v5 content types, components and dynamic zones — rendered as real SVG"
+    "description": "A diagram of your Strapi v5 content types, components and dynamic zones - rendered as real SVG"
   },
   "keywords": [
     "strapi",

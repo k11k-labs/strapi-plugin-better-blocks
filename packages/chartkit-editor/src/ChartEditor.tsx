@@ -3,7 +3,7 @@
  *
  * One component, used in both places Chartkit appears: the standalone Strapi
  * custom field, and the chart block inside Better Blocks. That is the reason
- * this is its own package — if it lived in either plugin, the other would have
+ * this is its own package - if it lived in either plugin, the other would have
  * to depend on a whole editor plugin to reuse it.
  *
  * The preview is rendered by `renderChart` from `@qkix/chartkit-core`, the same
@@ -64,7 +64,7 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
   const [pasteOpen, setPasteOpen] = React.useState(false);
 
   // A file read from the Media Library lands here and then goes through the
-  // same confirm panel as a paste — a file is no more trustworthy than typed
+  // same confirm panel as a paste - a file is no more trustworthy than typed
   // text, and the header guess is the same problem either way.
   const [imported, setImported] = React.useState<{ text: string; origin: PasteOrigin } | null>(
     null
@@ -93,7 +93,7 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
   };
 
   // Every edit goes out through here, so a spec can never leave the editor
-  // ragged — a series shorter than the labels makes every later edit ambiguous.
+  // ragged - a series shorter than the labels makes every later edit ambiguous.
   const update = (next: ChartSpec) => onChange(normalizeShape(next));
 
   const chooseType = (type: ChartType) => {

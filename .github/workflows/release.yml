@@ -1,9 +1,9 @@
-name: Release — prepare
+name: Release - prepare
 
 # Releases go through a pull request, the same gate as every other change.
 # main requires a PR and GitHub Actions cannot be granted a bypass, so this
 # workflow does not push to main: it opens a release PR instead. Publishing
-# happens in "Release — publish" once that PR has landed.
+# happens in "Release - publish" once that PR has landed.
 #
 # Defaults to a dry run: previewing costs nothing, publishing cannot be undone.
 on:
@@ -57,7 +57,7 @@ jobs:
       # "major" bump to the middle number, so asking for "minor" on 0.12.0 gets
       # you 0.12.1. Pass an exact version in `overrides` when that matters.
       # `projects` exists because nx attributes a change to a file outside every
-      # package — the root README, a shared config — to *all* of them, which
+      # package - the root README, a shared config - to *all* of them, which
       # then cascades to their dependents as "a dependency was bumped". A
       # one-line README edit alongside work in one package therefore proposes a
       # release of the entire workspace, with changelogs that say nothing.
@@ -95,13 +95,13 @@ jobs:
         run: |
           set -euo pipefail
 
-          # Stage everything first: a release can *create* files — a package
-          # getting its first changelog — and both `git diff` and `git commit -a`
+          # Stage everything first: a release can *create* files - a package
+          # getting its first changelog - and both `git diff` and `git commit -a`
           # ignore untracked paths, so checking or committing before staging
           # silently drops them.
           git add -A
           if git diff --cached --quiet; then
-            echo "nx release changed nothing — there is nothing to release."
+            echo "nx release changed nothing - there is nothing to release."
             exit 0
           fi
 
@@ -115,14 +115,14 @@ jobs:
           # List what is about to be released, so the PR is reviewable at a glance.
           #
           # Only the packages this release actually ships. Listing every manifest
-          # version instead — which this used to do — reads as "the whole
+          # version instead - which this used to do - reads as "the whole
           # workspace is going out" on a release scoped with `projects`, because
           # the untouched packages print the version they already have. Anyone
           # reading the PR later has no way to tell those apart from the ones
           # being published.
           #
           # A version with no tag yet is one that has not shipped. That is the
-          # same test "Release — publish" applies when it decides what to tag, so
+          # same test "Release - publish" applies when it decides what to tag, so
           # this list and what actually reaches npm cannot disagree.
           released=""
           held=0

@@ -26,7 +26,7 @@ export default {
       },
       components: {
         // Lazy, so the editor and its data grid are not in the bundle of every
-        // admin page — only of the ones that actually show a chart field.
+        // admin page - only of the ones that actually show a chart field.
         Input: async () => ({
           default: (await import('./components/ChartField')).default,
         }),
@@ -53,7 +53,7 @@ export default {
                 description: {
                   id: `${PLUGIN_ID}.previewLocale.description`,
                   defaultMessage:
-                    "How axis numbers are formatted in the admin preview — a BCP 47 tag such as de-DE or pl-PL. Affects the preview only; the front end passes its own locale when it renders. Left empty, the browser's is used.",
+                    "How axis numbers are formatted in the admin preview - a BCP 47 tag such as de-DE or pl-PL. Affects the preview only; the front end passes its own locale when it renders. Left empty, the browser's is used.",
                 },
               },
             ],
@@ -98,7 +98,7 @@ export default {
 
 /**
  * Re-exported so an app that stores a chart in this field and renders it
- * elsewhere — a preview route, a custom admin page — does not need a second
+ * elsewhere - a preview route, a custom admin page - does not need a second
  * install to get at the spec's type or to draw one.
  */
 export { readValue, writeValue, starterSpec } from './value';

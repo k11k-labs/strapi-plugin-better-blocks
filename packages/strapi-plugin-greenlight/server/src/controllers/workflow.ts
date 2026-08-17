@@ -34,7 +34,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
    * Content types that could be put under review, for the settings page.
    *
    * Filtered to api:: collections with Draft & Publish, because those are the
-   * only ones a gate means anything for — see workflow.validate.
+   * only ones a gate means anything for - see workflow.validate.
    */
   async eligibleContentTypes(ctx: any) {
     const eligible = Object.values(strapi.contentTypes)

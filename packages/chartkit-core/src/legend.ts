@@ -6,7 +6,7 @@
  *
  * The interesting part is wrapping. Series names are author-written and can be
  * any length, so a single row of entries runs off the side of the viewBox at
- * the worst possible moment — the chart with eight series, which is exactly the
+ * the worst possible moment - the chart with eight series, which is exactly the
  * one that needs its legend. So entries are packed into rows here, and the
  * height that falls out is fed back into the layout before the plot is sized.
  */
@@ -57,7 +57,7 @@ export const NO_LEGEND: LegendPlan = { rows: [], height: 0 };
  * Packs series names into rows no wider than `maxWidth`.
  *
  * An entry wider than the whole chart still gets its own row rather than being
- * dropped — it will overflow, but a legend that silently omits a series is
+ * dropped - it will overflow, but a legend that silently omits a series is
  * worse than one that looks cramped, because the reader has no way to know a
  * color is unexplained.
  */

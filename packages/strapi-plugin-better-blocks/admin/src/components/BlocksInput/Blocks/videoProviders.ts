@@ -8,7 +8,7 @@ import { type VideoProvider } from '../utils/types';
  * three, so the author only ever has to supply the one they have at hand.
  *
  * Anything that can only be embedded as an iframe (YouTube, Vimeo, Loom …)
- * belongs to the `embed` block instead — see ./embedProviders.
+ * belongs to the `embed` block instead - see ./embedProviders.
  * -------------------------------------------------------------------------*/
 
 /** Mux playback ids are opaque; this is the shape the API actually returns. */
@@ -31,7 +31,7 @@ export const MUX_HOSTS = {
  *
  * Only valid for assets with a **public** playback policy. Signed playback
  * requires a per-request JWT (`?token=…`) that must be minted server-side with
- * a Mux signing key, which this block deliberately does not handle — storing a
+ * a Mux signing key, which this block deliberately does not handle - storing a
  * short-lived token in the document body would break as soon as it expired.
  */
 export const muxPlaybackUrl = (playbackId: string): string =>
@@ -59,7 +59,7 @@ export const detectVideoSource = (input: string): DetectedVideo | null => {
   const value = input.trim();
   if (!value) return null;
 
-  // A bare Mux playback id — what the Mux dashboard shows next to an asset.
+  // A bare Mux playback id - what the Mux dashboard shows next to an asset.
   if (!value.includes('/') && isMuxPlaybackId(value)) {
     return {
       provider: 'mux',
@@ -106,7 +106,7 @@ export const detectVideoSource = (input: string): DetectedVideo | null => {
 /**
  * True when the URL needs an HLS/DASH-capable player rather than a plain
  * `<video src>`. Safari plays HLS natively; other browsers need hls.js or a
- * provider player, which is a frontend-renderer concern — the editor preview
+ * provider player, which is a frontend-renderer concern - the editor preview
  * degrades to the poster image instead.
  */
 export const isStreamingUrl = (url: string): boolean =>

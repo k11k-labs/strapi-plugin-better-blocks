@@ -3,7 +3,7 @@
  *
  * A chart editor is a preview plus a grid plus a row of settings, and inline in
  * a document that is most of a screen for something the author is usually not
- * editing. Every other rich block in Better Blocks — math, video, embed — shows
+ * editing. Every other rich block in Better Blocks - math, video, embed - shows
  * a compact preview and opens a modal to edit, so charts do the same.
  *
  * The dialog edits a **draft**. Cancel has to actually cancel, which it cannot

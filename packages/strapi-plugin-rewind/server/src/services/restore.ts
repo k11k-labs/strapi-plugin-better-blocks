@@ -8,9 +8,9 @@ import { runAsRestore } from '../utils/captureContext';
 export interface RestorePreview {
   /** Fields that will be written back. */
   fieldsToRestore: string[];
-  /** In the model but not in the version — left exactly as they are. */
+  /** In the model but not in the version - left exactly as they are. */
   fieldsKeptAsIs: string[];
-  /** In the version but no longer in the model — skipped. */
+  /** In the version but no longer in the model - skipped. */
   fieldsDropped: string[];
   /** Not localised, so restoring them changes every locale at once. */
   crossLocaleFields: string[];
@@ -49,8 +49,8 @@ const restore = ({ strapi }: { strapi: Core.Strapi }) => {
    * Whether the content type has localisation turned on at all.
    *
    * On a content type with a single locale every field is trivially "not
-   * localised", and warning that a restore will change every locale — of which
-   * there is one, the one being restored — is noise that teaches editors to
+   * localised", and warning that a restore will change every locale - of which
+   * there is one, the one being restored - is noise that teaches editors to
    * dismiss the dialog without reading it.
    */
   const isContentTypeLocalized = (uid: string): boolean =>
@@ -77,7 +77,7 @@ const restore = ({ strapi }: { strapi: Core.Strapi }) => {
      *
      * A separate call, and the UI shows it before asking for confirmation.
      * Restore without a preview of the consequences is a trap rather than a
-     * tool — `crossLocaleFields` in particular, where restoring the Polish
+     * tool - `crossLocaleFields` in particular, where restoring the Polish
      * version of a document quietly rewrites a field in every other language.
      */
     async preview(versionId: number): Promise<RestorePreview> {
@@ -139,7 +139,7 @@ const restore = ({ strapi }: { strapi: Core.Strapi }) => {
     /**
      * Writes the version back, to the draft only.
      *
-     * The document lands in "modified" and publishing stays a deliberate act —
+     * The document lands in "modified" and publishing stays a deliberate act -
      * restoring must never change what the public sees on its own.
      */
     async apply(

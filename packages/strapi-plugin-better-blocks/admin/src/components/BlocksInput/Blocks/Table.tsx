@@ -75,7 +75,7 @@ const StyledTable = styled.table<{ $hasRange: boolean }>`
     text-align: inherit;
   }
 
-  /* Cells carry their own highlight — with colSpan/rowSpan in play, a cell's
+  /* Cells carry their own highlight - with colSpan/rowSpan in play, a cell's
      index within its row is no longer its visual column, so nth-child rules
      can't identify a column any more. */
   th[data-highlight='active'],
@@ -102,7 +102,7 @@ const StyledTable = styled.table<{ $hasRange: boolean }>`
  * Lets each cell work out whether it should be highlighted.
  *
  * Cells are rendered independently by Slate's renderElement, so they can't see
- * the table's grid on their own — and with spans they can't be identified by
+ * the table's grid on their own - and with spans they can't be identified by
  * child index either. Only the focused table provides a value; every other
  * table renders with `null` and no highlight.
  */
@@ -299,7 +299,7 @@ const clampOversizedSpans = (
  * off again.
  *
  * Ragged rows arrive from imported JSON, and clamping a span leaves the slots it
- * used to cover empty — a clamp on its own would be a half-repair. Filling never
+ * used to cover empty - a clamp on its own would be a half-repair. Filling never
  * widens the table (it only fills below `colCount`) and clamping only ever
  * shrinks spans, so the two can't ping-pong.
  */
@@ -341,7 +341,7 @@ const fillUncoveredSlots = (
  * across cells, normalizing rows away, converting a cell to a paragraph, …).
  *
  * Structural edits are performed by tableOperations, which lifts the guard via
- * `allowTableEdit`. Inline editing inside a cell — marks, links, inline math —
+ * `allowTableEdit`. Inline editing inside a cell - marks, links, inline math -
  * is deliberately untouched, so cells keep full rich-text parity.
  */
 const withTables = (editor: Editor): Editor => {

@@ -272,7 +272,7 @@ export type CustomModifiersConfig = Partial<{
  * Props handed to a registered block's component.
  *
  * The whole node is passed rather than spread attributes, because this renderer
- * does not know what attributes the block has — that is the point of it being
+ * does not know what attributes the block has - that is the point of it being
  * registered elsewhere.
  */
 export type CustomBlockProps = {

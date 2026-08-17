@@ -8,8 +8,8 @@ const tableOf = (strapi: Core.Strapi, uid: string): string =>
 /**
  * Indexes Strapi will not create for us.
  *
- * A plugin cannot ship migrations — `database.migrations.dir` is hardwired to the
- * *application's* `database/migrations` — so raw SQL at boot is the only route.
+ * A plugin cannot ship migrations - `database.migrations.dir` is hardwired to the
+ * *application's* `database/migrations` - so raw SQL at boot is the only route.
  * `IF NOT EXISTS` makes it idempotent across restarts.
  */
 export const createIndexes = async (strapi: Core.Strapi): Promise<void> => {
@@ -18,12 +18,12 @@ export const createIndexes = async (strapi: Core.Strapi): Promise<void> => {
 
   /**
    * The one that enforces a rule rather than speeding one up: a document, in a
-   * locale, sits in exactly one stage. `ensure()` races on it deliberately —
+   * locale, sits in exactly one stage. `ensure()` races on it deliberately -
    * concurrent bulk publishes call it for the same document at the same moment,
    * and catching the unique violation is what makes that safe.
    *
    * Unlike the lookup index below, this one can fail on data that already breaks
-   * it — a database written by a version of this plugin from before the index
+   * it - a database written by a version of this plugin from before the index
    * existed. That is worth a loud warning and not worth refusing to boot over:
    * the plugin still works, it is just no longer protected against a duplicate.
    */

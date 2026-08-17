@@ -22,7 +22,7 @@ createServer((_request, response) => {
     response.end(html);
   } catch {
     response.writeHead(404, { 'content-type': 'text/plain' });
-    response.end('Not built yet — run `pnpm build` in this package first.');
+    response.end('Not built yet - run `pnpm build` in this package first.');
   }
 }).listen(port, () => {
   console.log(`Chartkit gallery on http://localhost:${port}`);

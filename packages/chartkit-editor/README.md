@@ -11,14 +11,14 @@ import { ChartEditor } from '@qkix/chartkit-editor';
 
 ## Why it is its own package
 
-Chartkit appears in two places — as a standalone Strapi custom field, and as a
+Chartkit appears in two places - as a standalone Strapi custom field, and as a
 block inside Better Blocks. Both need the same editing surface. If it lived in
 either plugin, the other would have to depend on a whole editor plugin to reuse
 it, which is precisely the coupling the block registration API exists to avoid.
 
 ## The preview is the real renderer
 
-It calls `renderChart` from `@qkix/chartkit-core` — the same function the React
+It calls `renderChart` from `@qkix/chartkit-core` - the same function the React
 and Astro renderers call. The editor and the published page draw from one code
 path, so a chart cannot look right in one and wrong in the other.
 
@@ -38,12 +38,12 @@ mistake:
 | --------------------------------- | ----------------------------------------------------------------------------- |
 | tab, comma or semicolon separated | detected per paste; tab first, since that is what a spreadsheet copy produces |
 | `1.234,5` and `1,234.5`           | 1234.5 either way                                                             |
-| `€1 234,50`                       | 1234.5 — currency, spaces and thousands marks stripped                        |
+| `€1 234,50`                       | 1234.5 - currency, spaces and thousands marks stripped                        |
 | `"North, inland"`                 | one cell; a quoted delimiter survives                                         |
-| `n/a`, `—`, empty                 | a **gap**, never a zero                                                       |
+| `n/a`, `-`, empty                 | a **gap**, never a zero                                                       |
 
 Semicolons are preferred over commas because a semicolon-separated file usually
-comes from a locale that also writes decimals with a comma — splitting on those
+comes from a locale that also writes decimals with a comma - splitting on those
 commas would shred every number.
 
 It shows **what it parsed before replacing anything**. The parser has to guess
@@ -52,15 +52,15 @@ author's data is far worse than one they can see and cancel.
 
 ## Edits are pure functions
 
-Every grid operation — `setCell`, `addRow`, `removeSeries`, `setType` — takes a
+Every grid operation - `setCell`, `addRow`, `removeSeries`, `setType` - takes a
 spec and returns a new one, and they are exported. A host that wants its own
 controls can drive a spec with these rather than reimplementing array surgery
 that has to preserve nulls.
 
 They are pure for two reasons. Strapi decides a document is dirty by comparing
 references, so an in-place edit would show changes the save button does not know
-about. And editing a chart is mostly array surgery — keep every series the same
-length as the labels, never lose a `null` that means "no reading" — which is
+about. And editing a chart is mostly array surgery - keep every series the same
+length as the labels, never lose a `null` that means "no reading" - which is
 miserable to test through a rendered table and trivial to test directly.
 
 `normalizeShape` runs on every change, so a spec can never leave the editor
@@ -80,7 +80,7 @@ silently would be a deletion disguised as a conversion.
 
 The third way in: pick a CSV, TSV or text file already uploaded to Strapi.
 
-It goes through **exactly the same panel** as a paste — same parser, same
+It goes through **exactly the same panel** as a paste - same parser, same
 preview, same header switch, same confirm before anything is replaced. A file
 is no more trustworthy than typed text: the header guess and the number formats
 are the same problem either way.
@@ -100,7 +100,7 @@ data: {
 }
 ```
 
-So nothing is fetched when the chart renders — no resolver, no request at page
+So nothing is fetched when the chart renders - no resolver, no request at page
 load, and no permission model to get wrong. The reference is kept so the editor
 can say where the numbers came from and offer to read the file again, which is
 an explicit action rather than something that happens behind a reader's back.
@@ -111,7 +111,7 @@ table of nonsense, which is worse than a refusal.
 
 `readAssetText` imports nothing from Strapi, so it is testable on its own; only
 `useMediaLibraryDialog` touches the admin's component registry, and it returns
-`undefined` — disabling the button — on a build that has no Media Library.
+`undefined` - disabling the button - on a build that has no Media Library.
 
 ## The Better Blocks block, ready made
 
@@ -144,7 +144,7 @@ data grid, so `slate` and `slate-react` are optional peers and you only need
 them if you import `/block`.
 
 The definition is structurally an `EditorBlockDefinition` without importing
-Better Blocks — a chart editor has no business depending on a rich-text plugin.
+Better Blocks - a chart editor has no business depending on a rich-text plugin.
 The two shapes meet at your `registerBlock` call, which is where TypeScript
 checks them against each other.
 

@@ -33,8 +33,8 @@ function loadStrapi(): {
  * Boots a real Strapi against a throwaway SQLite file.
  *
  * The point of doing it for real rather than mocking: everything worth testing
- * on the server side of a plugin — document-service middleware ordering,
- * transaction commit hooks, schema sync, lifecycle registration order — is
+ * on the server side of a plugin - document-service middleware ordering,
+ * transaction commit hooks, schema sync, lifecycle registration order - is
  * behaviour of Strapi itself. A mock would only assert what we already believe.
  *
  * `load()` runs register + bootstrap without binding a port, which is all a
@@ -49,7 +49,7 @@ export async function createTestStrapi(
   await writeFixtureApp(appDir, dbFile, options);
 
   // Telemetry does un-awaited network calls that outlive a short test run.
-  // (Update notifications are switched off through server config instead —
+  // (Update notifications are switched off through server config instead -
   // STRAPI_DISABLE_UPDATE_NOTIFICATION is deprecated and only logs a warning.)
   const previousEnv = { ...process.env };
   process.env.STRAPI_TELEMETRY_DISABLED = 'true';
@@ -58,7 +58,7 @@ export async function createTestStrapi(
   const { createStrapi } = loadStrapi();
 
   // createStrapi() attaches SIGTERM/SIGINT handlers per instance. Across a suite
-  // that boots several, Node starts warning about a listener leak — so note what
+  // that boots several, Node starts warning about a listener leak - so note what
   // was there before and drop only what this instance added.
   const signalsBefore = {
     SIGTERM: process.listeners('SIGTERM'),
@@ -81,7 +81,7 @@ export async function createTestStrapi(
   strapi.stopWithError = (error: unknown, customMessage?: string) => {
     const detail = error instanceof Error ? error.message : String(error);
     throw new Error(
-      `Strapi failed to boot: ${customMessage ? `${customMessage} — ` : ''}${detail}`
+      `Strapi failed to boot: ${customMessage ? `${customMessage} - ` : ''}${detail}`
     );
   };
 
@@ -176,7 +176,7 @@ export async function truncate(
   }
 }
 
-/** True when a SQLite file was actually created — a cheap boot smoke check. */
+/** True when a SQLite file was actually created - a cheap boot smoke check. */
 export function dbFileExists(dbFile: string): boolean {
   return fs.existsSync(dbFile);
 }

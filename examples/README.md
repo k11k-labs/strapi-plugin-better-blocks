@@ -17,9 +17,9 @@ against the working tree rather than a published release.
 docker compose up --build
 ```
 
-- Strapi admin — <http://localhost:1337/admin> (`admin@example.com` / `admin12#`)
-- React example — <http://localhost:5173>
-- Astro example — <http://localhost:4321>
+- Strapi admin - <http://localhost:1337/admin> (`admin@example.com` / `admin12#`)
+- React example - <http://localhost:5173>
+- Astro example - <http://localhost:4321>
 
 The renderers wait for Strapi to answer before starting, so the first boot
 finishes seeding before either app fetches. Editing an example app's `src/`
@@ -50,9 +50,9 @@ default; set `STRAPI_URL` to point them somewhere else.
 `strapi-app` seeds three articles on first boot, one per showcase that used to
 live in each repo's own playground:
 
-- **Plugin showcase** — the block coverage the plugin's own playground used
-- **React renderer showcase** — the richest set, including file-download buttons
-- **Astro renderer showcase** — the Astro playground's coverage
+- **Plugin showcase** - the block coverage the plugin's own playground used
+- **React renderer showcase** - the richest set, including file-download buttons
+- **Astro renderer showcase** - the Astro playground's coverage
 
 Both renderer apps list all three, so a block can be compared across renderers
 without switching stacks. Seeding only runs when the Article collection is

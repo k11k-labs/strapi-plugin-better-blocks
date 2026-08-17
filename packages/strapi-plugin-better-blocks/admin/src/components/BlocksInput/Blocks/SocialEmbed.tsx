@@ -284,7 +284,7 @@ const SocialEmbedElementComponent = ({
           {frame ? (
             <ToggleButton
               type="button"
-              // The card opens the editor on mousedown — keep the toggle local.
+              // The card opens the editor on mousedown - keep the toggle local.
               onMouseDown={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

@@ -4,8 +4,8 @@
  * Small, and separated out anyway, because it is where the field can lose
  * someone's work. Strapi hands a custom field whatever is in the document: a
  * JSON string on one code path and an already-parsed object on another, `null`
- * for a new entry, and — for a field that used to be something else, or a
- * document written by an import script — text that is not a chart at all.
+ * for a new entry, and - for a field that used to be something else, or a
+ * document written by an import script - text that is not a chart at all.
  *
  * None of that may throw. A field that throws while rendering takes the whole
  * edit view down, and the author loses every other field on the page along with
@@ -33,7 +33,7 @@ export type ReadValue =
  * Migrates on the way in, so an author opening a chart saved against an older
  * schema edits the current shape and saves the current shape. `renderChart`
  * migrates in memory too, which is what keeps the published page correct in the
- * meantime — but a document only stops being old once someone writes it back.
+ * meantime - but a document only stops being old once someone writes it back.
  */
 export function readValue(value: unknown): ReadValue {
   if (value === null || value === undefined || value === '') return { status: 'empty' };
@@ -79,7 +79,7 @@ export function readValue(value: unknown): ReadValue {
  * The value to store.
  *
  * A string, because Strapi's `json` custom fields are read back as strings and
- * writing an object here makes the field's own round trip asymmetric — it would
+ * writing an object here makes the field's own round trip asymmetric - it would
  * work until the page is reloaded.
  */
 export function writeValue(spec: ChartSpec): string {

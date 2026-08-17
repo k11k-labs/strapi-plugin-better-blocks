@@ -1,7 +1,7 @@
 # @qkix/chartkit-core
 
 Charts as server-rendered SVG. A `ChartSpec` goes in, a finished SVG string
-comes out — no DOM, no framework, and nothing for the browser to run.
+comes out - no DOM, no framework, and nothing for the browser to run.
 
 ## What this is
 
@@ -31,7 +31,7 @@ Because of color, which sounds trivial and is not.
 
 Chart libraries that render on a server bake their colors into the markup, so
 the colors are chosen where the chart is built. But a reader's light or dark
-preference is known in the _browser_ — usually as a class on `<html>` that a
+preference is known in the _browser_ - usually as a class on `<html>` that a
 toggle flips. Baked colors cannot follow that: you end up rendering two copies
 and swapping them, or falling back to `prefers-color-scheme` and ignoring the
 toggle your own site ships.
@@ -44,28 +44,28 @@ stroke="var(--chart-axis, currentColor)"
 ```
 
 So a chart inherits the page's theme by doing nothing, and a site restyles every
-chart it has ever published by setting a few properties — no rebuild, no
+chart it has ever published by setting a few properties - no rebuild, no
 re-render. For a CMS plugin that is the difference between a widget pasted onto
 a page and part of the design.
 
 ## Several series
 
 `stackMode` decides what happens inside a category band. It is an option rather
-than a chart `type`, because it changes the arrangement and not the mark —
+than a chart `type`, because it changes the arrangement and not the mark -
 axes, legend and baseline are identical either way, and a single-series chart
 looks the same in both.
 
 ```ts
 options: {
   stackMode: 'grouped';
-} // one bar per series, side by side — the default
+} // one bar per series, side by side - the default
 options: {
   stackMode: 'stacked';
 } // series piled into one bar per category
 ```
 
-Specs written against version 1 used `barMode`. They still render — `renderChart`
-migrates them in memory — but new specs should be written with `stackMode`.
+Specs written against version 1 used `barMode`. They still render - `renderChart`
+migrates them in memory - but new specs should be written with `stackMode`.
 
 The difference is not only visual. A **grouped** axis spans the values, because
 each bar is read on its own. A **stacked** axis spans the _totals_: three series
@@ -78,7 +78,7 @@ a +50, hiding a segment and shrinking the axis below the height the bar actually
 needs.
 
 A series with no value at a category contributes nothing and the stack closes
-up — segments keep their own color rather than inheriting the missing one's.
+up - segments keep their own color rather than inheriting the missing one's.
 
 ### Legend
 
@@ -86,7 +86,7 @@ Drawn automatically when there is more than one series, and suppressed with
 `legend: false`. With a single series the title already says what the bars are.
 
 Entries wrap onto as many rows as they need, and the height that falls out is
-fed back into the layout before the plot is sized — otherwise the chart with
+fed back into the layout before the plot is sized - otherwise the chart with
 eight series, the one that most needs its legend, is exactly the one whose
 legend runs off the side.
 
@@ -98,7 +98,7 @@ title, the legend and the accessible description.
 
 The colors mean something different too. In a bar or line chart a color is a
 **series**; in a pie there is one series and a color is a **category**, so the
-legend names the slices — it is the only thing that does.
+legend names the slices - it is the only thing that does.
 
 Two inputs are **refused** rather than reinterpreted, because quietly
 reinterpreting them loses data while looking like it worked:
@@ -109,7 +109,7 @@ reinterpreting them loses data while looking like it worked:
 | a negative value     | a slice cannot have a negative share of anything                                |
 
 A zero or a `null` is simply no wedge. If **everything** is zero, nothing is
-drawn at all — a full circle in one arbitrary color would read as "all of it is
+drawn at all - a full circle in one arbitrary color would read as "all of it is
 this category", which is a lie about data that does not exist.
 
 Slices keep the author's order rather than being sorted by size, so slice order
@@ -151,7 +151,7 @@ if (!result.ok) {
 ```
 
 A spec that fails validation is bad _content_, and content problems belong in
-front of whoever can fix them — an editor, a build log — rather than disguised
+front of whoever can fix them - an editor, a build log - rather than disguised
 as an empty chart on a live page. Every problem is reported at once, with a
 path, because fixing a pasted spreadsheet one error per attempt is miserable.
 
@@ -192,7 +192,7 @@ a new Chartkit never blanks charts already in a database. Migrating the stored
 content is a separate, opt-in step.
 
 **`version` from the first commit.** A spec is stored nested inside a Better
-Blocks document, and Better Blocks knows nothing about its shape — it only knows
+Blocks document, and Better Blocks knows nothing about its shape - it only knows
 to hand each chart node to `migrateChartSpec`. That contract has to exist before
 anyone stores a spec, because adding it later means changing the block
 registration API, which is a breaking change in another package.
@@ -223,7 +223,7 @@ than a sentence saying what the numbers show.
 import { fixtures } from '@qkix/chartkit-core/fixtures';
 ```
 
-Every input that breaks chart geometry — negative values, all zeros, a single
+Every input that breaks chart geometry - negative values, all zeros, a single
 point, fifty categories, labels forty characters long, values spanning six
 orders of magnitude, and markup in a label. They drive the snapshot tests and
 the gallery in `examples/chartkit-gallery`, so what is asserted and what gets
@@ -240,7 +240,7 @@ that page while every test passed. None of them is visible in a diff.
 ## No runtime dependencies
 
 `d3-scale`, `d3-shape` and `d3-array` do the scale and path maths, and are
-bundled at build time rather than declared as dependencies — they are ESM-only,
+bundled at build time rather than declared as dependencies - they are ESM-only,
 so a CJS build could not `require()` them. Bundling also lets tree shaking cut
 them to the handful of functions this package calls, so consumers never ship the
 rest of d3.

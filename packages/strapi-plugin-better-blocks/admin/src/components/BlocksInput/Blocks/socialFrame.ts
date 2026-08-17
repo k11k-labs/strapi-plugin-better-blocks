@@ -6,7 +6,7 @@ import { type SocialEmbedElement, type SocialPlatform } from '../utils/types';
  * The Strapi admin CSP is `script-src 'self'`, so platform widget scripts
  * (twitter `widgets.js`, tiktok `embed.js`) can never run in the editor. Every
  * platform however also exposes a *script-free* iframe embed URL, which only
- * needs its host allowed in the app's `frame-src` — the same setup the media
+ * needs its host allowed in the app's `frame-src` - the same setup the media
  * embed block already asks for with YouTube/Vimeo.
  * -------------------------------------------------------------------------*/
 
@@ -35,7 +35,7 @@ const FRAME_HEIGHTS: Record<SocialPlatform, number> = {
   pinterest: 450,
 };
 
-/** First `<iframe src>` in a markup blob — platforms that embed via iframe
+/** First `<iframe src>` in a markup blob - platforms that embed via iframe
  * (Pinterest, LinkedIn, a pasted Facebook snippet) already carry a usable one. */
 const iframeSrc = (html?: string): string | null => {
   const match = html?.match(/<iframe[^>]+src=["']([^"']+)["']/i);
@@ -131,7 +131,7 @@ export const getSocialFrame = (
         /(?:urn:li:)?(ugcPost|activity|share)[:-](\d{10,})/i
       );
       if (!match) return null;
-      // LinkedIn 404s an activity id addressed as a share — keep the URL's type.
+      // LinkedIn 404s an activity id addressed as a share - keep the URL's type.
       const type =
         match[1].toLowerCase() === 'ugcpost'
           ? 'ugcPost'

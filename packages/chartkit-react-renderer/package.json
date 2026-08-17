@@ -1,7 +1,7 @@
 {
   "name": "@qkix/chartkit-react-renderer",
   "version": "0.2.4",
-  "description": "React renderer for Chartkit charts — server-rendered SVG with no client-side JavaScript, and the Better Blocks block plugin that draws a chart inside a document",
+  "description": "React renderer for Chartkit charts - server-rendered SVG with no client-side JavaScript, and the Better Blocks block plugin that draws a chart inside a document",
   "type": "commonjs",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

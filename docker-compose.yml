@@ -45,7 +45,7 @@ services:
       - strapi_uploads:/workspace/examples/strapi-app/public/uploads
     healthcheck:
       # The renderers fetch articles at startup, so they must not race the
-      # first boot — which also runs the seeding.
+      # first boot - which also runs the seeding.
       test:
         [
           'CMD',

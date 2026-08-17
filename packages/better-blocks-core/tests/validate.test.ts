@@ -173,7 +173,7 @@ describe('the Slate element invariant', () => {
   // Slate refuses a document whose top-level nodes are not all elements, and an
   // element is something with a children array. A void block saved without its
   // empty-text placeholder therefore takes the whole editor down rather than
-  // degrading — which is exactly how it reached a seeded showcase unnoticed.
+  // degrading - which is exactly how it reached a seeded showcase unnoticed.
   it('rejects a void block saved without its children placeholder', () => {
     const result = validateDocument([
       { type: 'button', buttonType: 'link', label: 'Go', link: { url: '/x' } },

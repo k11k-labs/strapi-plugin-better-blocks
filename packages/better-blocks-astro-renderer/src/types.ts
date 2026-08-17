@@ -113,7 +113,7 @@ export type DiagramColors = {
 };
 
 /**
- * Theme for `diagram` (Mermaid) blocks — either a built-in theme name or a
+ * Theme for `diagram` (Mermaid) blocks - either a built-in theme name or a
  * custom color object. A bare `string` is accepted for forward compatibility
  * with themes added to `beautiful-mermaid`. Defaults to `github-light`.
  */
@@ -122,7 +122,7 @@ export type DiagramTheme = DiagramThemeName | (string & {}) | DiagramColors;
 // ── Style ────────────────────────────────────────────────────────────
 
 /**
- * Inline style value accepted by Astro elements — either a CSS string or a
+ * Inline style value accepted by Astro elements - either a CSS string or a
  * record of property/value pairs (Astro serializes the object to a string).
  */
 export type StyleValue = string | Record<string, string | number | undefined>;
@@ -130,7 +130,7 @@ export type StyleValue = string | Record<string, string | number | undefined>;
 // ── Custom Renderers Config ──────────────────────────────────────────
 
 /**
- * Any Astro component — the default export of a `.astro` file (or any
+ * Any Astro component - the default export of a `.astro` file (or any
  * framework component Astro can render). Custom renderers receive their props
  * via `Astro.props` and their inner content via the default `<slot />`.
  */
@@ -141,27 +141,27 @@ export type AstroComponentFactory = (...args: any[]) => any;
  * Map of block type → custom Astro component. Each component receives the props
  * documented below plus, where applicable, its rendered children via `<slot />`.
  *
- * - `paragraph` — `{ style?: StyleValue }`
- * - `heading` — `{ level: 1 | 2 | 3 | 4 | 5 | 6; style?: StyleValue }`
- * - `list` — `{ format: 'ordered' | 'unordered' | 'todo'; indentLevel: number }`
- * - `list-item` — `{ checked?: boolean }`
- * - `link` — `{ url: string; target?: string; rel?: string }`
- * - `quote` — `{ style?: StyleValue }`
- * - `code` — `{ plainText: string; language?: string }` (also available via `<slot />`)
- * - `image` — `{ image; caption?: string; imageAlign?: 'left' | 'center' | 'right' }`
- * - `horizontal-line` — no props
- * - `table` / `table-row` — children via `<slot />`
- * - `table-cell` / `table-header-cell` — `{ align?; colSpan?; rowSpan? }` (children via `<slot />`)
- * - `media-embed` — `{ url: string; originalUrl?: string }`
- * - `math` — `{ formula: string; inline: boolean }`
- * - `diagram` — `{ code: string; format: 'mermaid' }`
- * - `callout` — `{ variant: CalloutVariant; title?: string }` (children via `<slot />`)
- * - `details` — `{ summary: string; defaultOpen?: boolean }` (children via `<slot />`)
- * - `button` — `{ label; buttonType; alignment?; link?; file?; showFileSize?; showFileIcon?; style?; cssClass? }`
- * - `social-embed` — `{ platform; url; embedCode?; oembed?; alignment?; caption? }`
- * - `audio` — `{ file; title?; caption?; player?; alignment? }`
- * - `embed` — `{ embedHtml; embedSrc?; provider?; thumbnail?; aspectRatio?; customAspectRatio?; alignment?; caption?; title? }`
- * - `video` — `{ provider; url?; playbackId?; assetId?; file?; poster?; title?; caption?; transcript?; player?; alignment?; aspectRatio?; customAspectRatio? }`
+ * - `paragraph` - `{ style?: StyleValue }`
+ * - `heading` - `{ level: 1 | 2 | 3 | 4 | 5 | 6; style?: StyleValue }`
+ * - `list` - `{ format: 'ordered' | 'unordered' | 'todo'; indentLevel: number }`
+ * - `list-item` - `{ checked?: boolean }`
+ * - `link` - `{ url: string; target?: string; rel?: string }`
+ * - `quote` - `{ style?: StyleValue }`
+ * - `code` - `{ plainText: string; language?: string }` (also available via `<slot />`)
+ * - `image` - `{ image; caption?: string; imageAlign?: 'left' | 'center' | 'right' }`
+ * - `horizontal-line` - no props
+ * - `table` / `table-row` - children via `<slot />`
+ * - `table-cell` / `table-header-cell` - `{ align?; colSpan?; rowSpan? }` (children via `<slot />`)
+ * - `media-embed` - `{ url: string; originalUrl?: string }`
+ * - `math` - `{ formula: string; inline: boolean }`
+ * - `diagram` - `{ code: string; format: 'mermaid' }`
+ * - `callout` - `{ variant: CalloutVariant; title?: string }` (children via `<slot />`)
+ * - `details` - `{ summary: string; defaultOpen?: boolean }` (children via `<slot />`)
+ * - `button` - `{ label; buttonType; alignment?; link?; file?; showFileSize?; showFileIcon?; style?; cssClass? }`
+ * - `social-embed` - `{ platform; url; embedCode?; oembed?; alignment?; caption? }`
+ * - `audio` - `{ file; title?; caption?; player?; alignment? }`
+ * - `embed` - `{ embedHtml; embedSrc?; provider?; thumbnail?; aspectRatio?; customAspectRatio?; alignment?; caption?; title? }`
+ * - `video` - `{ provider; url?; playbackId?; assetId?; file?; poster?; title?; caption?; transcript?; player?; alignment?; aspectRatio?; customAspectRatio? }`
  */
 export type CustomBlocksConfig = Partial<{
   paragraph: AstroComponentFactory;
@@ -194,10 +194,10 @@ export type CustomBlocksConfig = Partial<{
  * its inner content via the default `<slot />`. The color/size/font modifiers
  * additionally receive a value prop:
  *
- * - `color` — `{ color: string }`
- * - `backgroundColor` — `{ backgroundColor: string }`
- * - `fontFamily` — `{ fontFamily: string }`
- * - `fontSize` — `{ fontSize: string }`
+ * - `color` - `{ color: string }`
+ * - `backgroundColor` - `{ backgroundColor: string }`
+ * - `fontFamily` - `{ fontFamily: string }`
+ * - `fontSize` - `{ fontSize: string }`
  */
 export type CustomModifiersConfig = Partial<{
   bold: AstroComponentFactory;
@@ -223,8 +223,8 @@ export type CustomModifiersConfig = Partial<{
  * and rendering: a package publishes its definition once and adds `component`
  * here.
  *
- * The component receives `{ node }` — the whole block, since this renderer does
- * not know what attributes it has — and, when the content model is `inline` or
+ * The component receives `{ node }` - the whole block, since this renderer does
+ * not know what attributes it has - and, when the content model is `inline` or
  * `blocks`, its rendered children via the default `<slot />`.
  */
 export type AstroBlockPlugin = BlockDefinition & {

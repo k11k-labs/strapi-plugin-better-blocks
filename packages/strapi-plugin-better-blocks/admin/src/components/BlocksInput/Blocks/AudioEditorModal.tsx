@@ -86,7 +86,7 @@ const Select = styled.select`
   background: ${({ theme }) => theme.colors.neutral0};
 `;
 
-// A connected segmented control — deliberately styled as a single grouped
+// A connected segmented control - deliberately styled as a single grouped
 // toggle (not four bordered pills) so it doesn't read as a row of text inputs.
 const AlignRow = styled.div`
   display: inline-flex;

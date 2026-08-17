@@ -10,7 +10,7 @@ import {
 
 /**
  * The pure half of the oEmbed service. Everything here is a data transform over
- * a URL or a provider payload, so none of it needs Strapi — which is the point:
+ * a URL or a provider payload, so none of it needs Strapi - which is the point:
  * the parts most likely to break when a platform changes its URL shape are also
  * the cheapest to pin down.
  */

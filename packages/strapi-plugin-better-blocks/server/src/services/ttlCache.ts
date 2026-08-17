@@ -3,7 +3,7 @@
  *
  * The oEmbed service used a bare `Map` keyed by URL, which meant one entry for
  * every social post ever embedded, for the life of the process. Entries expired
- * logically — a stale hit was discarded on read — but nothing ever removed them,
+ * logically - a stale hit was discarded on read - but nothing ever removed them,
  * so a long-running instance kept the memory whether or not anyone asked for
  * that post again.
  *
@@ -47,7 +47,7 @@ export const createTtlCache = <T>({ max }: { max: number }): TtlCache<T> => {
       // keeping the key at its old position in the eviction order.
       entries.delete(key);
 
-      // Drop anything already expired before evicting a live entry — cheaper to
+      // Drop anything already expired before evicting a live entry - cheaper to
       // lose a stale entry than a useful one.
       if (entries.size >= max) {
         const now = Date.now();

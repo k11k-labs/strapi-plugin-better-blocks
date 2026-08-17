@@ -34,7 +34,7 @@ Strapi sells a feature called **Content History** on its Growth and Enterprise
 plans. Rewind is **not that feature**, is not a drop-in replacement for it, and
 does not unlock it.
 
-It is the poor cousin. If you pay for Growth, use Strapi's — it is deeper, it is
+It is the poor cousin. If you pay for Growth, use Strapi's - it is deeper, it is
 supported by the people who wrote the CMS, and it will stay in step with Strapi
 in a way a third-party plugin cannot promise. Rewind exists for everyone on
 Community Edition, who today has nothing at all: no way to see what a document
@@ -56,7 +56,7 @@ cheap to add once the plumbing existed:
 - **Writes from outside the Content Manager can be versioned** (opt-in), where
   Strapi only ever records admin-panel edits.
 
-And a good deal it does _not_ do — see [Limits](#limits).
+And a good deal it does _not_ do - see [Limits](#limits).
 
 ### On not touching the paywall
 
@@ -64,8 +64,8 @@ Rewind never reads or writes `strapi.ee`, never inspects a licence, and never
 enables a gated feature. It is an independent implementation writing to its own
 table, and it works the same whether or not you have a Strapi licence. Strapi's
 history code is MIT-licensed and was read while working out what the problem
-actually is — the way you would read any open-source implementation before
-writing your own — but the code here is written for this plugin.
+actually is - the way you would read any open-source implementation before
+writing your own - but the code here is written for this plugin.
 
 ## Install
 
@@ -94,7 +94,7 @@ the first disk alert.
 
 Six actions on a tracked content type: `create`, `update`, `clone`, `publish`,
 `unpublish` and `discardDraft`. Each version stores the document's content, its
-relations, and a snapshot of the schema at the time — the last of which is what
+relations, and a snapshot of the schema at the time - the last of which is what
 lets a restore tell "this field was empty" apart from "this field did not exist
 yet".
 
@@ -106,7 +106,7 @@ A save that is rolled back records nothing.
 <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/panel.png" alt="History entries labelled Replaced by restore, Draft discarded and Edited" width="320" />
 
 The badge says what happened to the document. **Replaced by restore** marks the
-state a restore was about to overwrite — the undo point for that restore.
+state a restore was about to overwrite - the undo point for that restore.
 
 ## Restoring
 
@@ -125,7 +125,7 @@ part of a restore is what it will _not_ do:
 - fields no longer in the model are skipped
 - links to documents or media that have since been deleted are dropped, and
   reported
-- **fields that are not translated per locale change in every locale at once** —
+- **fields that are not translated per locale change in every locale at once** -
   restoring the Polish version of a document rewrites a shared field for every
   other language too. This is not a choice the plugin makes; a non-localised
   field physically has one value. The dialog names those fields and counts the
@@ -138,14 +138,14 @@ with the one saved immediately before it.
 
 <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/changes.png" alt="A word-level diff: 'put back' struck through and replaced by 'restored in one click', and 'ten' by 'twelve'" width="760" />
 
-Scalars are shown as a plain before and after. Prose — including rich text
-stored as JSON — is compared word by word, with the unchanged stretches
+Scalars are shown as a plain before and after. Prose - including rich text
+stored as JSON - is compared word by word, with the unchanged stretches
 collapsed, so a one-word edit in a long article reads as one word rather than
 as the whole article with something green in it somewhere. Relations are
 reported as linked and unlinked.
 
-Where a field's stored value changed but its readable text did not — a mark
-applied, blocks reordered — it says so, rather than showing an empty diff.
+Where a field's stored value changed but its readable text did not - a mark
+applied, blocks reordered - it says so, rather than showing an empty diff.
 
 ### Rendering a field type properly
 
@@ -156,7 +156,7 @@ package that owns the format can show that, so the mapping is a registry:
 ```ts
 import { registerDiffRenderer } from '@qkix/strapi-plugin-rewind/strapi-admin';
 
-import { MyBlocksDiff } from './MyBlocksDiff'; // yours — see below
+import { MyBlocksDiff } from './MyBlocksDiff'; // yours - see below
 
 registerDiffRenderer('plugin::better-blocks.better-blocks', MyBlocksDiff);
 ```
@@ -165,8 +165,8 @@ Keyed by a custom field's uid, or by an attribute `type`. A uid wins over a
 type, since every custom field stores itself as `json`.
 
 > **Bring your own renderer.** Rewind ships the registry, not the renderers. No
-> `@qkix` package currently exports a block-aware diff component — including
-> Better Blocks — so the component above is one you write. A renderer receives
+> `@qkix` package currently exports a block-aware diff component - including
+> Better Blocks - so the component above is one you write. A renderer receives
 > the two values and returns the `FieldChange` shape exported alongside
 > `registerDiffRenderer`; without one registered, a field falls back to the
 > generic text diff. A ready-made renderer for Better Blocks documents is
@@ -185,8 +185,8 @@ type, since every custom field stores itself as `json`.
 | `retention.keepAnchors`    | `true`        | Never thin publish, unpublish, discard or restore versions, whatever their age.                                 |
 | `cron`                     | `'0 3 * * *'` | When the thinning runs, in the server's timezone.                                                               |
 
-The three windows must widen in order — `keepAllDays <= dailyUntilDays <=
-maxAgeDays` — and the plugin refuses to boot rather than delete on a guess if
+The three windows must widen in order - `keepAllDays <= dailyUntilDays <=
+maxAgeDays` - and the plugin refuses to boot rather than delete on a guess if
 they do not. Pinned versions are never thinned either, independently of
 `keepAnchors`.
 
@@ -213,7 +213,7 @@ Worth knowing before you install it, not after:
 ## Keeping your history when the plugin is off
 
 Strapi's schema sync drops tables belonging to content types it no longer sees.
-Disable this plugin for a single boot and the history would go with it — so on
+Disable this plugin for a single boot and the history would go with it - so on
 boot Rewind adds its table to Strapi's `persisted_tables` list, which is the
 same mechanism Strapi uses to protect its own. Nothing to configure.
 

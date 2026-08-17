@@ -6,7 +6,7 @@
  * re-export them rather than keeping their own copies, which is what let them
  * drift apart in the first place.
  *
- * Deliberately free of any framework or editor types — nothing here depends on
+ * Deliberately free of any framework or editor types - nothing here depends on
  * React, Astro, Strapi or Slate.
  */
 
@@ -95,7 +95,7 @@ export type CodeNode = {
   /**
    * Language attached in the editor (e.g. `typescript`, `python`). Drives the
    * renderer's syntax highlighting. Unknown or missing values fall back to
-   * `plaintext` — see normalizeCodeLang.
+   * `plaintext` - see normalizeCodeLang.
    */
   language?: string;
   children: InlineNode[];
@@ -249,7 +249,7 @@ export type SocialEmbedAlignment = 'left' | 'center' | 'right';
 
 /**
  * oEmbed payload fetched server-side by the plugin at author time. Every field
- * is optional — providers vary in what they return (e.g. `thumbnailUrl` is
+ * is optional - providers vary in what they return (e.g. `thumbnailUrl` is
  * present for TikTok/Pinterest but absent for Twitter).
  */
 export type SocialEmbedOembed = {
@@ -267,7 +267,7 @@ export type SocialEmbedOembed = {
 export type SocialEmbedNode = {
   type: 'social-embed';
   platform: SocialPlatform;
-  /** Optional — platforms without a tokenless oEmbed can be saved embed-code-only. */
+  /** Optional - platforms without a tokenless oEmbed can be saved embed-code-only. */
   url?: string;
   /** Author-pasted manual override, takes priority over `oembed.html`. Trusted. */
   embedCode?: string;
@@ -275,7 +275,7 @@ export type SocialEmbedNode = {
   oembed?: SocialEmbedOembed;
   alignment?: SocialEmbedAlignment;
   caption?: string;
-  /** Void-node placeholder emitted by the editor — ignored when rendering. */
+  /** Void-node placeholder emitted by the editor - ignored when rendering. */
   children?: [{ type: 'text'; text: '' }];
 };
 
@@ -286,7 +286,7 @@ export type AudioAlignment = 'left' | 'center' | 'right' | 'none';
 export type AudioPreload = 'none' | 'metadata' | 'auto';
 
 /**
- * The audio asset. `url` is the value to render as-is — the editor stores the
+ * The audio asset. `url` is the value to render as-is - the editor stores the
  * backend-prefixed URL for Media-Library assets (same as `image`/`button`), so
  * the renderer must **not** re-prefix it. `id` is absent when the block was
  * inserted from a raw URL; every other key is optional.
@@ -302,7 +302,7 @@ export type AudioFile = {
   size?: number;
   /** `local` | `cloudinary` | … */
   provider?: string;
-  /** Seconds. Optional — not populated by Strapi Upload today. */
+  /** Seconds. Optional - not populated by Strapi Upload today. */
   duration?: number;
 };
 
@@ -323,7 +323,7 @@ export type AudioNode = {
   player?: AudioPlayer;
   /** `left` | `center` (default) | `right` | `none` (full-width, inline flow). */
   alignment?: AudioAlignment;
-  /** Void-node placeholder emitted by the editor — ignored when rendering. */
+  /** Void-node placeholder emitted by the editor - ignored when rendering. */
   children?: [{ type: 'text'; text: '' }];
 };
 
@@ -345,20 +345,20 @@ export type EmbedProvider =
 
 /**
  * Generic third-party embed (YouTube, Vimeo, Loom, …). `embedHtml` is the only
- * field needed to render — it is sanitized plugin-side (rebuilt from an
+ * field needed to render - it is sanitized plugin-side (rebuilt from an
  * attribute allowlist over an https-only `src`, with scripts, event handlers,
  * inline styles and unknown attributes stripped) and emitted verbatim via
  * `set:html`. `url` / `iframe` exist only to round-trip the editor UI.
  */
 export type EmbedNode = {
   type: 'embed';
-  /** Which input the author used — `"url"` or `"iframe"`. */
+  /** Which input the author used - `"url"` or `"iframe"`. */
   source?: 'url' | 'iframe';
-  /** Present when `source` is `"url"` — the pasted watch URL. Ignored when rendering. */
+  /** Present when `source` is `"url"` - the pasted watch URL. Ignored when rendering. */
   url?: string;
-  /** Present when `source` is `"iframe"` — the raw paste. Ignored when rendering. */
+  /** Present when `source` is `"iframe"` - the raw paste. Ignored when rendering. */
   iframe?: string;
-  /** Sanitized `<iframe>` markup — the value to render. */
+  /** Sanitized `<iframe>` markup - the value to render. */
   embedHtml?: string;
   /** The `src` of the sanitized iframe (informational). */
   embedSrc?: string;
@@ -370,7 +370,7 @@ export type EmbedNode = {
   alignment?: MediaAlignment;
   caption?: string;
   title?: string;
-  /** Void-node placeholder emitted by the editor — ignored when rendering. */
+  /** Void-node placeholder emitted by the editor - ignored when rendering. */
   children?: [{ type: 'text'; text: '' }];
 };
 
@@ -405,7 +405,7 @@ export type VideoPlayer = {
 /**
  * Provider-aware video. Direct file URLs (`local` / `custom`, or a Media-Library
  * `file`) render as a native `<video>`. HLS/DASH sources (`url` ending `.m3u8` /
- * `.mpd`, e.g. Mux) only play natively in Safari — this renderer emits the same
+ * `.mpd`, e.g. Mux) only play natively in Safari - this renderer emits the same
  * native `<video>` (poster + a graceful fallback link elsewhere); override the
  * `video` block to plug in a cross-browser player (`mux-player`, `hls.js`, …).
  */
@@ -415,20 +415,20 @@ export type VideoNode = {
   /** Direct/stream URL. Preferred source; for Mux, derivable from `playbackId`. */
   url?: string;
   assetId?: string;
-  /** Mux public playback id — enough to stream a public-policy asset. */
+  /** Mux public playback id - enough to stream a public-policy asset. */
   playbackId?: string;
   file?: VideoFile;
   poster?: string;
   title?: string;
   caption?: string;
-  /** URL of a WebVTT captions file — rendered as a `<track kind="captions">`. */
+  /** URL of a WebVTT captions file - rendered as a `<track kind="captions">`. */
   transcript?: string;
   player?: VideoPlayer;
   alignment?: MediaAlignment;
   aspectRatio?: AspectRatio;
   /** Used verbatim when `aspectRatio` is `"custom"` (e.g. `"3 / 2"`). */
   customAspectRatio?: string;
-  /** Void-node placeholder emitted by the editor — ignored when rendering. */
+  /** Void-node placeholder emitted by the editor - ignored when rendering. */
   children?: [{ type: 'text'; text: '' }];
 };
 
@@ -466,7 +466,7 @@ export type TableCellAttributes = {
 
 /**
  * A neutral inline-style record. The core maps document attributes onto this,
- * and each renderer converts it to whatever its framework expects — React to
+ * and each renderer converts it to whatever its framework expects - React to
  * `CSSProperties`, Astro to a `style` attribute.
  */
 export type BlockStyle = Record<string, string | number | undefined>;

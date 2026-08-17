@@ -38,14 +38,14 @@ try {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Better Blocks — Astro renderer</title>
+    <title>Better Blocks - Astro renderer</title>
   </head>
   <body>
     <div style="max-width: 720px; margin: 0 auto; padding: 24px; font-family: system-ui;">
-      <h1>Better Blocks — Astro renderer</h1>
+      <h1>Better Blocks - Astro renderer</h1>
       <p style="color: #666; margin-bottom: 32px;">
         Every showcase article seeded into the Strapi example, rendered with
-        <code>@qkix/better-blocks-astro-renderer</code> — native Astro, zero client-side JavaScript. The
+        <code>@qkix/better-blocks-astro-renderer</code> - native Astro, zero client-side JavaScript. The
         React example serves the same content at <code>localhost:5173</code>.
       </p>
 
@@ -82,14 +82,14 @@ try {
             <article style="margin-bottom: 48px; border-bottom: 1px solid #eee; padding-bottom: 24px;">
               <h2 style="margin-bottom: 4px;">{article.title}</h2>
               <h3 style="color: #888; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
-                ① Default rendering — callouts are GitHub-style
+                ① Default rendering - callouts are GitHub-style
               </h3>
               <BlocksRenderer content={article.content} codeCopyButton />
 
               {callouts.length > 0 && (
                 <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #d7c7ff;">
                   <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
-                    ② Custom callout renderer — same callouts via the <code>blocks</code> override
+                    ② Custom callout renderer - same callouts via the <code>blocks</code> override
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">
                     The callouts below are the exact same content as above, re-rendered with a
@@ -103,17 +103,17 @@ try {
               {details.length > 0 && (
                 <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #d0d7de;">
                   <h2 style="color: #57606a; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
-                    ③ Default details — GitHub-style markup shipped by the renderer
+                    ③ Default details - GitHub-style markup shipped by the renderer
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">
                     The same details blocks as above, rendered with the built-in
-                    <code>bb-details</code> markup and its scoped GitHub-inspired stylesheet — a
+                    <code>bb-details</code> markup and its scoped GitHub-inspired stylesheet - a
                     native <code>&lt;details&gt;</code> disclosure with zero client-side JavaScript.
                   </p>
                   <BlocksRenderer content={details} />
 
                   <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 32px;">
-                    ④ Custom details renderer — same details via the <code>blocks</code> override
+                    ④ Custom details renderer - same details via the <code>blocks</code> override
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">
                     The same details blocks re-rendered with a custom <code>details</code> component
@@ -126,10 +126,10 @@ try {
               {buttons.length > 0 && (
                 <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #c7d2fe;">
                   <h2 style="color: #4945ff; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
-                    ⑤ Buttons — default rendering (inline styles + hover via CSS variables)
+                    ⑤ Buttons - default rendering (inline styles + hover via CSS variables)
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">
-                    The same buttons as in the article above. Hover them — the
+                    The same buttons as in the article above. Hover them - the
                     <code>hoverBackgroundColor</code> / <code>hoverTextColor</code> from the block
                     are exposed as CSS custom properties and wired up by the renderer's scoped
                     stylesheet (zero client-side JavaScript). The file button downloads a real
@@ -138,7 +138,7 @@ try {
                   <BlocksRenderer content={buttons} />
 
                   <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 32px;">
-                    ⑥ Custom button renderer — same buttons via the <code>blocks</code> override
+                    ⑥ Custom button renderer - same buttons via the <code>blocks</code> override
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">
                     The same buttons re-rendered with a custom <code>button</code> component
@@ -151,14 +151,14 @@ try {
               {socialEmbeds.length > 0 && (
                 <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #a5d8ff;">
                   <h2 style="color: #1c7ed6; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
-                    ⑦ Social embeds — default rendering (lazy, deduped widget scripts)
+                    ⑦ Social embeds - default rendering (lazy, deduped widget scripts)
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">
                     The same social embeds as in the article above. Platform widget scripts load
-                    lazily via an <code>IntersectionObserver</code> — scroll one into view and its
+                    lazily via an <code>IntersectionObserver</code> - scroll one into view and its
                     script is injected <strong>once</strong>. Widget <code>&lt;script&gt;</code>
                     tags shipped inside the embed markup (e.g. TikTok's oEmbed, hand-pasted embed
-                    codes) are stripped so the loader is the single injector — no duplicate. TikTok
+                    codes) are stripped so the loader is the single injector - no duplicate. TikTok
                     is re-processed via <code>tiktokEmbed.lib.render()</code>. Pinterest, Instagram,
                     and LinkedIn here return self-contained <code>&lt;iframe&gt;</code>s that render
                     without any widget script. Embeds with no
@@ -169,7 +169,7 @@ try {
                   <BlocksRenderer content={socialEmbeds} />
 
                   <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 32px;">
-                    ⑧ Custom social-embed renderer — same embeds via the <code>blocks</code>{' '}
+                    ⑧ Custom social-embed renderer - same embeds via the <code>blocks</code>{' '}
                     override
                   </h2>
                   <p style="color: #666; font-size: 14px; margin-top: 0;">

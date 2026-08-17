@@ -57,7 +57,7 @@ const NavBtn = styled.button`
 `;
 
 /* ---------------------------------------------------------------------------
- * Search context — shared with BlocksContent for highlight decorations
+ * Search context - shared with BlocksContent for highlight decorations
  * -------------------------------------------------------------------------*/
 
 /**

@@ -3,8 +3,8 @@
  *
  * The bar is the same one Better Blocks' document validator sets: verify what a
  * renderer will crash or lie on, and leave alone what it can survive not
- * knowing. An unrecognized option is forward compatibility — a newer editor
- * wrote it — while a series holding strings is corruption, because the geometry
+ * knowing. An unrecognized option is forward compatibility - a newer editor
+ * wrote it - while a series holding strings is corruption, because the geometry
  * is computed from those numbers.
  */
 
@@ -40,7 +40,7 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
  * Validates a chart specification.
  *
  * Reports every problem it finds, with a path, rather than stopping at the
- * first — an editor showing one error at a time makes fixing a pasted
+ * first - an editor showing one error at a time makes fixing a pasted
  * spreadsheet a game of whack-a-mole.
  */
 export function validateChartSpec(value: unknown): ChartValidationResult {
@@ -116,7 +116,7 @@ function validateForType(
       if (typeof value === 'number' && value < 0) {
         fail(
           `data.series[${i}].values[${j}]`,
-          `a ${type} slice cannot be negative — it is a share of a whole`
+          `a ${type} slice cannot be negative - it is a share of a whole`
         );
       }
     });
@@ -168,8 +168,8 @@ function validateData(data: unknown, fail: (path: string, message: string) => vo
       }
     });
 
-    // Not fatal — a shorter series is drawn as far as it goes, which is more
-    // useful than refusing the whole chart — but it is almost always a paste
+    // Not fatal - a shorter series is drawn as far as it goes, which is more
+    // useful than refusing the whole chart - but it is almost always a paste
     // that went wrong, so it is worth saying.
     if (labelCount > 0 && series.values.length !== labelCount) {
       fail(

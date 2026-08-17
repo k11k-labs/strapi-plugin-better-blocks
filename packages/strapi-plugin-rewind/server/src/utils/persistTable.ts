@@ -8,8 +8,8 @@ type PersistedTable = string | { name: string; dependsOn?: { table: string }[] }
  * Keeps the versions table alive when the plugin is not loaded.
  *
  * Strapi's schema sync drops any table it previously tracked that is no longer
- * in the user schema. Disable this plugin for a single boot — to debug, to test
- * an upgrade — and the history it exists to protect is gone without a prompt.
+ * in the user schema. Disable this plugin for a single boot - to debug, to test
+ * an upgrade - and the history it exists to protect is gone without a prompt.
  *
  * `persisted_tables` is the core-store key `@strapi/database` consults before
  * dropping (schema/diff.js). The EE `admin::persist-tables` service writes the
@@ -27,7 +27,7 @@ export const persistVersionsTable = async (
 
   if (names.includes(tableName)) return;
 
-  // Append — other plugins keep their entries in this same list.
+  // Append - other plugins keep their entries in this same list.
   await strapi.store.set({
     ...CORE_STORE_KEY,
     value: [...persisted, { name: tableName }],

@@ -11,10 +11,10 @@ export interface Field {
 }
 
 export interface Node {
-  /** The content-type or component uid — unique, and what edges point at. */
+  /** The content-type or component uid - unique, and what edges point at. */
   uid: string;
   kind: NodeKind;
-  /** `Article`, `Shared / Seo` — what the admin panel calls it. */
+  /** `Article`, `Shared / Seo` - what the admin panel calls it. */
   label: string;
   /** `api`, `plugin::users-permissions`, or the component category. */
   group: string;
@@ -24,8 +24,8 @@ export interface Node {
   /**
    * Whether this box has a page in the Content-Type Builder to open.
    *
-   * A plugin's internal tables — Greenlight's transition log, upload's folders,
-   * every `admin::` type — are real content types and belong on the diagram, but
+   * A plugin's internal tables - Greenlight's transition log, upload's folders,
+   * every `admin::` type - are real content types and belong on the diagram, but
    * there is nowhere to send someone who clicks one.
    */
   navigable: boolean;
@@ -36,7 +36,7 @@ export interface Node {
  *
  * `relation` is the classic ERD edge. The other two are the reason this plugin
  * exists: every diagram in this category draws relations only, so a schema built
- * out of components — which is most of them — shows up as a handful of
+ * out of components - which is most of them - shows up as a handful of
  * disconnected boxes and tells you nothing.
  */
 export type EdgeKind = 'relation' | 'component' | 'dynamiczone';
@@ -60,7 +60,7 @@ export interface Graph {
 
 /** What the caller asked to see. Everything defaults to the useful answer. */
 export interface GraphOptions {
-  /** Content types owned by Strapi or by plugins — noise for most people. */
+  /** Content types owned by Strapi or by plugins - noise for most people. */
   includeForeign: boolean;
   /** Components and dynamic zones, and the edges into them. */
   includeComponents: boolean;

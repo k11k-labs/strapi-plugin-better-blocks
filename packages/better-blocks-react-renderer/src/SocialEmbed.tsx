@@ -26,7 +26,7 @@ interface WidgetScript {
 const socialWindow = (): SocialWindow => window as unknown as SocialWindow;
 
 // Widget enhancement scripts per platform. `src` is injected once and, after it
-// loads, `process` upgrades the mounted markup — this also covers remounts and
+// loads, `process` upgrades the mounted markup - this also covers remounts and
 // SPA navigations, where the script is long since loaded and only the new
 // markup needs processing. LinkedIn renders a self-contained `<iframe>` and
 // needs no script.
@@ -88,7 +88,7 @@ const PLATFORM_LABELS: Record<SocialPlatform, string> = {
 // Marks the `<script>` tags we injected ourselves. Deduping on `src` alone is a
 // trap: TikTok's oEmbed payload always ships `<script src=".../embed.js">`
 // inline, and a script inserted through `dangerouslySetInnerHTML` sits in the
-// DOM without ever executing — matching it would make us skip the real load and
+// DOM without ever executing - matching it would make us skip the real load and
 // leave the blockquote un-upgraded forever.
 const SCRIPT_MARKER = 'data-bb-social-script';
 
@@ -98,7 +98,7 @@ const SCRIPT_MARKER = 'data-bb-social-script';
 const scriptPromises = new Map<string, Promise<void>>();
 
 // Platforms whose script we already re-injected once after `process` reported a
-// missing global — the retry gets a single shot, so a permanently blocked
+// missing global - the retry gets a single shot, so a permanently blocked
 // script can't trigger a request per mount.
 const reinjected = new Set<SocialPlatform>();
 
@@ -172,7 +172,7 @@ function FallbackCard({
   providerName: string;
 }): ReactNode {
   // Title first, author second, and only then the bare "View on X" prompt. The
-  // provider line is dropped in that last case — with no title and no author it
+  // provider line is dropped in that last case - with no title and no author it
   // would just repeat the prompt back ("View on X" over "X").
   const title = oembed?.title ?? (oembed?.author ? `Post by ${oembed.author}` : null);
 
@@ -189,7 +189,7 @@ function FallbackCard({
   };
 
   // An embed saved with a manual `embedCode` and no source URL has nothing to
-  // link to — render the same card as a plain element rather than an `href=""`
+  // link to - render the same card as a plain element rather than an `href=""`
   // anchor, which would reload the current page.
   const Tag = url ? 'a' : 'div';
   const linkProps = url ? { href: url, target: '_blank', rel: 'noopener noreferrer' } : {};

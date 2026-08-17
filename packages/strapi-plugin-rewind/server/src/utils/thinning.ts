@@ -37,7 +37,7 @@ export interface PrunableVersion {
 
 /**
  * The points an editor navigates by. Thinning these away would leave a history
- * that is technically continuous and practically useless — "the version I
+ * that is technically continuous and practically useless - "the version I
  * published" is exactly what someone comes back for a year later.
  */
 const ANCHOR_ORIGINS = new Set(['publish', 'unpublish', 'discardDraft', 'restore']);

@@ -1,7 +1,7 @@
 /**
  * Chartkit as a ready-made Better Blocks block.
  *
- * `chartBlock` in `@qkix/chartkit-core` carries the framework-free half — the
+ * `chartBlock` in `@qkix/chartkit-core` carries the framework-free half - the
  * type, the validator, the migrator. This adds the half that only the Strapi
  * admin can supply: an icon, a menu label, something to insert, and a component
  * that draws a chart in a document and opens the editor when clicked.
@@ -45,7 +45,7 @@ export type ChartBlockDefinitionOptions = {
   /**
    * The chart a freshly inserted block starts from.
    *
-   * Defaults to four empty quarters — categories to type over, and no invented
+   * Defaults to four empty quarters - categories to type over, and no invented
    * numbers. A block that arrives carrying data an author did not enter is a
    * block that can be published without anyone noticing they never edited it.
    */
@@ -79,7 +79,7 @@ const ChartIcon = () => (
  * A chart inside a document: the preview, and the editor behind it.
  *
  * Slate owns the document, so a save goes back through it with
- * `Transforms.setNodes` at this element's path rather than into React state —
+ * `Transforms.setNodes` at this element's path rather than into React state -
  * anything else and the edit is invisible to undo, to the save button, and to
  * the next render.
  */
@@ -90,7 +90,7 @@ function ChartElement({
   locale,
 }: RenderElementProps & { locale?: string }) {
   // `useSlateStatic` is typed as the base editor, but anything rendering this
-  // went through `withReact` — that is what makes `renderElement` run at all —
+  // went through `withReact` - that is what makes `renderElement` run at all -
   // so the react methods `findPath` needs are there. The cast says so once,
   // rather than every call site pretending the props are `any`.
   const editor = useSlateStatic() as ReactEditor;
@@ -134,7 +134,7 @@ function ChartElement({
 /**
  * Builds the registration to hand to Better Blocks' `registerBlock`.
  *
- * A function rather than a constant so a locale can be passed in — a chart
+ * A function rather than a constant so a locale can be passed in - a chart
  * needs one to format its numbers and a block does not otherwise carry one.
  *
  * Structurally an `EditorBlockDefinition` without importing Better Blocks,

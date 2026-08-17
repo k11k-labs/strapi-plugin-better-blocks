@@ -8,7 +8,7 @@ import type { TestStrapiInstance } from '../src/index.js';
  *
  * The Content Manager's publish controller calls `updateDocument()` and then
  * `documentManager.publish()` as two sequential calls wrapped in a single
- * `strapi.db.transaction`. They are siblings, not nested — so no async-context
+ * `strapi.db.transaction`. They are siblings, not nested - so no async-context
  * flag set when entering `publish` can suppress the `update` that already ran.
  *
  * What they do share is the transaction. Buffering snapshot intents and flushing
@@ -25,8 +25,8 @@ let app: TestStrapiInstance;
  *
  * NOTE FOR THE REAL IMPLEMENTATION: a module-level buffer is only safe here
  * because the test drives one write at a time. In the plugin the buffer must be
- * scoped to the transaction — an AsyncLocalStorage store established when the
- * transaction opens — or two concurrent requests will flush each other's
+ * scoped to the transaction - an AsyncLocalStorage store established when the
+ * transaction opens - or two concurrent requests will flush each other's
  * intents.
  */
 let buffer: Array<{ action: string; documentId: string; locale: string }> = [];

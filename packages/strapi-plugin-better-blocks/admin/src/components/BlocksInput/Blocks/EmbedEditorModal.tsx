@@ -416,7 +416,7 @@ export const EmbedEditorModal = ({
                 {formatMessage({
                   id: 'components.Blocks.embed.hint.code',
                   defaultMessage:
-                    'Only the <iframe> is kept — scripts, event handlers and unknown attributes are removed before saving.',
+                    'Only the <iframe> is kept - scripts, event handlers and unknown attributes are removed before saving.',
                 })}
               </Hint>
             </Flex>

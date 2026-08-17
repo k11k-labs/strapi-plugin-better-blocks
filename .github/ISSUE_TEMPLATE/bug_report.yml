@@ -5,7 +5,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thanks for reporting this. The first field is the one that matters most —
+        Thanks for reporting this. The first field is the one that matters most -
         this repository publishes ten packages, and knowing which one you are
         using is what makes a report actionable.
 
@@ -17,10 +17,10 @@ body:
         The one you installed. If the problem shows up in the Strapi admin, it is
         almost certainly one of the three plugins.
       options:
-        - '@qkix/strapi-plugin-better-blocks — the rich text editor plugin'
-        - '@qkix/strapi-plugin-chartkit — the chart field plugin'
-        - '@qkix/strapi-plugin-rewind — document version history'
-        - '@qkix/strapi-plugin-greenlight — review stages and the publish gate'
+        - '@qkix/strapi-plugin-better-blocks - the rich text editor plugin'
+        - '@qkix/strapi-plugin-chartkit - the chart field plugin'
+        - '@qkix/strapi-plugin-rewind - document version history'
+        - '@qkix/strapi-plugin-greenlight - review stages and the publish gate'
         - '@qkix/better-blocks-core'
         - '@qkix/better-blocks-react-renderer'
         - '@qkix/better-blocks-astro-renderer'
@@ -83,7 +83,7 @@ body:
       label: Steps to reproduce
       description: |
         The shortest path from a fresh install to the problem. If you can, say
-        which content type and field types are involved — a lot of behaviour
+        which content type and field types are involved - a lot of behaviour
         depends on components, dynamic zones, relations and i18n.
       value: |
         1.

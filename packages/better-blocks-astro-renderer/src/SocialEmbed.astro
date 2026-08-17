@@ -21,7 +21,7 @@ const alignment = node.alignment ?? 'center';
 const source = getSocialEmbedSource(node);
 // Trusted markup (platform oEmbed / author-pasted embed code). It intentionally
 // contains <iframe>/<blockquote> and must NOT be passed through a sanitizer that
-// strips them — see the README's trust-boundary note. Widget <script> tags are
+// strips them - see the README's trust-boundary note. Widget <script> tags are
 // stripped in getSocialEmbedSource; the lazy loader is the single script injector.
 const html = source.kind === 'html' ? addLazyLoadingToIframes(source.html) : null;
 
@@ -77,7 +77,7 @@ const figureStyle = {
       {html !== null ? (
         <div class="bb-social-embed-html" set:html={html} />
       ) : (
-        /* No embedCode/oembed.html — graceful link card. Renders as an <a> when a
+        /* No embedCode/oembed.html - graceful link card. Renders as an <a> when a
            post URL is known, else a non-interactive <div> (no empty href). */
         <FallbackTag
           class="bb-social-embed-fallback"

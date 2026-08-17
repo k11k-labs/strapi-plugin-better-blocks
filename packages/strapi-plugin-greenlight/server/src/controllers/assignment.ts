@@ -77,7 +77,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       availableTargets: targets,
       /**
        * Drives the disabled state of the Publish button, and comes from the gate
-       * itself rather than from a second reading of the same rules — see
+       * itself rather than from a second reading of the same rules - see
        * `gate.publishable`.
        */
       isPublishable: service(strapi, 'gate').publishable(wf, current),
@@ -88,7 +88,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
    * The batch sibling of `find`: one answer per document, for a page of them.
    *
    * Both the list view's stage column and its Publish buttons read this. They
-   * used to ask separately and per row — the column would have been one request
+   * used to ask separately and per row - the column would have been one request
    * per page and the buttons one per row, for the same documents.
    *
    * There is an entry for **every** id asked about, including documents with no
@@ -206,7 +206,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
       value === undefined || value === '' ? undefined : Number(value);
 
     ctx.body = await service(strapi, 'queue').list({
-      // "mine" is the default the page opens with — a reviewer wants their own
+      // "mine" is the default the page opens with - a reviewer wants their own
       // queue first, not everyone's.
       assigneeId:
         assigneeId === 'all' ? undefined : (toNumber(assigneeId) ?? ctx.state.user?.id ?? null),

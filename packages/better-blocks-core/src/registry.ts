@@ -3,8 +3,8 @@
  *
  * Better Blocks knows nothing about what a registered block contains. It only
  * knows four things about it: what its children look like, whether its
- * attributes are well formed, how to bring an old one up to date, and — in the
- * packages that render — how to draw it. This file owns the first three; the
+ * attributes are well formed, how to bring an old one up to date, and - in the
+ * packages that render - how to draw it. This file owns the first three; the
  * fourth is framework-specific and lives in each renderer, because a React
  * component type and an Astro component type have nothing in common.
  *
@@ -23,7 +23,7 @@ import type { ValidationIssue } from './validate';
  * The index signature is the point: a registered block carries whatever
  * attributes its owner defined, and nothing here should pretend to know them.
  * `children` stays `unknown[]` because the content model decides what is legal
- * inside — see {@link BlockContentModel}.
+ * inside - see {@link BlockContentModel}.
  */
 export type CustomBlockNode = {
   type: string;
@@ -34,7 +34,7 @@ export type CustomBlockNode = {
 /**
  * A block that is either one of the documented built-ins or a registered one.
  *
- * {@link BlockNode} stays a closed union on purpose — widening it would break
+ * {@link BlockNode} stays a closed union on purpose - widening it would break
  * every exhaustive `switch` written against it, including the two renderers'.
  * Code that must handle registered blocks opts in by using this type instead.
  */
@@ -48,12 +48,12 @@ export type ExtendedBlocksContent = AnyBlockNode[];
 /**
  * What a registered block holds.
  *
- * - **`void`** — renders entirely from its own attributes. It still carries an
+ * - **`void`** - renders entirely from its own attributes. It still carries an
  *   empty text placeholder as its children, which is not decoration: Slate
  *   refuses to load a document whose nodes are not elements, and an element is
  *   something with a children array.
- * - **`inline`** — holds text and links, like a paragraph.
- * - **`blocks`** — holds whole blocks, like a callout.
+ * - **`inline`** - holds text and links, like a paragraph.
+ * - **`blocks`** - holds whole blocks, like a callout.
  *
  * `void` and `inline` validate identically today, because a void block's
  * placeholder *is* an inline text node. They stay separate because the editor
@@ -72,7 +72,7 @@ export type BlockContentModel = 'void' | 'inline' | 'blocks';
  */
 export type BlockValidateContext = {
   path: string;
-  /** Records a problem. `path` is absolute — build it from the context's. */
+  /** Records a problem. `path` is absolute - build it from the context's. */
   fail: (path: string, message: string) => void;
 };
 
@@ -96,7 +96,7 @@ export type BlockMigrationOutcome =
 /**
  * Everything Better Blocks needs to accept a block type it did not write.
  *
- * A definition is data, not a class, and holds no state — the same object is
+ * A definition is data, not a class, and holds no state - the same object is
  * handed to the validator, the migrator and both renderers.
  */
 export type BlockDefinition = {
@@ -117,7 +117,7 @@ export type BlockDefinition = {
    * Brings one node of this type up to date.
    *
    * Better Blocks does not know this block's schema and does not track its
-   * version — the node carries its own (`spec.version`, or whatever the owner
+   * version - the node carries its own (`spec.version`, or whatever the owner
    * chose) and the migrator reads it. This is called for every node of this
    * type in the document, including ones nested inside a callout or details.
    */
@@ -143,7 +143,7 @@ export type BlockRegistry = {
 };
 
 /**
- * Block types the core defines itself. A registration may not shadow one —
+ * Block types the core defines itself. A registration may not shadow one -
  * silently overriding `paragraph` would be very hard to trace back.
  */
 const BUILT_IN_TYPES = new Set([

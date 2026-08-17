@@ -11,7 +11,7 @@ import type { TestStrapiInstance } from '@qkix/strapi-test-harness';
  * the admin endpoint does not hand tokens to the browser.
  *
  * Strapi loads a plugin through its `./strapi-server` export, which points at
- * `dist/` — so this exercises the built plugin, the same artefact customers
+ * `dist/` - so this exercises the built plugin, the same artefact customers
  * install, and the `test` target declares a dependency on `build` in
  * package.json. Without it Strapi boots with the plugin silently absent and
  * every assertion here fails on `strapi.plugin(...)` being undefined.
@@ -100,7 +100,7 @@ describe('GET /better-blocks/config', () => {
 
   it('serves the same defaults the plugin config declares', () => {
     // The controller passes its own inline fallbacks to `.config()`. They
-    // duplicate config/index.ts, so this pins the two together — if they drift,
+    // duplicate config/index.ts, so this pins the two together - if they drift,
     // the admin panel and the server stop agreeing about what a default is.
     const body = getConfig();
 

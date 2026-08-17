@@ -66,7 +66,7 @@ describe('text mark nesting', () => {
     ];
     const { container } = render(<BlocksRenderer content={content} />);
 
-    // fontSize is outermost and code innermost — the Astro renderer builds the
+    // fontSize is outermost and code innermost - the Astro renderer builds the
     // same order from buildTextMarks(), so both produce identical nesting.
     const chain = [
       'span[style*="font-size"]',
@@ -221,8 +221,8 @@ describe('media-embed migration', () => {
     const after = render(<BlocksRenderer content={content} />);
     const afterIframe = after.container.querySelector('iframe');
 
-    // The wrapper changes — an `embed` renders as a bb-embed figure rather than
-    // the old bare div — but what the reader sees is the same frame, same
+    // The wrapper changes - an `embed` renders as a bb-embed figure rather than
+    // the old bare div - but what the reader sees is the same frame, same
     // source, same aspect ratio.
     expect(afterIframe?.getAttribute('src')).toBe(url);
     expect(after.container.querySelector('.bb-embed-frame')).toHaveStyle({

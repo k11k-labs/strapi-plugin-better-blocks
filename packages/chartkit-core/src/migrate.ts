@@ -3,7 +3,7 @@
  *
  * A `ChartSpec` lives nested inside a Better Blocks document, so migrating one
  * is Better Blocks walking the document and handing each chart node to this
- * package — it never learns what a spec looks like.
+ * package - it never learns what a spec looks like.
  *
  * | Version | What changed |
  * | ------- | ------------ |
@@ -64,7 +64,7 @@ export function migrateChartSpec(value: unknown): ChartMigrationResult {
  * Version 1 to 2: `options.barMode` becomes `options.stackMode`.
  *
  * A rename only. The values are unchanged, so nothing about how a chart looks
- * moves — which is the kind of migration worth doing eagerly rather than
+ * moves - which is the kind of migration worth doing eagerly rather than
  * carrying a second name forever.
  */
 function toVersion2(spec: Partial<ChartSpec> & { options?: Record<string, unknown> }): ChartSpec {

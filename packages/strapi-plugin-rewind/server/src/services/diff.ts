@@ -18,17 +18,17 @@ export interface FieldChange {
   type: string;
   /**
    * A custom field's uid, when the attribute is one. Custom fields all report
-   * their storage type — usually `json` — so this is the only thing specific
+   * their storage type - usually `json` - so this is the only thing specific
    * enough for the owning package to key a diff renderer on.
    */
   customField?: string;
   kind: ChangeKind;
-  /** Scalars only — the values themselves, for a plain before/after. */
+  /** Scalars only - the values themselves, for a plain before/after. */
   before?: unknown;
   after?: unknown;
-  /** Prose fields — a word-level diff of the readable text. */
+  /** Prose fields - a word-level diff of the readable text. */
   spans?: DiffSpan[];
-  /** Relations and media — what was linked and unlinked. */
+  /** Relations and media - what was linked and unlinked. */
   linked?: RelationRef[];
   unlinked?: RelationRef[];
 }
@@ -105,8 +105,8 @@ const diff = ({ strapi }: { strapi: Core.Strapi }) => {
     /**
      * What changed between a version and the one before it.
      *
-     * Comparing against the previous version — rather than against the document
-     * as it stands — is what makes a history readable: each entry answers "what
+     * Comparing against the previous version - rather than against the document
+     * as it stands - is what makes a history readable: each entry answers "what
      * did this edit do?". The other question, "what would restoring this
      * change?", is what `restore.preview()` already answers.
      */

@@ -146,7 +146,7 @@ describe('edits', () => {
     };
 
     expect(hasAnyValue(blank)).toBe(false);
-    // One number anywhere is enough — a chart of a single reading is a chart.
+    // One number anywhere is enough - a chart of a single reading is a chart.
     expect(hasAnyValue(setCell(blank, 0, 1, 0))).toBe(true);
   });
 
@@ -232,7 +232,7 @@ describe('reading a number out of a cell', () => {
     ['3.2e3', 3200],
     ['', null],
     ['n/a', null],
-    ['—', null],
+    ['-', null],
   ])('reads %s as %s', (input, expected) => {
     expect(toNumber(input)).toBe(expected);
   });

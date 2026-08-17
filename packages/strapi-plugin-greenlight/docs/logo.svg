@@ -5,7 +5,7 @@
     Geometry, so this stays even if it is ever edited.
 
     A check drawn in three segments: the stages a document passes through, and the
-    last one amber — the greenlight it is finally given. Amber for the destination
+    last one amber - the greenlight it is finally given. Amber for the destination
     is the family's convention, the same as Rewind's leading triangle and
     Chartkit's leading bar.
 
@@ -19,7 +19,7 @@
     one as its own short path, laid exactly over the third dash. Both approaches
     that looked simpler are wrong: a second dashed path phased with a leading
     `0` dash puts a zero-length dash at the path start, and a zero-length dash with
-    a round cap paints a full circle — a stray amber dot on the bottom tip. And
+    a round cap paints a full circle - a stray amber dot on the bottom tip. And
     splitting the check into two stroked sub-paths puts a round cap on the vertex,
     which extends 22 past its endpoint in the direction of travel and pokes out
     past the corner where no linejoin can contain it.
@@ -31,7 +31,7 @@
     Path length is 101.82 (short leg) + 225.22 (long leg) = 327.04. The dash array
     is 112 / 56 / 51.52 / 56 / 51.52, which sums to exactly that so the pattern
     fits the path with no remainder. The first dash is 112 rather than an even
-    third because the corner sits at 101.82 — a third of the way along — and even
+    third because the corner sits at 101.82 - a third of the way along - and even
     thirds put the corner inside a gap, which loses the elbow and leaves three
     loose diagonal dashes that no longer read as a check at all. Swallowing the
     corner in dash one keeps the tick legible down to about 20px.
@@ -41,7 +41,7 @@
       y  150..362   midpoint 256
 
     Centred by construction rather than by eye: 123 of padding left and right, 150
-    top and bottom. The axes differ on purpose — matching them would make an
+    top and bottom. The axes differ on purpose - matching them would make an
     asymmetric mark look undersized.
   -->
   <path

@@ -35,7 +35,7 @@ describe('renderChart', () => {
 
   it('produces no NaN coordinates for any fixture', () => {
     // NaN in an attribute renders as nothing at all and gives no clue why, so
-    // it is worth asserting separately from the snapshots — a snapshot happily
+    // it is worth asserting separately from the snapshots - a snapshot happily
     // records NaN forever once it is baked in.
     for (const fixture of fixtures) {
       expect(svgOf(fixture.spec), fixture.id).not.toMatch(/NaN|Infinity|undefined/);
@@ -73,7 +73,7 @@ describe('renderChart', () => {
   });
 
   it('draws no bar where a value is null', () => {
-    // Five categories, two of them null — so three bars, not five.
+    // Five categories, two of them null - so three bars, not five.
     const svg = svgOf(fixtureById('null-hole').spec);
     expect(svg.match(/<rect/g)).toHaveLength(3);
   });
@@ -87,7 +87,7 @@ describe('renderChart', () => {
   });
 
   // The three below were all found by looking at the gallery, not by a failing
-  // test — every one of them rendered "successfully" and looked wrong.
+  // test - every one of them rendered "successfully" and looked wrong.
 
   it('caps how wide a single bar can get', () => {
     const svg = svgOf(fixtureById('single-point').spec);
@@ -127,7 +127,7 @@ describe('renderChart', () => {
       [...svg.matchAll(/fill="(var\(--chart-series-[^"]*)"/g)].map((m) => m[1])
     );
 
-    // Three series, three distinct swatch variables — a shared one would make
+    // Three series, three distinct swatch variables - a shared one would make
     // the grouping unreadable.
     expect(fills.size).toBe(3);
     expect(svg).toContain('--chart-series-1');
@@ -143,7 +143,7 @@ describe('renderChart', () => {
     ].map((m) => Number(m[1].replace(/,/g, '')));
 
     // Q4 totals 720 + 400 + 510 = 1630. The top tick need not reach the domain
-    // max — d3 picks round numbers — but it must be far above the largest
+    // max - d3 picks round numbers - but it must be far above the largest
     // single value (720), or the axis is scaled to values instead of totals and
     // two thirds of the stack is drawn off the plot.
     expect(Math.max(...labels)).toBeGreaterThan(720 * 1.5);
@@ -286,7 +286,7 @@ describe('renderChart', () => {
   it('names slices in the legend, since nothing else does', () => {
     const svg = svgOf(fixtureById('pie').spec);
 
-    // One series, four categories — so the legend carries the category labels,
+    // One series, four categories - so the legend carries the category labels,
     // not the series name.
     expect(svg).toContain('Search');
     expect(svg).toContain('Referral');
@@ -320,7 +320,7 @@ describe('renderChart', () => {
       (m) => m[1]
     );
 
-    // Six slices, but only the ones with room get a label — text spilling out
+    // Six slices, but only the ones with room get a label - text spilling out
     // of a sliver onto its neighbors is worse than no text.
     expect(labels.length).toBeGreaterThan(0);
     expect(labels.length).toBeLessThan(6);

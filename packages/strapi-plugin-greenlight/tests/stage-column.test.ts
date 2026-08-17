@@ -255,7 +255,7 @@ describe('the stage filter', () => {
     });
 
     expect(reached).toBe(true);
-    // The plugin's own key is gone — leaving it would fail schema validation.
+    // The plugin's own key is gone - leaving it would fail schema validation.
     expect(JSON.stringify(filters)).not.toContain('greenlightStage');
     expect(filters.$and).toContainEqual({ documentId: { $in: [inReview] } });
   });
@@ -270,7 +270,7 @@ describe('the stage filter', () => {
       filters: clause(wf.stages[0].id),
     });
 
-    // "in the first stage" OR "has no assignment at all" — without the second
+    // "in the first stage" OR "has no assignment at all" - without the second
     // half, the stage most documents are in is the one the filter misses.
     expect(filters.$and[0]).toEqual({
       $or: [{ documentId: { $in: [assigned] } }, { documentId: { $notIn: [assigned] } }],

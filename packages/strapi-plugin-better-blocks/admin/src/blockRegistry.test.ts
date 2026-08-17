@@ -11,7 +11,7 @@ import {
 } from './blockRegistry';
 import type { EditorBlockDefinition } from './blockRegistry';
 
-// The registry is module state by design — the admin registers once at boot —
+// The registry is module state by design - the admin registers once at boot -
 // so each test starts from empty.
 beforeEach(() => {
   clearRegisteredBlocks();

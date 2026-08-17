@@ -31,7 +31,7 @@ beforeAll(async () => {
         pluginOptions: { i18n: { localized: true } },
         attributes: {
           title: { type: 'string', pluginOptions: { i18n: { localized: true } } },
-          // Shared across locales — the field that makes restore dangerous.
+          // Shared across locales - the field that makes restore dangerous.
           slug: { type: 'string', pluginOptions: { i18n: { localized: false } } },
           author: {
             type: 'relation',
@@ -179,7 +179,7 @@ describe('preview', () => {
 
     expect(preview.brokenRelations).toHaveLength(1);
 
-    // And restoring anyway must not throw — it drops the target and says so.
+    // And restoring anyway must not throw - it drops the target and says so.
     const result = await restore().apply(version.id as number, null);
     await settle();
     expect(result.warnings.join(' ')).toMatch(/no longer exist/);

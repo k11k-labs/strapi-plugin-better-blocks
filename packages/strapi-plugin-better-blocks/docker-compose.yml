@@ -1,5 +1,5 @@
 services:
-  # Strapi v5 — http://localhost:1337/admin
+  # Strapi v5 - http://localhost:1337/admin
   strapi:
     image: node:20-alpine
     working_dir: /app

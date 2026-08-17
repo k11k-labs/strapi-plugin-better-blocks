@@ -8,7 +8,7 @@ const STORAGE_KEY = 'greenlight:coverage';
 /**
  * Which content types are under review, and with which stages.
  *
- * Both list-view extensions have to decide *synchronously* whether to exist —
+ * Both list-view extensions have to decide *synchronously* whether to exist -
  * they are plain functions inside a `useMemo`, they cannot await, and nothing
  * re-runs them when a fetch lands. The answer they need lives in the database,
  * because which content types are covered is configured in the admin panel
@@ -60,7 +60,7 @@ const MIN_REFRESH_MS = 30_000;
 let lastPrimed = 0;
 
 /**
- * Refresh the cache. Safe to call often — concurrent calls share one request,
+ * Refresh the cache. Safe to call often - concurrent calls share one request,
  * and a failure (a 401 before login, most likely) is swallowed so that the next
  * call can try again.
  */
@@ -98,7 +98,7 @@ export const primeCoverage = ({ force = false } = {}): Promise<void> => {
 /**
  * Which content type a Content Manager list view is showing.
  *
- * Not available from either hook's payload — they carry the list layout, which
+ * Not available from either hook's payload - they carry the list layout, which
  * is fields, settings and metadata, and nothing that names the content type.
  * The route does: `/content-manager/collection-types/:uid` is where the page's
  * own `model` comes from, and the hooks only ever run while it is rendering.

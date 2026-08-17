@@ -1,7 +1,7 @@
 /**
  * A word-level diff, and the text extraction that makes it useful.
  *
- * The alternative — reporting "content changed" — is true and worthless. The
+ * The alternative - reporting "content changed" - is true and worthless. The
  * field an editor cares most about is usually rich text stored as JSON, so the
  * readable part is pulled out and compared as prose. That is renderer-agnostic:
  * it walks the structure collecting anything that reads as text, without
@@ -100,7 +100,7 @@ const STRUCTURAL_KEYS = new Set([
  * Pulls the human-readable text out of an arbitrary value.
  *
  * Rich text, components and dynamic zones are all nested objects and arrays
- * whose shape this plugin deliberately does not model — a `text` key here, a
+ * whose shape this plugin deliberately does not model - a `text` key here, a
  * `children` array there. Collecting every string reached is imprecise but
  * stable across editors, and it is what turns "content changed" into a sentence
  * an editor recognises.
@@ -109,7 +109,7 @@ export const extractText = (value: unknown, depth = 0): string => {
   if (depth > 12) return '';
   if (value == null) return '';
   if (typeof value === 'string') return value;
-  // Booleans are marks — `bold: true` on a text node — never prose. Rendering
+  // Booleans are marks - `bold: true` on a text node - never prose. Rendering
   // them would put the word "true" into the diff every time someone bolds
   // something.
   if (typeof value === 'boolean') return '';

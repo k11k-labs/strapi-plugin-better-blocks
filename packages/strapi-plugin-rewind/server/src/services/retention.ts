@@ -6,7 +6,7 @@ import type { RetentionPolicy } from '../utils/thinning';
 
 /**
  * Rows deleted per statement. Small enough that other writers are never held up
- * for long — an editor saving a document must not wait on the nightly tidy-up.
+ * for long - an editor saving a document must not wait on the nightly tidy-up.
  */
 const DELETE_BATCH = 500;
 
@@ -24,7 +24,7 @@ const retention = ({ strapi }: { strapi: Core.Strapi }) => {
    * enough to be a candidate.
    *
    * Worked out first, and then handled a document at a time, because "the
-   * newest version that day" is a question about a whole document's history —
+   * newest version that day" is a question about a whole document's history -
    * but holding every version of every document in memory to answer it is how
    * a tidy-up job takes a site down.
    */

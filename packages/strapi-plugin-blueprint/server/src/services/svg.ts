@@ -5,7 +5,7 @@ import type { Layout, Placed, RoutedEdge } from '../types';
  * Every string that reaches the output goes through here.
  *
  * Content-type names come from developers rather than from the public, so this
- * is not the front line of anything — but the SVG is injected into the admin
+ * is not the front line of anything - but the SVG is injected into the admin
  * panel's DOM and also handed to people to commit into a repository, and a
  * display name containing `</text><script>` must not become script in either
  * place. Escaping at the boundary is the only version of this that stays true
@@ -124,7 +124,7 @@ const box = (node: Placed): string => {
  * A smooth line through dagre's control points.
  *
  * dagre hands back a polyline, and drawn literally it is a chain of visible
- * kinks — the thing that makes a generated diagram look generated. Curving
+ * kinks - the thing that makes a generated diagram look generated. Curving
  * through the midpoints costs nothing and is what the eye expects of a wire.
  */
 const path = (points: Array<{ x: number; y: number }>): string => {
@@ -162,7 +162,7 @@ const edge = (routed: RoutedEdge): string => {
 /**
  * The diagram, as a standalone SVG document.
  *
- * Standalone on purpose — styles and marker inline, no external references — so
+ * Standalone on purpose - styles and marker inline, no external references - so
  * the same bytes work in the admin panel, in a README, and opened straight from
  * a downloads folder. An `<img>` tag will not fetch anything an SVG refers to,
  * which is what makes the usual "export" of this category a raster screenshot

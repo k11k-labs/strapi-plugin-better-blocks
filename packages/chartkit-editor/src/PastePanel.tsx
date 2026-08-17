@@ -2,8 +2,8 @@
  * Pasting a range out of a spreadsheet.
  *
  * Shows what the paste parsed into *before* it replaces anything. The parser
- * has to guess — is the first row a header, is the comma a separator or a
- * decimal mark — and a wrong guess that silently overwrites an author's data is
+ * has to guess - is the first row a header, is the comma a separator or a
+ * decimal mark - and a wrong guess that silently overwrites an author's data is
  * much worse than one they can see and cancel.
  */
 
@@ -39,7 +39,7 @@ export type PastePanelProps = {
   initialText?: string;
   /**
    * The file the text came from. Recorded on the spec so the editor can say
-   * where the numbers came from and offer to read it again — the values
+   * where the numbers came from and offer to read it again - the values
    * themselves are written in, so nothing has to be fetched at render time.
    */
   origin?: PasteOrigin;
@@ -72,7 +72,7 @@ export function PastePanel({ spec, onApply, onCancel, initialText = '', origin }
             {/* Its own `Field.Root`, which is not decoration. A design-system
               control takes its error styling from the nearest field context,
               and React context reaches through the portal this panel renders
-              into — so without one, a textarea sitting inside a chart field
+              into - so without one, a textarea sitting inside a chart field
               that happens to be invalid paints itself red about someone else's
               problem. */}
             <Field.Root name="paste-text">

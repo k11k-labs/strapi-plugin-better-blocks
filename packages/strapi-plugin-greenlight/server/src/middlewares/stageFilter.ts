@@ -32,7 +32,7 @@ interface Clause {
  *
  * The Content Manager writes filters as `filters[$and][0][greenlightStage][$eq]`,
  * but hand-written queries nest differently, so this walks the whole tree.
- * Objects left empty by the removal are dropped — an empty `{}` inside `$and`
+ * Objects left empty by the removal are dropped - an empty `{}` inside `$and`
  * is not harmless, it is a filter matching everything.
  */
 const extract = (node: unknown, clauses: Clause[]): unknown => {
@@ -72,13 +72,13 @@ const isEmpty = (value: unknown): boolean =>
  * run.
  *
  * A stage lives in this plugin's own table, and the Content Manager validates
- * every filter against the content type's schema before the query is built — so
+ * every filter against the content type's schema before the query is built - so
  * the only way through is to answer the stage question here, up front, and hand
  * the result on as a `documentId` filter, which *is* an attribute it knows.
  *
  * The subtlety is documents with no assignment row. Under
  * `onMissingAssignment: 'firstStage'` they count as being in the first stage and
- * the gate blocks them there, so filtering by that stage has to include them —
+ * the gate blocks them there, so filtering by that stage has to include them -
  * expressed as "has no assignment at all", the `$notIn` branch below. Leave it
  * out and the first stage is the one stage the filter gets wrong, which is also
  * the stage most documents are in.
@@ -135,7 +135,7 @@ const buildFilter = async (
  * Rewrites a review-stage filter before the Content Manager sees it.
  *
  * Registered on the Koa app in `bootstrap()`, which puts it after Strapi's own
- * middlewares — authentication and error formatting have both run — and before
+ * middlewares - authentication and error formatting have both run - and before
  * the router, which is only mounted when the server starts listening.
  */
 export const stageFilter =

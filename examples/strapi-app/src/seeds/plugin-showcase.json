@@ -6,7 +6,7 @@
       "children": [
         {
           "type": "text",
-          "text": "Better Blocks Renderer — Feature Showcase"
+          "text": "Better Blocks Renderer - Feature Showcase"
         }
       ]
     },
@@ -424,7 +424,7 @@
         },
         {
           "type": "text",
-          "text": " — Alan Kay"
+          "text": " - Alan Kay"
         }
       ]
     },
@@ -832,7 +832,7 @@
       "children": [
         {
           "type": "text",
-          "text": "Embed audio straight from the Media Library (or a URL) with a native HTML5 player. Authors set the title, caption, alignment and player behaviour — autoplay, loop, controls and preload — right in the editor."
+          "text": "Embed audio straight from the Media Library (or a URL) with a native HTML5 player. Authors set the title, caption, alignment and player behaviour - autoplay, loop, controls and preload - right in the editor."
         }
       ]
     },
@@ -841,7 +841,7 @@
       "file": {
         "url": ""
       },
-      "title": "Better Blocks — sample tune",
+      "title": "Better Blocks - sample tune",
       "caption": "A short arpeggio bundled with the playground.",
       "player": {
         "autoplay": false,
@@ -872,7 +872,7 @@
       "children": [
         {
           "type": "text",
-          "text": "Embed posts from social platforms by URL, or by pasting a platform embed code. The plugin fetches each post’s official embed server-side via the oEmbed proxy — no platform tokens reach the browser — and strips the widget script tags, which the renderers inject themselves."
+          "text": "Embed posts from social platforms by URL, or by pasting a platform embed code. The plugin fetches each post’s official embed server-side via the oEmbed proxy - no platform tokens reach the browser - and strips the widget script tags, which the renderers inject themselves."
         }
       ]
     },
@@ -894,7 +894,7 @@
           "text": ""
         }
       ],
-      "caption": "A classic public tweet, embedded by URL — no token required."
+      "caption": "A classic public tweet, embedded by URL - no token required."
     },
     {
       "type": "social-embed",
@@ -915,7 +915,7 @@
           "text": ""
         }
       ],
-      "caption": "A public TikTok video rendered via TikTok’s tokenless oEmbed. Note the stored markup carries no widget script tag — the renderer loads embed.js itself."
+      "caption": "A public TikTok video rendered via TikTok’s tokenless oEmbed. Note the stored markup carries no widget script tag - the renderer loads embed.js itself."
     },
     {
       "type": "social-embed",
@@ -938,7 +938,7 @@
           "text": ""
         }
       ],
-      "caption": "A public Pinterest pin — tokenless oEmbed returns an iframe + thumbnail."
+      "caption": "A public Pinterest pin - tokenless oEmbed returns an iframe + thumbnail."
     },
     {
       "type": "social-embed",
@@ -952,7 +952,7 @@
           "text": ""
         }
       ],
-      "caption": "A public @strapijs post. Instagram has no tokenless oEmbed, so this one was authored by pasting the post’s embed code — the permalink was recovered from the snippet."
+      "caption": "A public @strapijs post. Instagram has no tokenless oEmbed, so this one was authored by pasting the post’s embed code - the permalink was recovered from the snippet."
     },
     {
       "type": "social-embed",
@@ -966,7 +966,7 @@
           "text": ""
         }
       ],
-      "caption": "A public @strapijs video, authored as embed code only with no post URL at all — the renderers must not fall back to an empty link."
+      "caption": "A public @strapijs video, authored as embed code only with no post URL at all - the renderers must not fall back to an empty link."
     },
     {
       "type": "social-embed",
@@ -985,7 +985,7 @@
           "text": ""
         }
       ],
-      "caption": "LinkedIn has no oEmbed API — the plugin builds this iframe from the post’s URN. Note the urn:li:activity: type: addressing an activity id as a share 404s."
+      "caption": "LinkedIn has no oEmbed API - the plugin builds this iframe from the post’s URN. Note the urn:li:activity: type: addressing an activity id as a share 404s."
     },
     {
       "type": "social-embed",
@@ -998,7 +998,7 @@
           "text": ""
         }
       ],
-      "caption": "The same pin stored without markup (the author never hit “Fetch preview”) — this is the graceful fallback link card."
+      "caption": "The same pin stored without markup (the author never hit “Fetch preview”) - this is the graceful fallback link card."
     },
     {
       "type": "paragraph",

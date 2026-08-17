@@ -6,7 +6,7 @@
 
     Two transport-control triangles pointing back. Each is drawn as a path and
     stroked in its own fill at 16 with round joins, which is what rounds the
-    corners — so every coordinate below is inset by 8 from the shape you
+    corners - so every coordinate below is inset by 8 from the shape you
     actually see.
 
     Visual boxes:
@@ -19,7 +19,7 @@
     centred on the canvas rather than optically nudged, because a symmetric
     shape does not need it.
 
-    The leading triangle is amber — the one you land on, and the same accent
+    The leading triangle is amber - the one you land on, and the same accent
     Chartkit uses for the bar that matters.
   -->
   <path

@@ -215,7 +215,7 @@ const spanProp = (value: number): number | undefined =>
  * Inserts a column beside the caret's cell.
  *
  * A cell that straddles the insertion boundary is widened rather than given a
- * new neighbour — otherwise the merge would visually break apart. Every other
+ * new neighbour - otherwise the merge would visually break apart. Every other
  * row gets a fresh cell, placed at the child index that lands it in the new
  * grid column (which is not the same as the column number once spans exist).
  */
@@ -360,7 +360,7 @@ const insertRow = (
  * Deletes the row the caret sits in.
  *
  * Cells reaching into the row from above simply shrink. Cells that *start* in
- * the row but continue below it can't just be removed — they're re-inserted
+ * the row but continue below it can't just be removed - they're re-inserted
  * into the following row, one row shorter, so the merge survives.
  */
 const deleteRow = (editor: Editor, location: TableLocation) => {
@@ -437,7 +437,7 @@ const deleteTable = (editor: Editor, location: TableLocation) => {
  * Whether a range straddles the header/body divide.
  *
  * A header cell labels a column; one that runs from the header down into the
- * body labels nothing and belongs to neither. HTML agrees — a `rowSpan` may not
+ * body labels nothing and belongs to neither. HTML agrees - a `rowSpan` may not
  * cross the `<thead>`/`<tbody>` boundary, so a browser would clamp it and render
  * something different from what the editor shows. Merging is therefore confined
  * to one side of the divide. Merging *within* the header (a heading spanning two
@@ -472,7 +472,7 @@ const canSplitCell = (location: TableLocation): boolean =>
  *
  * The range arrives already squared off (see expandRangeToRectangle), so the
  * result always tiles the grid. Content from the absorbed cells is appended to
- * the anchor rather than discarded — losing an author's text to a layout
+ * the anchor rather than discarded - losing an author's text to a layout
  * operation would be unforgivable.
  */
 const mergeCells = (editor: Editor, location: TableLocation) => {

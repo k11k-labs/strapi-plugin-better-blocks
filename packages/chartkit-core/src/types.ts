@@ -5,7 +5,7 @@
  * and how it should look. It is plain JSON, because it is stored inside a
  * Better Blocks document and travels through Strapi's API untouched.
  *
- * Deliberately free of any framework, DOM or Strapi types — this package turns
+ * Deliberately free of any framework, DOM or Strapi types - this package turns
  * a spec into an SVG string and nothing else.
  */
 
@@ -16,7 +16,7 @@
  *
  * Unlike a Better Blocks document, a `ChartSpec` carries its version
  * explicitly. It has to: the spec sits nested inside someone else's document,
- * and Better Blocks knows nothing about its shape — it only knows to call this
+ * and Better Blocks knows nothing about its shape - it only knows to call this
  * package's migrator. Inferring the version from content, the way the document
  * format does, would mean re-deriving it from scratch on every schema change.
  */
@@ -41,7 +41,7 @@ export type ChartType = 'bar' | 'line' | 'area' | 'pie' | 'donut';
 /**
  * One line of numbers, named.
  *
- * `null` is a hole, not a zero — a line chart breaks across it rather than
+ * `null` is a hole, not a zero - a line chart breaks across it rather than
  * interpolating through it, and a bar simply is not drawn. Making that
  * distinction representable is why the array is not `number[]`.
  */
@@ -62,7 +62,7 @@ export type InlineData = {
  *
  * The values are **materialized**: parsing happens once, in the editor, and the
  * result is written into the spec alongside a reference to the file it came
- * from. So this renders exactly like `inline` — no fetching, no resolver, and
+ * from. So this renders exactly like `inline` - no fetching, no resolver, and
  * no permission model to get wrong at render time.
  *
  * The reference is kept anyway, so the editor can offer to re-read the file
@@ -73,7 +73,7 @@ export type MediaData = {
   source: 'media';
   /** Media Library file id, when the file came from there. */
   fileId?: number;
-  /** The file's URL at import time — for showing the author what this was. */
+  /** The file's URL at import time - for showing the author what this was. */
   url?: string;
   /** File name at import time, for the same reason. */
   name?: string;
@@ -88,7 +88,7 @@ export type MediaData = {
  *
  * The discriminant exists from the first version even though it started with
  * one member, so adding a source later does not invalidate documents already
- * written. `collection` — reading live from a Strapi collection — is
+ * written. `collection` - reading live from a Strapi collection - is
  * deliberately absent: it is a design problem about permissions and caching,
  * not a coding one, and a resolver that ignores Strapi's permission model
  * leaks draft content into public API responses while looking perfectly
@@ -107,18 +107,18 @@ export type AxisBounds = {
 /**
  * How a chart with more than one series arranges them.
  *
- * - **`grouped`** — series drawn side by side, or overlaid, and read
+ * - **`grouped`** - series drawn side by side, or overlaid, and read
  *   individually.
- * - **`stacked`** — series piled on each other, so the height at a category is
+ * - **`stacked`** - series piled on each other, so the height at a category is
  *   the total. Good for parts of a whole.
  *
- * Applies to `bar` and `area`. It has no meaning for `line` — stacked lines are
+ * Applies to `bar` and `area`. It has no meaning for `line` - stacked lines are
  * read as cumulative totals, which is what an area chart says visually and a
- * line does not — nor for `pie` and `donut`, which are already a whole divided
+ * line does not - nor for `pie` and `donut`, which are already a whole divided
  * up.
  *
  * Not a chart `type`, because it changes the arrangement rather than the mark:
- * everything else — axes, legend, baseline — is identical, and a single-series
+ * everything else - axes, legend, baseline - is identical, and a single-series
  * chart looks the same either way.
  */
 export type StackMode = 'grouped' | 'stacked';

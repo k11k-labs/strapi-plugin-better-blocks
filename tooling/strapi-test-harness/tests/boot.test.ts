@@ -38,7 +38,7 @@ beforeAll(async () => {
         info: { displayName: 'Section' },
         attributes: {
           heading: { type: 'string' },
-          // Nested component — the case Strapi's own history snapshot has an
+          // Nested component - the case Strapi's own history snapshot has an
           // open TODO for, so every fixture here needs to exercise it.
           meta: {
             type: 'component',

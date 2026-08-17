@@ -99,7 +99,7 @@ const IconBadge = styled.span`
   }
 `;
 
-// Native player inside the void card — pointer-events kept live so the author
+// Native player inside the void card - pointer-events kept live so the author
 // can test playback without leaving the editor.
 const PreviewAudio = styled.audio`
   width: 100%;
@@ -205,7 +205,7 @@ const AudioElementComponent = ({
             <Typography fontWeight="bold">
               {el.title ||
                 el.file?.name ||
-                (hasSource ? 'Audio' : 'Audio — click to add a file')}
+                (hasSource ? 'Audio' : 'Audio - click to add a file')}
             </Typography>
           </Header>
 
@@ -219,7 +219,7 @@ const AudioElementComponent = ({
             />
           ) : (
             <Placeholder variant="pi">
-              No audio selected — click to choose from the Media Library or
+              No audio selected - click to choose from the Media Library or
               paste a URL.
             </Placeholder>
           )}

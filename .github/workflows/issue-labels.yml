@@ -1,7 +1,7 @@
 name: Label issues by package
 
 # The issue form asks which package the report is about, but a form can only
-# apply fixed labels — the answer would otherwise sit in the body as prose and
+# apply fixed labels - the answer would otherwise sit in the body as prose and
 # every issue would still need sorting by hand. This reads the answer and
 # applies the matching `pkg:` label.
 on:
@@ -23,7 +23,7 @@ jobs:
             // The form renders each answer as a section under its question.
             const match = body.match(/###\s*Which package\?\s*\n+([^\n]+)/i);
             if (!match) {
-              core.info('No package question in this issue — nothing to label.');
+              core.info('No package question in this issue - nothing to label.');
               return;
             }
 
@@ -47,7 +47,7 @@ jobs:
 
             const wanted = MAP.find(([needle]) => answer.includes(needle))?.[1];
             if (!wanted) {
-              core.info(`No package matched "${answer}" — leaving it for triage.`);
+              core.info(`No package matched "${answer}" - leaving it for triage.`);
               return;
             }
 

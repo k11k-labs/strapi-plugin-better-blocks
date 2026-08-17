@@ -3,7 +3,7 @@ export default {
     /**
      * Uids never to draw, whatever the UI asks for.
      *
-     * For schemas with a corner nobody wants on the picture — a bulky
+     * For schemas with a corner nobody wants on the picture - a bulky
      * integration type, a legacy import table. The UI can hide things too; this
      * is the version that survives a page reload and applies to the API as well.
      *

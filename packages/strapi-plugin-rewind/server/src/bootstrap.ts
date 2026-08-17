@@ -28,7 +28,7 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
   await persistVersionsTable(strapi, 'rewind_versions');
   await createLookupIndex(strapi);
 
-  // Detached on purpose — see backfillLabels. A boot must not wait on a
+  // Detached on purpose - see backfillLabels. A boot must not wait on a
   // cosmetic column, and nothing else depends on it having finished.
   void backfillLabels(strapi, VERSION_UID).catch((error: unknown) =>
     strapi.log.warn(
@@ -142,7 +142,7 @@ const createLookupIndex = async (strapi: Core.Strapi): Promise<void> => {
          ON ${tableName} (content_type, related_document_id, locale, created_at)`
     );
   } catch (error) {
-    // A missing index is slow, not broken — never a reason to refuse to boot.
+    // A missing index is slow, not broken - never a reason to refuse to boot.
     strapi.log.warn(
       `[rewind] could not create the lookup index, queries will be slower: ${
         error instanceof Error ? error.message : String(error)

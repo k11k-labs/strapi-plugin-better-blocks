@@ -3,7 +3,7 @@ import type { Core } from '@strapi/strapi';
 /**
  * Registers the chart custom field.
  *
- * `json`, because a chart is a spec — a type, some labels, some series — and
+ * `json`, because a chart is a spec - a type, some labels, some series - and
  * the alternatives are worse. A relation would need a content type nobody
  * asked for; text would need every consumer to parse it and guess at what
  * failure means.

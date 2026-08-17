@@ -9,7 +9,7 @@
  * - **Zero is not forced into the domain.** A bar encodes magnitude by length
  *   from a baseline, so cropping the axis lies about proportions. A line
  *   encodes change by slope, and cropping to the data is what makes the shape
- *   readable — a temperature chart starting at zero is mostly empty space.
+ *   readable - a temperature chart starting at zero is mostly empty space.
  *   An *area* chart does force zero, because the filled region is measured from
  *   the baseline and is meaningless without it.
  *
@@ -80,7 +80,7 @@ export function renderLine(input: LineRenderInput): string {
   const stacking = stacked && type === 'area';
   // Running total per category, so each band is drawn on top of the ones below
   // it. A missing value contributes nothing, which means the bands above it sit
-  // lower at that category — the total genuinely is smaller there. Holding them
+  // lower at that category - the total genuinely is smaller there. Holding them
   // at the height they would have had would assert a reading nobody took.
   const baselines = data.labels.map(() => 0);
 
@@ -142,7 +142,7 @@ export function renderLine(input: LineRenderInput): string {
 /**
  * Dots for points with no neighbor to join to.
  *
- * A path through a single point draws nothing at all — there is no segment —
+ * A path through a single point draws nothing at all - there is no segment -
  * so a reading surrounded by gaps would silently vanish from the chart. That is
  * the worst kind of rendering bug: the data is there, the chart is drawn, and
  * the value is simply invisible.
@@ -185,7 +185,7 @@ function valueAt(series: Series, index: number): number | null {
  * Rounds the numbers in a path.
  *
  * d3 emits full floating-point precision, which triples the size of the markup
- * and makes a snapshot diff unreadable — a one-pixel change should not rewrite
+ * and makes a snapshot diff unreadable - a one-pixel change should not rewrite
  * every coordinate in the file. Two decimals is far below what any renderer
  * resolves.
  */

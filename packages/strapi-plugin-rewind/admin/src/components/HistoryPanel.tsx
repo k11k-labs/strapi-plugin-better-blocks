@@ -45,7 +45,7 @@ interface RestorePreview {
  *
  * These name what happened to the document, not what the plugin did. "Replaced
  * by restore" in particular: that version holds the state a restore was about
- * to overwrite, so it is the undo point for that restore — "Before restore"
+ * to overwrite, so it is the undo point for that restore - "Before restore"
  * read as a moment in time rather than a state you can go back to.
  */
 const ORIGIN_LABEL: Record<string, string> = {

@@ -9,7 +9,7 @@ import { useFetchClient } from '@strapi/admin/strapi-admin';
  * over its admin HTTP routes. That plugin exposes no reusable admin components,
  * so HTTP is the only integration surface.
  *
- * Everything here degrades to "unavailable" when the plugin isn't installed —
+ * Everything here degrades to "unavailable" when the plugin isn't installed -
  * the video block stays fully usable without it.
  * -------------------------------------------------------------------------*/
 
@@ -61,7 +61,7 @@ export interface UseMuxAssetsResult {
  *
  * Availability is decided by the asset-list call itself rather than the
  * plugin's `mux-settings` route: that route reports "configured" only when a
- * *webhook signing secret* is also set, which listing assets does not need — so
+ * *webhook signing secret* is also set, which listing assets does not need - so
  * it answers false for perfectly usable installs.
  */
 export const useMuxAssets = (enabled: boolean): UseMuxAssetsResult => {

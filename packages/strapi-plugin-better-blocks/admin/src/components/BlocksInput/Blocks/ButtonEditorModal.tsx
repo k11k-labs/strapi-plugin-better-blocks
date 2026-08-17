@@ -502,7 +502,7 @@ const ColorField = ({
       />
       <HexInput
         value={value ?? ''}
-        placeholder="—"
+        placeholder="-"
         spellCheck={false}
         onChange={(e) => onChange(e.target.value)}
       />

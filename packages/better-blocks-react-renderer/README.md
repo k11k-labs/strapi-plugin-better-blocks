@@ -1,6 +1,6 @@
 <h1 align="center">Better Blocks React Renderer</h1>
 
-<p align="center">React renderer for Strapi v5 Blocks content — supports all standard blocks plus Better Blocks features: color, highlight, text alignment, nested lists, to-do lists, tables, media embeds, image captions, and more.</p>
+<p align="center">React renderer for Strapi v5 Blocks content - supports all standard blocks plus Better Blocks features: color, highlight, text alignment, nested lists, to-do lists, tables, media embeds, image captions, and more.</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@qkix/better-blocks-react-renderer">
@@ -70,7 +70,7 @@ npm install @qkix/better-blocks-react-renderer
 ```tsx
 import { BlocksRenderer } from '@qkix/better-blocks-react-renderer';
 
-// Basic — renders all blocks including color/highlight
+// Basic - renders all blocks including color/highlight
 <BlocksRenderer content={blocks} />;
 ```
 
@@ -853,7 +853,7 @@ Override any text modifier with your own component:
 ## Registered Block Types
 
 `blocks` overrides how a **known** block is drawn. `blockPlugins` adds a block
-type this renderer has never heard of — one owned by another package, such as a
+type this renderer has never heard of - one owned by another package, such as a
 chart.
 
 ```tsx
@@ -870,8 +870,8 @@ const chart: BlockPlugin = {
 <BlocksRenderer content={content} blockPlugins={[chart]} />;
 ```
 
-The component receives the whole `node` — this renderer does not know what
-attributes the block has, which is the point — and, when the content model is
+The component receives the whole `node` - this renderer does not know what
+attributes the block has, which is the point - and, when the content model is
 `inline` or `blocks`, its rendered `children`. A registered block works at any
 depth, including inside a callout or a details.
 
@@ -960,7 +960,7 @@ with the showcase articles, plus both renderers displaying the same content.
 ### Development workflow
 
 1. Make changes to the renderer source in `packages/better-blocks-react-renderer/src/`
-2. Rebuild with `docker compose up --build` — the renderer is compiled into the image
+2. Rebuild with `docker compose up --build` - the renderer is compiled into the image
 3. Editing `examples/react-app/src/` hot-reloads on its own, with no rebuild
 
 ### Without Docker

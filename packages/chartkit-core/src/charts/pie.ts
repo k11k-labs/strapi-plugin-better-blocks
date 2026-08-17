@@ -2,7 +2,7 @@
  * The pie chart, and the donut that is a pie with its middle removed.
  *
  * This is the first chart here with no axes, no baseline and no categories
- * along a scale — so it shares almost nothing with the others except the title,
+ * along a scale - so it shares almost nothing with the others except the title,
  * the legend and the accessible description. Trying to route it through the
  * cartesian pipeline would mean threading "except for pie" through every step
  * of it.
@@ -63,7 +63,7 @@ export function renderPie(input: PieRenderInput): string {
   const innerRadius = type === 'donut' ? radius * DONUT_RATIO : 0;
 
   // sort(null) keeps the author's order. Left to itself d3 sorts by size, which
-  // would break the correspondence between slice order and legend order — and
+  // would break the correspondence between slice order and legend order - and
   // the legend is the only thing naming these slices.
   const arcs = d3Pie<number>()
     .sort(null)
@@ -131,7 +131,7 @@ export function renderPie(input: PieRenderInput): string {
  *
  * So it measures instead. At the label's radius the wedge is about a chord
  * wide, and the text must also fit within the thickness of the ring. A label
- * spilling out of its slice onto its neighbors is worse than no label — the
+ * spilling out of its slice onto its neighbors is worse than no label - the
  * legend already names every category, and the figures are in the description.
  */
 function labelFits(
@@ -145,7 +145,7 @@ function labelFits(
   // Measured at the text's inner edge rather than its middle: a wedge narrows
   // toward the center, so the bottom of the label is where it runs out of room
   // first. Clamped at half a turn, past which the wedge is wider than its own
-  // chord and the formula turns back on itself — a full circle would otherwise
+  // chord and the formula turns back on itself - a full circle would otherwise
   // report zero width for the slice with the most room of all.
   const tightestRadius = Math.max(1, labelRadius - LABEL_FONT_SIZE / 2);
   const chord = 2 * tightestRadius * Math.sin(Math.min(angle, Math.PI) / 2);
@@ -159,7 +159,7 @@ function labelFits(
  * A slice's share, as a percentage.
  *
  * Percentages rather than the raw values: a pie answers "how much of the whole"
- * and nothing else — anyone who needs the figures has the accessible
+ * and nothing else - anyone who needs the figures has the accessible
  * description, and a legend of numbers is what a table is for.
  */
 function formatShare(value: number, total: number): string {
@@ -169,7 +169,7 @@ function formatShare(value: number, total: number): string {
   return percent < 10 ? `${percent.toFixed(1)}%` : `${Math.round(percent)}%`;
 }
 
-/** Rounds the numbers in a path — see the note in charts/line.ts. */
+/** Rounds the numbers in a path - see the note in charts/line.ts. */
 function roundPath(d: string): string {
   return d.replace(/-?\d+\.\d+/g, (match) => String(round(Number(match))));
 }

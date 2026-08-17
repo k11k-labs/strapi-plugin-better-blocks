@@ -6,7 +6,7 @@
       "children": [
         {
           "type": "text",
-          "text": "Better Blocks Renderer — Feature Showcase"
+          "text": "Better Blocks Renderer - Feature Showcase"
         }
       ]
     },
@@ -816,7 +816,7 @@
         },
         {
           "type": "text",
-          "text": " — Alan Kay"
+          "text": " - Alan Kay"
         }
       ]
     },
@@ -896,7 +896,7 @@
       "children": [
         {
           "type": "text",
-          "text": "This block has no language set — it renders as themed plaintext (no syntax colors)."
+          "text": "This block has no language set - it renders as themed plaintext (no syntax colors)."
         }
       ]
     },
@@ -1189,7 +1189,7 @@
       "children": [
         {
           "type": "text",
-          "text": "A spanned-over slot carries no node — cells are emitted in document order and the span attributes reconstruct the grid, exactly like hand-written HTML."
+          "text": "A spanned-over slot carries no node - cells are emitted in document order and the span attributes reconstruct the grid, exactly like hand-written HTML."
         }
       ]
     },
@@ -1398,7 +1398,7 @@
         "width": 600,
         "height": 200
       },
-      "caption": "Better Blocks — a rich-text editor plugin for Strapi v5",
+      "caption": "Better Blocks - a rich-text editor plugin for Strapi v5",
       "imageAlign": "center",
       "children": [
         {
@@ -1485,7 +1485,7 @@
       "children": [
         {
           "type": "text",
-          "text": "The new embed block renders a provider's sanitized iframe verbatim inside an aspect-ratio box — no client-side JavaScript."
+          "text": "The new embed block renders a provider's sanitized iframe verbatim inside an aspect-ratio box - no client-side JavaScript."
         }
       ]
     },
@@ -1532,7 +1532,7 @@
       "url": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
       "poster": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/images/ForBiggerBlazes.jpg",
       "title": "For Bigger Blazes",
-      "caption": "A native <video> from a direct file URL — zero client-side JavaScript.",
+      "caption": "A native <video> from a direct file URL - zero client-side JavaScript.",
       "player": {
         "controls": true,
         "autoplay": false,
@@ -1553,7 +1553,7 @@
       "provider": "mux",
       "playbackId": "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe",
       "title": "Mux HLS stream",
-      "caption": "An HLS (.m3u8) Mux asset — the stream URL and poster are derived from the playback id.",
+      "caption": "An HLS (.m3u8) Mux asset - the stream URL and poster are derived from the playback id.",
       "player": {
         "controls": true
       },
@@ -1646,7 +1646,7 @@
       "children": [
         {
           "type": "text",
-          "text": "Mermaid diagrams are pre-rendered to SVG on the server — zero client-side JavaScript:"
+          "text": "Mermaid diagrams are pre-rendered to SVG on the server - zero client-side JavaScript:"
         }
       ]
     },
@@ -2137,7 +2137,7 @@
       "platform": "tiktok",
       "url": "https://www.tiktok.com/@scout2015/video/6718335390845095173",
       "alignment": "center",
-      "caption": "TikTok — its oEmbed html ships an inline <script>. It's stripped before render, so the lazy loader is the only injector (no duplicate embed.js), and the loader calls tiktokEmbed.lib.render() to hydrate the blockquote.",
+      "caption": "TikTok - its oEmbed html ships an inline <script>. It's stripped before render, so the lazy loader is the only injector (no duplicate embed.js), and the loader calls tiktokEmbed.lib.render() to hydrate the blockquote.",
       "oembed": {
         "html": "<blockquote class=\"tiktok-embed\" cite=\"https://www.tiktok.com/@scout2015/video/6718335390845095173\" data-video-id=\"6718335390845095173\" data-embed-from=\"oembed\" style=\"max-width:605px; min-width:325px;\"> <section> <a target=\"_blank\" title=\"@scout2015\" href=\"https://www.tiktok.com/@scout2015?refer=embed\">@scout2015</a> <p>Scramble up ur name &amp; I&rsquo;ll try to guess it&#128525;&#10084;&#65039; <a title=\"foryoupage\" target=\"_blank\" href=\"https://www.tiktok.com/tag/foryoupage?refer=embed\">#foryoupage</a> <a title=\"petsoftiktok\" target=\"_blank\" href=\"https://www.tiktok.com/tag/petsoftiktok?refer=embed\">#petsoftiktok</a> <a title=\"aesthetic\" target=\"_blank\" href=\"https://www.tiktok.com/tag/aesthetic?refer=embed\">#aesthetic</a></p> <a target=\"_blank\" title=\"&#9835; original sound - tiff\" href=\"https://www.tiktok.com/music/original-sound-6689804660171082501?refer=embed\">&#9835; original sound - tiff</a> </section> </blockquote><script async src=\"https://www.tiktok.com/embed.js\"></script>",
         "author": "Scout, Suki & Stella",
@@ -2155,7 +2155,7 @@
       "platform": "pinterest",
       "url": "https://www.pinterest.com/pin/99360735500167749/",
       "alignment": "center",
-      "caption": "Pinterest — its modern oEmbed returns a self-contained <iframe>, so the pin renders on its own (the pinit.js widget script is not required).",
+      "caption": "Pinterest - its modern oEmbed returns a self-contained <iframe>, so the pin renders on its own (the pinit.js widget script is not required).",
       "oembed": {
         "html": "<iframe src=\"https://assets.pinterest.com/ext/embed.html?id=99360735500167749&src=oembed\" height=\"436\" width=\"450\" frameborder=\"0\" scrolling=\"no\"></iframe>",
         "title": "Love my Pinterest t-shirt!",
@@ -2174,7 +2174,7 @@
       "platform": "instagram",
       "url": "https://www.instagram.com/p/BsOGulcndj-/",
       "alignment": "center",
-      "caption": "Instagram — rendered from its self-contained /embed/ iframe, so the post shows without depending on Instagram's widget script hydrating the blockquote.",
+      "caption": "Instagram - rendered from its self-contained /embed/ iframe, so the post shows without depending on Instagram's widget script hydrating the blockquote.",
       "oembed": {
         "html": "<iframe src=\"https://www.instagram.com/p/BsOGulcndj-/embed/captioned/\" width=\"400\" height=\"640\" frameborder=\"0\" scrolling=\"no\" style=\"max-width:100%;border:1px solid #dbdbdb;border-radius:3px;\"></iframe>",
         "title": "World record egg",
@@ -2192,7 +2192,7 @@
       "type": "social-embed",
       "platform": "facebook",
       "alignment": "left",
-      "caption": "Embed-code-only node saved with no post URL — the fallback renders as a non-interactive card, never an empty <a href=\"\">.",
+      "caption": "Embed-code-only node saved with no post URL - the fallback renders as a non-interactive card, never an empty <a href=\"\">.",
       "oembed": {
         "title": "Facebook post",
         "author": "Meta",

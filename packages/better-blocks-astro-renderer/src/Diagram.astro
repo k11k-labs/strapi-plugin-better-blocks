@@ -17,7 +17,7 @@ const DiagramComp = blocks?.diagram;
 // Resolve the color palette passed to beautiful-mermaid. Without one it renders
 // monochrome (every color is derived from a single dark `fg`). The built-in
 // themes only set an accent, which colors arrows but leaves node fills/borders
-// near-white — so our default mirrors mermaid.js's familiar look: lavender node
+// near-white - so our default mirrors mermaid.js's familiar look: lavender node
 // fills (`surface`) with purple borders (`border`) and dark edges (`line`). A
 // theme name selects a built-in palette; an object is used as custom colors.
 const DEFAULT_DIAGRAM_COLORS = {
@@ -37,7 +37,7 @@ const themeOptions =
       : (THEMES[diagramTheme] ?? DEFAULT_DIAGRAM_COLORS);
 
 // beautiful-mermaid renders Mermaid to an SVG string synchronously on the
-// server — no browser, no client-side hydration. It throws on empty or invalid
+// server - no browser, no client-side hydration. It throws on empty or invalid
 // input and on unsupported diagram types (gantt, pie, mindmap, gitGraph, …); in
 // that case we fall back to the raw source in a <pre> so content is never lost.
 let svg: string | null = null;

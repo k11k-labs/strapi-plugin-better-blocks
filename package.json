@@ -2,7 +2,7 @@
   "name": "@qkix/better-blocks-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "Better Blocks — Strapi v5 blocks editor plugin and its React / Astro renderers",
+  "description": "Better Blocks - Strapi v5 blocks editor plugin and its React / Astro renderers",
   "license": "MIT",
   "author": "qkix",
   "repository": {

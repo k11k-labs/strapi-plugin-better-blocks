@@ -166,7 +166,7 @@ export const DeleteColumnIcon = ({ fill }: TableIconProps) => {
   );
 };
 
-/** Table frame with a solid top row — the "toggle header row" affordance. */
+/** Table frame with a solid top row - the "toggle header row" affordance. */
 export const HeaderRowIcon = ({ fill }: TableIconProps) => {
   const color = useIconColor(fill);
   return (
