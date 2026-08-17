@@ -68,7 +68,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
           instagram?: { accessToken?: string };
           facebook?: { accessToken?: string };
         };
-        // Never leak tokens to the browser — only expose what the editor needs.
+        // Never leak tokens to the browser - only expose what the editor needs.
         return {
           enabled: social.enabled !== false,
           platforms: social.platforms ?? [],

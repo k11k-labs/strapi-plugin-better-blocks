@@ -32,7 +32,7 @@ const ORIGIN_PRIORITY: Origin[] = [
  * Intents buffered against the transaction they belong to.
  *
  * Keyed by the Knex transaction object because that is the only thing the
- * Content Manager's `update` and `publish` calls have in common — they are
+ * Content Manager's `update` and `publish` calls have in common - they are
  * sequential siblings, not nested, so nothing about the call stack relates
  * them. Strapi hands the same `trx` to every nested `db.transaction`, which
  * makes it a reliable key, and a WeakMap means a finished transaction takes its
@@ -80,7 +80,7 @@ export const coalesce = (intents: SnapshotIntent[]): SnapshotIntent[] => {
 
     byDocument.set(key, {
       // A winning `publish` still wants the rows an earlier `discardDraft`
-      // captured — losing them would lose the only copy of that state.
+      // captured - losing them would lose the only copy of that state.
       ...(isBetter ? intent : current),
       before: current.before ?? intent.before,
     });

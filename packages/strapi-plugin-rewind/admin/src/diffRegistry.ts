@@ -39,7 +39,7 @@ const renderers = new Map<string, DiffRenderer>();
  * Keyed by the attribute's `type`, or by a custom field's uid.
  *
  * `MyBlocksDiff` above is the caller's own component. No @qkix package exports
- * one today — this is the hook for writing it, not a wiring instruction for
+ * one today - this is the hook for writing it, not a wiring instruction for
  * something that already exists. Without a renderer registered, the field falls
  * back to the generic text diff.
  */

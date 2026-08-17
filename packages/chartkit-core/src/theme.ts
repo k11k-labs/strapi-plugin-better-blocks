@@ -3,15 +3,15 @@
  *
  * This is the reason Chartkit renders its own SVG instead of wrapping an
  * existing chart library. Libraries that render on the server bake colors into
- * the markup, which means the colors are chosen where the chart is built — on
- * the server — while the reader's light or dark preference is known in the
+ * the markup, which means the colors are chosen where the chart is built - on
+ * the server - while the reader's light or dark preference is known in the
  * browser, usually as a class on `<html>` flipped by a toggle. Serving baked
  * colors to that leaves you rendering two copies, or falling back to
  * `prefers-color-scheme` and ignoring the toggle.
  *
  * So every color here is a `var()` with a fallback. The chart inherits the
  * page's theme by doing nothing at all, and a site that wants its own palette
- * sets the custom properties in its own stylesheet — no rebuild, no rerender.
+ * sets the custom properties in its own stylesheet - no rebuild, no rerender.
  */
 
 /**
@@ -36,8 +36,8 @@ const FALLBACK_SERIES_COLORS = [
  * The paint for series `index`, as a CSS value.
  *
  * Wraps around when there are more series than palette entries. Running out of
- * distinguishable colors is a data problem rather than a rendering one — eight
- * series on one chart is already more than most readers can follow — so this
+ * distinguishable colors is a data problem rather than a rendering one - eight
+ * series on one chart is already more than most readers can follow - so this
  * repeats rather than generating ever-closer hues that only look distinct.
  */
 export function seriesColor(index: number): string {
@@ -49,7 +49,7 @@ export function seriesColor(index: number): string {
  * Ink for axis lines, ticks and rules.
  *
  * Falls back to `currentColor` so that, absent any custom property, the chart's
- * furniture takes the surrounding text color — which is already correct in
+ * furniture takes the surrounding text color - which is already correct in
  * both themes, because the page set it.
  */
 export const AXIS_COLOR = 'var(--chart-axis, currentColor)';

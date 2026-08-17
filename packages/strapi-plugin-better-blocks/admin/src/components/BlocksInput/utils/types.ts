@@ -113,7 +113,7 @@ export interface AudioPlayerSettings {
  * Audio block. A void block referencing a Strapi Media Library asset (or an
  * external URL). Stores the file metadata plus a display title, caption, player
  * behavior flags and alignment. The frontend renderer turns this into a native
- * HTML5 `<audio>` player — see issue #43 for the renderer contract.
+ * HTML5 `<audio>` player - see issue #43 for the renderer contract.
  */
 export interface AudioElement extends CustomElement {
   type: 'audio';
@@ -245,7 +245,7 @@ export interface ButtonElement extends CustomElement {
   /** "link" → hyperlink, "file" → Media Library download. */
   buttonType: ButtonMode;
   /**
-   * Visible button label. NOTE: must not be named `text` — Slate treats any node
+   * Visible button label. NOTE: must not be named `text` - Slate treats any node
    * with a string `text` property as a Text leaf, which would break this element.
    */
   label: string;
@@ -282,7 +282,7 @@ export interface TableCellElement extends CustomElement {
   align?: TableCellAlign;
   /**
    * Columns this cell covers, from merging. Absent means 1, so unmerged cells
-   * — the overwhelming majority — store nothing and existing tables stay valid.
+   * - the overwhelming majority - store nothing and existing tables stay valid.
    */
   colSpan?: number;
   /** Rows this cell covers. Absent means 1. */
@@ -440,7 +440,7 @@ export interface EmbedElement extends CustomElement {
   iframe?: string;
   /**
    * Sanitized iframe markup to render. Always present once the block has a
-   * source — renderers should output this and ignore `url`/`iframe`.
+   * source - renderers should output this and ignore `url`/`iframe`.
    */
   embedHtml?: string;
   /** The `src` of `embedHtml`, hoisted so renderers can check the host. */
@@ -479,7 +479,7 @@ export interface VideoPlayerSettings {
  * a provider playback id, or a direct URL) plus display and player settings.
  *
  * NOTE: player flags are nested under `player` rather than sitting at the top
- * level as issue #44 proposed, to match the sibling `audio` block — one shape
+ * level as issue #44 proposed, to match the sibling `audio` block - one shape
  * for renderers to learn, not two.
  */
 export interface VideoElement extends CustomElement {

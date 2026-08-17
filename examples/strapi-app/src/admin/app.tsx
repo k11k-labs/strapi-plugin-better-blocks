@@ -1,13 +1,13 @@
 /**
  * Demonstrates adding a block type to the Better Blocks editor from outside the
- * plugin — the same `registerBlock` call another Strapi plugin would make from
+ * plugin - the same `registerBlock` call another Strapi plugin would make from
  * its own `register()`.
  *
  * The block here is deliberately trivial: a big number with a caption. What it
  * shows is the shape of a registration, not the block itself.
  *
  * The front end needs its own half of this: a renderer given no plugin for a
- * type draws nothing for it. See `blockPlugins` in either renderer's README —
+ * type draws nothing for it. See `blockPlugins` in either renderer's README -
  * the example apps do not register one, so a `key-figure` authored here is
  * stored and round-trips, but does not appear on the rendered pages.
  */
@@ -56,7 +56,7 @@ export default {
       label: 'Key figure',
 
       // Runs in `validateDocument`/`migrateDocument` when the core is given
-      // this definition — the editor never calls it.
+      // this definition - the editor never calls it.
       validate: (node, { path, fail }) => {
         if (typeof node.value !== 'string') {
           fail(`${path}.value`, 'key-figure value must be a string');
@@ -69,7 +69,7 @@ export default {
           value: '42',
           caption: 'things measured',
           // Slate refuses a document whose nodes are not elements, and an
-          // element is something with a children array — see the core's
+          // element is something with a children array - see the core's
           // BlockContentModel docs.
           children: [{ type: 'text', text: '' }],
         } as never);
@@ -107,8 +107,8 @@ export default {
     /**
      * Chartkit as a Better Blocks block.
      *
-     * Everything this used to spell out by hand — the icon, the starter chart,
-     * finding the node's path and writing the edited spec back through Slate —
+     * Everything this used to spell out by hand - the icon, the starter chart,
+     * finding the node's path and writing the edited spec back through Slate -
      * now ships in `@qkix/chartkit-editor/block`. What is left is the choice a
      * host actually has to make: the locale its numbers are formatted in.
      */

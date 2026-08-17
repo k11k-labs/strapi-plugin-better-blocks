@@ -11,8 +11,8 @@ export const VERSION_UID = 'plugin::rewind.version';
 /**
  * Origins that anchor the history.
  *
- * These are the points an editor navigates by — "the version I published",
- * "the draft I threw away" — so they are never deduplicated away, however
+ * These are the points an editor navigates by - "the version I published",
+ * "the draft I threw away" - so they are never deduplicated away, however
  * little the content changed.
  */
 const ANCHORS = new Set(['publish', 'unpublish', 'discardDraft', 'restore']);
@@ -39,7 +39,7 @@ const snapshot = ({ strapi }: { strapi: Core.Strapi }) => {
    * snapshot built from it silently loses every component and relation. Strapi
    * re-queries here for the same reason.
    *
-   * Always the draft rows — a `publish` version records what was published, and
+   * Always the draft rows - a `publish` version records what was published, and
    * comparing it against the surrounding drafts only means something if both
    * sides are the same kind of thing.
    */
@@ -90,7 +90,7 @@ const snapshot = ({ strapi }: { strapi: Core.Strapi }) => {
      * Writes one version per affected locale, for each buffered intent.
      *
      * Called from the transaction's commit hook and never awaited by the write
-     * path — a failure here must not be able to reach the editor's save.
+     * path - a failure here must not be able to reach the editor's save.
      */
     async captureAll(intents: SnapshotIntent[], userId: number | null): Promise<void> {
       for (const intent of intents) {

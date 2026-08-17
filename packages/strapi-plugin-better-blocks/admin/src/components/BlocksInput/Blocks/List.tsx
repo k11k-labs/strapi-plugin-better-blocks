@@ -285,7 +285,7 @@ const handleEnterKeyOnList = (editor: Editor) => {
     currentListItemPath
   );
 
-  // Check if parent list is a todo list — new items need `checked: false`
+  // Check if parent list is a todo list - new items need `checked: false`
   const isTodoList =
     !Editor.isEditor(currentList) &&
     'type' in currentList &&

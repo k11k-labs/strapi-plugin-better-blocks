@@ -1,7 +1,7 @@
 # @qkix/chartkit-astro-renderer
 
 Astro renderer for [Chartkit](https://www.npmjs.com/package/@qkix/chartkit-core) charts. **Zero client-side
-JavaScript** — an Astro page with a chart on it ships exactly as much script as
+JavaScript** - an Astro page with a chart on it ships exactly as much script as
 one without.
 
 ```bash
@@ -22,7 +22,7 @@ import { Chart } from '@qkix/chartkit-astro-renderer';
 | ---------- | ------------------------------------------------------------------------------------------ |
 | `spec`     | the chart                                                                                  |
 | `locale`   | number formatting, worth passing explicitly when building on a server                      |
-| `idPrefix` | prefix for the ids the accessible name points at — needed when a page holds several charts |
+| `idPrefix` | prefix for the ids the accessible name points at - needed when a page holds several charts |
 | `class`    | class on the wrapping element                                                              |
 
 A spec that will not draw renders **nothing**, the same as any other broken
@@ -40,7 +40,7 @@ import { chartBlockPlugin } from '@qkix/chartkit-astro-renderer';
 ```
 
 Neither package knows the other's internals. Leave the plugin out and the chart
-is not drawn, while the rest of the document renders normally — content is never
+is not drawn, while the rest of the document renders normally - content is never
 lost by a front end that has not been taught about charts.
 
 Unlike the React plugin this is a constant rather than a factory: an Astro

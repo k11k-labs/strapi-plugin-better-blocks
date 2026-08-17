@@ -1,7 +1,7 @@
 {
   "name": "@qkix/better-blocks-core",
   "version": "0.2.5",
-  "description": "Framework-independent core for Strapi v5 Better Blocks content — the document types every renderer shares, plus the attribute mapping they all apply",
+  "description": "Framework-independent core for Strapi v5 Better Blocks content - the document types every renderer shares, plus the attribute mapping they all apply",
   "type": "commonjs",
   "main": "dist/index.js",
   "module": "dist/index.mjs",

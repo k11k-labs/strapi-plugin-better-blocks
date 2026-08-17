@@ -2,7 +2,7 @@
  * The chart custom field.
  *
  * A preview, and a button that opens the editor. The editor itself is
- * `@qkix/chartkit-editor` — the same component the chart block inside Better
+ * `@qkix/chartkit-editor` - the same component the chart block inside Better
  * Blocks mounts, which is why it is a package rather than living in one of the
  * two plugins that need it.
  *
@@ -56,12 +56,12 @@ const ChartField = React.forwardRef<HTMLDivElement, ChartFieldProps>((props, ref
 
   // Memoized for the same reason `stored` is, and it matters more here: a fresh
   // starter object on every render would reset the dialog's draft every time
-  // this field re-rendered — which the edit view does on any change to any
-  // field — throwing away a chart halfway through being built.
+  // this field re-rendered - which the edit view does on any change to any
+  // field - throwing away a chart halfway through being built.
   const starter = React.useMemo(() => starterSpec(), []);
 
   // Only ever opened over something. A field with nothing in it opens over the
-  // starter, and the starter is written to the document on save, not on open —
+  // starter, and the starter is written to the document on save, not on open -
   // merely looking at a new entry must not mark it dirty.
   const editing = stored.status === 'ok' ? stored.spec : starter;
 
@@ -124,7 +124,7 @@ const ChartField = React.forwardRef<HTMLDivElement, ChartFieldProps>((props, ref
 
       {/* Outside `Field.Root` deliberately. A design-system control takes its
         error styling from the nearest field context, and React context reaches
-        through the portal the modal renders into — so a dialog nested in the
+        through the portal the modal renders into - so a dialog nested in the
         field would paint its own inputs red whenever the *field* was invalid,
         which for a required chart is its entire empty life. */}
       {stored.status !== 'unreadable' && (

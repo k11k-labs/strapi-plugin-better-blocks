@@ -7,7 +7,7 @@ pnpm --filter @qkix/example-chartkit-gallery dev
 # http://localhost:4322
 ```
 
-`build` writes `dist/index.html`; `serve` serves it. The page is static — the
+`build` writes `dist/index.html`; `serve` serves it. The page is static - the
 charts are SVG strings produced at build time, so there is nothing to hydrate.
 That is also the point being demonstrated: this is what a Chartkit chart costs a
 page.
@@ -25,6 +25,6 @@ suite, and each was caught here. The note under every fixture says what that
 fixture is meant to break, so there is something specific to check for rather
 than a vague impression of whether it looks fine.
 
-The fixtures come from `@qkix/chartkit-core/fixtures` — the same set the
+The fixtures come from `@qkix/chartkit-core/fixtures` - the same set the
 snapshot tests use, so what is asserted and what is looked at cannot drift
 apart.

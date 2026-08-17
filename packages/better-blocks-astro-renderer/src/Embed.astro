@@ -15,7 +15,7 @@ const aspectRatio = getAspectRatio(node.aspectRatio, node.customAspectRatio);
 
 // Sanitized plugin-side (attribute allowlist over an https-only src, scripts /
 // handlers / inline styles / unknown attributes stripped), so it is emitted
-// verbatim via set:html — see the README's trust-boundary note.
+// verbatim via set:html - see the README's trust-boundary note.
 const { embedHtml, title, caption } = node;
 
 // `none` = full-width; aligned variants are capped by the retheme-able

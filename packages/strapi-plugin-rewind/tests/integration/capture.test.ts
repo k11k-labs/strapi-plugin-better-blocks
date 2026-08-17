@@ -251,7 +251,7 @@ describe('discardDraft', () => {
 
     const rows = await versions({ origin: 'discardDraft' });
     expect(rows).toHaveLength(1);
-    // Snapshotting after the action would have stored "Published copy" — the
+    // Snapshotting after the action would have stored "Published copy" - the
     // one state that is still recoverable anyway.
     expect((rows[0].data as any).title).toBe('Work in progress');
   });

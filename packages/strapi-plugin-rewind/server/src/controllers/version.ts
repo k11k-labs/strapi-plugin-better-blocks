@@ -6,7 +6,7 @@ import { VERSION_UID } from '../services/snapshot';
  * The list endpoint never returns `data`.
  *
  * A single document with a rich-text body runs to 100+ KB, and the panel asks
- * for ten versions at a time — sending the content of each just to render a row
+ * for ten versions at a time - sending the content of each just to render a row
  * of timestamps would make opening the panel slower than opening the document.
  * `data` comes down one version at a time, when something is actually shown.
  */
@@ -112,7 +112,7 @@ const version = ({ strapi }: { strapi: Core.Strapi }) => ({
  * Resolves author names in one query per request rather than one per row.
  *
  * `userId` is a plain integer rather than a relation, precisely so that deleting
- * an admin account cannot delete or orphan the history they made — which means
+ * an admin account cannot delete or orphan the history they made - which means
  * the name has to be looked up here, and may legitimately be missing.
  */
 const withUserNames = async (strapi: Core.Strapi, rows: any[]) => {

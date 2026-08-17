@@ -19,7 +19,7 @@ const START: View = { x: 0, y: 0, scale: 1 };
  *
  * A schema of any size is bigger than the panel, so opening at 1:1 in the
  * top-left corner shows a corner of one box and reads as broken. Never zooms
- * *in* past 1:1 — a two-box schema blown up to fill the screen looks like a
+ * *in* past 1:1 - a two-box schema blown up to fill the screen looks like a
  * mistake too.
  */
 export const fitView = (
@@ -66,7 +66,7 @@ export const Canvas = ({
   onViewChange: (view: View) => void;
   /** Diagram extent. When it changes, the view is fitted to it. */
   fitTo: { width: number; height: number };
-  /** Bump to refit on demand — what the "Reset view" button changes. */
+  /** Bump to refit on demand - what the "Reset view" button changes. */
   refit: number;
 }) => {
   const surface = React.useRef<HTMLDivElement | null>(null);
@@ -138,7 +138,7 @@ export const Canvas = ({
   }, [handleWheel]);
 
   /**
-   * Fit whenever the drawing changes size — first load, and every toggle that
+   * Fit whenever the drawing changes size - first load, and every toggle that
    * adds or removes boxes. Deliberately not on every render: refitting while
    * someone is panning would fight them for control.
    */
@@ -214,7 +214,7 @@ export const Canvas = ({
           width: 'max-content',
         }}
         // The SVG comes from this plugin's own renderer, which escapes every
-        // value it writes — see `escapeXml` in server/src/services/svg.ts.
+        // value it writes - see `escapeXml` in server/src/services/svg.ts.
         dangerouslySetInnerHTML={{ __html: svg }}
       />
     </Box>

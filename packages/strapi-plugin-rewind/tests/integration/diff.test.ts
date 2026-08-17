@@ -138,7 +138,7 @@ describe('diff between consecutive versions', () => {
     const all = await versions();
     const change = (await diff().between(all[1].id)).changes.find((c: any) => c.field === 'body');
 
-    // The field did change, but the readable text did not — saying so beats
+    // The field did change, but the readable text did not - saying so beats
     // showing an empty diff.
     expect(change).toBeDefined();
     expect(change.spans).toBeUndefined();

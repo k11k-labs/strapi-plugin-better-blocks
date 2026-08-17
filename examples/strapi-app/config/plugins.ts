@@ -20,7 +20,7 @@ const config = ({
     resolve: '../../packages/strapi-plugin-chartkit',
   },
   /**
-   * Rewind tracks nothing until it is told what to track — the default is an
+   * Rewind tracks nothing until it is told what to track - the default is an
    * empty list, so that installing it cannot quietly start writing a row on
    * every save. Here it watches the one content type this example has.
    */
@@ -35,8 +35,8 @@ const config = ({
    * Greenlight holds a document at its review stage until it is approved, and
    * refuses to publish it before then. Same `resolve` reason as above.
    *
-   * Nothing is under review until a workflow says so — that lives in the
-   * database and is edited from the admin panel, not here — so enabling it in
+   * Nothing is under review until a workflow says so - that lives in the
+   * database and is edited from the admin panel, not here - so enabling it in
    * the playground changes nothing until a workflow exists.
    */
   greenlight: {
@@ -44,7 +44,7 @@ const config = ({
     resolve: '../../packages/strapi-plugin-greenlight',
   },
   /**
-   * Blueprint draws the schema — content types, components and dynamic zones —
+   * Blueprint draws the schema - content types, components and dynamic zones -
    * as SVG. Nothing to configure; it only reads. Same `resolve` reason as above.
    */
   blueprint: {
@@ -52,20 +52,20 @@ const config = ({
     resolve: '../../packages/strapi-plugin-blueprint',
   },
   /**
-   * Mux Video Uploader — enables the "Mux" source button in the Better Blocks
+   * Mux Video Uploader - enables the "Mux" source button in the Better Blocks
    * video block, which lists and searches Mux assets through this plugin's
    * admin API. Credentials come from a Mux **Access Token** (Mux dashboard →
    * Settings → Access Tokens, Full Access) and live in `.env`, never here.
    *
    * Gated on the credentials being present so the playground still boots
-   * without them — the video block simply hides its Mux button.
+   * without them - the video block simply hides its Mux button.
    */
   'mux-video-uploader': {
     enabled: Boolean(env('MUX_ACCESS_TOKEN_ID') && env('MUX_SECRET_KEY')),
     config: {
       accessTokenId: env('MUX_ACCESS_TOKEN_ID'),
       secretKey: env('MUX_SECRET_KEY'),
-      // Optional — only needed for upload webhooks and signed playback.
+      // Optional - only needed for upload webhooks and signed playback.
       webhookSigningSecret: env('MUX_WEBHOOK_SIGNING_SECRET'),
       playbackSigningId: env('MUX_SIGNING_KEY_ID'),
       playbackSigningSecret: env('MUX_SIGNING_KEY_PRIVATE_KEY'),

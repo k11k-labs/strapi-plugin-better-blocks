@@ -130,7 +130,7 @@ const isSelectorBlockKey = (key: unknown): key is SelectorBlockKey => {
 
 /**
  * The built-in keys are spelled out so `blocks.paragraph` stays typed, while
- * the index signature leaves room for the types other packages register — see
+ * the index signature leaves room for the types other packages register - see
  * `registerBlock`. Without it, every consumer that walks the store would have
  * to widen at the call site.
  */
@@ -367,7 +367,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
 
     /**
      * Turns each registered definition into the shape the editor's block store
-     * expects. `matchNode` is derived from the type rather than asked for —
+     * expects. `matchNode` is derived from the type rather than asked for -
      * every built-in writes the same one-line comparison, and letting a
      * registration supply its own only invites one that disagrees with the
      * `type` it registered under.
@@ -429,7 +429,7 @@ const BlocksEditor = React.forwardRef<{ focus: () => void }, BlocksEditorProps>(
         ...videoBlocks,
         ...socialEmbedBlocks,
         // Types other packages registered. Last, so a registration can never
-        // quietly replace a built-in — `registerBlock` rejects that outright,
+        // quietly replace a built-in - `registerBlock` rejects that outright,
         // and this ordering means a bug there cannot become a silent override.
         ...registeredBlocks,
       }),

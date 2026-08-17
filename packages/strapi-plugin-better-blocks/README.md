@@ -218,13 +218,13 @@ with **Full Access**. Once they are set, the video block's source picker grows a
 
 Notes:
 
-- Only assets **uploaded through the Mux plugin** appear — the plugin lists its
+- Only assets **uploaded through the Mux plugin** appear - the plugin lists its
   own `mux-asset` records, not everything in your Mux account.
 - Assets with a **signed** playback policy are shown but not selectable: signed
   playback needs a short-lived JWT minted per request, and a token stored in the
   document body would expire.
 - Better Blocks detects the plugin by calling its asset-list route, not its
-  `mux-settings` route — the latter reports "not configured" unless a webhook
+  `mux-settings` route - the latter reports "not configured" unless a webhook
   signing secret is also set, which listing assets does not require.
 
 #### Button defaults (optional)
@@ -327,7 +327,7 @@ A button is stored as a single block. `buttonType` selects the rendering mode:
 Render link mode as `<a href={link.url} target={link.target} rel={link.rel}>`. For file
 mode, honour `filePreview`: when `true` open the file in a new tab
 (`<a href={file.url} target="_blank" rel="noopener noreferrer">`), otherwise force a
-download (`<a href={file.url} download={file.name}>`) — optionally prefixing
+download (`<a href={file.url} download={file.name}>`) - optionally prefixing
 `file.name`/size with `showFileIcon`/`showFileSize`. Only the keys for the active mode are
 present. `style.variant` records the selected preset for the editor UI; renderers can
 ignore it.
@@ -349,8 +349,8 @@ display and player settings:
     "size": 5242880, // bytes
     "provider": "local", // local | cloudinary | …
   },
-  "title": "Episode 1: Introduction", // optional — key omitted when empty
-  "caption": "Our first podcast episode", // optional — key omitted when empty
+  "title": "Episode 1: Introduction", // optional - key omitted when empty
+  "caption": "Our first podcast episode", // optional - key omitted when empty
   "player": {
     "autoplay": false,
     "loop": false,
@@ -371,16 +371,16 @@ omitted when empty. See the full React/Astro renderer contract on [issue #43](ht
 #### Embed JSON shape (for frontend renderers)
 
 A generic embed is a void block. `embedHtml` is the **only** field a renderer
-needs — it is already sanitized (rebuilt from an attribute allowlist, https-only
+needs - it is already sanitized (rebuilt from an attribute allowlist, https-only
 `src`), so render it as-is and ignore `url` / `iframe`, which exist to
 round-trip the editor UI:
 
 ```jsonc
 {
   "type": "embed",
-  "source": "url", // "url" | "iframe" — which input the author used
+  "source": "url", // "url" | "iframe" - which input the author used
   "url": "https://www.youtube.com/watch?v=abc12345678", // source: "url" only
-  "iframe": "<iframe src=…>", // source: "iframe" only — the raw paste
+  "iframe": "<iframe src=…>", // source: "iframe" only - the raw paste
   "embedHtml": "<iframe src=\"https://www.youtube.com/embed/abc12345678\" …></iframe>",
   "embedSrc": "https://www.youtube.com/embed/abc12345678", // hoisted for host checks
   "provider": "youtube", // youtube | vimeo | loom | wistia | dailymotion | api-video | generic
@@ -389,7 +389,7 @@ round-trip the editor UI:
   "customAspectRatio": "3 / 2", // only when aspectRatio is "custom"
   "alignment": "center", // "left" | "center" | "right" | "none"
   "caption": "A video explaining the feature", // optional
-  "title": "Product Demo", // optional — becomes the iframe's accessible name
+  "title": "Product Demo", // optional - becomes the iframe's accessible name
 }
 ```
 
@@ -443,15 +443,15 @@ sibling `audio` block so renderers only learn one shape.
 
 Rendering rules:
 
-- **`provider: "local"` / `"custom"` with a direct file URL** — a native
+- **`provider: "local"` / `"custom"` with a direct file URL** - a native
   `<video src={url} poster={poster} controls={player.controls}
 autoPlay={player.autoplay} loop={player.loop} muted={player.muted}>`. Add
   `<track kind="captions" src={transcript}>` when `transcript` is set, and
   associate `caption` via `aria-describedby`.
 - **HLS/DASH sources** (`url` ending in `.m3u8` / `.mpd`, i.e. most Mux assets)
-  — a bare `<video>` only plays these in Safari. Use the provider's player
-  (`<mux-player playback-id={playbackId}>` for Mux) or attach `hls.js`.
-- **`provider: "mux"`** — `playbackId` alone is enough for a **public** playback
+  - a bare `<video>` only plays these in Safari. Use the provider's player
+    (`<mux-player playback-id={playbackId}>` for Mux) or attach `hls.js`.
+- **`provider: "mux"`** - `playbackId` alone is enough for a **public** playback
   policy; no credentials are needed on the frontend. Assets with a **signed**
   policy are intentionally not selectable in the editor, because they need a
   short-lived JWT minted per request and a token baked into the document body
@@ -463,8 +463,8 @@ keys are omitted when empty.
 #### Table JSON shape (for frontend renderers)
 
 A table is a `table` block holding `table-row` children, each holding
-`table-cell` or `table-header-cell` children. Cells contain **inline** content —
-text leaves with marks, links, inline math — so render their `children` through
+`table-cell` or `table-header-cell` children. Cells contain **inline** content -
+text leaves with marks, links, inline math - so render their `children` through
 the same inline renderer used for paragraphs, never as plain text.
 
 ```jsonc
@@ -502,10 +502,10 @@ the same inline renderer used for paragraphs, never as plain text.
 
 Rendering rules:
 
-- **`align`** maps to `text-align`. **Absent means `left`** — left-aligned cells
+- **`align`** maps to `text-align`. **Absent means `left`** - left-aligned cells
   store nothing, so documents authored before alignment existed stay valid.
 - **`colSpan` / `rowSpan`** map to the HTML attributes of the same name.
-  **Absent means 1**, so unmerged cells — the overwhelming majority — carry
+  **Absent means 1**, so unmerged cells - the overwhelming majority - carry
   neither key. A spanned-over slot has no node at all: the cell that covers it
   simply carries the span, exactly like hand-written HTML.
 - **`table-header-cell`** renders as `<th scope="col">`, `table-cell` as `<td>`.
@@ -514,7 +514,7 @@ Rendering rules:
   row exists.
 - **A `rowSpan` never crosses the header/body divide.** The editor won't merge
   across it and normalizes away any span that does, because HTML doesn't allow a
-  cell to span `<thead>` into `<tbody>` — so `<thead>` is always exactly the
+  cell to span `<thead>` into `<tbody>` - so `<thead>` is always exactly the
   leading header rows, and no cell straddles the two groups.
 
 ### 2. Restart Strapi
@@ -691,7 +691,7 @@ hosts added to `frame-src`:
 ],
 ```
 
-Add only the platforms you enable. Without them the card still works — clicking
+Add only the platforms you enable. Without them the card still works - clicking
 **Show live post** just renders an empty frame, since the admin CSP blocks it.
 Third-party frames load only after that click, never on page load.
 
@@ -727,8 +727,8 @@ See the [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plug
 
 ## Adding Your Own Block Type
 
-Another Strapi plugin — or your own admin customization in
-`src/admin/app.tsx` — can add a block type to the editor. Call `registerBlock`
+Another Strapi plugin - or your own admin customization in
+`src/admin/app.tsx` - can add a block type to the editor. Call `registerBlock`
 from `register()`, which runs before any editor is mounted.
 
 ```tsx
@@ -773,7 +773,7 @@ Registering is the only supported way in. Editing this package to add a block is
 how the editor, both renderers and the validator ended up with four separate
 hardcoded lists of block types in the first place.
 
-`registerBlock` throws if the type shadows a built-in or is registered twice —
+`registerBlock` throws if the type shadows a built-in or is registered twice -
 either one would otherwise surface much later as a block that mysteriously does
 not appear.
 
@@ -789,7 +789,7 @@ package writes `type` and `content` once:
 | `migrateDocument(doc, { blocks })` in the core  | `migrate`, called for every node of the type      |
 | `blockPlugins` on either renderer               | `component`, so the front end draws it            |
 
-A renderer given no plugin for a type renders nothing for it — content authored
+A renderer given no plugin for a type renders nothing for it - content authored
 with a registered block is not lost, it is simply not drawn until the front end
 knows about it too.
 

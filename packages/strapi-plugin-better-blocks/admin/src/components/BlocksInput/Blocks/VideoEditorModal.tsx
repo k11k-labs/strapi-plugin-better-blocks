@@ -513,7 +513,7 @@ export const VideoEditorModal = ({
                 </Flex>
               </Flex>
 
-              {/* Mux asset picker — only rendered when the Mux Video Uploader
+              {/* Mux asset picker - only rendered when the Mux Video Uploader
                   plugin is installed and configured. */}
               {muxOpen && mux.available ? (
                 <Flex direction="column" gap={2} alignItems="stretch">
@@ -575,7 +575,7 @@ export const VideoEditorModal = ({
                                   ? formatMessage({
                                       id: 'components.Blocks.video.mux.signed',
                                       defaultMessage:
-                                        'Signed playback — not supported',
+                                        'Signed playback - not supported',
                                     })
                                   : !asset.isReady
                                     ? formatMessage({

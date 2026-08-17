@@ -1,7 +1,7 @@
 /**
  * Minimal shapes for the fixture app. These deliberately mirror the JSON files
  * a real Strapi app keeps on disk, because that is exactly what the harness
- * writes out — no in-memory registry shortcuts, so what boots here boots the
+ * writes out - no in-memory registry shortcuts, so what boots here boots the
  * same way in a customer's project.
  */
 

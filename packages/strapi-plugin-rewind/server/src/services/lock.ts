@@ -9,7 +9,7 @@ import type { Core } from '@strapi/strapi';
  *
  * Best-effort is the honest description: read-then-write is not atomic, so two
  * instances starting within the same millisecond can both win. That is
- * acceptable for a nightly tidy-up and not for anything else — do not reuse
+ * acceptable for a nightly tidy-up and not for anything else - do not reuse
  * this for something that must happen exactly once.
  */
 const lock = ({ strapi }: { strapi: Core.Strapi }) => {

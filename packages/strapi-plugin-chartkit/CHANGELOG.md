@@ -66,7 +66,7 @@ This was a version bump only for @qkix/strapi-plugin-chartkit to align it with o
 - **chartkit:** add the standalone Strapi custom field ([#124](https://github.com/qkix/strapi-plugins/pull/124))
 
   A chart as a Strapi field of its own, so Chartkit works in a project with no
-  Better Blocks in it. Stores a `ChartSpec` — the same object the renderers
+  Better Blocks in it. Stores a `ChartSpec` - the same object the renderers
   take. Migrates older specs on read, and refuses to overwrite a value it cannot
   recognise.
 

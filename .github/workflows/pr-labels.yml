@@ -2,7 +2,7 @@ name: Label pull requests by package
 
 # `pull_request_target` so the labels also land on pull requests from forks,
 # which the read-only `pull_request` token cannot do. Safe here because nothing
-# is checked out or executed from the branch — the job only reads the file list
+# is checked out or executed from the branch - the job only reads the file list
 # and applies labels from `.github/labeler.yml` as it exists on the base branch.
 on:
   pull_request_target:

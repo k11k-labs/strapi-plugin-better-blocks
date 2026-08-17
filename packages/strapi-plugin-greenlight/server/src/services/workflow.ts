@@ -99,8 +99,8 @@ const workflow = ({ strapi }: { strapi: Core.Strapi }) => ({
 
       /**
        * Rejected here rather than at the first publish. A content type without
-       * Draft & Publish has nothing to gate — there is no publish action to
-       * refuse — so putting one under review would silently do nothing, and the
+       * Draft & Publish has nothing to gate - there is no publish action to
+       * refuse - so putting one under review would silently do nothing, and the
        * person who configured it would find out months later.
        */
       if (!(model as { options?: { draftAndPublish?: boolean } }).options?.draftAndPublish) {

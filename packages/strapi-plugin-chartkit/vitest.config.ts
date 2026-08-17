@@ -7,7 +7,7 @@ export default defineConfig({
     // What is tested here is the field's value handling: parse, migrate,
     // serialize. Pure data, so no DOM.
     environment: 'node',
-    // Covers tests/integration too, which boots a real Strapi — see
+    // Covers tests/integration too, which boots a real Strapi - see
     // tooling/strapi-test-harness.
     include: ['tests/**/*.test.ts'],
     ...strapiTestOptions,

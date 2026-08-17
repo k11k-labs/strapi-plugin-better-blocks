@@ -27,7 +27,7 @@ interface Modifier {
   handleToggle: (editor: Editor) => void;
 }
 
-/** Marks worth surfacing on a selection — the long tail (super/subscript,
+/** Marks worth surfacing on a selection - the long tail (super/subscript,
  *  uppercase) stays in the main toolbar so this bar stays glanceable. */
 const SELECTION_MODIFIERS = [
   'bold',
@@ -118,7 +118,7 @@ const FloatingSelectionToolbar = () => {
     return true;
   }, [editor, disabled]);
 
-  // Runs after every render — the editor re-renders on selection change, which
+  // Runs after every render - the editor re-renders on selection change, which
   // is exactly when the bar needs repositioning.
   React.useEffect(() => {
     const bar = barRef.current;
@@ -142,7 +142,7 @@ const FloatingSelectionToolbar = () => {
     }
 
     const { offsetWidth, offsetHeight } = bar;
-    // Above the selection, unless there isn't room — then below it.
+    // Above the selection, unless there isn't room - then below it.
     const fitsAbove = rect.top - offsetHeight - OFFSET > 0;
     const top = fitsAbove
       ? rect.top - offsetHeight - OFFSET
@@ -199,7 +199,7 @@ const FloatingSelectionToolbar = () => {
               <LinkButton disabled={disabled} location="toolbar" />
               <InlineColorPicker />
               {/* ToolbarButton renders a Radix ToggleItem, which throws unless
-                  it has a ToggleGroup ancestor — keep it inside this group. */}
+                  it has a ToggleGroup ancestor - keep it inside this group. */}
               <RemoveFormattingButton disabled={disabled} />
             </Flex>
           </Toolbar.ToggleGroup>

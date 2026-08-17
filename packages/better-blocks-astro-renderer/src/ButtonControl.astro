@@ -24,7 +24,7 @@ const size =
 {
   isFile && file ? (
     filePreview ? (
-      /* Preview mode — open the file in a new tab instead of downloading. */
+      /* Preview mode - open the file in a new tab instead of downloading. */
       <a
         href={file.url}
         target="_blank"
@@ -42,7 +42,7 @@ const size =
         {size && <span class="bb-button-size"> ({size})</span>}
       </a>
     ) : (
-      /* Download mode — the `download` attribute handles same-origin assets; the
+      /* Download mode - the `download` attribute handles same-origin assets; the
          scoped script below force-downloads cross-origin ones (where `download`
          is ignored and PDFs/videos/images would otherwise preview inline). */
       <a
@@ -75,7 +75,7 @@ const size =
       {node.label}
     </a>
   ) : (
-    /* No link/file payload — render the label as a styled, non-navigating span. */
+    /* No link/file payload - render the label as a styled, non-navigating span. */
     <span class={className} style={style}>
       {node.label}
     </span>
@@ -147,7 +147,7 @@ const size =
             URL.revokeObjectURL(objectUrl);
           })
           .catch(() => {
-            // CORS-blocked or offline — fall back to native navigation.
+            // CORS-blocked or offline - fall back to native navigation.
             window.location.href = url;
           });
       });

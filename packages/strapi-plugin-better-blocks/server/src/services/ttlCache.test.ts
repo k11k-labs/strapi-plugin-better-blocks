@@ -26,7 +26,7 @@ describe('createTtlCache', () => {
     vi.advanceTimersByTime(1000);
 
     expect(cache.get('a')).toBeUndefined();
-    // The read is what frees it — the old implementation stopped here and never
+    // The read is what frees it - the old implementation stopped here and never
     // reclaimed the memory.
     expect(cache.size).toBe(0);
   });

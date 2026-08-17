@@ -85,7 +85,7 @@ describe('chartBlockPlugin', () => {
   });
 
   it('renders nothing for the chart when the plugin is not passed', () => {
-    // Unregistered content is not lost, it simply is not drawn — the rest of
+    // Unregistered content is not lost, it simply is not drawn - the rest of
     // the document still renders.
     const content = [
       { type: 'paragraph', children: [{ type: 'text', text: 'before' }] },

@@ -16,7 +16,7 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
    *
    * Registered here rather than in `register()` on purpose. Strapi adds its own
    * application middlewares during bootstrap but *before* plugin bootstraps run,
-   * and mounts the router only when the server starts listening — so this lands
+   * and mounts the router only when the server starts listening - so this lands
    * after authentication and error formatting, and still ahead of every route.
    */
   strapi.server.use(stageFilter(strapi));
@@ -27,7 +27,7 @@ const bootstrap = async ({ strapi }: { strapi: Core.Strapi }) => {
 /**
  * Strapi's own Review Workflows is an Enterprise feature, and this plugin is not
  * it. Where both are live the editor gets two side panels that disagree, which is
- * a guaranteed bug report — so say so once, at boot, in the logs.
+ * a guaranteed bug report - so say so once, at boot, in the logs.
  *
  * Every hop is optional-chained: `strapi.ee` exists in Community Edition too, but
  * its shape is not part of any contract we can rely on.

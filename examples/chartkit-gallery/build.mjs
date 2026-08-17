@@ -9,7 +9,7 @@
  *
  * The page is a static file: the charts are SVG strings produced here, so there
  * is nothing to hydrate and nothing to serve dynamically. That is also a
- * demonstration of the point — this is what a Chartkit chart costs a page.
+ * demonstration of the point - this is what a Chartkit chart costs a page.
  */
 
 import { writeFileSync, mkdirSync } from 'node:fs';
@@ -69,7 +69,7 @@ const page = `<!doctype html>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Chartkit gallery</title>
     <style>
-      /* The palette is defined here, on the page, rather than in the chart —
+      /* The palette is defined here, on the page, rather than in the chart -
          which is the whole argument for rendering our own SVG. Switching the
          theme below reaches inside every chart without re-rendering any of
          them. */
@@ -134,7 +134,7 @@ const page = `<!doctype html>
     <h1>Chartkit gallery</h1>
     <p class="lede">
       Every fixture, rendered by <code>@qkix/chartkit-core</code>. Each is chosen to break
-      something specific — the note under each title says what to look for. Nothing on this
+      something specific - the note under each title says what to look for. Nothing on this
       page runs JavaScript; every chart is an SVG string produced at build time.
     </p>
     <div class="grid">${fixtures.map(card).join('')}</div>
@@ -146,4 +146,4 @@ const out = join(here, 'dist');
 mkdirSync(out, { recursive: true });
 writeFileSync(join(out, 'index.html'), page);
 
-console.log(`Wrote ${join(out, 'index.html')} — ${fixtures.length} fixtures`);
+console.log(`Wrote ${join(out, 'index.html')} - ${fixtures.length} fixtures`);

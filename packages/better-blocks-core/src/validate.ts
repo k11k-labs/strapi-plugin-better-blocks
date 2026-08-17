@@ -20,15 +20,15 @@ export type ValidationResult = {
 export type ValidateOptions = {
   /**
    * Block types registered by another package. Without these, a document
-   * containing one is reported as invalid — which is the correct answer for a
+   * containing one is reported as invalid - which is the correct answer for a
    * caller that has not opted in, since it has no way to render it either.
    */
   blocks?: BlockRegistryInput;
 };
 
 /**
- * Block types the editor can store. `media-embed` is deprecated — nothing
- * inserts it any more — but documents saved before it was replaced still
+ * Block types the editor can store. `media-embed` is deprecated - nothing
+ * inserts it any more - but documents saved before it was replaced still
  * contain it, so it stays valid. {@link migrateDocument} converts it.
  */
 const BLOCK_TYPES = new Set([
@@ -64,7 +64,7 @@ const INLINE_PARENTS = new Set([
 ]);
 
 /**
- * Block types that nest whole blocks rather than inline content — a callout or
+ * Block types that nest whole blocks rather than inline content - a callout or
  * a details holds paragraphs and lists, and details can nest further details.
  */
 const BLOCK_PARENTS = new Set(['callout', 'details']);
@@ -78,13 +78,13 @@ const isObject = (v: unknown): v is Record<string, unknown> =>
  * Checks that a value is a Better Blocks document.
  *
  * This is a structural check, not a schema for every attribute: it verifies the
- * things a renderer will crash or silently drop content on — the node types it
+ * things a renderer will crash or silently drop content on - the node types it
  * dispatches over, and the child shapes it walks into. Optional presentation
  * attributes are left alone, because an unknown one is forward compatibility
  * rather than corruption.
  *
  * Block types from other packages are accepted only when passed in through
- * `options.blocks` — see {@link ValidateOptions}.
+ * `options.blocks` - see {@link ValidateOptions}.
  */
 export function validateDocument(value: unknown, options?: ValidateOptions): ValidationResult {
   const issues: ValidationIssue[] = [];
@@ -212,7 +212,7 @@ export function validateDocument(value: unknown, options?: ValidateOptions): Val
 
     // Every remaining block is a void: it renders from its own attributes and
     // carries an empty text placeholder as its children. The placeholder is not
-    // decoration — Slate refuses to load a document whose top-level nodes are
+    // decoration - Slate refuses to load a document whose top-level nodes are
     // not all elements, and an element is something with a children array. A
     // void block saved without it takes the whole editor down.
     checkChildren(node, path, checkInline);

@@ -64,7 +64,7 @@ describe('reading a Media Library file', () => {
 
   it('explains a fetch that cannot happen at all', async () => {
     // The likely cause is an upload provider on another origin, which the
-    // author can act on — unlike a stack trace.
+    // author can act on - unlike a stack trace.
     stubFetch(() => Promise.reject(new Error('CORS')));
 
     const result = await readAssetText({ url: 'https://cdn.example.com/x.csv', ext: '.csv' });

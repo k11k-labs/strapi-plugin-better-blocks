@@ -170,7 +170,7 @@ export function DataGrid({ spec, onChange, disabled }: DataGridProps) {
  * Reveals the delete controls on the row being pointed at.
  *
  * A hundred rows each carrying a visible button is a wall of chrome around the
- * numbers, which are the point. Hidden until hover — and until keyboard focus,
+ * numbers, which are the point. Hidden until hover - and until keyboard focus,
  * without which the control would exist only for people using a mouse.
  */
 const HoverReveal = styled.div`
@@ -227,7 +227,7 @@ const ColumnHeading = ({ children }: { children: React.ReactNode }) => (
 /**
  * A text cell that reports on blur.
  *
- * `key` on the value is what lets an outside change — a paste, an undo — reach
+ * `key` on the value is what lets an outside change - a paste, an undo - reach
  * a cell that is holding its own draft.
  */
 function CellInput({
@@ -303,7 +303,7 @@ function NumberCell({
       value={draft}
       disabled={disabled}
       inputMode="decimal"
-      placeholder="—"
+      placeholder="-"
       onChange={(event) => setDraft(event.target.value)}
       onBlur={commit}
       onKeyDown={(event) => {
@@ -326,7 +326,7 @@ function NumberCell({
  * A rule between columns.
  *
  * With four series and a hundred rows, a grid of bare numbers is genuinely hard
- * to read — the eye loses which column it is in halfway down. `currentColor` at
+ * to read - the eye loses which column it is in halfway down. `currentColor` at
  * low opacity keeps the rule subtle and correct in either admin theme, rather
  * than picking a grey that is invisible on one of them.
  */

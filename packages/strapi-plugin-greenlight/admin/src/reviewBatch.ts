@@ -17,9 +17,9 @@ const NO_OPINION: ReviewEntry = { workflow: null, state: null };
 /**
  * One resolved answer per document, shared by every caller.
  *
- * The list view asks about the same documents from two places at once — the
+ * The list view asks about the same documents from two places at once - the
  * stage column once per row, and the Publish action once per row on top of that
- * — and the Content Manager re-renders both freely. Without this a ten-row page
+ * - and the Content Manager re-renders both freely. Without this a ten-row page
  * produced hundreds of requests for ten documents.
  *
  * Cleared wholesale on a stage change rather than surgically: the entries are
@@ -42,7 +42,7 @@ const pageKey = (uid: string, locale?: string | null) => `${uid}|${locale ?? ''}
  *
  * The Content Manager hands each cell and each row action only its own row, so
  * the batching has to happen here. `setTimeout(0)` is what defines "this tick"
- * — a microtask would fire between React's own render passes and split one page
+ * - a microtask would fire between React's own render passes and split one page
  * into several requests.
  */
 const openBatch = (get: Fetcher, uid: string, locale: string | null | undefined): Batch => {
@@ -91,7 +91,7 @@ export const loadReviewState = (
     .then((page) => ({ workflow: page.workflow, state: page.documents?.[documentId] ?? null }))
     .catch(() => {
       // Not remembered, so the next render can try again. A failure must read as
-      // "no opinion" rather than "not publishable" — the server-side gate is the
+      // "no opinion" rather than "not publishable" - the server-side gate is the
       // real enforcement, and a broken request must not also stop publishing for
       // content that is not under review at all.
       answers.delete(key);

@@ -5,10 +5,10 @@ coverage
 .DS_Store
 .astro
 
-# Playground — Strapi
+# Playground - Strapi
 playground/strapi/package-lock.json
 
-# Playground — Astro app
+# Playground - Astro app
 playground/astro-app/dist
 playground/astro-app/.astro
 playground/astro-app/yarn.lock

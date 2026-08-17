@@ -4,7 +4,7 @@ import { createTestStrapi } from '@qkix/strapi-test-harness';
 import type { TestStrapiInstance } from '@qkix/strapi-test-harness';
 
 export const UID = 'api::article.article';
-/** No i18n, and no Draft & Publish — used for the rejection cases. */
+/** No i18n, and no Draft & Publish - used for the rejection cases. */
 export const PLAIN_UID = 'api::note.note';
 export const NO_DP_UID = 'api::tag.tag';
 

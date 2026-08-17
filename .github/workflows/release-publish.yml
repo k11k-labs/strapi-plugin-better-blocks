@@ -1,14 +1,14 @@
-name: Release — publish
+name: Release - publish
 
-# Runs itself when a release PR from "Release — prepare" lands on main: merging
+# Runs itself when a release PR from "Release - prepare" lands on main: merging
 # that PR is the decision to release, so requiring a second manual step only
 # adds a way to forget. It tags the merged commit and publishes to npm; nothing
-# here bumps versions — whatever is in the manifests is what ships.
+# here bumps versions - whatever is in the manifests is what ships.
 #
 # Can also be dispatched by hand, which defaults to a dry run.
 #
-# This is the only irreversible step in the repository — npm does not allow a
-# version to be republished — so it is guarded three ways: it refuses to run
+# This is the only irreversible step in the repository - npm does not allow a
+# version to be republished - so it is guarded three ways: it refuses to run
 # outside main, it only tags versions that have no tag yet, and it publishes
 # only when that tagging produced something new.
 on:
@@ -85,7 +85,7 @@ jobs:
             # is what keeps the publish step below from offering npm a version
             # it already has.
             if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
-              echo "  $tag already exists — skipping"
+              echo "  $tag already exists - skipping"
               continue
             fi
 
@@ -112,7 +112,7 @@ jobs:
       #
       # Only the freshly tagged projects are published. A release may cover one
       # package while the rest of the workspace keeps versions npm already has,
-      # and offering those again fails the whole job — so the tag step's list of
+      # and offering those again fails the whole job - so the tag step's list of
       # what was actually new is what gets published.
       - name: Publish to npm
         if: ${{ github.event_name == 'workflow_dispatch' || steps.tag.outputs.created != '0' }}

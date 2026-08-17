@@ -12,7 +12,7 @@
  * `@qkix/better-blocks-core` would make Chartkit's core depend on Better
  * Blocks' core, and a chart has no business knowing what a rich-text document
  * is. TypeScript is structural, so the object below satisfies `BlockDefinition`
- * without saying so — and the renderer packages, which legitimately depend on
+ * without saying so - and the renderer packages, which legitimately depend on
  * both, assert exactly that. If the two ever drift, their builds fail.
  */
 
@@ -28,7 +28,7 @@ export const CHART_BLOCK_TYPE = 'chart';
  * A chart as it is stored in a document.
  *
  * The spec is nested under `spec` rather than spread across the node, so the
- * chart's schema and the document's stay separable — Better Blocks migrates
+ * chart's schema and the document's stay separable - Better Blocks migrates
  * nodes, Chartkit migrates specs, and neither has to know the other's shape.
  */
 export type ChartBlockNode = {
@@ -58,7 +58,7 @@ export function createChartBlock(spec?: Partial<ChartSpec>): ChartBlockNode {
 /**
  * The registration, minus the part that draws it.
  *
- * Structurally a `BlockDefinition` from `@qkix/better-blocks-core` — see the
+ * Structurally a `BlockDefinition` from `@qkix/better-blocks-core` - see the
  * note at the top of this file. Each renderer adds its own `component` and
  * hands the result to that renderer's `blockPlugins`.
  */
@@ -92,7 +92,7 @@ export const chartBlock = {
    *
    * Better Blocks walks the document and calls this for every chart node; it
    * never learns what a `ChartSpec` is. That is the whole point of the
-   * arrangement — a new chart schema is a Chartkit release, not a Better Blocks
+   * arrangement - a new chart schema is a Chartkit release, not a Better Blocks
    * one.
    */
   migrate(node: { type: string; spec?: unknown; [attribute: string]: unknown }) {

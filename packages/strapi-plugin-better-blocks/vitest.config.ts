@@ -10,7 +10,7 @@ export default defineConfig({
     include: [
       'admin/src/**/*.test.ts',
       'server/src/**/*.test.ts',
-      // Boot a real Strapi — see tooling/strapi-test-harness.
+      // Boot a real Strapi - see tooling/strapi-test-harness.
       'tests/integration/**/*.test.ts',
     ],
     ...strapiTestOptions,

@@ -17,7 +17,7 @@ export default {
 
     /**
      * Start reading which content types are under review now, so the list
-     * view's stage column can decide synchronously later. See stageColumn.tsx —
+     * view's stage column can decide synchronously later. See stageColumn.tsx -
      * this runs before login on a cold boot and is expected to fail there.
      */
     void primeCoverage();
@@ -65,7 +65,7 @@ export default {
     contentManager.apis.addEditViewSidePanel([ReviewPanel]);
 
     /**
-     * Disabling the Publish button is a courtesy — the enforcement is a
+     * Disabling the Publish button is a courtesy - the enforcement is a
      * document-service middleware on the server, which covers every route in
      * rather than only this one. Both exist on purpose.
      */
@@ -74,8 +74,8 @@ export default {
     /**
      * There is deliberately no warning inside the bulk-publish confirmation
      * dialog. `listView.publishModalAdditionalInfos` is declared in the Content
-     * Manager's injection zones but nothing renders it in Strapi 5.52 — only
-     * `editView.right-links`, `listView.actions` and `preview.actions` are live —
+     * Manager's injection zones but nothing renders it in Strapi 5.52 - only
+     * `editView.right-links`, `listView.actions` and `preview.actions` are live -
      * so a component registered there would silently never appear. Better to not
      * ship the feature than to ship one that looks registered and does nothing.
      */

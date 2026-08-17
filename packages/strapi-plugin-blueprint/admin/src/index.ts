@@ -1,4 +1,4 @@
-// `Graph` — nodes joined by edges, which is what this draws. Deliberately not
+// `Graph` - nodes joined by edges, which is what this draws. Deliberately not
 // `Layout`: that is the Content-Type Builder's icon, and two neighbouring items
 // in the same menu with the same glyph is a menu you have to read twice.
 import { Graph } from '@strapi/icons';

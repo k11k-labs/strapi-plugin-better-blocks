@@ -4,8 +4,8 @@ A Strapi v5 application running `@qkix/strapi-plugin-better-blocks` from the
 workspace, seeded on first boot with the showcase articles the renderer
 examples display.
 
-See [examples/README.md](../README.md) for how to bring the whole stack up —
-this app plus both renderers — and what gets seeded.
+See [examples/README.md](../README.md) for how to bring the whole stack up -
+this app plus both renderers - and what gets seeded.
 
 ## Running just this app
 
@@ -33,7 +33,7 @@ The seeded admin is `admin@example.com` / `admin12#`.
 `config/plugins.ts` points Strapi at the plugin with an explicit `resolve`
 path. Strapi discovers plugins by requiring them relative to `@strapi/core` in
 the root `node_modules`, and a workspace package is only linked into the app
-that depends on it — so auto-discovery alone does not find it here. In a normal
+that depends on it - so auto-discovery alone does not find it here. In a normal
 install no such setting is needed.
 
 To re-seed from scratch, delete the database and restart:

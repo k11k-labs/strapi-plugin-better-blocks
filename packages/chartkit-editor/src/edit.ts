@@ -2,8 +2,8 @@
  * Every edit the grid can make, as a pure function.
  *
  * Kept out of the components on purpose. Editing a chart is mostly array
- * surgery — insert a column here, keep every series the same length, do not
- * lose a `null` that means "no reading" — and that is exactly the kind of code
+ * surgery - insert a column here, keep every series the same length, do not
+ * lose a `null` that means "no reading" - and that is exactly the kind of code
  * that is miserable to test through a rendered table and trivial to test
  * directly.
  *
@@ -20,8 +20,8 @@ export type CellValue = number | null;
 /**
  * Pads or trims every series so each has exactly one value per label.
  *
- * The invariant the rest of this file relies on. A ragged spec is not invalid —
- * the core renders what it has and the validator only warns — but it makes
+ * The invariant the rest of this file relies on. A ragged spec is not invalid -
+ * the core renders what it has and the validator only warns - but it makes
  * every subsequent edit ambiguous: inserting a column at index 3 means nothing
  * if one series has two values and another has nine.
  *
@@ -118,7 +118,7 @@ export function removeSeries(spec: ChartSpec, index: number): ChartSpec {
  * Switching to a pie or a donut drops every series but the first, because those
  * types show one series as shares of a whole and the core's validator refuses
  * more. Doing it here, visibly, is better than letting the author save
- * something that will not render — but it is a data loss, so the editor warns
+ * something that will not render - but it is a data loss, so the editor warns
  * before offering it.
  */
 export function setType(spec: ChartSpec, type: ChartType): ChartSpec {
@@ -132,7 +132,7 @@ export function setType(spec: ChartSpec, type: ChartType): ChartSpec {
 /**
  * Whether the spec has a single number anywhere in it.
  *
- * Not a validity check — a spec with none is perfectly valid and renders an
+ * Not a validity check - a spec with none is perfectly valid and renders an
  * empty frame. It is the difference between a chart worth drawing and one worth
  * describing in words, which is a question the preview has to answer.
  */

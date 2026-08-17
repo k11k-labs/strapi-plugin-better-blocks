@@ -31,7 +31,7 @@ export type EditorBlockDefinition = BlockDefinition & {
   renderElement: (props: RenderElementProps) => React.JSX.Element;
   /**
    * Icon for the Insert menu and the slash command. Required to appear in
-   * either — a block with no icon is still rendered, just not offered.
+   * either - a block with no icon is still rendered, just not offered.
    */
   icon?: React.ComponentType;
   /** Menu label. A plain string is fine; a descriptor gets translated. */
@@ -45,7 +45,7 @@ export type EditorBlockDefinition = BlockDefinition & {
   /** Text that converts into this block as you type, e.g. '```mermaid'. */
   snippets?: string[];
   /**
-   * Anything `isVoid` cannot express — custom normalization, paste handling,
+   * Anything `isVoid` cannot express - custom normalization, paste handling,
    * key bindings. Applied when the editor is created.
    */
   withEditor?: (editor: Editor) => Editor;

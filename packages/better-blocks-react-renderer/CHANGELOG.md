@@ -114,17 +114,17 @@
 
 - [#55](https://github.com/k11k-labs/better-blocks-react-renderer/pull/55) [`a8b0d6e`](https://github.com/k11k-labs/better-blocks-react-renderer/commit/a8b0d6e7a548e0c26a12d715bc6fcc983d718647) Thanks [@kkukielka](https://github.com/kkukielka)! - GitHub-style defaults for tables, blockquotes and code blocks
 
-  Tables, blockquotes, and code blocks previously rendered as bare markup. They now ship with GitHub-flavored defaults out of the box — each with a stable `bb-*` class and styles injected only when the block is present (and skipped when you override it), rethemable via CSS custom properties, and still fully overridable through the existing `blocks={{ … }}` prop.
+  Tables, blockquotes, and code blocks previously rendered as bare markup. They now ship with GitHub-flavored defaults out of the box - each with a stable `bb-*` class and styles injected only when the block is present (and skipped when you override it), rethemable via CSS custom properties, and still fully overridable through the existing `blocks={{ … }}` prop.
 
   **Tables** → `<table class="bb-table">`: bordered cells, a shaded header, zebra-striped body rows, and horizontal scroll on overflow. Retheme via `--bb-table-border`, `--bb-table-header-bg`, `--bb-table-row-bg`, `--bb-table-stripe-bg`.
 
   **Blockquotes** → `<blockquote class="bb-quote">`: a muted left border with indented, dimmed text. Retheme via `--bb-quote-border`, `--bb-quote-fg`.
 
   **Code blocks** → syntax highlighting with Shiki, wrapped in `<div class="bb-code">`:
-  - Added a `language` field to `CodeNode` — the Strapi editor already stores it, the renderer just dropped it. Values are mapped to Shiki grammar ids (`objectivec` → `objective-c`, `fortran` → `fortran-free-form`, `vbnet` → `vb`, …); unknown or missing languages fall back to themed-but-unhighlighted `plaintext`, so a stray value never breaks the page.
+  - Added a `language` field to `CodeNode` - the Strapi editor already stores it, the renderer just dropped it. Values are mapped to Shiki grammar ids (`objectivec` → `objective-c`, `fortran` → `fortran-free-form`, `vbnet` → `vb`, …); unknown or missing languages fall back to themed-but-unhighlighted `plaintext`, so a stray value never breaks the page.
   - Shiki resolves grammars asynchronously, so highlighting happens on the client the same way diagrams do: SSR and first paint emit the raw source in a plain `<pre class="bb-code-pre">` (matching hydration), then the highlighted markup swaps in after mount. If Shiki fails to load, the plain `<pre>` stays. Retheme the pre-hydration colors via `--bb-code-fallback-bg` / `--bb-code-fallback-fg`.
-  - New `codeTheme` prop — any bundled Shiki theme (`github-dark` default).
-  - New `codeCopyButton` prop — off by default; when enabled, adds a "Copy" button in the top-right corner.
+  - New `codeTheme` prop - any bundled Shiki theme (`github-dark` default).
+  - New `codeCopyButton` prop - off by default; when enabled, adds a "Copy" button in the top-right corner.
 
   Custom `code` renderers now also receive `language` (the raw editor value, not the Shiki grammar id) alongside `plainText`.
 
@@ -136,7 +136,7 @@
 
 - [#53](https://github.com/k11k-labs/better-blocks-react-renderer/pull/53) [`9378275`](https://github.com/k11k-labs/better-blocks-react-renderer/commit/9378275aa9e52fabbd4f4972fcda4e7eed7c7073) Thanks [@kkukielka](https://github.com/kkukielka)! - Render the new table cell properties and semantic header rows
 
-  `table-cell` and `table-header-cell` now honor `align` (applied as `text-align`) and `colSpan` / `rowSpan` (mapped onto the HTML attributes of the same name). Each is omitted by the editor at its default — absent `align` means left, absent spans mean 1 — so existing documents render exactly as before.
+  `table-cell` and `table-header-cell` now honor `align` (applied as `text-align`) and `colSpan` / `rowSpan` (mapped onto the HTML attributes of the same name). Each is omitted by the editor at its default - absent `align` means left, absent spans mean 1 - so existing documents render exactly as before.
 
   Leading rows whose cells are all `table-header-cell` are treated as the table's header: they render inside `<thead>` with each cell as `<th scope="col">`, and the remaining rows in `<tbody>`. Several such rows are supported, so a merged header (a `rowSpan` label above a split sub-header) lands in `<thead>` intact. A `table-header-cell` inside a body row is a row header and gets `scope="row"`.
 
@@ -159,7 +159,7 @@
 ### Minor Changes
 
 - [#47](https://github.com/k11k-labs/better-blocks-react-renderer/pull/47) [`e9f0d69`](https://github.com/k11k-labs/better-blocks-react-renderer/commit/e9f0d69e72b7b44e853ca377f5cf64096996bfc5) Thanks [@kkukielka](https://github.com/kkukielka)! - Fix social embeds never hydrating (TikTok, Pinterest) and not re-processing on remount
-  - Strip `<script>` tags from the injected embed HTML. Providers that ship their widget script inline in the oEmbed payload (TikTok always; pasted Instagram snippets often) left an inert `<script src="…">` in the DOM — inserted via `dangerouslySetInnerHTML` it never executes, but it matched the loader's `script[src="…"]` dedupe check, so the real widget script was never injected and the embed stayed a raw blockquote.
+  - Strip `<script>` tags from the injected embed HTML. Providers that ship their widget script inline in the oEmbed payload (TikTok always; pasted Instagram snippets often) left an inert `<script src="…">` in the DOM - inserted via `dangerouslySetInnerHTML` it never executes, but it matched the loader's `script[src="…"]` dedupe check, so the real widget script was never injected and the embed stayed a raw blockquote.
   - Dedupe the loader on `script[data-bb-social-script="{platform}"]`, a marker only set on scripts the renderer injected itself.
   - Re-process embeds mounted after the widget script has loaded (remount, client-side navigation). TikTok (`tiktokEmbed.lib.render()`) and Pinterest (`PinUtils.build()`) had no processor at all; when a platform global is missing the renderer now re-injects the script once so it rescans the document.
   - `url` is now optional on `SocialEmbedNode` and the `social-embed` block override, matching the plugin allowing an embed saved with only an `embedCode`. The fallback card renders as a `<div>` rather than an `<a href="">` when there is no URL.
@@ -202,7 +202,7 @@
   `<iframe>`.
 
   Platform widget scripts (Twitter, Instagram, TikTok, Pinterest, Facebook) are
-  loaded once per platform — deduped by URL and guarded against double-injection —
+  loaded once per platform - deduped by URL and guarded against double-injection -
   then their processor is re-run on mount so freshly-mounted embeds get upgraded
   (LinkedIn renders a self-contained `<iframe>` and needs no script). Script
   loading is client-only, keeping SSR/hydration consistent.
@@ -219,7 +219,7 @@
 
   Button hover colors (`hoverBackgroundColor` / `hoverTextColor`) previously did
   nothing on the frontend unless the consumer manually added a `.bb-button:hover`
-  CSS rule — only the `--bb-button-hover-*` custom properties were set. The
+  CSS rule - only the `--bb-button-hover-*` custom properties were set. The
   renderer now ships a small default `<style>` (emitted once, only when a default
   button is present) wiring hover and `:focus-visible` to those properties, with a
   fallback to the base colors so buttons without hover colors keep their colors on
@@ -232,7 +232,7 @@
 - [#33](https://github.com/k11k-labs/better-blocks-react-renderer/pull/33) [`e5cc53c`](https://github.com/k11k-labs/better-blocks-react-renderer/commit/e5cc53cd16d2511d7d31ac0fb61fe2c31b82eeec) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: fix cross-origin file downloads and add `filePreview` toggle for file buttons
 
   File-mode buttons now force a real download via a blob fetch, so cross-origin
-  assets (Strapi/CDN) download instead of opening inline in the browser — the
+  assets (Strapi/CDN) download instead of opening inline in the browser - the
   native `download` attribute is ignored cross-origin, which made PDFs, videos and
   images preview rather than save. CORS-blocked fetches fall back to native
   navigation.
@@ -264,7 +264,7 @@
 
 ### Minor Changes
 
-- [#19](https://github.com/k11k-labs/better-blocks-react-renderer/pull/19) [`4bb5d32`](https://github.com/k11k-labs/better-blocks-react-renderer/commit/4bb5d32f3d6c353733d904de13c3dc9dc88e9453) Thanks [@kkukielka](https://github.com/kkukielka)! - Add support for `callout` (admonition) nodes from the Better Blocks plugin (`{ type: 'callout', variant, title?, children }`). Callouts render GitHub-style in five variants — note, tip, important, warning, caution — as an `<aside role="note">` with a colored left border, a title row (icon + label, or the node's custom `title`), and the nested block children rendered recursively. Colors are inlined so no stylesheet is required. The block can be overridden with a custom `callout` renderer that receives `variant`, `title`, and `children`.
+- [#19](https://github.com/k11k-labs/better-blocks-react-renderer/pull/19) [`4bb5d32`](https://github.com/k11k-labs/better-blocks-react-renderer/commit/4bb5d32f3d6c353733d904de13c3dc9dc88e9453) Thanks [@kkukielka](https://github.com/kkukielka)! - Add support for `callout` (admonition) nodes from the Better Blocks plugin (`{ type: 'callout', variant, title?, children }`). Callouts render GitHub-style in five variants - note, tip, important, warning, caution - as an `<aside role="note">` with a colored left border, a title row (icon + label, or the node's custom `title`), and the nested block children rendered recursively. Colors are inlined so no stylesheet is required. The block can be overridden with a custom `callout` renderer that receives `variant`, `title`, and `children`.
 
 ## 0.6.0
 

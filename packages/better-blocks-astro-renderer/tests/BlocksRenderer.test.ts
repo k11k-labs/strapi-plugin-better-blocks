@@ -868,7 +868,7 @@ describe('BlocksRenderer', () => {
     const th = container.querySelector('th');
     expect(th?.getAttribute('colspan')).toBe('2');
     expect(th?.getAttribute('rowspan')).toBe('2');
-    // colSpan of 1 (or absent) emits no attribute — existing content unchanged.
+    // colSpan of 1 (or absent) emits no attribute - existing content unchanged.
     const td = container.querySelector('td');
     expect(td?.getAttribute('colspan')).toBeNull();
     expect(td?.getAttribute('rowspan')).toBeNull();
@@ -1083,8 +1083,8 @@ describe('BlocksRenderer', () => {
       },
     ]);
     // Without a palette beautiful-mermaid renders monochrome (only fg/bg). The
-    // default mirrors mermaid.js: lavender node fill + purple border, so nodes —
-    // not just arrows — are colored.
+    // default mirrors mermaid.js: lavender node fill + purple border, so nodes -
+    // not just arrows - are colored.
     const html = container.querySelector('div.mermaid-diagram')?.innerHTML.toLowerCase() ?? '';
     expect(html).toContain('#ececff');
     expect(html).toContain('#9370db');
@@ -1636,7 +1636,7 @@ describe('BlocksRenderer', () => {
       },
     ]);
     const figure = container.querySelector('figure.bb-social-embed');
-    // No <a> at all — an anchor without an href would be meaningless.
+    // No <a> at all - an anchor without an href would be meaningless.
     expect(figure?.querySelector('a')).toBeNull();
     const fallback = figure?.querySelector('div.bb-social-embed-fallback');
     expect(fallback).not.toBeNull();
@@ -1822,7 +1822,7 @@ describe('BlocksRenderer', () => {
       },
     ]);
     const audios = container.querySelectorAll('figure.bb-audio audio');
-    // Distinct, index-derived ids — no duplicate `bb-audio-cap-undefined` clash.
+    // Distinct, index-derived ids - no duplicate `bb-audio-cap-undefined` clash.
     expect(audios[0]?.getAttribute('aria-describedby')).toBe('bb-audio-cap-1');
     expect(audios[1]?.getAttribute('aria-describedby')).toBe('bb-audio-cap-2');
   });

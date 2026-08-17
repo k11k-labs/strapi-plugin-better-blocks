@@ -30,7 +30,7 @@ const gate = ({ strapi }: { strapi: Core.Strapi }) => {
      * There are five shapes and only two of them are obvious:
      *
      *   'en'            one locale
-     *   '*'             every locale the document has — expanded here, because
+     *   '*'             every locale the document has - expanded here, because
      *                   the document service passes it through verbatim
      *   ['en','pl']     a bulk publish across locales, unflattened
      *   undefined       the default locale on a localized type, and *also* what a
@@ -90,7 +90,7 @@ const gate = ({ strapi }: { strapi: Core.Strapi }) => {
     /**
      * Would `assertPublishable` let this one through?
      *
-     * The same decision, for one locale, without the I/O or the throw — so the
+     * The same decision, for one locale, without the I/O or the throw - so the
      * edit view's Publish button and the list view's rows answer with the gate
      * rather than with their own guess at it. Every branch below mirrors one in
      * `assertPublishable`; if that gains a rule, this needs the same rule or the
@@ -194,7 +194,7 @@ const gate = ({ strapi }: { strapi: Core.Strapi }) => {
      *
      * It deliberately says **nothing** about the rest of a bulk publish. How much
      * of the batch survives a refusal is a race inside Strapi's transaction
-     * bookkeeping — with I/O before the refusal, as here, the whole batch rolls
+     * bookkeeping - with I/O before the refusal, as here, the whole batch rolls
      * back; refuse synchronously and the siblings escape and commit. Neither
      * "the batch was rolled back" nor "the others were published" is safe to
      * claim, so the message claims neither. `tests/gate.test.ts` has the detail.

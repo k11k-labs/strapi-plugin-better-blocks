@@ -72,7 +72,7 @@ export function getButtonStyle(style?: ButtonStyle): StyleValue {
 }
 
 /**
- * Per-platform widget script URL. LinkedIn is intentionally absent — its
+ * Per-platform widget script URL. LinkedIn is intentionally absent - its
  * oEmbed markup is a self-contained `<iframe>` that needs no script. Loaded
  * lazily and deduped by the client loader in `SocialEmbedScript.astro`.
  */
@@ -87,8 +87,8 @@ export const SOCIAL_SCRIPTS: Partial<Record<SocialPlatform, string>> = {
 export type SocialEmbedSource = { kind: 'html'; html: string } | { kind: 'fallback' };
 
 /**
- * Strips `<script>` tags from (trusted) embed markup. Platform oEmbed payloads —
- * TikTok's especially, which has no `omit_script` option — and hand-pasted
+ * Strips `<script>` tags from (trusted) embed markup. Platform oEmbed payloads -
+ * TikTok's especially, which has no `omit_script` option - and hand-pasted
  * Instagram/Facebook embed codes ship their widget `<script>` inline. Since the
  * `set:html` output is server-rendered, those tags would execute a *second*
  * copy of a widget script the lazy loader also injects. Removing them here makes
@@ -116,7 +116,7 @@ export function getSocialEmbedSource(node: SocialEmbedNode): SocialEmbedSource {
 
 /**
  * Adds `loading="lazy"` to any `<iframe>` in the (trusted) embed markup that
- * doesn't already declare a `loading` attribute — so provider iframes
+ * doesn't already declare a `loading` attribute - so provider iframes
  * (LinkedIn, Pinterest, Facebook) defer offscreen loads. The negative lookahead
  * stays within the opening tag (`[^>]` excludes `>`), so only iframes without a
  * `loading` attribute are touched and the rest of the markup is left verbatim.

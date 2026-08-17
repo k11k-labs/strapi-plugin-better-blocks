@@ -4,7 +4,7 @@
 
 <h1 align="center">Blueprint for Strapi</h1>
 
-<p align="center">A diagram of your content types — <strong>including the components and dynamic zones everything else leaves out</strong>.</p>
+<p align="center">A diagram of your content types - <strong>including the components and dynamic zones everything else leaves out</strong>.</p>
 
 <p align="center">
   <a href="https://www.npmjs.com/package/@qkix/strapi-plugin-blueprint">
@@ -29,7 +29,7 @@
 
 Every schema diagram for Strapi draws **relations only**. That is fine for a
 schema built out of relations, and useless for the way most Strapi projects are
-actually built — a handful of content types, and the real structure living in
+actually built - a handful of content types, and the real structure living in
 components and dynamic zones. Draw relations only and a modern schema comes out
 as a scattering of disconnected boxes.
 
@@ -69,7 +69,7 @@ Builder. The view fits the whole diagram when it opens and whenever what is
 drawn changes.
 
 Boxes that have nowhere to go do not pretend otherwise: a plugin's internal
-tables — Rewind's versions, upload's folders, anything under `admin::` — belong
+tables - Rewind's versions, upload's folders, anything under `admin::` - belong
 on the diagram because they are part of the schema, but the Content-Type Builder
 has no page for them, so they take no pointer and no hover.
 
@@ -77,7 +77,7 @@ has no page for them, so they take no pointer and no hover.
 own `createdAt`-style fields, and the content types belonging to Strapi and to
 other plugins. Layout runs top-to-bottom or left-to-right.
 
-**Download SVG** — an actual vector, not a screenshot of one. It is a standalone
+**Download SVG** - an actual vector, not a screenshot of one. It is a standalone
 document with its styles and arrowheads inline and nothing fetched from
 anywhere, so it works pasted into a README, opened from a downloads folder, or
 embedded in a docs site, and it stays sharp at any size.
@@ -94,7 +94,7 @@ The diagram is laid out and rendered to SVG by the server, and the admin panel
 displays what it is given. Two things follow from that.
 
 The first is that **anything that can make an HTTP request can have the
-diagram** — a docs build, a CI job, a script that commits the current schema
+diagram** - a docs build, a CI job, a script that commits the current schema
 next to your code:
 
 ```
@@ -129,7 +129,7 @@ blueprint: {
 ```
 
 The toolbar can hide things too. The difference is that this survives a reload
-and applies to the API as well — it is the answer to "this never belongs on the
+and applies to the API as well - it is the answer to "this never belongs on the
 picture", not to "not right now".
 
 ## Known limitations

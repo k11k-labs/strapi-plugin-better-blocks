@@ -3,7 +3,7 @@
  * category axis.
  *
  * Shared rather than copied because a bar chart and a line chart differ in
- * exactly one thing — the marks inside the plot. If each drew its own axes they
+ * exactly one thing - the marks inside the plot. If each drew its own axes they
  * would drift, and a chart's axis is the part a reader trusts most.
  */
 
@@ -32,7 +32,7 @@ export type AxesInput = {
  * line every value is measured from, and a crisp edge along the foot of the
  * bars is what makes them look seated on it rather than floating near it.
  *
- * Returning two strings rather than one is the whole point — the caller
+ * Returning two strings rather than one is the whole point - the caller
  * sandwiches its marks between them.
  */
 export function renderAxes(input: AxesInput): { behind: string; front: string } {

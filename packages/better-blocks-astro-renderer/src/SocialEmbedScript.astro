@@ -6,18 +6,18 @@
  *
  * It watches every `[data-bb-social-embed]` figure with an IntersectionObserver
  * and injects a platform's widget script only when an embed nears the viewport
- * — no third-party JavaScript loads eagerly. Each platform script is injected
+ * - no third-party JavaScript loads eagerly. Each platform script is injected
  * at most once; when it's already present, the platform's re-process API is
  * called (including TikTok's `tiktokEmbed.lib.render`) so embeds that scroll in
  * later are hydrated too. Re-scans on `astro:page-load` for view-transition
  * navigations.
  *
- * This component carries no server props — it's a pure client-side loader.
+ * This component carries no server props - it's a pure client-side loader.
  */
 ---
 
 <script>
-  // Mirrors SOCIAL_SCRIPTS in utils.ts. LinkedIn is intentionally absent — its
+  // Mirrors SOCIAL_SCRIPTS in utils.ts. LinkedIn is intentionally absent - its
   // oEmbed markup is a self-contained <iframe> that needs no widget script.
   const SCRIPTS: Record<string, string> = {
     twitter: 'https://platform.twitter.com/widgets.js',
@@ -49,7 +49,7 @@
   function ensureScript(platform: string | null) {
     if (!platform) return;
     const src = SCRIPTS[platform];
-    if (!src) return; // e.g. linkedin — self-contained iframe.
+    if (!src) return; // e.g. linkedin - self-contained iframe.
     const existing = document.querySelector(`script[data-bb-social-script="${platform}"]`);
     // Already loaded (this page or a prior injection) → re-process in place.
     if (injected.has(platform) || existing) {

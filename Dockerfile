@@ -1,5 +1,5 @@
 # One image for the whole workspace. All three example services run from it,
-# differing only in the command they start — so the plugin and both renderers
+# differing only in the command they start - so the plugin and both renderers
 # are built exactly once and every service sees the same linked workspace.
 FROM node:22-bookworm-slim
 

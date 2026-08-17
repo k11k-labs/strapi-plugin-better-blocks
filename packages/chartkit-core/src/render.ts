@@ -2,7 +2,7 @@
  * Turning a spec into an SVG string.
  *
  * The output is finished markup: no script, no stylesheet, nothing to hydrate.
- * A page can drop it in and be done, which is the entire premise — a chart in a
+ * A page can drop it in and be done, which is the entire premise - a chart in a
  * CMS should not cost a static site a JavaScript bundle.
  */
 
@@ -31,7 +31,7 @@ import type { ChartSpec } from './types';
 export type RenderOptions = {
   /**
    * BCP 47 tag used to format numbers, unless the spec's `valueFormat` names
-   * its own. Left undefined, `Intl` uses the runtime's locale — which on a
+   * its own. Left undefined, `Intl` uses the runtime's locale - which on a
    * server is whatever the container happened to be built with, so passing this
    * explicitly is worth doing.
    */
@@ -50,13 +50,13 @@ export type RenderResult = { ok: true; svg: string } | { ok: false; issues: Char
  *
  * Returns a result rather than throwing, and rather than emitting a placeholder
  * chart. A spec that fails validation is bad content, and content problems
- * belong in front of whoever can fix them — an editor showing the issues, a
- * build log — not disguised as an empty chart on a live page.
+ * belong in front of whoever can fix them - an editor showing the issues, a
+ * build log - not disguised as an empty chart on a live page.
  */
 export function renderChart(spec: unknown, options: RenderOptions = {}): RenderResult {
   // An older spec is brought up to date in memory first. Migrating stored
   // content is opt-in and someone else's job, but a renderer handed a version 1
-  // chart should draw it rather than refuse it — the alternative is that
+  // chart should draw it rather than refuse it - the alternative is that
   // publishing a new Chartkit blanks every chart already in a database.
   const migration = migrateChartSpec(spec);
   const current = migration.status === 'skipped' ? spec : migration.spec;
@@ -71,7 +71,7 @@ export function renderChart(spec: unknown, options: RenderOptions = {}): RenderR
  * Renders a spec already known to be valid.
  *
  * Skips validation, so only call it with something {@link validateChartSpec}
- * has passed — everything here assumes the shapes it guarantees.
+ * has passed - everything here assumes the shapes it guarantees.
  */
 export function renderValidatedChart(spec: ChartSpec, options: RenderOptions = {}): string {
   return renderValidated(spec, options);
@@ -92,7 +92,7 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
   const legendNames = radial ? spec.data.labels : spec.data.series.map((one) => one.name);
 
   // A legend earns its space when it has something to disambiguate. A pie
-  // always does — nothing else names its slices — while a single-series bar
+  // always does - nothing else names its slices - while a single-series bar
   // chart is already named by its title.
   const wantsLegend = spec.options?.legend ?? legendNames.length > 1;
   const legend = wantsLegend ? planLegend(legendNames, width) : NO_LEGEND;
@@ -140,7 +140,7 @@ function renderValidated(spec: ChartSpec, options: RenderOptions): string {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: `0 0 ${round(width)} ${round(height)}`,
-      // Sized by its container rather than by these numbers — the viewBox sets
+      // Sized by its container rather than by these numbers - the viewBox sets
       // the aspect ratio and the page sets the size.
       width: '100%',
       height: 'auto',
@@ -171,7 +171,7 @@ function renderCartesianBody(spec: ChartSpec, frame: Frame & { locale?: string }
   const { width, height, titleHeight, legendHeight, locale } = frame;
   const mode = spec.options?.stackMode ?? 'grouped';
 
-  // The domain depends on the chart type — a bar is measured from a baseline, a
+  // The domain depends on the chart type - a bar is measured from a baseline, a
   // line is not. See lineDomain for why that is not a detail.
   const domain =
     spec.type === 'bar'
@@ -179,7 +179,7 @@ function renderCartesianBody(spec: ChartSpec, frame: Frame & { locale?: string }
       : lineDomain(spec.data.series, spec.type, spec.options?.yAxis, mode === 'stacked');
 
   // Ticks depend only on the domain, so they are known before the plot is
-  // sized — which matters, because the left margin is sized from the widest
+  // sized - which matters, because the left margin is sized from the widest
   // tick label. The range here is a placeholder.
   const { ticks } = linearScale(domain, [1, 0]);
   const formatValue = createTickFormatter(spec.options?.valueFormat, locale, ticks);

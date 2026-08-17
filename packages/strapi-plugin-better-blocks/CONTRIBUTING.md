@@ -22,7 +22,7 @@ content on `http://localhost:5173` and `http://localhost:4321`.
 
 ### Without Docker
 
-Node 20 or 22 — the Strapi SDK refuses 23 and newer.
+Node 20 or 22 - the Strapi SDK refuses 23 and newer.
 
 ```bash
 pnpm install
@@ -57,12 +57,13 @@ pnpm --filter @qkix/strapi-plugin-better-blocks test
 
 The document types and the framework-independent logic live in
 `packages/better-blocks-core`. If you add a block attribute, add it there first
-— both renderers read it from that one place, and the boundary lint rule keeps
-the dependency direction honest.
+
+- both renderers read it from that one place, and the boundary lint rule keeps
+  the dependency direction honest.
 
 ## Pull requests
 
-- Keep PRs focused — one feature or fix per PR
+- Keep PRs focused - one feature or fix per PR
 - Fill out the PR template
 - Make sure CI passes (lint, typecheck, test, build)
 - Add screenshots or GIFs for UI changes

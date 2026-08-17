@@ -107,8 +107,8 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
   Cells can now be merged into a rectangle and split back apart, completing the
   table work started in [#36](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/36).
 
-  **Merging.** Select a range of cells — drag across them, or click one and
-  Shift+click another — and use **Merge cells** in the table's contextual toolbar.
+  **Merging.** Select a range of cells - drag across them, or click one and
+  Shift+click another - and use **Merge cells** in the table's contextual toolbar.
   The two endpoints act as opposite corners, so selecting from `r2c1` to `r3c2`
   merges a 2×2 block rather than everything between them in document order. If the
   picked rectangle would slice through an existing merged cell, it grows until it
@@ -119,11 +119,11 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
   vacates with an empty cell. Content stays where it was.
 
   **Header cells stay in the header.** A merge can't cross the header/body divide,
-  because HTML doesn't let a `rowSpan` span `<thead>` into `<tbody>` — a browser
+  because HTML doesn't let a `rowSpan` span `<thead>` into `<tbody>` - a browser
   would clamp it and render something other than what the editor showed, and
   `scope="col"` on a cell sitting in body rows labels nothing. The button explains
-  itself in that state rather than just greying out. Merging _within_ the header —
-  one heading across two columns — is unaffected.
+  itself in that state rather than just greying out. Merging _within_ the header -
+  one heading across two columns - is unaffected.
 
   **The grid model underneath.** Once cells can span, a cell's index within its row
   is no longer its visual column: a row of three cells can cover four columns, and
@@ -142,14 +142,14 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
   any table containing a merge.
 
   **JSON shape.** `colSpan` / `rowSpan` on `table-cell` and `table-header-cell`,
-  **absent meaning 1** — the same convention as `align`, so unmerged cells store
+  **absent meaning 1** - the same convention as `align`, so unmerged cells store
   neither key and existing tables need no migration. The full table contract is now
   documented in the README for renderer authors. A normalizer repairs spans that
-  can't be rendered as written — ones reaching past the table's bounds and ones
-  crossing the header/body divide — and refills any slot left uncovered, so
+  can't be rendered as written - ones reaching past the table's bounds and ones
+  crossing the header/body divide - and refills any slot left uncovered, so
   hand-edited or imported JSON is squared off rather than left ragged.
 
-  Renderers need `colSpan` / `rowSpan` support to match — tracked in
+  Renderers need `colSpan` / `rowSpan` support to match - tracked in
   k11k-labs/better-blocks-react-renderer#50 and
   k11k-labs/better-blocks-astro-renderer#41.
 
@@ -157,10 +157,10 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 
 ### Minor Changes
 
-- [#80](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/80) [`dd9c66f`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/dd9c66f58c31b6c2ac54adf950593b8af2a65b14) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: editor UX overhaul — toolbar grouping, visual table controls, floating selection menu (closes [#36](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/36))
+- [#80](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/80) [`dd9c66f`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/dd9c66f58c31b6c2ac54adf950593b8af2a65b14) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: editor UX overhaul - toolbar grouping, visual table controls, floating selection menu (closes [#36](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/36))
 
-  **Toolbar re-organization.** Controls are now grouped by what they do — history,
-  block type, type/colour, marks, paragraph formatting, insertion — and each group
+  **Toolbar re-organization.** Controls are now grouped by what they do - history,
+  block type, type/colour, marks, paragraph formatting, insertion - and each group
   wraps as a whole instead of splitting across rows. The 1px separators are gone;
   spacing carries the grouping, which survives wrapping at any editor width.
   Blockquote is a direct toggle next to the lists rather than an entry buried in
@@ -181,8 +181,8 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
   - Inserting a table opens a 10×10 hover grid with a live "4 × 6" readout and a
     custom-size fallback, instead of dropping a fixed 3×3.
   - A contextual toolbar floats above the table whenever the caret is inside it,
-    with **directional** operations — insert row above/below, insert column
-    left/right, delete row/column — all anchored on the focused cell rather than
+    with **directional** operations - insert row above/below, insert column
+    left/right, delete row/column - all anchored on the focused cell rather than
     appending at the end. It also carries cell alignment, a header-row toggle and
     delete-table.
   - Cell alignment is stored as `align` on `table-cell` / `table-header-cell`.
@@ -193,18 +193,18 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
   - Borders went from a 1px hairline to 2px against a mid-grey, and the row and
     column holding the caret are tinted for orientation in large tables.
   - Wide tables scroll horizontally instead of overflowing the editor.
-  - Cells keep full inline rich-text parity (marks, links, colours, inline math) —
+  - Cells keep full inline rich-text parity (marks, links, colours, inline math) -
     the structure guard only blocks operations that would break the table's shape.
 
   **Floating selection toolbar.** Selecting text pops a mini toolbar above it with
   bold, italic, underline, strikethrough, inline code, link, colour and clear
-  formatting — no trip to the main toolbar. It hides inside code and void media
+  formatting - no trip to the main toolbar. It hides inside code and void media
   blocks, where marks don't apply.
 
   Renderers need to follow up on the table changes: see
   k11k-labs/better-blocks-react-renderer#50 and
   k11k-labs/better-blocks-astro-renderer#41. Merge/split cells is tracked
-  separately in [#79](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/79) — it needs a cell-range selection model and a span-aware grid,
+  separately in [#79](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/79) - it needs a cell-range selection model and a span-aware grid,
   which the rest of this work deliberately doesn't assume.
 
 ## 0.19.0
@@ -213,17 +213,17 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 
 - [#77](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/77) [`6e4c106`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/6e4c106e56d02007c29c253ce9cb26bf7f56d6de) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: generic Embed block and provider-aware Video block (closes [#44](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/44))
 
-  **Embed block** — insert any third-party embed from the `+` Insert menu, the
+  **Embed block** - insert any third-party embed from the `+` Insert menu, the
   `/embed` slash command, or the toolbar's media button. Two modes: **URL**
   (YouTube, Vimeo, Loom, Wistia, Dailymotion and api.video are converted to an
   iframe automatically) and **Embed code** (paste any platform's `<iframe>`).
-  Pasted markup is never stored verbatim — the iframe is rebuilt from an attribute
+  Pasted markup is never stored verbatim - the iframe is rebuilt from an attribute
   allowlist over an https-only `src`, so `<script>`, event handlers, inline styles
   and unknown attributes cannot reach your frontend, and the `allow` attribute is
   filtered to a safe permission set. Adds live in-editor preview, aspect ratio
   (16:9 / 21:9 / 4:3 / 1:1 / custom), alignment, caption and an accessible title.
 
-  **Video block** — source a video from the Media Library, a direct URL, or a
+  **Video block** - source a video from the Media Library, a direct URL, or a
   hosting provider. Mux, api.video and Cloudinary URLs are detected automatically,
   and a bare Mux playback ID fills in the stream URL and poster frame. When
   `strapi-plugin-mux-video-uploader` is installed and configured, a **Mux** button
@@ -246,26 +246,26 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 
 - [#75](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/75) [`2bcbe8b`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/2bcbe8bb5f39a676ee634c9de5ff84dbdb0b17cf) Thanks [@kkukielka](https://github.com/kkukielka)! - Social embeds can now show the real post inside the editor. Each card gets a
   **Show live post** toggle that swaps in the platform's script-free iframe embed
-  (X, Instagram, Facebook, TikTok, LinkedIn, Pinterest) — no widget JavaScript
+  (X, Instagram, Facebook, TikTok, LinkedIn, Pinterest) - no widget JavaScript
   runs in the admin, so the `script-src 'self'` CSP is untouched.
 
   Third-party frames load only after that click, never on page load, and the
   choice isn't persisted in the content. Add the platform hosts you use to
-  `frame-src` in `config/middlewares.ts` (see the README) — without them the card
+  `frame-src` in `config/middlewares.ts` (see the README) - without them the card
   still works, the frame just renders empty.
 
 ### Patch Changes
 
 - [#75](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/75) [`2bcbe8b`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/2bcbe8bb5f39a676ee634c9de5ff84dbdb0b17cf) Thanks [@kkukielka](https://github.com/kkukielka)! - Fix social embeds that rely on a pasted embed code, and stop TikTok/Pinterest
   posts from degrading to a bare link on the frontend.
-  - **Embed code alone is now enough** — Save is enabled when either a post URL or
+  - **Embed code alone is now enough** - Save is enabled when either a post URL or
     an embed code is present, so platforms without a tokenless oEmbed (Instagram,
     Facebook) can be embedded by pasting their snippet. Pasting a snippet also
     recovers the permalink from it (`data-instgrm-permalink`, `cite`, `href`) and
     auto-detects the platform.
   - **Widget scripts are stripped** from both fetched oEmbed markup and pasted
     embed codes. A `<script>` injected via `innerHTML` never executes, and its
-    inert tag made renderers believe the platform widget was already loaded — the
+    inert tag made renderers believe the platform widget was already loaded - the
     cause of TikTok posts rendering as a raw blockquote of links.
   - **Failed oEmbed lookups now surface an error** instead of silently storing an
     empty payload. Pinterest answers HTTP 200 with `{"error": …}` for unresolvable
@@ -286,7 +286,7 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 
   The audio editor was a hand-rolled overlay rendered inline inside the Slate
   `Editable` tree, so every keystroke in its Title/Caption inputs also bubbled to
-  the editor's key handlers — which acted on the selected void node and removed
+  the editor's key handlers - which acted on the selected void node and removed
   the block, taking the popup with it. The editor now uses the Strapi
   `Modal` primitive (portalled out of the editable, like the Button and Social
   embed editors), so form input stays in the form.
@@ -302,13 +302,13 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
   Adds a new **Audio** block that lets authors embed audio directly inside the
   Blocks field. Pick a file from the Strapi Media Library (upload included) or
   paste a direct URL, then set a title, caption, alignment (left / center / right
-  / none) and player behaviour — controls, autoplay, loop and preload
+  / none) and player behaviour - controls, autoplay, loop and preload
   (none / metadata / auto). A native `<audio>` player renders inline in the editor
   so authors can test playback before saving.
 
   The block serialises to a stable JSON shape (`type: "audio"`, `file`, `title`,
   `caption`, `player`, `alignment`) that frontend renderers turn into an HTML5
-  `<audio>` element — see issue [#43](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/43) for the React and Astro renderer contract.
+  `<audio>` element - see issue [#43](https://github.com/k11k-labs/strapi-plugin-better-blocks/issues/43) for the React and Astro renderer contract.
 
   The playground now seeds a short sample audio file so the showcase article ships
   with a working example.
@@ -351,8 +351,8 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 - [#61](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/61) [`0656f70`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/0656f7003005a0d796176c66880b8fd016dda165) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: Shiki syntax highlighting in the editor code block
 
   Code blocks in the editor now render with Shiki syntax highlighting that follows
-  the admin's light/dark theme. The language selector is no longer hidden — it is
-  an always-visible, colored pill in the top-right corner of the block — and the
+  the admin's light/dark theme. The language selector is no longer hidden - it is
+  an always-visible, colored pill in the top-right corner of the block - and the
   code block has a distinct background so it stands out from surrounding text.
   Grammars load on demand; `plaintext` renders without highlighting.
 
@@ -387,8 +387,8 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 - [#51](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/51) [`d8679f7`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/d8679f7fd82e8f64de266f879b62942ccab6c302) Thanks [@kkukielka](https://github.com/kkukielka)! - feat: WordPress-style Button block with full styling, link & file-download modes
 
   Adds a new **Button** block (insert from the blocks selector, the `+` menu, or by typing `[button]`). Two modes:
-  - **Link** — URL, open-in-new-tab (auto `rel="noopener noreferrer"`), ARIA label.
-  - **File** — pick any Media Library asset to render a download button with optional file size and type icon.
+  - **Link** - URL, open-in-new-tab (auto `rel="noopener noreferrer"`), ARIA label.
+  - **File** - pick any Media Library asset to render a download button with optional file size and type icon.
 
   A full-screen editor with live preview controls alignment, background/text colors (incl. hover), border radius, font size/weight, padding presets, a structured border (toggle + thickness + style + color), and a custom CSS class. Admins can set default button colors via `config/plugins` or per field. Stored as `{ "type": "button", "buttonType": "link" | "file", "label": "…", … }`.
 
@@ -400,7 +400,7 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 
   Adds a native collapsible `details` block to the editor. Insert it from the blocks selector or the `/details` slash command. Each block has a plain-text `summary` label, a `defaultOpen` toggle (maps to the HTML `open` attribute), and full rich-text block content as children (paragraphs, lists, tables, images, and even nested details). The editor preview renders a bordered/GitHub-style header with a disclosure triangle and animated expand/collapse.
 
-  Admins can set the default summary text and choose between a GitHub-minimal or bordered style — globally via `config/plugins.js` (`config.details.defaultSummary` / `config.details.style`), or per field in the Content-Type Builder (per-field overrides the global config).
+  Admins can set the default summary text and choose between a GitHub-minimal or bordered style - globally via `config/plugins.js` (`config.details.defaultSummary` / `config.details.style`), or per field in the Content-Type Builder (per-field overrides the global config).
 
   JSON output:
 
@@ -422,7 +422,7 @@ This was a version bump only for @qkix/strapi-plugin-better-blocks to align it w
 
 - [#39](https://github.com/k11k-labs/strapi-plugin-better-blocks/pull/39) [`9608b68`](https://github.com/k11k-labs/strapi-plugin-better-blocks/commit/9608b684a35f14895147221bf5e5d783480d35eb) Thanks [@kkukielka](https://github.com/kkukielka)! - Add GitHub-style callout / admonition blocks. A new `callout` block holds
   nested rich-text content (`{ type: 'callout', variant, title?, children }`) in
-  five variants — note, tip, important, warning, and caution — with an optional
+  five variants - note, tip, important, warning, and caution - with an optional
   custom title. Insert it from the blocks selector or the `/note`, `/tip`,
   `/important`, `/warning`, `/caution` slash commands, and switch variant, edit
   the title, or dissolve the callout from the header popover. Variant colors use

@@ -2,7 +2,7 @@
  * Domains, scales and ticks.
  *
  * Most of this file is about degenerate data rather than ordinary data. A
- * series of all zeros, a single data point, every value identical — each gives
+ * series of all zeros, a single data point, every value identical - each gives
  * a domain with no extent, and a linear scale over `[k, k]` maps every input to
  * the same pixel, or to `NaN`. Those cases are not exotic: "all zeros so far"
  * is what a chart of this quarter's sales looks like on day one.
@@ -32,7 +32,7 @@ export type LinearScale = {
  * Every finite number across the given series.
  *
  * `null` holes and any non-finite value that survived validation are dropped
- * rather than treated as zero — a missing measurement is not a measurement of
+ * rather than treated as zero - a missing measurement is not a measurement of
  * zero, and letting one through would drag the domain to the origin.
  */
 export function finiteValues(series: readonly Series[]): number[] {
@@ -56,7 +56,7 @@ export function finiteValues(series: readonly Series[]): number[] {
  * cropping to the data is what makes the shape readable.
  *
  * An explicit bound from the spec always wins, including one that crops a bar
- * chart — the author asked for it, and refusing would be this package deciding
+ * chart - the author asked for it, and refusing would be this package deciding
  * it knows better than the person who wrote the spec.
  */
 export function computeValueDomain(
@@ -83,7 +83,7 @@ export function computeValueDomain(
 /**
  * The value domain for a stacked chart.
  *
- * The axis has to cover the *totals*, not the individual values — a category
+ * The axis has to cover the *totals*, not the individual values - a category
  * whose three series each read 40 reaches 120, and an axis topping out at 40
  * would draw two of the segments off the top of the plot.
  *
@@ -130,12 +130,12 @@ export function computeStackedDomain(
  *
  * Three cases reach this, and they want different answers:
  *
- * - **all zeros** — `[0, 0]`. Padding proportionally gives `[0, 0]` again, so
+ * - **all zeros** - `[0, 0]`. Padding proportionally gives `[0, 0]` again, so
  *   this picks an arbitrary but sane `[0, 1]`: an axis reading 0 to 1 with a
  *   flat line along the bottom is the truthful picture.
- * - **every value the same non-zero k** — pads by 10% of `|k|`, so the line
+ * - **every value the same non-zero k** - pads by 10% of `|k|`, so the line
  *   sits mid-plot with room around it rather than pinned to an edge.
- * - **inverted bounds**, from a spec with `min` above `max` — swapped rather
+ * - **inverted bounds**, from a spec with `min` above `max` - swapped rather
  *   than rejected, since the intent is obvious and a backwards axis renders
  *   as nonsense.
  */
@@ -153,7 +153,7 @@ function padDegenerate(min: number, max: number): Domain {
  * A linear scale over `domain`, mapped onto `range`, with ticks.
  *
  * `range` is given in SVG coordinates, so for a vertical axis it runs
- * bottom-to-top — that is, the first number is larger than the second, because
+ * bottom-to-top - that is, the first number is larger than the second, because
  * SVG's y grows downward.
  */
 export function linearScale(domain: Domain, range: [number, number], tickCount = 5): LinearScale {
@@ -174,7 +174,7 @@ export function linearScale(domain: Domain, range: [number, number], tickCount =
  *
  * d3 picks steps of 1, 2, 5 and powers of ten, which is what makes an axis read
  * as 0, 25, 50, 75, 100 rather than 0, 23.4, 46.8. It can return fewer ticks
- * than asked for, and for a very narrow domain it can return none at all —
+ * than asked for, and for a very narrow domain it can return none at all -
  * hence the fallback to the domain's own ends, so an axis is never blank.
  */
 export function niceTicks(domain: Domain, count: number): number[] {

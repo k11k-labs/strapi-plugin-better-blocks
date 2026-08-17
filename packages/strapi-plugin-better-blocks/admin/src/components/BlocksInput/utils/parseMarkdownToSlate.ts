@@ -88,7 +88,7 @@ const normalizeIdentifier = (identifier: string): string => {
 
 /**
  * Definitions are only legal at the top level in CommonMark, but remark still
- * parses them inside blockquotes and list items — so walk the whole tree or a
+ * parses them inside blockquotes and list items - so walk the whole tree or a
  * `[ref]` used from one of those containers would lose its URL.
  */
 const collectDefinitions = (tree: Root): DefinitionMap => {
@@ -115,7 +115,7 @@ const collectDefinitions = (tree: Root): DefinitionMap => {
  * remark-math treats every `$…$` pair as inline math, so shell-style prose like
  * `run $HOME/bin and $PATH` parses as a formula and would be swallowed by KaTeX.
  * Real LaTeX never pads its delimiters with whitespace, so a padded (or empty)
- * span is text the author never meant as math — keep it as literal `$…$`.
+ * span is text the author never meant as math - keep it as literal `$…$`.
  */
 const isLikelyInlineMath = (value: string): boolean => {
   return value.trim() !== '' && !/^\s|\s$/.test(value);
@@ -178,7 +178,7 @@ const normalizeCodeLanguage = (lang: string | null | undefined): string => {
 
 const normalizeUrl = (url: string): string => {
   // remark already resolves `<hi@example.com>` to `mailto:hi@example.com`, and
-  // that value still looks like a bare address to the test below — without this
+  // that value still looks like a bare address to the test below - without this
   // guard it would be prefixed a second time (`mailto:mailto:…`).
   if (/^[a-z][a-z0-9+.-]*:/i.test(url)) {
     return url;
@@ -518,7 +518,7 @@ const mapListItem = (
 
 /**
  * A Markdown image is inline while the plugin's image is a block, so only an
- * image that is alone in its paragraph can become one — `see ![x](y) here` has
+ * image that is alone in its paragraph can become one - `see ![x](y) here` has
  * to stay an inline link or the sentence would be torn in two.
  */
 const standaloneImage = (

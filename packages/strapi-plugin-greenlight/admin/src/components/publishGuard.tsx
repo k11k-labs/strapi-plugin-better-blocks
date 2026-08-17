@@ -14,7 +14,7 @@ import type { ReviewEntry } from '../reviewBatch';
  * can be perfectly publishable, and any second implementation of that gets it
  * wrong eventually. See `gate.publishable`.
  *
- * Requests are batched and cached in `reviewBatch` — shared with the list
+ * Requests are batched and cached in `reviewBatch` - shared with the list
  * view's stage column, so a page of rows asks once in total rather than once
  * per row per feature.
  */
@@ -68,7 +68,7 @@ const usePublishable = (
  * Disables the Publish button when the document has not been approved.
  *
  * A courtesy, not the enforcement. The gate is a document-service middleware on
- * the server and applies to every route in — the edit view, the list view, the
+ * the server and applies to every route in - the edit view, the list view, the
  * REST admin API and anyone's own code. Disabling the button only saves the
  * editor a click that was always going to fail, which is the same reason the
  * panel hides stages their role cannot move into.

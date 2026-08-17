@@ -47,7 +47,7 @@ const controller = ({ strapi }: { strapi: Core.Strapi }) => ({
    * The admin panel receives finished SVG rather than a graph to render itself.
    * That is the design: one renderer, on the server, so what you see in the
    * panel and what you download are the same bytes, and so the diagram can be
-   * produced by anything that can make an HTTP request — a docs build, CI — and
+   * produced by anything that can make an HTTP request - a docs build, CI - and
    * not only by a browser running the admin panel.
    */
   async svg(ctx: any) {

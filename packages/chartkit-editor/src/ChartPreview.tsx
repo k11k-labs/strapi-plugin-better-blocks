@@ -25,7 +25,7 @@ export function ChartPreview({ spec, locale, idPrefix, onClick }: ChartPreviewPr
 
   // A chart with categories but no readings renders perfectly happily: axes,
   // ticks, a 0-to-1 scale invented out of nothing, and no marks. It is valid,
-  // and it is useless to look at — so say it in words instead of drawing an
+  // and it is useless to look at - so say it in words instead of drawing an
   // empty frame.
   if (result.ok && !hasAnyValue(spec)) {
     return (
@@ -37,7 +37,7 @@ export function ChartPreview({ spec, locale, idPrefix, onClick }: ChartPreviewPr
         style={{ textAlign: 'center', cursor: onClick ? 'pointer' : undefined }}
       >
         <Typography variant="pi" textColor="neutral600">
-          Nothing to draw yet — this chart has no numbers in it.
+          Nothing to draw yet - this chart has no numbers in it.
         </Typography>
       </Box>
     );
@@ -68,7 +68,7 @@ export function ChartPreview({ spec, locale, idPrefix, onClick }: ChartPreviewPr
       style={{
         // Both, always. The chart's text and axes are
         // `var(--chart-text, currentColor)` by design, so a background without a
-        // matching color leaves them inheriting the admin's theme — which on the
+        // matching color leaves them inheriting the admin's theme - which on the
         // dark one is white text on white paper.
         background: '#ffffff',
         color: '#32324a',

@@ -12,7 +12,7 @@ import { PLUGIN_ID } from '../pluginId';
  * The Content Manager's own hook names, as literals.
  *
  * `@strapi/content-manager` exports them as constants, but only from a deep
- * internal path with no entry point pointing at it — importing that would be
+ * internal path with no entry point pointing at it - importing that would be
  * reaching into someone else's `dist`. The strings are the public contract; the
  * import is not.
  */
@@ -51,7 +51,7 @@ const StageCell = ({
   }, [get, uid, documentId, locale]);
 
   // Still loading, or the content type turned out not to be under review after
-  // all — the cached coverage can be a workflow edit out of date.
+  // all - the cached coverage can be a workflow edit out of date.
   if (!entry || !entry.workflow) return null;
 
   const state = entry.state;
@@ -60,7 +60,7 @@ const StageCell = ({
   if (!state || !state.stageName) {
     return (
       <Typography textColor="neutral500" variant="pi">
-        —
+        -
       </Typography>
     );
   }
@@ -81,7 +81,7 @@ const StageCell = ({
 
 interface ColumnPayload {
   displayedHeaders: Array<Record<string, unknown>>;
-  /** `{ layout, settings, metadatas, options }` — note there is no uid on it. */
+  /** `{ layout, settings, metadatas, options }` - note there is no uid on it. */
   layout: Record<string, unknown>;
 }
 
@@ -173,13 +173,13 @@ const StageFilterInput = ({ name, options }: { name: string; options?: FilterOpt
  * Adds a "Review stage" filter to the list view.
  *
  * The value written into the URL is a stage id, which means nothing to the
- * Content Manager's own query — a stage is not a field on anyone's content
+ * Content Manager's own query - a stage is not a field on anyone's content
  * type. A middleware on the server rewrites it into a `documentId` filter
  * before the query is validated; see `server/src/middlewares/stageFilter.ts`,
  * without which this control would produce a 400 rather than a result.
  *
  * Only `$eq` and `$ne` are offered. Every other operator the Content Manager
- * knows — contains, greater-than, null checks — either means nothing for a
+ * knows - contains, greater-than, null checks - either means nothing for a
  * stage or would have to be answered with a scan, and an operator that silently
  * does the wrong thing is worse than one that is not in the list.
  */

@@ -130,7 +130,7 @@ export const isEmbeddableUrl = (url: string): boolean =>
  * Pasted embed codes are untrusted: they are authored in the admin but rendered
  * on the public frontend, so a stored `<script>` or an `onload=` handler would
  * be a stored-XSS vector. Rather than filter the input, the iframe is *rebuilt*
- * from an allowlist — anything not explicitly listed is dropped.
+ * from an allowlist - anything not explicitly listed is dropped.
  * -------------------------------------------------------------------------*/
 
 /** Attributes carried over from a pasted iframe. Everything else is dropped. */
@@ -206,7 +206,7 @@ export const sanitizeIframe = (
   } catch {
     return { error: 'insecure-src' };
   }
-  // Only https: — blocks javascript:, data: and mixed-content http: embeds.
+  // Only https: - blocks javascript:, data: and mixed-content http: embeds.
   if (parsed.protocol !== 'https:') return { error: 'insecure-src' };
 
   const attrs: string[] = [`src="${parsed.toString()}"`];
@@ -243,7 +243,7 @@ const escapeAttr = (value: string): string =>
 
 /**
  * Build the iframe markup for a recognized share URL. Returns null when the URL
- * isn't one of the known providers — the author then has to use embed-code mode.
+ * isn't one of the known providers - the author then has to use embed-code mode.
  */
 export const buildUrlEmbed = (
   url: string,

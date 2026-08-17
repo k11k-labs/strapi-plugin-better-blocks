@@ -3,7 +3,7 @@
  * A Chartkit chart, as an Astro component.
  *
  * The work happens in `@qkix/chartkit-core`, which turns a spec into a finished
- * SVG string. This is the thin part — and being thin is the point: the rendered
+ * SVG string. This is the thin part - and being thin is the point: the rendered
  * page carries an SVG and nothing else. No component runtime, no hydration
  * directive, no bytes.
  */
@@ -29,6 +29,6 @@ const svg = result.ok ? result.svg : '';
 
 {
   /* The markup is this library's own output, from a builder that escapes every
-     author-controlled value on the way in — see chartkit-core's svg.ts. */
+     author-controlled value on the way in - see chartkit-core's svg.ts. */
 }
 {svg && <div class={className} set:html={svg} />}

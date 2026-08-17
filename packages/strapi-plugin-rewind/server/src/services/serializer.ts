@@ -3,8 +3,8 @@
  *
  * Written for this plugin rather than lifted from Strapi's own history module.
  * Where the shapes here resemble theirs it is because Strapi's populate API
- * dictates them — a relation can only be populated by naming its fields, a
- * dynamic zone only through `on` fragments — not because the code was copied.
+ * dictates them - a relation can only be populated by naming its fields, a
+ * dynamic zone only through `on` fragments - not because the code was copied.
  * Their implementation is MIT and was read while working out what the problem
  * actually is; two facts learned that way are worth stating outright, since
  * both cost a day if you meet them the hard way:
@@ -34,7 +34,7 @@ const IDENTITY_FIELDS = ['id', 'documentId', 'locale'];
  * The timestamps and author columns change on every write, so a version that
  * keeps them can never be compared with another. `locale` and `localizations`
  * are injected by i18n and describe how the document is wired up rather than
- * what it says — restoring them would try to rewrite the translation graph.
+ * what it says - restoring them would try to rewrite the translation graph.
  */
 export const FIELDS_TO_IGNORE = [
   'createdAt',
@@ -111,7 +111,7 @@ export const buildDeepPopulate = (
       switch (attribute.type) {
         case 'relation': {
           if (isMorphRelation(attribute)) break;
-          // Only what identifies the target — never the target itself.
+          // Only what identifies the target - never the target itself.
           acc[name] = { [fieldSelector]: ['documentId', 'locale', 'publishedAt'] };
           break;
         }

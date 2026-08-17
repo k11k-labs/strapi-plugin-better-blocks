@@ -168,7 +168,7 @@ interface TableToolbarProps {
 /**
  * Contextual toolbar that floats above a table while the caret is inside it.
  *
- * Every row/column action is directional and anchored on the focused cell —
+ * Every row/column action is directional and anchored on the focused cell -
  * "insert row above" means above *this* row, not at the end of the table.
  */
 const TableToolbar = ({ location, disabled }: TableToolbarProps) => {
@@ -247,7 +247,7 @@ const TableToolbar = ({ location, disabled }: TableToolbarProps) => {
             : t('components.Blocks.table.mergeCells', 'Merge cells')
         }
         icon={MergeCellsIcon}
-        // Merging needs a selection covering more than one cell — drag across
+        // Merging needs a selection covering more than one cell - drag across
         // cells, or click one and Shift+click another.
         disabled={disabled || !canMergeCells(location)}
         onAction={() => mergeCells(editor, location)}

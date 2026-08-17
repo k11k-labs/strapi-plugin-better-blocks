@@ -14,12 +14,12 @@ import type { BlocksContent, EmbedNode, MediaEmbedNode } from './types';
  *
  * Documents do **not** carry a version marker. The plugin has never written
  * one, and adding a field to content already sitting in people's databases is
- * not something a version number is worth — so the version is inferred from
+ * not something a version number is worth - so the version is inferred from
  * what a document actually contains. See {@link detectSchemaVersion}.
  *
- * - **1** — the original format. Media was a `media-embed` block: a URL that
+ * - **1** - the original format. Media was a `media-embed` block: a URL that
  *   renderers turned into a hardcoded 16:9 iframe.
- * - **2** — `media-embed` was superseded by the richer `embed` and `video`
+ * - **2** - `media-embed` was superseded by the richer `embed` and `video`
  *   blocks. Nothing inserts `media-embed` any more.
  */
 export const CURRENT_SCHEMA_VERSION = 2;
@@ -41,7 +41,7 @@ export type MigrateOptions = {
   /**
    * Block types registered by another package. A registered block's own
    * migrator runs on every node of its type, regardless of the document's
-   * schema version — the two version lines are independent, and a document
+   * schema version - the two version lines are independent, and a document
    * that is current by Better Blocks' reckoning can still hold an outdated
    * chart.
    */
@@ -50,7 +50,7 @@ export type MigrateOptions = {
 
 /**
  * Blocks whose children are themselves blocks. Walking has to descend into
- * these: a `media-embed` — or a registered block — sitting inside a callout is
+ * these: a `media-embed` - or a registered block - sitting inside a callout is
  * just as much part of the document as one at the top level.
  */
 const BUILT_IN_BLOCK_PARENTS = new Set(['callout', 'details']);
@@ -66,7 +66,7 @@ function blockChildrenOf(node: AnyBlockNode, holdsBlocks: boolean): AnyBlockNode
  * Infers a document's format version from its contents.
  *
  * A document is version 1 only if it still contains a `media-embed` block,
- * at any depth. Everything else — including an empty document — is already
+ * at any depth. Everything else - including an empty document - is already
  * current, because every other change to the format has been additive.
  */
 export function detectSchemaVersion(content: ExtendedBlocksContent): SchemaVersion {
@@ -92,7 +92,7 @@ const escapeAttribute = (value: string): string =>
  *
  * Both renderers draw a `media-embed` as a 16:9 box wrapping
  * `<iframe src={url}>`, and draw an `embed` from its sanitized `embedHtml`. To
- * come out looking the same, the migration has to synthesize that markup — so
+ * come out looking the same, the migration has to synthesize that markup - so
  * it builds the same iframe the renderers used to build, with the URL escaped
  * as an attribute value.
  *
@@ -124,13 +124,13 @@ function migrateMediaEmbed(node: MediaEmbedNode): EmbedNode | null {
  * registered block to its own migrator on the way through.
  *
  * This is opt-in. Both renderers still handle `media-embed`, so nothing breaks
- * if you never run it — it is for normalizing stored content, e.g. in a Strapi
+ * if you never run it - it is for normalizing stored content, e.g. in a Strapi
  * migration or a one-off script.
  *
  * Better Blocks does not know the schema of a registered block and does not
  * try to: it walks the document once, and for each node of a registered type
  * calls that type's `migrate`. The block reads its own version marker and
- * decides. That is the whole contract — the alternative is a `switch` over
+ * decides. That is the whole contract - the alternative is a `switch` over
  * other people's block types living in this file forever.
  *
  * The input is not mutated; blocks that need no change are carried over by

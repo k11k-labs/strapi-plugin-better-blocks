@@ -7,7 +7,7 @@ import { styled } from 'styled-components';
 const GRID_ROWS = 10;
 const GRID_COLS = 10;
 
-/** Upper bound for the custom-size inputs — a guard against typos, not a limit
+/** Upper bound for the custom-size inputs - a guard against typos, not a limit
  *  anyone should hit in practice. */
 const MAX_DIMENSION = 50;
 

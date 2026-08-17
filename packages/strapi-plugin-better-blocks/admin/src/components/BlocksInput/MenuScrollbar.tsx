@@ -16,7 +16,7 @@ import { createGlobalStyle } from 'styled-components';
  *     content fits.
  *   - `scrollbar-width` must be overridden to `auto` (not `thin`) to un-hide the
  *     design-system's `none`. `auto` keeps the `::-webkit-scrollbar`
- *     pseudo-elements active, whereas `thin` — like `scrollbar-color` — makes
+ *     pseudo-elements active, whereas `thin` - like `scrollbar-color` - makes
  *     Chromium fall back to an OS overlay scrollbar that is invisible until you
  *     scroll (defeating the purpose on macOS). We therefore do NOT set
  *     `scrollbar-color`; Firefox falls back to its own always-visible bar.

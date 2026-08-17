@@ -14,7 +14,7 @@ import type { ValueFormat } from './types';
  * and potentially every value, so the formatter is built once per render and
  * passed down rather than constructed per call.
  *
- * A malformed format — an unknown currency, a bad locale — throws inside `Intl`.
+ * A malformed format - an unknown currency, a bad locale - throws inside `Intl`.
  * That is content someone typed into a CMS field, not a programming error, so
  * it falls back to plain number formatting instead of taking the page down.
  */
@@ -51,7 +51,7 @@ export function createValueFormatter(
  *
  * The subtler one is collapsing. `compact` notation writes 1,000,000 and
  * 1,200,000 and 1,400,000 all as "1M" at zero decimals, so an axis climbing
- * through three distinct ticks appears to stall — the same label three times,
+ * through three distinct ticks appears to stall - the same label three times,
  * against three different gridlines. Rounding by step does not help, because
  * the values genuinely differ; what is missing is precision in the *output*.
  * So the whole tick set is formatted, and if two distinct values collide the

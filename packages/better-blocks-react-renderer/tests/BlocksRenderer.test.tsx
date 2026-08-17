@@ -2138,7 +2138,7 @@ describe('BlocksRenderer', () => {
 
   it('injects the widget script even when the markup shipped an inert copy of it', async () => {
     const src = 'https://www.tiktok.com/embed.js';
-    // An inert `<script>` already in the DOM — the shape a previously-rendered
+    // An inert `<script>` already in the DOM - the shape a previously-rendered
     // embed (or another library) leaves behind. It must not defeat the loader.
     const inert = document.createElement('script');
     inert.setAttribute('src', src);
@@ -2493,7 +2493,7 @@ describe('BlocksRenderer', () => {
     expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     expect(link.textContent).toBe('Demo');
 
-    // No markup and no URL — nothing to render at all.
+    // No markup and no URL - nothing to render at all.
     const { container: empty } = render(<BlocksRenderer content={[{ type: 'embed' }]} />);
     expect(empty.querySelector('figure.bb-embed')).toBeNull();
   });
@@ -2633,7 +2633,7 @@ describe('BlocksRenderer', () => {
     );
     const video = container.querySelector('video') as HTMLVideoElement;
     expect(video.getAttribute('preload')).toBe('none');
-    // No mux-player registered and no window.Hls — the poster carries the block.
+    // No mux-player registered and no window.Hls - the poster carries the block.
     expect(video.getAttribute('poster')).toBe('https://image.mux.com/def456/thumbnail.jpg');
   });
 
@@ -2736,7 +2736,7 @@ describe('BlocksRenderer', () => {
     ];
     const { container } = render(<BlocksRenderer content={content} />);
 
-    // Not registered yet — the native element holds the place.
+    // Not registered yet - the native element holds the place.
     expect(container.querySelector('mux-player')).toBeNull();
     expect(container.querySelector('video')).toBeInTheDocument();
 

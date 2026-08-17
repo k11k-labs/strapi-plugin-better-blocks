@@ -70,7 +70,7 @@ const assignment = ({ strapi }: { strapi: Core.Strapi }) => {
      * the same document, both callers find nothing, and both insert. The unique
      * index turns that into an error rather than a duplicate, and catching it and
      * re-reading is what makes the whole thing safe. "Check, then insert" is
-     * exactly the race — the check is worthless by the time the insert runs.
+     * exactly the race - the check is worthless by the time the insert runs.
      */
     async ensure(uid: string, documentId: string, locale: string | null): Promise<Assignment> {
       const normalized = normalizeLocale(locale);

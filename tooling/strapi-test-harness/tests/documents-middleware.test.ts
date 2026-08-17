@@ -8,7 +8,7 @@ import type { TestStrapiInstance } from '../src/index.js';
  * The content-history spike, run as a test.
  *
  * Every design decision in that plugin rests on how `strapi.documents.use()`
- * actually behaves — which actions fire, what the middleware receives, and
+ * actually behaves - which actions fire, what the middleware receives, and
  * whether a publish nests an update inside its own async context. Those are
  * claims about Strapi, so they belong in a test that breaks when Strapi changes,
  * not in a paragraph of a handover document.
@@ -128,7 +128,7 @@ async function seed(): Promise<string> {
   return created.documentId;
 }
 
-describe('documents.use — which actions reach the middleware', () => {
+describe('documents.use - which actions reach the middleware', () => {
   it('fires for create, with the documentId only available on the result', async () => {
     const documentId = await seed();
 
@@ -151,7 +151,7 @@ describe('documents.use — which actions reach the middleware', () => {
     expect(calls.map((c) => c.action)).toContain('update');
   });
 
-  it('emits publish alone — the document service does not nest an update inside it', async () => {
+  it('emits publish alone - the document service does not nest an update inside it', async () => {
     const documentId = await seed();
     calls = [];
 
@@ -166,7 +166,7 @@ describe('documents.use — which actions reach the middleware', () => {
     calls = [];
 
     // What the CM publish controller does (collection-types.js): update the
-    // document, then publish it — two sequential calls in one transaction.
+    // document, then publish it - two sequential calls in one transaction.
     await app.strapi.db.transaction(async () => {
       await app.strapi.documents(UID).update({
         documentId,
@@ -207,7 +207,7 @@ describe('documents.use — which actions reach the middleware', () => {
   });
 });
 
-describe('documents.use — what the middleware result actually contains', () => {
+describe('documents.use - what the middleware result actually contains', () => {
   it('does not populate components on the result, so a snapshot cannot be built from it', async () => {
     const documentId = await seed();
 
@@ -254,7 +254,7 @@ describe('i18n behaviour the restore rules depend on', () => {
     const documentId = await seed();
 
     // A second locale for an existing document is added with update(), not
-    // create() — create() would start a separate document.
+    // create() - create() would start a separate document.
     await app.strapi.documents(UID).update({
       documentId,
       locale: 'pl',

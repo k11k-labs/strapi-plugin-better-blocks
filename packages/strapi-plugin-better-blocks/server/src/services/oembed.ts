@@ -122,7 +122,7 @@ export const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
   );
   if (!urnMatch) return null;
   // The URN type matters: LinkedIn 404s an activity id addressed as a share.
-  // Share URLs (…-activity-<id>-<hash>) carry their own type — keep it.
+  // Share URLs (…-activity-<id>-<hash>) carry their own type - keep it.
   const type =
     urnMatch[1].toLowerCase() === 'ugcpost'
       ? 'ugcPost'
@@ -145,7 +145,7 @@ export const buildLinkedInIframe = (url: string): NormalisedOEmbed | null => {
  * Platform oEmbed markup often ships the widget script inline (TikTok always
  * does; Twitter/Instagram only when `omit_script` isn't honoured). Renderers
  * inject that script themselves, and a `<script>` added through `innerHTML`
- * never executes anyway — worse, its inert tag makes a renderer believe the
+ * never executes anyway - worse, its inert tag makes a renderer believe the
  * widget is already loaded. Strip it so the stored html is markup only.
  */
 export const stripScripts = (html: string): string =>
@@ -184,7 +184,7 @@ const service = ({ strapi }: { strapi: Core.Strapi }) => {
     strapi.plugin('better-blocks').config('social', {}) as SocialConfig;
 
   // Built on first use rather than at module load, so it can read the
-  // configured size — and so it belongs to this Strapi instance instead of the
+  // configured size - and so it belongs to this Strapi instance instead of the
   // process, which matters the moment a test boots two of them.
   let cache: TtlCache<NormalisedOEmbed> | null = null;
   const getCache = (): TtlCache<NormalisedOEmbed> => {

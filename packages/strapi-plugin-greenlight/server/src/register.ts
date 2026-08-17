@@ -19,7 +19,7 @@ export const releaseMiddleware = (): void => {
  * The coarse switch: who can see the plugin at all, configure it, and assign
  * reviewers.
  *
- * Per-stage rules are **not** here and cannot be — they live on the stages
+ * Per-stage rules are **not** here and cannot be - they live on the stages
  * themselves and are checked in `permission.ts`. This only decides who gets
  * through the door.
  */
@@ -61,7 +61,7 @@ const registerPermissions = (strapi: Core.Strapi): void => {
  *
  * Registered in `register()` rather than `bootstrap()` deliberately. Document
  * service middlewares run in registration order, and plugins that snapshot
- * documents — Rewind, for one — register theirs in `bootstrap()`. Registering
+ * documents - Rewind, for one - register theirs in `bootstrap()`. Registering
  * here puts the gate outside those, so a publish that is refused never reaches
  * them and never records a version of something that did not happen.
  */
@@ -89,7 +89,7 @@ const registerPublishGate = (strapi: Core.Strapi): (() => void) => {
     if (context.action !== 'publish') return next();
 
     /**
-     * The escape hatch for seeds, imports and migrations — code that publishes
+     * The escape hatch for seeds, imports and migrations - code that publishes
      * on purpose and has no reviewer to answer to.
      *
      * Stripped before `next()` so it never reaches the document service's own

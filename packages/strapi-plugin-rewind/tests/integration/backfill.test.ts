@@ -122,7 +122,7 @@ describe('backfillLabels', () => {
     }
     await app.strapi.db.query(VERSION_UID).updateMany({ where: {}, data: { label: null } });
 
-    // 251 rows against a batch size of 200 — the loop has to go round twice.
+    // 251 rows against a batch size of 200 - the loop has to go round twice.
     expect(await runBackfill()).toBe(251);
 
     const remaining = await app.strapi.db.query(VERSION_UID).count({ where: { label: null } });

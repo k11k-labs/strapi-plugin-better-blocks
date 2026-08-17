@@ -35,7 +35,7 @@ export async function writeFixtureApp(
 
   await writeModule(
     path.join(configDir, 'server.js'),
-    // The instance never listens — `load()` stops short of binding a port — so
+    // The instance never listens - `load()` stops short of binding a port - so
     // host/port are only here to satisfy config validation.
     `module.exports = () => (${JSON.stringify(
       {

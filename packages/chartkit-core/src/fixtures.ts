@@ -1,7 +1,7 @@
 /**
  * The fixture set, chosen to break things.
  *
- * A chart that looks right on tidy data tells you nothing — tidy data is the
+ * A chart that looks right on tidy data tells you nothing - tidy data is the
  * case that works by accident. Each fixture below targets a specific way the
  * geometry can fall apart, and the name says which. They are shared between the
  * snapshot tests and the gallery page, so what is asserted and what is looked
@@ -46,7 +46,7 @@ const bar = (
 export const fixtures: Fixture[] = [
   {
     id: 'ordinary',
-    breaks: 'nothing — the control case, so a regression elsewhere is visible',
+    breaks: 'nothing - the control case, so a regression elsewhere is visible',
     spec: {
       ...bar('Quarterly revenue', ['Q1', 'Q2', 'Q3', 'Q4'], [420, 610, 385, 720]),
       description: 'Revenue by quarter, rising to a peak in Q4.',
@@ -59,12 +59,12 @@ export const fixtures: Fixture[] = [
   },
   {
     id: 'all-zeros',
-    breaks: 'scale degeneracy — the domain has no width, so every tick collides',
+    breaks: 'scale degeneracy - the domain has no width, so every tick collides',
     spec: bar('Nothing yet', ['Mon', 'Tue', 'Wed', 'Thu'], [0, 0, 0, 0]),
   },
   {
     id: 'null-hole',
-    breaks: 'gaps — a missing value must not be drawn as a measured zero',
+    breaks: 'gaps - a missing value must not be drawn as a measured zero',
     spec: bar('With a gap', ['Q1', 'Q2', 'Q3', 'Q4', 'Q5'], [30, null, 45, null, 20]),
   },
   {
@@ -206,7 +206,7 @@ export const fixtures: Fixture[] = [
   },
   {
     id: 'line-gaps',
-    breaks: 'holes — the line must break, and a lone reading must still show',
+    breaks: 'holes - the line must break, and a lone reading must still show',
     spec: {
       version: 2,
       type: 'line',
@@ -298,7 +298,7 @@ export const fixtures: Fixture[] = [
   },
   {
     id: 'area-stacked-holes',
-    breaks: 'a gap low in the stack — the bands above it drop, because the total really did',
+    breaks: 'a gap low in the stack - the bands above it drop, because the total really did',
     spec: {
       version: 2,
       type: 'area',
@@ -369,7 +369,7 @@ export const fixtures: Fixture[] = [
   },
   {
     id: 'pie-all-zero',
-    breaks: 'nothing to divide up — a full circle here would be a lie',
+    breaks: 'nothing to divide up - a full circle here would be a lie',
     spec: {
       version: 2,
       type: 'pie',
@@ -383,7 +383,7 @@ export const fixtures: Fixture[] = [
   },
   {
     id: 'markup-in-labels',
-    breaks: 'escaping — this is a stored XSS if any of it reaches the output raw',
+    breaks: 'escaping - this is a stored XSS if any of it reaches the output raw',
     spec: {
       ...bar('</title><script>alert(1)</script>', ['<b>bold</b>', 'a & b', '"quoted"'], [5, 9, 3]),
       description: 'Labels containing markup, which must arrive as text.',

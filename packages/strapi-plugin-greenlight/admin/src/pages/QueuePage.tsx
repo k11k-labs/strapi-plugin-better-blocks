@@ -27,7 +27,7 @@ import type { QueueItem, Workflow } from '../api';
  * "My reviews".
  *
  * The list view has a stage column of its own, but it is per collection and per
- * page, and it cannot be filtered — a filter would have to be a query against
+ * page, and it cannot be filtered - a filter would have to be a query against
  * the user's content type, and a stage is not a field on it. This page is the
  * answer to the question a reviewer actually has: everything waiting on them,
  * across every content type, in one list.
@@ -161,11 +161,11 @@ export const QueuePage = () => {
                         {item.stage.name}
                       </Badge>
                     ) : (
-                      <Typography textColor="neutral500">—</Typography>
+                      <Typography textColor="neutral500">-</Typography>
                     )}
                   </Td>
                   <Td>
-                    <Typography textColor="neutral600">{item.locale ?? '—'}</Typography>
+                    <Typography textColor="neutral600">{item.locale ?? '-'}</Typography>
                   </Td>
                   <Td>
                     <Typography textColor="neutral600">

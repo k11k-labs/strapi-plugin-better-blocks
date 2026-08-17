@@ -8,7 +8,7 @@ const BATCH_SIZE = 200;
  * Gives versions recorded before labels existed something to show.
  *
  * Without this, upgrading leaves a history where older entries are a badge and
- * a timestamp and newer ones have a title — the list stays half-unreadable for
+ * a timestamp and newer ones have a title - the list stays half-unreadable for
  * exactly as long as the old versions are worth keeping.
  *
  * Two details that matter:

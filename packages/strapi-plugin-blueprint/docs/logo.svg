@@ -8,13 +8,13 @@
     is made of below. The smallest shape that reads as a schema diagram rather
     than as an org chart or a folder tree.
 
-    The right-hand child is amber — the component. Amber for the one that matters
+    The right-hand child is amber - the component. Amber for the one that matters
     is the family's convention (Rewind's leading triangle, Chartkit's leading bar,
     Greenlight's final check segment), and here it points at the thing this plugin
     draws that no other one in its category does. Two amber children would make it
     a colour scheme; one makes it a statement.
 
-    Boxes are 152 x 88, all three the same size — different widths would read as a
+    Boxes are 152 x 88, all three the same size - different widths would read as a
     hierarchy of importance, which is not what a schema is.
 
       parent        x 180..332   y 104..192   centre x 256
@@ -27,8 +27,8 @@
     and bottom, and both midpoints land on 256. Centred by construction rather
     than by eye, which a symmetric shape has earned.
 
-    The connectors drop from the parent's bottom edge to y 256 — the canvas
-    midpoint, which is where the elbow wants to be anyway — then run out to each
+    The connectors drop from the parent's bottom edge to y 256 - the canvas
+    midpoint, which is where the elbow wants to be anyway - then run out to each
     child's centre and down to its top edge. Drawn before the boxes so that the
     round caps at both ends are covered by the shapes they join, rather than
     poking out as dots.

@@ -15,7 +15,7 @@ import {
  * Scenarios 1-11 of the handover: the publish gate itself.
  *
  * These drive the Document Service directly rather than the HTTP layer, because
- * that is the boundary the gate defends — a publish from a seed script has to be
+ * that is the boundary the gate defends - a publish from a seed script has to be
  * refused exactly as one from the edit view is.
  */
 
@@ -91,7 +91,7 @@ describe('the gate', () => {
 
   it('4. blocks a document with no assignment, and creates one in the first stage', async () => {
     const documentId = await draft('predates the plugin');
-    // Workflow added *after* the document existed — the case every install hits.
+    // Workflow added *after* the document existed - the case every install hits.
     const wf = await seedWorkflow(strapi);
 
     await expect(strapi.documents(UID).publish({ documentId, locale: 'en' })).rejects.toThrow(
@@ -121,7 +121,7 @@ describe('the gate', () => {
   });
 });
 
-describe('locales — the five shapes', () => {
+describe('locales - the five shapes', () => {
   it("5. locale '*' is expanded, and one unapproved locale blocks the call", async () => {
     const wf = await seedWorkflow(strapi);
     const documentId = await draft('multi');
@@ -203,7 +203,7 @@ describe('bulk publish', () => {
    *                           the rollback takes them with it
    *
    * A real gate reads the workflow, the assignment and the document title before
-   * it can refuse, which puts it firmly in the second case — the whole batch
+   * it can refuse, which puts it firmly in the second case - the whole batch
    * rolls back, consistently. That is what is asserted here.
    *
    * It is a race rather than a contract, which is exactly why the error message

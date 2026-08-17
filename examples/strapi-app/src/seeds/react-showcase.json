@@ -6,7 +6,7 @@
       "children": [
         {
           "type": "text",
-          "text": "Better Blocks Renderer — Feature Showcase"
+          "text": "Better Blocks Renderer - Feature Showcase"
         }
       ]
     },
@@ -816,7 +816,7 @@
         },
         {
           "type": "text",
-          "text": " — Alan Kay"
+          "text": " - Alan Kay"
         }
       ]
     },
@@ -1118,7 +1118,7 @@
       "children": [
         {
           "type": "text",
-          "text": "A spanned-over slot carries no node — cells are emitted in document order and the span attributes reconstruct the grid, exactly like hand-written HTML."
+          "text": "A spanned-over slot carries no node - cells are emitted in document order and the span attributes reconstruct the grid, exactly like hand-written HTML."
         }
       ]
     },
@@ -1327,7 +1327,7 @@
         "width": 600,
         "height": 200
       },
-      "caption": "Better Blocks — a rich-text editor plugin for Strapi v5",
+      "caption": "Better Blocks - a rich-text editor plugin for Strapi v5",
       "imageAlign": "center",
       "children": [
         {
@@ -1953,7 +1953,7 @@
         "width": 550,
         "height": null
       },
-      "caption": "Twitter/X — oEmbed html, already script-free (omit_script=true). Needs widgets.js, which X serves only to allowed referrers.",
+      "caption": "Twitter/X - oEmbed html, already script-free (omit_script=true). Needs widgets.js, which X serves only to allowed referrers.",
       "children": [
         {
           "type": "text",
@@ -1974,7 +1974,7 @@
         "thumbnailUrl": "https://p16-common-sign.tiktokcdn-eu.com/tos-maliva-p-0068/2367c7d45cf54a1397abd0e72bf22eac~tplv-tiktokx-origin.image?dr=10395&x-expires=1784635200&x-signature=1PKIeFApi7zsMmfl32NBJbCj9jg%3D&t=4d5b0474&ps=13740610&shp=81f88b70&shcp=43f4a2f9&idc=no1a",
         "providerName": "TikTok"
       },
-      "caption": "TikTok — oEmbed html always ships an inline <script>; it is stripped and embed.js is injected instead. This is the bug from issue #45.",
+      "caption": "TikTok - oEmbed html always ships an inline <script>; it is stripped and embed.js is injected instead. This is the bug from issue #45.",
       "children": [
         {
           "type": "text",
@@ -2011,10 +2011,10 @@
       "alignment": "center",
       "embedCode": "<a data-pin-do=\"embedPin\" data-pin-width=\"large\" href=\"https://www.pinterest.com/pin/99360735500167749/\"></a><script async defer src=\"https://assets.pinterest.com/js/pinit.js\"></script>",
       "oembed": {
-        "html": "<blockquote>oembed.html — must NOT render</blockquote>",
+        "html": "<blockquote>oembed.html - must NOT render</blockquote>",
         "providerName": "Pinterest"
       },
-      "caption": "embedCode wins over oembed.html — the pin below comes from the pasted snippet, not from the (deliberately broken) oEmbed html.",
+      "caption": "embedCode wins over oembed.html - the pin below comes from the pasted snippet, not from the (deliberately broken) oEmbed html.",
       "children": [
         {
           "type": "text",
@@ -2027,7 +2027,7 @@
       "platform": "pinterest",
       "alignment": "center",
       "embedCode": "<a data-pin-do=\"embedPin\" data-pin-width=\"medium\" href=\"https://www.pinterest.com/pin/99360735500167749/\"></a><script async defer src=\"https://assets.pinterest.com/js/pinit.js\"></script>",
-      "caption": "Pinterest — pasted embedCode with no url at all: PinUtils.build() upgrades the anchor, and the fallback card would render as a <div>, never an empty <a>.",
+      "caption": "Pinterest - pasted embedCode with no url at all: PinUtils.build() upgrades the anchor, and the fallback card would render as a <div>, never an empty <a>.",
       "children": [
         {
           "type": "text",
@@ -2046,7 +2046,7 @@
         "width": 504,
         "height": 600
       },
-      "caption": "LinkedIn — self-contained iframe, the one platform with no widget script; the iframe keeps loading=\"lazy\". Renders only for posts LinkedIn serves publicly.",
+      "caption": "LinkedIn - self-contained iframe, the one platform with no widget script; the iframe keeps loading=\"lazy\". Renders only for posts LinkedIn serves publicly.",
       "children": [
         {
           "type": "text",
@@ -2060,7 +2060,7 @@
       "url": "https://www.instagram.com/p/C/",
       "alignment": "center",
       "embedCode": "<blockquote class=\"instagram-media\" data-instgrm-captioned data-instgrm-permalink=\"https://www.instagram.com/p/C/\" data-instgrm-version=\"14\"></blockquote><script async src=\"//www.instagram.com/embed.js\"></script>",
-      "caption": "Instagram — pasted embedCode carrying the inline embed.js tag (stripped, then injected). Instagram serves embeds only for public posts.",
+      "caption": "Instagram - pasted embedCode carrying the inline embed.js tag (stripped, then injected). Instagram serves embeds only for public posts.",
       "children": [
         {
           "type": "text",
@@ -2074,7 +2074,7 @@
       "url": "https://www.facebook.com/20531316728/posts/10154009990506729/",
       "alignment": "center",
       "embedCode": "<div class=\"fb-post\" data-href=\"https://www.facebook.com/20531316728/posts/10154009990506729/\" data-width=\"500\"></div><script async defer crossorigin=\"anonymous\" src=\"https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v19.0\"></script>",
-      "caption": "Facebook — fb-post markup driven by FB.XFBML.parse(). Facebook renders it only for apps it recognises, so without an app id it stays blank.",
+      "caption": "Facebook - fb-post markup driven by FB.XFBML.parse(). Facebook renders it only for apps it recognises, so without an app id it stays blank.",
       "children": [
         {
           "type": "text",
@@ -2087,7 +2087,7 @@
       "platform": "twitter",
       "url": "https://twitter.com/Interior/status/463440424141459456",
       "alignment": "left",
-      "caption": "Fallback — nothing but a url: a single \"View on X\" line, with no provider line repeating it.",
+      "caption": "Fallback - nothing but a url: a single \"View on X\" line, with no provider line repeating it.",
       "children": [
         {
           "type": "text",
@@ -2106,7 +2106,7 @@
         "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Example.jpg/120px-Example.jpg",
         "providerName": "Instagram"
       },
-      "caption": "Fallback — author + thumbnail, no title.",
+      "caption": "Fallback - author + thumbnail, no title.",
       "children": [
         {
           "type": "text",
@@ -2125,7 +2125,7 @@
         "thumbnailUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a9/Example.jpg/120px-Example.jpg",
         "providerName": "TikTok"
       },
-      "caption": "Fallback — title + author + thumbnail.",
+      "caption": "Fallback - title + author + thumbnail.",
       "children": [
         {
           "type": "text",
@@ -2142,7 +2142,7 @@
         "author": "Facebook",
         "providerName": "Facebook"
       },
-      "caption": "Fallback — author only, no thumbnail (Facebook oEmbed needs an access token).",
+      "caption": "Fallback - author only, no thumbnail (Facebook oEmbed needs an access token).",
       "children": [
         {
           "type": "text",
@@ -2280,7 +2280,7 @@
         "provider": "local"
       },
       "title": "Time-lapse: a flower opening",
-      "caption": "Media Library asset — native HTML5 player, with a WebVTT captions track.",
+      "caption": "Media Library asset - native HTML5 player, with a WebVTT captions track.",
       "player": {
         "autoplay": false,
         "loop": false,
@@ -2305,7 +2305,7 @@
       "playbackId": "DS00Spx1CV902MCtPj5WknGlR102V5HFkDe",
       "poster": "https://image.mux.com/DS00Spx1CV902MCtPj5WknGlR102V5HFkDe/thumbnail.jpg",
       "title": "Mux sample (HLS)",
-      "caption": "HLS manifest — plays natively in Safari, via hls.js elsewhere, poster otherwise.",
+      "caption": "HLS manifest - plays natively in Safari, via hls.js elsewhere, poster otherwise.",
       "player": {
         "autoplay": false,
         "loop": false,

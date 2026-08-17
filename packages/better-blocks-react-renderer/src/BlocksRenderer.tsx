@@ -267,7 +267,7 @@ function renderTable(
     const cells = row.children.map((cell, cellIndex) => {
       const cellChildren = renderInlineContent(cell.children, blocks, modifiers);
       const isHeader = cell.type === 'table-header-cell';
-      // Absent means left / 1 — omit rather than emit a redundant attribute.
+      // Absent means left / 1 - omit rather than emit a redundant attribute.
       const style = cell.align ? { textAlign: cell.align } : undefined;
       const cellProps = {
         align: cell.align,
@@ -343,7 +343,7 @@ type RenderOptions = {
   codeCopyButton: boolean;
   /**
    * Registered block types, keyed by type. Carried in the options rather than
-   * as another parameter so nesting blocks — callout, details — thread it to
+   * as another parameter so nesting blocks - callout, details - thread it to
    * their children for free, which is what makes a registered block work at
    * any depth.
    */
@@ -573,7 +573,7 @@ const TABLE_CSS =
   '.bb-table tbody tr{background:var(--bb-table-row-bg,#fff)}' +
   '.bb-table tbody tr:nth-child(2n){background:var(--bb-table-stripe-bg,#f6f8fa)}';
 
-// A muted left border with indented, dimmed text — GitHub's markdown quote,
+// A muted left border with indented, dimmed text - GitHub's markdown quote,
 // which has no background fill.
 const QUOTE_CSS =
   '.bb-quote{margin:1rem 0;padding:0 1rem;color:var(--bb-quote-fg,#57606a);' +
@@ -582,7 +582,7 @@ const QUOTE_CSS =
 // Shiki inlines the theme's background and text colors onto the `<pre>` it
 // generates, so we only add padding, rounding, and typography around it. The
 // pre-highlight fallback `<pre>` has no such inline colors, so it carries its
-// own — defaulting to the github-dark values to match DEFAULT_CODE_THEME.
+// own - defaulting to the github-dark values to match DEFAULT_CODE_THEME.
 // Retheme them alongside `codeTheme` via --bb-code-fallback-*.
 const CODE_CSS =
   '.bb-code{position:relative;margin:1rem 0}' +
@@ -666,14 +666,14 @@ function renderMediaEmbed(
 
 // The sanitized `embedHtml` carries the provider's own width/height, so make
 // the iframe fill the aspect-ratio box instead. Inline styles can't reach into
-// `dangerouslySetInnerHTML` markup, so this ships as a stylesheet — injected
+// `dangerouslySetInnerHTML` markup, so this ships as a stylesheet - injected
 // only when the content actually renders a default embed.
 const EMBED_FRAME_CSS =
   '.bb-embed-frame{overflow:hidden}' +
   '.bb-embed-frame iframe{width:100%;height:100%;border:0;display:block}';
 
 /**
- * Renders an `embed` node from its plugin-sanitized `embedHtml` — rebuilt from
+ * Renders an `embed` node from its plugin-sanitized `embedHtml` - rebuilt from
  * an attribute allowlist over an https-only `src`, with scripts, event handlers
  * and inline styles stripped. `url` / `iframe` only round-trip the editor UI and
  * are deliberately ignored. Override the `embed` block to render the parsed
@@ -1148,7 +1148,7 @@ function handleFileDownload(
       anchor.remove();
       URL.revokeObjectURL(objectUrl);
     } catch {
-      // CORS-blocked or offline — fall back to native navigation.
+      // CORS-blocked or offline - fall back to native navigation.
       window.location.href = url;
     }
   })();
@@ -1234,7 +1234,7 @@ function renderButton(block: ButtonElement, key: number, blocks?: CustomBlocksCo
       </a>
     );
   } else {
-    // No link/file payload — render the label as a styled, non-navigating span.
+    // No link/file payload - render the label as a styled, non-navigating span.
     control = (
       <span className={className} style={style}>
         {block.label}

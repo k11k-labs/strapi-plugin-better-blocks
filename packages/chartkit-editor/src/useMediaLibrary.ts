@@ -8,7 +8,7 @@
  *
  * What arrives is text. It then goes through exactly the same parser and the
  * same confirm-before-replacing panel as a paste, because a file is no more
- * trustworthy than a paste — the header guess and the number formats are the
+ * trustworthy than a paste - the header guess and the number formats are the
  * same problem either way.
  *
  * Reading the file itself lives in `media.ts`, which imports nothing from
@@ -28,7 +28,7 @@ export type MediaLibraryDialogProps = {
  * The Media Library dialog, if this build of the admin provides one.
  *
  * Looked up through the app registry rather than imported, which is how Strapi
- * exposes it — and means a version that does not have it leaves the caller with
+ * exposes it - and means a version that does not have it leaves the caller with
  * `undefined` instead of a broken import.
  */
 export function useMediaLibraryDialog(): React.ComponentType<MediaLibraryDialogProps> | undefined {

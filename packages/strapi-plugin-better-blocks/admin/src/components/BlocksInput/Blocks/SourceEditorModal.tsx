@@ -16,7 +16,7 @@ import { styled } from 'styled-components';
  *
  * Replaces the previous anchored popover: a long source no longer overflows,
  * and because this is a real modal (own overlay + focus trap) it no longer
- * dismisses — losing unsaved edits — when the page is scrolled. See issue #46.
+ * dismisses - losing unsaved edits - when the page is scrolled. See issue #46.
  * -------------------------------------------------------------------------*/
 
 // Near full-screen: a small margin keeps the overlay visible around the edges.
@@ -281,7 +281,7 @@ const SourceEditorModal = ({
                     renderPreview(source)
                   ) : (
                     <Typography variant="pi" textColor="neutral400">
-                      —
+                      -
                     </Typography>
                   )}
                 </PreviewInner>

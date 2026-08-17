@@ -80,7 +80,7 @@ import { SpecialCharPicker } from './SpecialCharPicker';
 
 /**
  * A single continuous flow of controls that wraps to fill each row, the way
- * CKEditor's toolbar does — buttons are never held back by their group.
+ * CKEditor's toolbar does - buttons are never held back by their group.
  *
  * Grouping is carried by thin rules between clusters rather than by layout
  * boxes: keeping groups as `nowrap` flex containers made them jump to the next
@@ -242,7 +242,7 @@ const DROPDOWN_EXCLUDED_KEYS: SelectorBlockKey[] = [
 
 /**
  * The block key at the selection anchor, or null when there's no selection or
- * nothing matches. Read-only — it must be safe to call during render.
+ * nothing matches. Read-only - it must be safe to call during render.
  */
 const getAnchorBlockKey = (
   editor: Editor,
@@ -304,7 +304,7 @@ const BlocksDropdown = () => {
    * The label is derived on every render rather than mirrored into state.
    *
    * Slate mutates `editor.children` in place, so an effect keyed on the
-   * document never re-runs — which left the label stale after any conversion
+   * document never re-runs - which left the label stale after any conversion
    * that doesn't move the caret (the Cmd/Ctrl+Alt shortcuts, notably). The
    * component already re-renders on every editor change via `useSlate`, so
    * reading the document here is both correct and cheap.
@@ -384,7 +384,7 @@ const BlocksDropdown = () => {
     const maybeRenderModal = blocks[optionKey].handleConvert?.(editor);
     handleConversionResult(maybeRenderModal);
 
-    // No need to mirror the choice into state — the next render reads it back
+    // No need to mirror the choice into state - the next render reads it back
     // off the document.
     ReactEditor.focus(editor as ReactEditor);
   };
@@ -1124,7 +1124,7 @@ const QuoteButton = ({ disabled }: { disabled: boolean }) => {
 };
 
 /**
- * Fullscreen toggle. Lives at the toolbar's right edge — the conventional spot
+ * Fullscreen toggle. Lives at the toolbar's right edge - the conventional spot
  * for a maximize control, and always in view unlike the old bottom-corner
  * placement.
  */
@@ -1630,8 +1630,8 @@ const BlocksToolbar = () => {
    * These used to go through EditorToolbarObserver, which relegated whatever
    * didn't fit into a "More" menu. That design only works for a single
    * non-wrapping row clipped by `overflow: hidden`; this toolbar wraps instead,
-   * so nothing ever overflowed and the menu's trigger — which reserves its
-   * space with `visibility: hidden` — sat there as a permanent empty slot
+   * so nothing ever overflowed and the menu's trigger - which reserves its
+   * space with `visibility: hidden` - sat there as a permanent empty slot
    * between the lists and the next separator.
    */
   const markButtons = getEntries(modifiers).map(([name, modifier]) => {

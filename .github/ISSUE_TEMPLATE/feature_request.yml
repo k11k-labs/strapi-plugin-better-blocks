@@ -7,9 +7,9 @@ body:
     attributes:
       label: Which package?
       options:
-        - '@qkix/strapi-plugin-better-blocks — the rich text editor plugin'
-        - '@qkix/strapi-plugin-chartkit — the chart field plugin'
-        - '@qkix/strapi-plugin-rewind — document version history'
+        - '@qkix/strapi-plugin-better-blocks - the rich text editor plugin'
+        - '@qkix/strapi-plugin-chartkit - the chart field plugin'
+        - '@qkix/strapi-plugin-rewind - document version history'
         - '@qkix/better-blocks-core'
         - '@qkix/better-blocks-react-renderer'
         - '@qkix/better-blocks-astro-renderer'
@@ -27,7 +27,7 @@ body:
       label: The problem
       description: |
         What you were trying to do, and where it got awkward. A description of
-        the problem is worth more than a description of the solution — it leaves
+        the problem is worth more than a description of the solution - it leaves
         room for a better one.
     validations:
       required: true

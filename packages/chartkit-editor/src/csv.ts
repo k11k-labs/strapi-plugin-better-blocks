@@ -40,7 +40,7 @@ export type ParseResult = { ok: true; table: ParsedTable } | { ok: false; reason
 /**
  * Parses a pasted block of delimited text.
  *
- * Shape expected — the one a spreadsheet selection produces:
+ * Shape expected - the one a spreadsheet selection produces:
  *
  * ```
  *          Revenue  Costs      <- header: first cell blank or a category title
@@ -54,7 +54,7 @@ export type ParseResult = { ok: true; table: ParsedTable } | { ok: false; reason
  */
 export function parseDelimited(input: string, options: ParseOptions = {}): ParseResult {
   // Blank lines off each end only. A full trim would eat the leading tab of a
-  // spreadsheet header row — `\tRevenue\tCosts` — taking the empty first cell
+  // spreadsheet header row - `\tRevenue\tCosts` - taking the empty first cell
   // with it, and the header would then be read as a row of data.
   const text = input.replace(/\r\n?/g, '\n').replace(/^\n+|\s+$/g, '');
   if (!text.trim()) return { ok: false, reason: 'Nothing to paste.' };
@@ -79,7 +79,7 @@ export function parseDelimited(input: string, options: ParseOptions = {}): Parse
 
   // A first row whose data cells are not numbers is a header. Guessing wrong
   // either way costs a row of data or a row of nonsense names, so it is decided
-  // by what the cells actually contain — and then offered to the reader to
+  // by what the cells actually contain - and then offered to the reader to
   // override, because a header of years defeats any such rule.
   const guessed = rows[0].slice(1).some((cell) => cell.trim() !== '' && !isNumeric(cell));
   const hasHeader = options.header ?? guessed;
@@ -123,7 +123,7 @@ export function parseDelimited(input: string, options: ParseOptions = {}): Parse
  * Tab first: a paste from a spreadsheet is tab-separated, and that is the case
  * worth getting right without asking. Semicolon before comma, because a
  * semicolon-separated file is usually one written by a locale that also uses
- * the comma as a decimal mark — treating those commas as separators would
+ * the comma as a decimal mark - treating those commas as separators would
  * shred every number.
  */
 function detectDelimiter(text: string): string {
@@ -174,7 +174,7 @@ function splitRow(line: string, delimiter: string): string[] {
  *
  * Strips currency symbols, spaces and thousands separators, and copes with both
  * decimal conventions. A cell that still is not a number becomes `null` rather
- * than `0` — an unreadable cell is a missing reading, and a zero would be a
+ * than `0` - an unreadable cell is a missing reading, and a zero would be a
  * measurement nobody took.
  */
 export function toNumber(cell: string | undefined): number | null {
@@ -202,8 +202,8 @@ export function toNumber(cell: string | undefined): number | null {
     cleaned = decimals === 3 ? cleaned.replace(/,/g, '') : cleaned.replace(',', '.');
   }
 
-  // `Number('')` is 0, so a cell that cleaned down to nothing — `n/a`, `—`, a
-  // stray currency symbol — would come back as a measured zero. Requiring a
+  // `Number('')` is 0, so a cell that cleaned down to nothing - `n/a`, `-`, a
+  // stray currency symbol - would come back as a measured zero. Requiring a
   // digit is what keeps "unreadable" and "zero" apart.
   if (!/\d/.test(cleaned)) return null;
 

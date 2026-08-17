@@ -1,7 +1,7 @@
 /**
  * Deciding where things go.
  *
- * Axes and labels are the expensive part of drawing a chart — far more than the
+ * Axes and labels are the expensive part of drawing a chart - far more than the
  * shapes. A bar is four numbers; an axis has to work out how much room its
  * labels need, whether they collide, and what to do when they do.
  *
@@ -34,7 +34,7 @@ const SIN_45 = Math.SQRT1_2;
  * Approximate width of a string, in user units.
  *
  * The factor is the average advance width of a character in a typical UI sans
- * at a given size — digits and lowercase run near 0.5em, uppercase wider. 0.58
+ * at a given size - digits and lowercase run near 0.5em, uppercase wider. 0.58
  * sits above the average on purpose; see the note at the top of the file about
  * erring wide.
  */
@@ -102,8 +102,8 @@ export type AxisLabelPlan = {
 /**
  * Smallest gap between adjacent labels that still reads as two labels.
  *
- * Rotated text needs less horizontal room than upright text — the glyphs run
- * away diagonally — so this is expressed against the font size rather than
+ * Rotated text needs less horizontal room than upright text - the glyphs run
+ * away diagonally - so this is expressed against the font size rather than
  * against label length.
  */
 const MIN_LABEL_GAP = LABEL_FONT_SIZE * 1.1;
@@ -154,7 +154,7 @@ export function planCategoryLabels(
   const stride = strideFor(step);
 
   // With labels thinned, the ones left have `stride` bands of room each, so
-  // they may well fit upright after all — which is easier to read than a
+  // they may well fit upright after all - which is easier to read than a
   // rotated axis, and worth re-checking rather than rotating out of habit.
   if (stride > 1 && longest <= step * stride) {
     return {

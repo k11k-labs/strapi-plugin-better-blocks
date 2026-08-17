@@ -29,7 +29,7 @@
 npm install @qkix/strapi-plugin-chartkit
 ```
 
-Add a **Chart** field to a content type. That's it — no config file, no provider.
+Add a **Chart** field to a content type. That's it - no config file, no provider.
 
 ## Why server-side SVG
 
@@ -42,7 +42,7 @@ receives finished markup:
 
 - **No runtime.** Nothing to download, parse, or execute.
 - **Nothing to hydrate**, so no layout shift and no flash of empty box.
-- **It scales and prints** — it is vector, not a canvas bitmap.
+- **It scales and prints** - it is vector, not a canvas bitmap.
 - **Screen readers get a real description**: `role="img"` with a `<title>` and
   the description you wrote.
 
@@ -53,7 +53,7 @@ receives finished markup:
 Bar, grouped and stacked bars, line, area and stacked area, pie and donut.
 
 Two of those tiles are the details that usually go wrong. A missing reading
-stays a **gap** — never a zero pretending to be a measurement. And negative
+stays a **gap** - never a zero pretending to be a measurement. And negative
 values get a real baseline instead of being flipped or clipped.
 
 ## Editing
@@ -61,7 +61,7 @@ values get a real baseline instead of being flipped or clipped.
 <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-chartkit/docs/editor.png" alt="The chart editor: live preview, chart settings and a data grid" width="700" />
 
 A live preview above a spreadsheet-style grid. **The preview is the real
-renderer** — the same function that draws the published page — so a chart cannot
+renderer** - the same function that draws the published page - so a chart cannot
 look right here and wrong there.
 
 The editor opens in a dialog. Cancel genuinely cancels: it edits a draft and
@@ -80,24 +80,24 @@ part of every charting tool.
 | ------------------------- | ------------------------------------- |
 | tab, comma or semicolon   | detected per paste                    |
 | `1.234,50` and `1,234.50` | 1234.5 either way                     |
-| `€1 234,50`               | 1234.5 — currency and spaces stripped |
+| `€1 234,50`               | 1234.5 - currency and spaces stripped |
 | `"North, inland"`         | one cell; a quoted delimiter survives |
-| `n/a`, `—`, empty         | a **gap**, never a zero               |
+| `n/a`, `-`, empty         | a **gap**, never a zero               |
 
-It shows **what it parsed before replacing anything** — above, four categories,
+It shows **what it parsed before replacing anything** - above, four categories,
 two series, and one unreadable cell called out. The parser has to guess whether
 the first row is a header, and a wrong guess that silently overwrites your data
 is far worse than one you can cancel.
 
 **From the Media Library.** Pick a `.csv`, `.tsv` or `.txt` you already
-uploaded. Anything else is refused before it is fetched — handing a PDF to a CSV
+uploaded. Anything else is refused before it is fetched - handing a PDF to a CSV
 parser produces a confident table of nonsense.
 
 **By hand**, in the grid.
 
 ## Rendering it
 
-The field stores a `ChartSpec` — the same object the renderers take. Nothing
+The field stores a `ChartSpec` - the same object the renderers take. Nothing
 sits in between:
 
 ```tsx
@@ -139,7 +139,7 @@ a chart looks like it belongs wherever it lands:
 
 This is the reason the SVG is hand-written rather than produced by an existing
 SSR chart renderer. The obvious candidate, ECharts in SSR mode, writes its
-palette into the markup as literal hex values — which makes class-based dark
+palette into the markup as literal hex values - which makes class-based dark
 mode impossible without post-processing the output.
 
 ## Also a block, if you use Better Blocks
@@ -162,15 +162,15 @@ export default {
 };
 ```
 
-The front end needs its own half — `chartBlockPlugin` from whichever renderer
-you use — or a chart authored in a document is stored correctly and drawn as
+The front end needs its own half - `chartBlockPlugin` from whichever renderer
+you use - or a chart authored in a document is stored correctly and drawn as
 nothing.
 
 ## Field options
 
 | Option                       | Effect                                                                                                                          |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
-| **Number formatting locale** | How axis numbers are formatted **in the admin preview** — a BCP 47 tag such as `de-DE`. The front end passes its own at render. |
+| **Number formatting locale** | How axis numbers are formatted **in the admin preview** - a BCP 47 tag such as `de-DE`. The front end passes its own at render. |
 | **Required**                 | Standard Strapi validation.                                                                                                     |
 
 ## Old charts stay working
@@ -179,15 +179,15 @@ The spec is versioned, and the field **migrates on read**, so opening a chart
 saved against an older schema edits and saves the current shape. Nothing has to
 be resaved for a site to keep working: `renderChart` migrates in memory too.
 
-If a field holds something that is not a readable chart — a value from an import
-script, or a field that used to be a different type — it says so and goes
+If a field holds something that is not a readable chart - a value from an import
+script, or a field that used to be a different type - it says so and goes
 **read-only** rather than offering to overwrite it.
 
 ## Packages
 
 | Package                                                                                        | For                                                            |
 | ---------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
-| [`@qkix/strapi-plugin-chartkit`](https://www.npmjs.com/package/@qkix/strapi-plugin-chartkit)   | this plugin — the field in the Strapi admin                    |
+| [`@qkix/strapi-plugin-chartkit`](https://www.npmjs.com/package/@qkix/strapi-plugin-chartkit)   | this plugin - the field in the Strapi admin                    |
 | [`@qkix/chartkit-core`](https://www.npmjs.com/package/@qkix/chartkit-core)                     | the spec, the validator and the SVG renderer. No dependencies. |
 | [`@qkix/chartkit-react-renderer`](https://www.npmjs.com/package/@qkix/chartkit-react-renderer) | rendering a stored chart in React / Next.js                    |
 | [`@qkix/chartkit-astro-renderer`](https://www.npmjs.com/package/@qkix/chartkit-astro-renderer) | rendering a stored chart in Astro                              |
@@ -196,7 +196,7 @@ script, or a field that used to be a different type — it says so and goes
 ## Not there yet
 
 Being honest about the edges: no time axes, no tooltips or other
-interactivity, and no per-chart color overrides — palettes are set in your site's
+interactivity, and no per-chart color overrides - palettes are set in your site's
 CSS. Data is stored with the chart rather than queried from a collection.
 
 Issues and ideas welcome at

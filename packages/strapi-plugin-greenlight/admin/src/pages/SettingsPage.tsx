@@ -110,7 +110,7 @@ const StageEditor = ({
         checked={stage.isTerminal ?? false}
         onCheckedChange={(checked: boolean) => onChange({ ...stage, isTerminal: checked })}
       >
-        Approved stage — documents can only be published from here
+        Approved stage - documents can only be published from here
       </Checkbox>
     </Box>
 
@@ -333,7 +333,7 @@ export const SettingsPage = () => {
                       {workflow.name}
                     </SingleSelectOption>
                   ))}
-                  <SingleSelectOption value="new">— new —</SingleSelectOption>
+                  <SingleSelectOption value="new">- new -</SingleSelectOption>
                 </SingleSelect>
               </Field.Root>
             </Box>
@@ -366,7 +366,7 @@ export const SettingsPage = () => {
               <Box flex="1" minWidth="240px">
                 <Field.Root
                   name="workflow-content-types"
-                  hint="Only types with Draft & Publish appear — there is nothing to gate otherwise."
+                  hint="Only types with Draft & Publish appear - there is nothing to gate otherwise."
                 >
                   <Field.Label>Content types under this workflow</Field.Label>
                   <MultiSelect
@@ -438,7 +438,7 @@ export const SettingsPage = () => {
                     }}
                     onDuplicate={() => {
                       const stages = [...draft.stages];
-                      // With its permissions — copying six role lists by hand is
+                      // With its permissions - copying six role lists by hand is
                       // the reason people give up on configuring this.
                       stages.splice(index + 1, 0, {
                         ...stage,

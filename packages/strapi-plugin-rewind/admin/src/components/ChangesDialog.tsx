@@ -45,7 +45,7 @@ const asText = (value: unknown): string => {
 
 const Change = ({ change }: { change: FieldChange }) => {
   // A package that owns this field type can render it far better than a word
-  // diff can — see diffRegistry. The custom field uid wins over the storage
+  // diff can - see diffRegistry. The custom field uid wins over the storage
   // type, because every custom field stores itself as `json` and a renderer
   // registered for `json` would claim all of them.
   const Custom =

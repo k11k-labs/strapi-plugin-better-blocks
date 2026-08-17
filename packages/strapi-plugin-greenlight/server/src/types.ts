@@ -22,7 +22,7 @@ export interface Assignment {
   id: number;
   relatedDocumentId: string;
   contentTypeUid: string;
-  /** Never null — see utils/locale. */
+  /** Never null - see utils/locale. */
   locale: string;
   stageId: number;
   assigneeId: number | null;

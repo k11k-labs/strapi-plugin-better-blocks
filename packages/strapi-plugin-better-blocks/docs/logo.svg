@@ -8,14 +8,14 @@
     text is. Each is 44 tall with rx 22, so the ends are fully round rather than
     merely softened.
 
-      y 120, 196, 272, 348 — 44 tall, 32 between, 272 in total
+      y 120, 196, 272, 348 - 44 tall, 32 between, 272 in total
       x from 96, longest 320 wide, so the block spans 96..416
 
     That leaves 96 of padding left and right and 120 top and bottom: the mark is
     centred on the canvas, and looks it, because nothing about it is asymmetric.
 
     The second line is amber, and shorter than the ones around it, so it reads
-    as a highlighted phrase rather than a coloured row — which is the plugin's
+    as a highlighted phrase rather than a coloured row - which is the plugin's
     signature feature and the same one-accent rhythm Chartkit and Rewind use.
   -->
   <g fill="#ffffff">

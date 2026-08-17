@@ -4,7 +4,7 @@
  * Not `null`, and this is not a style choice. In Postgres, SQLite and MySQL a
  * `NULL` is not equal to another `NULL` inside a unique index, so
  * `UNIQUE (related_document_id, content_type_uid, locale)` would happily accept
- * the same document twice as soon as `locale` were null — which is exactly the
+ * the same document twice as soon as `locale` were null - which is exactly the
  * case for every content type without i18n. The duplicate assignments would then
  * disagree about which stage the document is in.
  *

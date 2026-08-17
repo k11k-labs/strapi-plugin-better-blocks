@@ -3,7 +3,7 @@ export default {
     /**
      * Which content types sit under a review workflow is **not** configured
      * here. It lives in the database, on the workflow itself, and is edited from
-     * the admin panel — so an editor can put a content type under review without
+     * the admin panel - so an editor can put a content type under review without
      * a deploy, and so one content type cannot end up claimed by two workflows.
      *
      * What is left in config is the part a developer owns.
@@ -27,7 +27,7 @@ export default {
      * How long the transition log is kept, in days.
      *
      * The log is append-only and one row per stage change, so it grows far more
-     * slowly than a version history would — a year is generous rather than
+     * slowly than a version history would - a year is generous rather than
      * risky.
      */
     transitionRetentionDays: 365,

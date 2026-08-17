@@ -66,7 +66,7 @@ export const stripScripts = (html: string): string =>
  */
 export const extractUrlFromEmbedCode = (code: string): string | null => {
   // `dropQuery` is set for permalinks, whose query string is only tracking
-  // params — an iframe `src` needs its query to stay intact.
+  // params - an iframe `src` needs its query to stay intact.
   const patterns: Array<{ re: RegExp; dropQuery?: boolean }> = [
     { re: /data-instgrm-permalink=["']([^"']+)["']/i, dropQuery: true },
     { re: /\bcite=["'](https?:\/\/[^"']+)["']/i, dropQuery: true },
@@ -484,7 +484,7 @@ export const SocialEmbedEditorModal = ({
               {formatMessage({
                 id: 'components.Blocks.social.field.embedCode.hint',
                 defaultMessage:
-                  'Pasting an embed code is enough on its own — the post URL is optional.',
+                  'Pasting an embed code is enough on its own - the post URL is optional.',
               })}
             </Typography>
           </Flex>

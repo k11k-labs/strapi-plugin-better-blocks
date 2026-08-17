@@ -40,8 +40,8 @@
 - **chartkit:** the dialog no longer discards a draft when the `spec` prop changes identity ([#124](https://github.com/qkix/strapi-plugins/pull/124))
 
   It now resets on the opening edge only. A host that rebuilds its spec object on
-  render — which a Strapi edit view provokes on every keystroke in any other
-  field — could wipe out a chart mid-edit.
+  render - which a Strapi edit view provokes on every keystroke in any other
+  field - could wipe out a chart mid-edit.
 
 - **chartkit:** the paste panel's textarea owns its field context ([#124](https://github.com/qkix/strapi-plugins/pull/124))
 

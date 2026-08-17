@@ -102,7 +102,7 @@ const customBlocks: CustomBlocksConfig = {
 };
 
 // Plain CSS targeting the DEFAULT block markup (bb-details / bb-button classes).
-// This proves the default output can be themed with CSS alone — GitHub-style
+// This proves the default output can be themed with CSS alone - GitHub-style
 // disclosures and the button hover/focus states, no `blocks` override needed.
 const playgroundCss = `
 .gh-details .bb-details {
@@ -144,7 +144,7 @@ const playgroundCss = `
   margin-left: 16px;
   margin-right: 16px;
 }
-/* Bottom padding only when open — when collapsed the summary should fill the
+/* Bottom padding only when open - when collapsed the summary should fill the
    card edge-to-edge with no gap below it. */
 .gh-details .bb-details[open] {
   padding-bottom: 8px;
@@ -166,7 +166,7 @@ const playgroundCss = `
 }
 
 /* Hover, focus, and transition for default buttons are shipped by the renderer
-   itself (no setup needed) — see the default <style> it emits. We only add a bit
+   itself (no setup needed) - see the default <style> it emits. We only add a bit
    of layout polish here to show the default markup is still themeable via CSS. */
 .bb-button {
   text-align: center;
@@ -226,7 +226,7 @@ function App() {
       }}
     >
       <style>{playgroundCss}</style>
-      <h1>Better Blocks — React renderer</h1>
+      <h1>Better Blocks - React renderer</h1>
       <p style={{ color: '#666', marginBottom: 32 }}>
         Every showcase article seeded into the Strapi example, rendered with{' '}
         <code>@qkix/better-blocks-react-renderer</code>. The Astro example

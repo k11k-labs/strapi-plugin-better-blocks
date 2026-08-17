@@ -19,7 +19,7 @@ import { Chart } from '@qkix/chartkit-react-renderer';
 | ----------- | ---------------------------------------------------------------------------------------------------------------- |
 | `spec`      | the chart                                                                                                        |
 | `locale`    | number formatting. Worth passing on a server, where the runtime default is whatever the container was built with |
-| `idPrefix`  | prefix for the ids the accessible name points at — needed when a page holds several charts                       |
+| `idPrefix`  | prefix for the ids the accessible name points at - needed when a page holds several charts                       |
 | `className` | class on the wrapping element                                                                                    |
 | `fallback`  | rendered instead of the chart when the spec will not draw                                                        |
 
@@ -43,7 +43,7 @@ Neither package knows the other's internals. Better Blocks knows a block type
 called `chart` exists, that it is a void, and that Chartkit can validate and
 migrate it; Chartkit knows nothing about rich-text documents at all.
 
-**Leave the plugin out and the chart simply is not drawn** — the rest of the
+**Leave the plugin out and the chart simply is not drawn** - the rest of the
 document renders normally. Content authored with a chart is never lost by a
 front end that has not been taught about charts yet.
 

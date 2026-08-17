@@ -31,7 +31,7 @@ export default {
 
 export { PLUGIN_ID } from './pluginId';
 /**
- * The hook a package owning a field format uses to render its own diff — see
+ * The hook a package owning a field format uses to render its own diff - see
  * diffRegistry for why this is a registry and not a switch.
  */
 export { registerDiffRenderer } from './diffRegistry';

@@ -26,7 +26,7 @@ export const createLabeller = (strapi: Core.Strapi) => {
         .findConfiguration(strapi.contentTypes[uid]);
       mainField = configuration?.settings?.mainField;
     } catch {
-      // No configuration for this type — fall back to guessing below.
+      // No configuration for this type - fall back to guessing below.
     }
 
     mainFieldByUid.set(uid, mainField);

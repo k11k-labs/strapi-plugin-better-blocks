@@ -1,7 +1,7 @@
 /**
  * Chartkit as a Better Blocks block plugin.
  *
- * `chartBlock` in `@qkix/chartkit-core` carries the framework-free half — the
+ * `chartBlock` in `@qkix/chartkit-core` carries the framework-free half - the
  * type, the validator, the migrator. This adds the half only React can supply.
  *
  * The `satisfies` below is the load-bearing line: chartkit-core writes its
@@ -23,7 +23,7 @@ export type ChartBlockOptions = {
 /**
  * Builds the plugin to hand to `BlocksRenderer`'s `blockPlugins`.
  *
- * A function rather than a constant so the locale can be passed in — the chart
+ * A function rather than a constant so the locale can be passed in - the chart
  * needs it and the block does not otherwise carry one.
  */
 export function chartBlockPlugin(options: ChartBlockOptions = {}): BlockPlugin {

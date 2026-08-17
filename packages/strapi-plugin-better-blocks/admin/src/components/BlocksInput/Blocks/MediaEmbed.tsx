@@ -16,7 +16,7 @@ import { type BlocksStore } from '../BlocksEditor';
  * same YouTube/Vimeo URLs plus arbitrary providers and pasted iframes, and adds
  * caption/title/alignment/aspect-ratio.
  *
- * Nothing inserts `media-embed` any more — this file exists so documents
+ * Nothing inserts `media-embed` any more - this file exists so documents
  * authored before the `embed` block keep rendering. Do not add features here.
  */
 

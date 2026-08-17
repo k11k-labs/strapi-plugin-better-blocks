@@ -52,7 +52,7 @@ export interface RawModel {
  * Whether the Content-Type Builder has a page for this.
  *
  * `pluginOptions['content-type-builder'].visible === false` is how Strapi and
- * every plugin mark their own tables as not yours to edit — upload's files and
+ * every plugin mark their own tables as not yours to edit - upload's files and
  * folders, i18n's locales, all of `admin::`, and a plugin's internal bookkeeping.
  * The Builder hides exactly those, so it is also the honest test for whether
  * clicking a box can go anywhere. Components are always editable there.
@@ -149,7 +149,7 @@ const graph = ({ strapi }: { strapi: Core.Strapi }) => {
      *
      * Both ends of a two-sided relation describe the same line. Strapi marks
      * the non-owning end with `mappedBy`, so skipping those leaves exactly one
-     * edge — deduplicating by node pair instead would silently merge two
+     * edge - deduplicating by node pair instead would silently merge two
      * genuinely different relations between the same two types.
      *
      * Edges to something not on the diagram are dropped rather than drawn into

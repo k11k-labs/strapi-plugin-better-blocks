@@ -98,7 +98,7 @@ export const routes = {
  * Broadcast when a document's review state changes.
  *
  * The side panel and the Publish button are two separate Content Manager
- * extension points with no shared state and no way to pass props between them —
+ * extension points with no shared state and no way to pass props between them -
  * so without this the panel updates on a stage change and the button carries on
  * showing "needs approval" until the page is reloaded. A window event is the only
  * channel the two actually share.
@@ -110,7 +110,7 @@ export const notifyReviewChanged = (): void => {
 };
 
 export const formatWhen = (iso: string | null): string => {
-  if (!iso) return '—';
+  if (!iso) return '-';
   const date = new Date(iso);
   const minutes = Math.round((Date.now() - date.getTime()) / 60_000);
 

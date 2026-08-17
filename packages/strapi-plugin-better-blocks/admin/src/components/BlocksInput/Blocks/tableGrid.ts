@@ -8,8 +8,8 @@ import type { CustomElement, TableCellElement } from '../utils/types';
  * Once cells can carry `colSpan` / `rowSpan`, a cell's index within its row
  * stops being its visual column: a row of three cells can cover four columns,
  * and a cell with `rowSpan: 2` occupies a slot in the row below without having
- * a node there. Every structural operation therefore works against this grid —
- * a slot-by-slot map of what covers what — rather than against raw child
+ * a node there. Every structural operation therefore works against this grid -
+ * a slot-by-slot map of what covers what - rather than against raw child
  * indices.
  */
 
@@ -33,7 +33,7 @@ export interface TableGrid {
   rowCount: number;
   /** Total grid columns, spans included. */
   colCount: number;
-  /** `matrix[row][col]` — the cell covering that slot, or undefined if ragged. */
+  /** `matrix[row][col]` - the cell covering that slot, or undefined if ragged. */
   matrix: (GridCell | undefined)[][];
   /** Every cell once, in document order. */
   cells: GridCell[];
@@ -120,7 +120,7 @@ export const cellsOriginatingInRow = (
 
 /**
  * Where a new cell covering grid column `col` has to be inserted among row
- * `row`'s children — i.e. how many of that row's own cells start left of it.
+ * `row`'s children - i.e. how many of that row's own cells start left of it.
  * Cells that merely reach into the row from above have no node here and so
  * don't count.
  */
@@ -142,7 +142,7 @@ export const covers = (cell: GridCell, row: number, col: number): boolean =>
  * Grows `range` until every cell it touches is fully inside it.
  *
  * Selecting two cells that a third one straddles can't produce a rectangle
- * without swallowing that third cell — so the range expands to include it,
+ * without swallowing that third cell - so the range expands to include it,
  * which may in turn pull in others. Repeats to a fixed point, which always
  * terminates because the range only ever grows and is bounded by the table.
  */
@@ -228,13 +228,13 @@ const cellAtPoint = (
  * The rectangle of cells the selection covers, or null when it stays within a
  * single cell.
  *
- * The selection model is Slate's own — dragging across cells already produces a
+ * The selection model is Slate's own - dragging across cells already produces a
  * range spanning both, and Shift+arrow already extends it, so there's no
  * separate cell-selection state to keep in sync.
  *
  * Only the two *endpoints* define the rectangle, though. A document range is
  * linear, so everything between r2c1 and r3c2 includes the whole tail of row 2
- * — taking the bounding box of every touched cell would turn a 2x2 pick into a
+ * - taking the bounding box of every touched cell would turn a 2x2 pick into a
  * full-width 2x5 one. Treating anchor and focus as opposite corners gives the
  * 2D behavior authors expect from a table.
  */

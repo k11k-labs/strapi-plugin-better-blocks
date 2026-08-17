@@ -31,7 +31,7 @@ const PanelContent = ({
   locale,
   /**
    * Bumped by the Content Manager whenever it re-reads the document. Used purely
-   * as a refresh signal — without it the panel loads once and then quietly goes
+   * as a refresh signal - without it the panel loads once and then quietly goes
    * stale, so a stage change made in another tab never appears.
    */
   updatedAt,
@@ -96,7 +96,7 @@ const PanelContent = ({
   };
 
   /**
-   * A stage change saves immediately, with no separate Save button — the
+   * A stage change saves immediately, with no separate Save button - the
    * behaviour Strapi users already expect from everything else in this column.
    */
   const moveTo = async (toStageId: number) => {
@@ -176,7 +176,7 @@ const PanelContent = ({
         </Typography>
         <Flex gap={2} alignItems="center">
           {/* Without a stage there is no configured colour to use, and the
-              default one is white-on-light-grey — unreadable. */}
+              default one is white-on-light-grey - unreadable. */}
           {stage ? (
             <Badge backgroundColor={stage.color} textColor="neutral0">
               {stage.name}
@@ -188,7 +188,7 @@ const PanelContent = ({
           )}
           {stage?.isTerminal ? (
             <Typography variant="pi" textColor="success600">
-              Approved — can be published
+              Approved - can be published
             </Typography>
           ) : (
             <Typography variant="pi" textColor="warning600">
@@ -223,7 +223,7 @@ const PanelContent = ({
       <Field.Root name="greenlight-comment">
         <Field.Label>Comment</Field.Label>
         <Textarea
-          placeholder="Optional — kept in the log"
+          placeholder="Optional - kept in the log"
           value={comment}
           disabled={busy}
           onChange={(event: React.ChangeEvent<HTMLTextAreaElement>) =>

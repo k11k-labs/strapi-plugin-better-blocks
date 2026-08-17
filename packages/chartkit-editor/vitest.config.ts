@@ -11,7 +11,7 @@ const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 export default defineConfig({
   // This package pins React 18 while the workspace root carries 19, and with a
   // hoisted linker a test can end up calling React 18's hooks through React
-  // 19's renderer — which surfaces as `Cannot read properties of null (reading
+  // 19's renderer - which surfaces as `Cannot read properties of null (reading
   // 'useState')` rather than as anything resembling a version conflict.
   //
   // Testing Library is hoisted to the root and pulls React 19 with it, so the

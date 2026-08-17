@@ -53,7 +53,7 @@ export async function readAssetText(asset: MediaAsset): Promise<ReadResult> {
     return { ok: true, text, asset };
   } catch {
     // A cross-origin upload provider is the likely cause, and the author can do
-    // something about that — unlike a stack trace.
+    // something about that - unlike a stack trace.
     return {
       ok: false,
       reason: 'Could not read the file. It may be stored somewhere this browser cannot fetch.',

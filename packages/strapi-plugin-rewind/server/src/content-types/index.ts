@@ -4,8 +4,8 @@ import version from './version/schema.json';
  * The versions table.
  *
  * `relatedDocumentId`, not `documentId`: Strapi injects a `documentId` into
- * every content type and rejects the name outright — "The attribute
- * "documentId" is reserved and cannot be used in a model" — at boot, before
+ * every content type and rejects the name outright - "The attribute
+ * "documentId" is reserved and cannot be used in a model" - at boot, before
  * anything else runs. Strapi's own history model calls it `relatedDocumentId`
  * for the same reason.
  *
