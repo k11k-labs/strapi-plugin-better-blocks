@@ -202,6 +202,11 @@ CSS. Data is stored with the chart rather than queried from a collection.
 Issues and ideas welcome at
 [qkix/strapi-plugins](https://github.com/qkix/strapi-plugins/issues).
 
+## Roadmap
+
+What is worth building next, what is deliberately not planned, and why:
+[ROADMAP.md](./ROADMAP.md).
+
 ## License
 
 MIT

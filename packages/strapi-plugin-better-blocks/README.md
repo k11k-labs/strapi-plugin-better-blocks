@@ -870,6 +870,11 @@ This plugin is built and maintained in my free time, and it's free for everyone.
 
 Every coffee goes toward fixing bugs, reviewing PRs, writing docs, and shipping the features you ask for. Thank you! ☕
 
+## Roadmap
+
+What is worth building next, what is deliberately not planned, and why:
+[ROADMAP.md](./ROADMAP.md).
+
 ## License
 
 [MIT License](LICENSE) &copy; [qkix](https://github.com/qkix)

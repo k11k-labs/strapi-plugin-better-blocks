@@ -257,6 +257,11 @@ assigned on create, that `create` is not an upsert, that a missing relation
 target takes the whole row down, and that a draft is allowed to be incomplete so
 `required` is no guide to what will import.
 
-## Licence
+## Roadmap
+
+What is worth building next, what is deliberately not planned, and why:
+[ROADMAP.md](./ROADMAP.md).
+
+## License
 
 MIT

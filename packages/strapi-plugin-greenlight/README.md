@@ -227,6 +227,11 @@ did not happen.
 If your licence has Strapi's own Review Workflows enabled, Greenlight logs a warning at
 boot: both will show a panel in the edit view, and you probably want only one of them.
 
+## Roadmap
+
+What is worth building next, what is deliberately not planned, and why:
+[ROADMAP.md](./ROADMAP.md).
+
 ## License
 
 MIT © [qkix](https://github.com/qkix)
