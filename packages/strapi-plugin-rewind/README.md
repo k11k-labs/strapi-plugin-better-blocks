@@ -221,6 +221,11 @@ same mechanism Strapi uses to protect its own. Nothing to configure.
 
 Strapi 5, Node 20 or 22.
 
+## Roadmap
+
+What is worth building next, what is deliberately not planned, and why:
+[ROADMAP.md](./ROADMAP.md).
+
 ## License
 
 MIT.

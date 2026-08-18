@@ -146,6 +146,11 @@ is not built yet.
 point at, so there is no honest line to draw for it. The field is still listed on
 its box.
 
+## Roadmap
+
+What is worth building next, what is deliberately not planned, and why:
+[ROADMAP.md](./ROADMAP.md).
+
 ## License
 
 MIT © [qkix](https://github.com/qkix)
