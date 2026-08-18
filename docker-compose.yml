@@ -1,11 +1,12 @@
 # One stack for the whole repo: a Strapi instance running the plugin and seeded
-# with every showcase article, plus both renderers reading that same content.
+# with every showcase article, plus every renderer reading that same content.
 #
 #   docker compose up --build
 #
 #   Strapi admin   http://localhost:1337/admin   (admin@example.com / admin12#)
 #   React example  http://localhost:5173
 #   Astro example  http://localhost:4321
+#   Nuxt example   http://localhost:3000
 #
 # The renderer services bind-mount their own source, so editing an example app
 # hot-reloads. Changing plugin or renderer source needs `--build`, since those
@@ -83,6 +84,22 @@ services:
       STRAPI_URL: http://strapi:1337
     volumes:
       - ./examples/astro-app/src:/workspace/examples/astro-app/src:ro
+    depends_on:
+      strapi:
+        condition: service_healthy
+
+  nuxt:
+    <<: *workspace
+    container_name: better-blocks-nuxt
+    command: pnpm --filter @qkix/example-nuxt-app dev
+    ports:
+      - '3000:3000'
+    environment:
+      STRAPI_URL: http://strapi:1337
+    volumes:
+      - ./examples/nuxt-app/app.vue:/workspace/examples/nuxt-app/app.vue:ro
+      - ./examples/nuxt-app/pages:/workspace/examples/nuxt-app/pages:ro
+      - ./examples/nuxt-app/components:/workspace/examples/nuxt-app/components:ro
     depends_on:
       strapi:
         condition: service_healthy
