@@ -873,7 +873,7 @@ Every coffee goes toward fixing bugs, reviewing PRs, writing docs, and shipping 
 ## Roadmap
 
 What is worth building next, what is deliberately not planned, and why:
-[ROADMAP.md](./ROADMAP.md).
+[ROADMAP.md](https://github.com/qkix/strapi-plugins/blob/main/packages/strapi-plugin-better-blocks/ROADMAP.md).
 
 ## License
 
