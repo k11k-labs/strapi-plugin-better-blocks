@@ -1,3 +1,7 @@
+## 0.23.7 (2026-08-18)
+
+This was a version bump only for @qkix/strapi-plugin-better-blocks to align it with other projects, there were no code changes.
+
 ## 0.23.6 (2026-08-17)
 
 ### 🧱 Updated Dependencies

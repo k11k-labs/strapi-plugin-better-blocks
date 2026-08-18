@@ -1,3 +1,7 @@
+## 0.1.3 (2026-08-18)
+
+This was a version bump only for @qkix/strapi-plugin-greenlight to align it with other projects, there were no code changes.
+
 ## 0.1.2 (2026-08-17)
 
 ### 🚀 Features
