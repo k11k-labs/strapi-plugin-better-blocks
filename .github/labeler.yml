@@ -44,6 +44,14 @@
   - changed-files:
       - any-glob-to-any-file: 'packages/strapi-plugin-greenlight/**'
 
+'pkg: blueprint':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/strapi-plugin-blueprint/**'
+
+'pkg: ferry':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/strapi-plugin-ferry/**'
+
 'pkg: tooling':
   - changed-files:
       - any-glob-to-any-file:
