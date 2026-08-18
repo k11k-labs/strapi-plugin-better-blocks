@@ -478,7 +478,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
 export interface ApiPagePage extends Struct.CollectionTypeSchema {
   collectionName: 'pages';
   info: {
-    description: 'Demonstrates components, a dynamic zone and a relation \u2014 the shapes Blueprint draws.';
+    description: 'Demonstrates components, a dynamic zone and a relation - the shapes Blueprint draws.';
     displayName: 'Page';
     pluralName: 'pages';
     singularName: 'page';
