@@ -1,6 +1,8 @@
 ## 0.1.7 (2026-08-18)
 
-This was a version bump only for @qkix/strapi-plugin-chartkit to align it with other projects, there were no code changes.
+### 📖 Documentation
+
+- The README now links to a roadmap for this plugin: what is worth building next, what is deliberately not planned, and why. No code changes.
 
 ## 0.1.6 (2026-08-17)
 
