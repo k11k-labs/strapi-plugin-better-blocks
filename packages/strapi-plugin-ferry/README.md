@@ -260,7 +260,7 @@ target takes the whole row down, and that a draft is allowed to be incomplete so
 ## Roadmap
 
 What is worth building next, what is deliberately not planned, and why:
-[ROADMAP.md](./ROADMAP.md).
+[ROADMAP.md](https://github.com/qkix/strapi-plugins/blob/main/packages/strapi-plugin-ferry/ROADMAP.md).
 
 ## License
 

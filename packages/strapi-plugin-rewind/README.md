@@ -224,7 +224,7 @@ Strapi 5, Node 20 or 22.
 ## Roadmap
 
 What is worth building next, what is deliberately not planned, and why:
-[ROADMAP.md](./ROADMAP.md).
+[ROADMAP.md](https://github.com/qkix/strapi-plugins/blob/main/packages/strapi-plugin-rewind/ROADMAP.md).
 
 ## License
 

@@ -230,7 +230,7 @@ boot: both will show a panel in the edit view, and you probably want only one of
 ## Roadmap
 
 What is worth building next, what is deliberately not planned, and why:
-[ROADMAP.md](./ROADMAP.md).
+[ROADMAP.md](https://github.com/qkix/strapi-plugins/blob/main/packages/strapi-plugin-greenlight/ROADMAP.md).
 
 ## License
 
