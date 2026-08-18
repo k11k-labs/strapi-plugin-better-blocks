@@ -90,7 +90,7 @@ const escapeAttribute = (value: string): string =>
 /**
  * Converts one `media-embed` into the `embed` block that replaced it.
  *
- * Both renderers draw a `media-embed` as a 16:9 box wrapping
+ * Every renderer draws a `media-embed` as a 16:9 box wrapping
  * `<iframe src={url}>`, and draw an `embed` from its sanitized `embedHtml`. To
  * come out looking the same, the migration has to synthesize that markup - so
  * it builds the same iframe the renderers used to build, with the URL escaped
@@ -123,7 +123,7 @@ function migrateMediaEmbed(node: MediaEmbedNode): EmbedNode | null {
  * Brings a document up to {@link CURRENT_SCHEMA_VERSION}, and hands every
  * registered block to its own migrator on the way through.
  *
- * This is opt-in. Both renderers still handle `media-embed`, so nothing breaks
+ * This is opt-in. Every renderer still handles `media-embed`, so nothing breaks
  * if you never run it - it is for normalizing stored content, e.g. in a Strapi
  * migration or a one-off script.
  *

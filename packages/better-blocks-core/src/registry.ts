@@ -35,7 +35,7 @@ export type CustomBlockNode = {
  * A block that is either one of the documented built-ins or a registered one.
  *
  * {@link BlockNode} stays a closed union on purpose - widening it would break
- * every exhaustive `switch` written against it, including the two renderers'.
+ * every exhaustive `switch` written against it, including the renderers'.
  * Code that must handle registered blocks opts in by using this type instead.
  */
 export type AnyBlockNode = BlockNode | CustomBlockNode;
@@ -97,7 +97,7 @@ export type BlockMigrationOutcome =
  * Everything Better Blocks needs to accept a block type it did not write.
  *
  * A definition is data, not a class, and holds no state - the same object is
- * handed to the validator, the migrator and both renderers.
+ * handed to the validator, the migrator and every renderer.
  */
 export type BlockDefinition = {
   /**

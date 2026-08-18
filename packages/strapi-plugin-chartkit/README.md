@@ -114,7 +114,17 @@ import { Chart } from '@qkix/chartkit-astro-renderer';
 <Chart spec={article.chart} locale="en-US" />
 ```
 
-Both produce markup at build or request time. Neither ships a runtime.
+```vue
+<script setup>
+import { Chart } from '@qkix/chartkit-vue-renderer';
+</script>
+
+<template>
+  <Chart :spec="article.chart" locale="en-US" />
+</template>
+```
+
+They all produce markup at build or request time. None ships a runtime.
 
 ## It takes your theme, including dark mode
 
@@ -191,6 +201,7 @@ script, or a field that used to be a different type - it says so and goes
 | [`@qkix/chartkit-core`](https://www.npmjs.com/package/@qkix/chartkit-core)                     | the spec, the validator and the SVG renderer. No dependencies. |
 | [`@qkix/chartkit-react-renderer`](https://www.npmjs.com/package/@qkix/chartkit-react-renderer) | rendering a stored chart in React / Next.js                    |
 | [`@qkix/chartkit-astro-renderer`](https://www.npmjs.com/package/@qkix/chartkit-astro-renderer) | rendering a stored chart in Astro                              |
+| [`@qkix/chartkit-vue-renderer`](https://www.npmjs.com/package/@qkix/chartkit-vue-renderer)     | rendering a stored chart in Vue / Nuxt                         |
 | [`@qkix/chartkit-editor`](https://www.npmjs.com/package/@qkix/chartkit-editor)                 | the editing surface, and the ready-made block                  |
 
 ## Not there yet

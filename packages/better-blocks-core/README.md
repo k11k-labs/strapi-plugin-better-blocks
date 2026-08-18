@@ -56,7 +56,7 @@ import { migrateDocument } from '@qkix/better-blocks-core';
 const { content, changed, skipped } = migrateDocument(document);
 ```
 
-**Migrating is opt-in.** Both renderers still handle `media-embed`, so nothing
+**Migrating is opt-in.** Every renderer still handles `media-embed`, so nothing
 breaks if you never run it - this is for normalizing stored content, say in a
 Strapi migration or a one-off script. The input is never mutated, and blocks
 that need no change are carried over by reference.
@@ -120,13 +120,13 @@ Registries are built and passed explicitly rather than kept in a module-level
 global: the renderers run on servers handling concurrent requests, where mutable
 module state is a cross-request bug waiting to happen.
 
-Drawing the block is not here - a React component type and an Astro component
-type have nothing in common, so each renderer takes its own registration. See
+Drawing the block is not here - a React component type, an Astro one and a Vue
+one have nothing in common, so each renderer takes its own registration. See
 their READMEs.
 
 ## Zero runtime dependencies
 
-By design. Nothing here imports React, Astro, Strapi or Slate, so any consumer
+By design. Nothing here imports React, Astro, Vue, Strapi or Slate, so any consumer
 can depend on it without pulling a framework along.
 
 ## Who uses it
@@ -135,8 +135,9 @@ can depend on it without pulling a framework along.
 | -------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
 | [`@qkix/better-blocks-react-renderer`](https://www.npmjs.com/package/@qkix/better-blocks-react-renderer) | types, marks, and the shared resolution rules |
 | [`@qkix/better-blocks-astro-renderer`](https://www.npmjs.com/package/@qkix/better-blocks-astro-renderer) | the same                                      |
+| [`@qkix/better-blocks-vue-renderer`](https://www.npmjs.com/package/@qkix/better-blocks-vue-renderer)     | the same                                      |
 
-Both renderers re-export the document types, so consumers keep importing
+The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from the renderer they already use.
 
 ## Why it exists

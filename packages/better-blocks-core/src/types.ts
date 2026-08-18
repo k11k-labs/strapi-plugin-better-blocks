@@ -2,7 +2,7 @@
  * The Better Blocks document format.
  *
  * These types describe the JSON the Strapi plugin stores and every renderer
- * consumes. They are the single source of truth: the React and Astro renderers
+ * consumes. They are the single source of truth: the React, Astro and Vue renderers
  * re-export them rather than keeping their own copies, which is what let them
  * drift apart in the first place.
  *

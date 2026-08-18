@@ -10,8 +10,8 @@ import reactShowcase from './seeds/react-showcase.json';
 /**
  * One Strapi instance backs every example app in this repo, so it seeds all
  * three showcase documents that used to live in the separate playgrounds. The
- * React and Astro apps render whatever is published here, which is the point:
- * the same content, side by side, through two different renderers.
+ * React, Astro and Nuxt apps render whatever is published here, which is the
+ * point: the same content, side by side, through every renderer.
  */
 const SEEDS = [
   {
