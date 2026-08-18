@@ -1,6 +1,6 @@
 {
   "name": "@qkix/strapi-plugin-greenlight",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Multi-stage content review for Strapi v5, with a publish gate - nothing goes live until it has been approved",
   "strapi": {
     "kind": "plugin",

@@ -1,6 +1,6 @@
 {
   "name": "@qkix/strapi-plugin-ferry",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Import and export Strapi v5 content as JSON or CSV - relations, components and dynamic zones included, with a dry run before anything is written",
   "strapi": {
     "kind": "plugin",

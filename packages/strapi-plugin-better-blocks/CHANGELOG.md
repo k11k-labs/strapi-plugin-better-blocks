@@ -1,3 +1,9 @@
+## 0.23.7 (2026-08-18)
+
+### 📖 Documentation
+
+- The README now links to a roadmap for this plugin: what is worth building next, what is deliberately not planned, and why. No code changes.
+
 ## 0.23.6 (2026-08-17)
 
 ### 🧱 Updated Dependencies
