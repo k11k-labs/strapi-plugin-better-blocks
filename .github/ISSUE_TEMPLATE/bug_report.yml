@@ -6,8 +6,8 @@ body:
     attributes:
       value: |
         Thanks for reporting this. The first field is the one that matters most -
-        this repository publishes ten packages, and knowing which one you are
-        using is what makes a report actionable.
+        this repository publishes fifteen packages, and knowing which one you
+        are using is what makes a report actionable.
 
   - type: dropdown
     id: package
@@ -26,10 +26,12 @@ body:
         - '@qkix/better-blocks-core'
         - '@qkix/better-blocks-react-renderer'
         - '@qkix/better-blocks-astro-renderer'
+        - '@qkix/better-blocks-vue-renderer'
         - '@qkix/chartkit-core'
         - '@qkix/chartkit-editor'
         - '@qkix/chartkit-react-renderer'
         - '@qkix/chartkit-astro-renderer'
+        - '@qkix/chartkit-vue-renderer'
         - "I'm not sure"
     validations:
       required: true

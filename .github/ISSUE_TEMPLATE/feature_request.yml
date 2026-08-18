@@ -16,10 +16,12 @@ body:
         - '@qkix/better-blocks-core'
         - '@qkix/better-blocks-react-renderer'
         - '@qkix/better-blocks-astro-renderer'
+        - '@qkix/better-blocks-vue-renderer'
         - '@qkix/chartkit-core'
         - '@qkix/chartkit-editor'
         - '@qkix/chartkit-react-renderer'
         - '@qkix/chartkit-astro-renderer'
+        - '@qkix/chartkit-vue-renderer'
         - 'Something new / not sure'
     validations:
       required: true
