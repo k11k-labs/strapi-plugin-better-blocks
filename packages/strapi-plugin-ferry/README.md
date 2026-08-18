@@ -21,6 +21,10 @@
   </a>
 </p>
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-ferry/docs/dry-run.png" alt="The Ferry panel: an Export card on the left and an Import card on the right, with a dry run reporting 5 documents in the file, 3 to create and 2 to update, and nothing written yet" width="900" />
+</p>
+
 ## Why another one of these
 
 Import and export is the most-wanted thing in the Strapi ecosystem that nobody
