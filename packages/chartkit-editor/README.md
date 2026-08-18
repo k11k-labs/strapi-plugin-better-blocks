@@ -18,8 +18,8 @@ it, which is precisely the coupling the block registration API exists to avoid.
 
 ## The preview is the real renderer
 
-It calls `renderChart` from `@qkix/chartkit-core` - the same function the React
-and Astro renderers call. The editor and the published page draw from one code
+It calls `renderChart` from `@qkix/chartkit-core` - the same function the React,
+Astro and Vue renderers call. The editor and the published page draw from one code
 path, so a chart cannot look right in one and wrong in the other.
 
 A spec that will not render shows its **validation issues** instead of an empty

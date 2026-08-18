@@ -697,7 +697,16 @@ Third-party frames load only after that click, never on page load.
 
 ## Frontend Rendering
 
-To render Better Blocks content in your React frontend, use the companion renderer:
+Three companion renderers read this content, one per framework. Each supports
+every Better Blocks feature - text colors, background highlights, images, and all
+standard block types - and each is native to its framework rather than a wrapper
+around another one:
+
+| Renderer                                                                                                                       | For                                             |
+| ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| [`@qkix/better-blocks-react-renderer`](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-react-renderer) | React / Next.js                                 |
+| [`@qkix/better-blocks-astro-renderer`](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-astro-renderer) | Astro - zero client-side JavaScript             |
+| [`@qkix/better-blocks-vue-renderer`](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-vue-renderer)     | Vue 3 / Nuxt - with a Nuxt module for the setup |
 
 ```bash
 # Using yarn
@@ -715,9 +724,8 @@ const MyComponent = ({ content }) => {
 };
 ```
 
-The renderer supports all Better Blocks features including text colors, background highlights, images, and all standard block types.
-
-See the [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-react-renderer) documentation for details.
+See each renderer's own documentation for its props, custom renderers and
+framework-specific notes.
 
 ## Requirements
 
@@ -770,7 +778,7 @@ export default {
 ```
 
 Registering is the only supported way in. Editing this package to add a block is
-how the editor, both renderers and the validator ended up with four separate
+how the editor, the renderers and the validator ended up with four separate
 hardcoded lists of block types in the first place.
 
 `registerBlock` throws if the type shadows a built-in or is registered twice -
@@ -779,7 +787,7 @@ not appear.
 
 ### The rest of the pipeline
 
-The same definition object is understood by the core and both renderers, so a
+The same definition object is understood by the core and every renderer, so a
 package writes `type` and `content` once:
 
 | Where                                           | What it adds                                      |
@@ -787,7 +795,7 @@ package writes `type` and `content` once:
 | `registerBlock` here                            | the editor: rendering, Insert menu, slash command |
 | `validateDocument(doc, { blocks })` in the core | `validate`, so the block is not "unknown"         |
 | `migrateDocument(doc, { blocks })` in the core  | `migrate`, called for every node of the type      |
-| `blockPlugins` on either renderer               | `component`, so the front end draws it            |
+| `blockPlugins` on any renderer                  | `component`, so the front end draws it            |
 
 A renderer given no plugin for a type renders nothing for it - content authored
 with a registered block is not lost, it is simply not drawn until the front end
@@ -800,7 +808,9 @@ working registration.
 ## Contributing
 
 Contributions are welcome! This package lives in a monorepo together with the
-React and Astro renderers. The easiest way to get started is with Docker:
+React, Astro and Vue renderers -
+[CONTRIBUTING.md](https://github.com/qkix/strapi-plugins/blob/main/CONTRIBUTING.md)
+covers the whole workspace. The easiest way to get started is with Docker:
 
 ```bash
 # Clone the repository
@@ -812,9 +822,9 @@ docker compose up --build
 
 That builds the plugin and starts a Strapi v5 app (SQLite) at
 `http://localhost:1337/admin`, seeded with showcase articles and an admin
-account (`admin@example.com` / `admin12#`). Both renderers come up alongside it
-on `http://localhost:5173` and `http://localhost:4321`, showing the same
-content.
+account (`admin@example.com` / `admin12#`). The renderer examples come up
+alongside it on `http://localhost:5173` (React), `http://localhost:4321` (Astro)
+and `http://localhost:3000` (Nuxt), showing the same content.
 
 To see the field itself, open any article, or add it to your own content type
 via **Content-Type Builder** &rarr; **Add new field** &rarr; **CUSTOM** tab
@@ -842,7 +852,7 @@ docker compose down -v && docker compose up --build
 
 ```bash
 pnpm install
-pnpm build   # the plugin, the core and both renderers
+pnpm build   # the plugin, the core and every renderer
 
 pnpm --filter @qkix/example-strapi-app develop
 ```

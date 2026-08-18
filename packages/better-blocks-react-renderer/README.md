@@ -541,7 +541,7 @@ Cell `children` go through the same inline renderer as paragraphs, so marks (`bo
 
 These three blocks ship with GitHub-flavored defaults out of the box &mdash; no stylesheet to import. Each carries a stable `bb-*` class, and the styles are injected as a `<style>` tag only when the block actually appears in the content (and skipped entirely when you override the block). Everything is rethemable through CSS custom properties, so you can restyle without replacing any markup.
 
-The same classes and custom properties are used by the [Astro renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-astro-renderer), so one shared theme covers both.
+The same classes and custom properties are used by the [Astro](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-astro-renderer) and [Vue](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-vue-renderer) renderers, so one shared theme covers all three.
 
 | Block   | Default element                 | Custom properties                                                                        |
 | ------- | ------------------------------- | ---------------------------------------------------------------------------------------- |
@@ -940,8 +940,8 @@ import type {
 
 Contributions are welcome! This package lives in the
 [strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins)
-monorepo, next to the Strapi plugin and the Astro renderer. The easiest way to
-get started is with Docker:
+monorepo, next to the Strapi plugin and the Astro and Vue renderers. The easiest
+way to get started is with Docker:
 
 ```bash
 git clone https://github.com/qkix/strapi-plugins.git
@@ -951,11 +951,12 @@ docker compose up --build
 ```
 
 That brings up a Strapi v5 instance running the Better Blocks plugin, seeded
-with the showcase articles, plus both renderers displaying the same content.
+with the showcase articles, plus every renderer displaying the same content.
 
 - **Strapi admin:** http://localhost:1337/admin (login: `admin@example.com` / `admin12#`)
 - **React example:** http://localhost:5173
 - **Astro example:** http://localhost:4321
+- **Nuxt example:** http://localhost:3000
 
 ### Development workflow
 
@@ -999,6 +1000,8 @@ Every coffee goes toward fixing bugs, reviewing PRs, writing docs, and shipping 
 
 ## Related
 
+- [@qkix/better-blocks-astro-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-astro-renderer) &mdash; Astro renderer with the same Better Blocks support
+- [@qkix/better-blocks-vue-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-vue-renderer) &mdash; Vue 3 / Nuxt renderer with the same Better Blocks support
 - [@qkix/strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins) &mdash; Strapi plugin that extends the Blocks editor with colors, tables, to-do lists, media embeds, and more
 - [@strapi/blocks-react-renderer](https://github.com/strapi/blocks-react-renderer) &mdash; Official Strapi renderer (standard blocks only)
 

@@ -16,6 +16,10 @@
   - changed-files:
       - any-glob-to-any-file: 'packages/better-blocks-astro-renderer/**'
 
+'pkg: better-blocks-vue':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/better-blocks-vue-renderer/**'
+
 'pkg: chartkit':
   - changed-files:
       - any-glob-to-any-file: 'packages/strapi-plugin-chartkit/**'
@@ -35,6 +39,10 @@
 'pkg: chartkit-astro':
   - changed-files:
       - any-glob-to-any-file: 'packages/chartkit-astro-renderer/**'
+
+'pkg: chartkit-vue':
+  - changed-files:
+      - any-glob-to-any-file: 'packages/chartkit-vue-renderer/**'
 
 'pkg: rewind':
   - changed-files:

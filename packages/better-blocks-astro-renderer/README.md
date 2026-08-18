@@ -606,8 +606,8 @@ import type {
 
 Contributions are welcome! This package lives in the
 [strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins)
-monorepo, next to the Strapi plugin and the React renderer. The easiest way to
-get started is with Docker:
+monorepo, next to the Strapi plugin and the React and Vue renderers. The easiest
+way to get started is with Docker:
 
 ```bash
 git clone https://github.com/qkix/strapi-plugins.git
@@ -617,11 +617,12 @@ docker compose up --build
 ```
 
 That brings up a Strapi v5 instance running the Better Blocks plugin, seeded
-with the showcase articles, plus both renderers displaying the same content.
+with the showcase articles, plus every renderer displaying the same content.
 
 - **Strapi admin:** http://localhost:1337/admin (login: `admin@example.com` / `admin12#`)
 - **Astro example:** http://localhost:4321
 - **React example:** http://localhost:5173
+- **Nuxt example:** http://localhost:3000
 
 ### Development workflow
 
@@ -657,6 +658,8 @@ pnpm --filter @qkix/better-blocks-astro-renderer test   # just this one
 ## Related
 
 - [@qkix/better-blocks-react-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-react-renderer) &mdash; React renderer with the same Better Blocks support
+- [@qkix/better-blocks-vue-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/better-blocks-vue-renderer) &mdash; Vue 3 / Nuxt renderer with the same Better Blocks support
+- [@qkix/chartkit-astro-renderer](https://github.com/qkix/strapi-plugins/tree/main/packages/chartkit-astro-renderer) &mdash; charts as a registered block type
 - [@qkix/strapi-plugin-better-blocks](https://github.com/qkix/strapi-plugins) &mdash; Strapi plugin that extends the Blocks editor with colors, tables, to-do lists, media embeds, and more
 
 ## Support this project

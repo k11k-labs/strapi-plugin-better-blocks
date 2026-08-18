@@ -1,0 +1,90 @@
+{
+  "name": "@qkix/chartkit-vue-renderer",
+  "version": "0.1.0",
+  "description": "Vue 3 renderer for Chartkit charts - server-rendered SVG with zero client-side JavaScript, and the Better Blocks block plugin that draws a chart inside a document",
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "module": "./dist/index.mjs",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.mjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "clean": "rm -rf dist",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@qkix/chartkit-core": "workspace:^"
+  },
+  "peerDependencies": {
+    "@qkix/better-blocks-vue-renderer": ">=0.1.0",
+    "vue": ">=3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@qkix/better-blocks-vue-renderer": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@qkix/better-blocks-vue-renderer": "workspace:^",
+    "@qkix/eslint-config": "workspace:*",
+    "@qkix/tsconfig": "workspace:*",
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/test-utils": "^2.4.6",
+    "eslint": "^10.8.1",
+    "jsdom": "^25.0.1",
+    "prettier": "^3.4.2",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.0",
+    "vite-plugin-dts": "^4.5.0",
+    "vitest": "^3.0.0",
+    "vue": "^3.5.13",
+    "vue-tsc": "^2.2.0"
+  },
+  "keywords": [
+    "chart",
+    "charts",
+    "svg",
+    "vue",
+    "vue3",
+    "nuxt",
+    "chartkit",
+    "strapi",
+    "ssr",
+    "zero-js"
+  ],
+  "license": "MIT",
+  "author": "qkix",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qkix/strapi-plugins.git",
+    "directory": "packages/chartkit-vue-renderer"
+  },
+  "bugs": {
+    "url": "https://github.com/qkix/strapi-plugins/issues"
+  },
+  "homepage": "https://github.com/qkix/strapi-plugins#readme",
+  "engines": {
+    "node": ">=20.0.0 <=24.x.x",
+    "npm": ">=6.0.0"
+  },
+  "nx": {
+    "tags": [
+      "scope:renderer-extension"
+    ]
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

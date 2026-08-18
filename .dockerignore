@@ -9,6 +9,8 @@
 **/.strapi
 **/.tmp
 **/.vite
+**/.nuxt
+**/.output
 examples/strapi-app/database/*.db
 examples/strapi-app/public/uploads/*
 docs

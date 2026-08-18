@@ -5,7 +5,7 @@ workspace, seeded on first boot with the showcase articles the renderer
 examples display.
 
 See [examples/README.md](../README.md) for how to bring the whole stack up -
-this app plus both renderers - and what gets seeded.
+this app plus every renderer example - and what gets seeded.
 
 ## Running just this app
 

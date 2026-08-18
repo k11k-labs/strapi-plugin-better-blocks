@@ -8,7 +8,7 @@
  * another request to leak into.
  *
  * Registering is the *only* supported way in. Adding a block by editing this
- * package is how the editor, both renderers and the validator ended up with
+ * package is how the editor, the renderers and the validator ended up with
  * four separate hardcoded lists of block types in the first place.
  */
 
@@ -24,7 +24,7 @@ import type { CSSProperties } from 'styled-components';
  *
  * Extends the core {@link BlockDefinition}, so a package writes `type` and
  * `content` once and the same object teaches the validator, the migrator and
- * both renderers about the block.
+ * every renderer about the block.
  */
 export type EditorBlockDefinition = BlockDefinition & {
   /** Draws the block inside the editor. Slate calls this with its element props. */

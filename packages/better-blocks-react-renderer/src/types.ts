@@ -58,8 +58,8 @@ import type {
 } from '@qkix/better-blocks-core';
 
 /**
- * The document types come from `@qkix/better-blocks-core`, which both renderers
- * share so they cannot drift apart again. They are re-exported here so existing
+ * The document types come from `@qkix/better-blocks-core`, which every renderer
+ * shares so they cannot drift apart again. They are re-exported here so existing
  * imports from this package keep resolving.
  *
  * What stays local is the React component surface: the props custom block and

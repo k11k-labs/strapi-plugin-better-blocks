@@ -2,7 +2,7 @@
   "name": "@qkix/better-blocks-monorepo",
   "version": "0.0.0",
   "private": true,
-  "description": "Better Blocks - Strapi v5 blocks editor plugin and its React / Astro renderers",
+  "description": "Better Blocks - Strapi v5 blocks editor plugin and its React / Astro / Vue renderers",
   "license": "MIT",
   "author": "qkix",
   "repository": {
@@ -30,7 +30,7 @@
     "react-dom": "^19.2.0"
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,yml,yaml,css,astro}": "prettier --write"
+    "*.{js,jsx,ts,tsx,mjs,cjs,json,md,yml,yaml,css,astro,vue}": "prettier --write"
   },
   "engines": {
     "node": ">=20.0.0 <23.0.0"

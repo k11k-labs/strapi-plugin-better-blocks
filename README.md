@@ -16,8 +16,8 @@
 ## Products
 
 **[Better Blocks](./packages/strapi-plugin-better-blocks)** - an enhanced Rich Text
-(Blocks) editor for Strapi v5, plus the React and Astro renderers that display what it
-writes. Colors, tables, callouts, media embeds, code, math and diagrams.
+(Blocks) editor for Strapi v5, plus the React, Astro and Vue renderers that display what
+it writes. Colors, tables, callouts, media embeds, code, math and diagrams.
 
 **[Chartkit](./packages/strapi-plugin-chartkit)** - charts rendered as SVG on the
 server, so a page gets a chart without a byte of client-side JavaScript. Authored in
@@ -53,11 +53,13 @@ than either one knowing the other's internals.
 | [`@qkix/strapi-plugin-better-blocks`](./packages/strapi-plugin-better-blocks)   | Strapi v5 custom field - an extended Blocks editor built on Slate: colors, tables, callouts, media embeds, code, math, diagrams and more. |
 | [`@qkix/better-blocks-react-renderer`](./packages/better-blocks-react-renderer) | React renderer for Strapi Blocks content with full Better Blocks support.                                                                 |
 | [`@qkix/better-blocks-astro-renderer`](./packages/better-blocks-astro-renderer) | Astro renderer for the same content - native Astro components, zero client-side JavaScript.                                               |
+| [`@qkix/better-blocks-vue-renderer`](./packages/better-blocks-vue-renderer)     | Vue 3 renderer for the same content - server-rendered in Nuxt, with a Nuxt module that sets it up in one line.                            |
 | [`@qkix/better-blocks-core`](./packages/better-blocks-core)                     | The document types, the logic every package shares, and the block registration contract. No runtime dependencies.                         |
 | [`@qkix/strapi-plugin-chartkit`](./packages/strapi-plugin-chartkit)             | Strapi v5 custom field - a chart, edited in a data grid and stored as a spec. Works with or without Better Blocks.                        |
 | [`@qkix/chartkit-core`](./packages/chartkit-core)                               | Charts as server-rendered SVG - a `ChartSpec` in, a finished SVG string out. No DOM, no framework, no client-side JavaScript.             |
 | [`@qkix/chartkit-react-renderer`](./packages/chartkit-react-renderer)           | React renderer for Chartkit charts, and the Better Blocks block plugin that draws one inside a document.                                  |
 | [`@qkix/chartkit-astro-renderer`](./packages/chartkit-astro-renderer)           | The same for Astro - zero client-side JavaScript.                                                                                         |
+| [`@qkix/chartkit-vue-renderer`](./packages/chartkit-vue-renderer)               | The same for Vue and Nuxt - the chart is an SVG built on the server.                                                                      |
 | [`@qkix/chartkit-editor`](./packages/chartkit-editor)                           | The chart editor for the Strapi admin: preview, data grid and spreadsheet paste, shared by both Chartkit surfaces.                        |
 | [`@qkix/strapi-plugin-rewind`](./packages/strapi-plugin-rewind)                 | Strapi v5 plugin - document version history: a snapshot on every save, a diff between any two, and restore.                               |
 | [`@qkix/strapi-plugin-greenlight`](./packages/strapi-plugin-greenlight)         | Strapi v5 plugin - multi-stage content review with a publish gate: nothing goes live until it is approved.                                |
@@ -66,11 +68,11 @@ than either one knowing the other's internals.
 
 The renderers re-export the document types, so consumers keep importing
 `BlocksContent` from whichever renderer they already use - for reading content,
-the core stays an implementation detail that keeps the two in step.
+the core stays an implementation detail that keeps them in step.
 
 Packages that **add a block type** are the exception, and depend on the core
 directly. A `BlockDefinition` is the vocabulary the editor, the validator, the
-migrator and both renderers all speak, so a package that contributes a block
+migrator and every renderer all speak, so a package that contributes a block
 writes it once and hands the same object to each. See
 [Registering a block type](./packages/better-blocks-core#registering-a-block-type).
 
@@ -105,13 +107,16 @@ Nx wraps each package's own build script rather than replacing it, so a package
 still builds on its own from its directory.
 
 To see a change running end to end, `docker compose up --build` brings up Strapi with
-the plugin plus both renderers on the same seeded content - see
+the plugin plus every renderer on the same seeded content - see
 [examples/README.md](./examples/README.md). Chartkit has its own page,
 [examples/chartkit-gallery](./examples/chartkit-gallery), which renders every fixture at
 once: charts cannot be reviewed in a diff, so there has to be somewhere to look at them.
 
 Releases go through `nx release`: independent versions, one changelog and tag
 per package. The release workflow is manual and defaults to a dry run.
+
+[CONTRIBUTING.md](./CONTRIBUTING.md) has the rest: the development workflow, what
+belongs in a core rather than a renderer, and how a package gets labelled.
 
 ## License
 

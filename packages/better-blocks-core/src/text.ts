@@ -18,7 +18,7 @@ export function getPlainText(children: InlineNode[]): string {
 export type Mark = { name: string; value?: string };
 
 /**
- * The active marks for a text node in outer → inner order. Both renderers wrap
+ * The active marks for a text node in outer → inner order. Every renderer wraps
  * text in this exact order, so their nesting matches element for element.
  */
 export function buildTextMarks(node: TextNode): Mark[] {
