@@ -1,18 +1,25 @@
 <script setup lang="ts">
 /**
- * A Mermaid diagram, rendered to SVG on the server.
+ * A Mermaid diagram, rendered to inline SVG by mermaid.js on the client.
  *
- * `beautiful-mermaid` turns Mermaid source into an SVG string synchronously and
- * without a browser, so the markup is identical on the server and on the client
- * - the page ships a finished diagram and hydrates over it, with no client-side
- * rendering pass and no mismatch.
+ * mermaid needs a real DOM to measure text, so unlike KaTeX it cannot render
+ * during SSR. The server and the first client render both emit the raw source
+ * in a `<pre>` - so hydration matches - and the SVG is swapped in after mount.
+ * This mirrors the React renderer, and it is what makes the output match
+ * mermaid.js exactly: rendering to SVG on the server needs a reimplementation
+ * of mermaid's layout, which disagreed with the real thing on, among others,
+ * flowcharts containing a cycle and the closing actor row of sequence diagrams.
+ *
+ * If mermaid fails to parse the diagram the raw source simply stays put, so
+ * content is never lost.
  */
-import { computed } from 'vue';
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue';
 
-import { renderMermaidSVG, THEMES } from 'beautiful-mermaid';
+import { applyDiagramTheme } from '@qkix/better-blocks-core';
 
 import type { CustomBlocksConfig, DiagramNode, DiagramTheme } from './types';
 
+import { loadMermaid, nextDiagramId } from './mermaid';
 import { rawComponent } from './utils';
 
 const props = defineProps<{
@@ -25,45 +32,49 @@ const DiagramComp = computed(() => rawComponent(props.blocks?.diagram));
 const source = computed(() => props.node.value ?? '');
 const format = computed(() => props.node.format ?? 'mermaid');
 
-// The palette handed to beautiful-mermaid. Without one it renders monochrome
-// (every color derived from a single dark `fg`). The built-in themes only set an
-// accent, which colors arrows but leaves node fills/borders near-white - so our
-// default mirrors mermaid.js's familiar look: lavender node fills (`surface`)
-// with purple borders (`border`) and dark edges (`line`). A theme name selects a
-// built-in palette; an object is used as custom colors.
-const DEFAULT_DIAGRAM_COLORS = {
-  bg: '#ffffff',
-  fg: '#333333',
-  line: '#333333',
-  accent: '#9370db',
-  muted: '#666666',
-  surface: '#ececff',
-  border: '#9370db',
-};
+// Identity of the theme as a plain string. Watching the prop itself would
+// re-render on every parent update for the very common `:diagram-theme="{ … }"`
+// inline object, which is a new reference each time.
+const themeKey = computed(() =>
+  props.diagramTheme == null || typeof props.diagramTheme === 'string'
+    ? (props.diagramTheme ?? '')
+    : JSON.stringify(props.diagramTheme)
+);
 
-const themeOptions = computed(() => {
-  const theme = props.diagramTheme;
-  if (theme == null) return DEFAULT_DIAGRAM_COLORS;
-  if (typeof theme === 'object') return theme;
-  return THEMES[theme] ?? DEFAULT_DIAGRAM_COLORS;
-});
+const svg = ref<string | null>(null);
 
-// It throws on empty or invalid input and on unsupported diagram types (gantt,
-// pie, mindmap, gitGraph, …); in that case we fall back to the raw source in a
-// <pre> so content is never lost.
-const svg = computed<string | null>(() => {
-  if (DiagramComp.value || !source.value) return null;
+// Bumped on every (re-)render and on unmount, so a render that resolves after
+// the source changed - or after the component is gone - drops its result.
+let generation = 0;
+
+async function renderDiagram() {
+  const token = ++generation;
+  svg.value = null;
+
+  if (DiagramComp.value || !source.value) return;
+
   try {
-    const out = renderMermaidSVG(source.value, themeOptions.value);
-    return typeof out === 'string' && out.includes('<svg') ? out : null;
+    const mermaid = await loadMermaid();
+    // The theme rides along in an `%%{init}%%` directive rather than through
+    // `mermaid.initialize`, whose config is global and shared by every diagram
+    // on the page.
+    const themed = applyDiagramTheme(source.value, props.diagramTheme);
+    const { svg: rendered } = await mermaid.render(nextDiagramId(), themed);
+    if (token === generation) svg.value = rendered;
   } catch {
-    return null;
+    // Leave the raw-source fallback in place on parse/render errors.
   }
+}
+
+onMounted(renderDiagram);
+watch([source, themeKey], renderDiagram);
+onBeforeUnmount(() => {
+  generation++;
 });
 </script>
 
 <template>
   <component :is="DiagramComp" v-if="DiagramComp" :code="source" :format="format" />
-  <div v-else-if="svg !== null" class="mermaid-diagram" v-html="svg"></div>
+  <div v-else-if="svg" class="mermaid-diagram" v-html="svg"></div>
   <pre v-else class="mermaid-source">{{ source }}</pre>
 </template>

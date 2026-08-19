@@ -45,6 +45,7 @@ type RenderProps = {
   blocks?: CustomBlocksConfig;
   modifiers?: CustomModifiersConfig;
   diagramTheme?: DiagramTheme;
+  clientMermaid?: boolean;
   codeTheme?: string;
   codeCopyButton?: boolean;
 };
@@ -1135,6 +1136,77 @@ describe('BlocksRenderer', () => {
     expect(pre).not.toBeNull();
     expect(pre?.textContent).toContain('gantt');
     expect(container.querySelector('div.mermaid-diagram')).toBeNull();
+  });
+
+  it('emits the raw source for mermaid.js when clientMermaid is on', async () => {
+    // Opt-in mode: the SVG is produced by mermaid.js after load, so the server
+    // ships the source with a marker the client script picks up - and that
+    // source doubles as the no-JS fallback.
+    const { container } = await render(
+      [
+        {
+          type: 'diagram',
+          format: 'mermaid',
+          value: 'graph TD\n  A[Start] --> B[End];',
+          children: [{ type: 'text', text: '' }],
+        },
+      ],
+      { clientMermaid: true }
+    );
+    const pre = container.querySelector('pre.mermaid-source[data-bb-mermaid]');
+    expect(pre).not.toBeNull();
+    expect(pre?.textContent).toContain('graph TD');
+    expect(container.querySelector('div.mermaid-diagram')).toBeNull();
+  });
+
+  it('carries the theme into the clientMermaid source as an init directive', async () => {
+    const { container } = await render(
+      [
+        {
+          type: 'diagram',
+          format: 'mermaid',
+          value: 'graph TD\n  A[Start] --> B[End];',
+          children: [{ type: 'text', text: '' }],
+        },
+      ],
+      { clientMermaid: true, diagramTheme: 'dracula' }
+    );
+    const text = container.querySelector('pre.mermaid-source')?.textContent ?? '';
+    expect(text).toContain('%%{init:');
+    expect(text).toContain('#282a36');
+    expect(text.trimEnd().endsWith('graph TD\n  A[Start] --> B[End];')).toBe(true);
+  });
+
+  it('still server-renders the SVG when clientMermaid is off', async () => {
+    const { container } = await render(
+      [
+        {
+          type: 'diagram',
+          format: 'mermaid',
+          value: 'graph TD\n  A[Start] --> B[End];',
+          children: [{ type: 'text', text: '' }],
+        },
+      ],
+      { clientMermaid: false }
+    );
+    expect(container.querySelector('div.mermaid-diagram svg')).not.toBeNull();
+    expect(container.querySelector('[data-bb-mermaid]')).toBeNull();
+  });
+
+  it('lets a custom diagram renderer win over clientMermaid', async () => {
+    const { container } = await render(
+      [
+        {
+          type: 'diagram',
+          format: 'mermaid',
+          value: 'graph TD\n  A --> B;',
+          children: [{ type: 'text', text: '' }],
+        },
+      ],
+      { clientMermaid: true, blocks: { diagram: CustomDiagram } }
+    );
+    expect(container.querySelector('.custom-diagram')).not.toBeNull();
+    expect(container.querySelector('[data-bb-mermaid]')).toBeNull();
   });
 
   it('uses a custom diagram renderer with code and format props', async () => {

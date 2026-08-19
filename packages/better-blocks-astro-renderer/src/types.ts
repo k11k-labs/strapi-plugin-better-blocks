@@ -69,55 +69,18 @@ import type {
   BlockDefinition,
   BlockNode,
   BlocksContent,
+  DiagramTheme,
   ExtendedBlocksContent,
 } from '@qkix/better-blocks-core';
 
 // ── Diagram Theming ──────────────────────────────────────────────────
 
 /**
- * Built-in Mermaid color theme shipped by `beautiful-mermaid` (the engine that
- * renders diagrams to SVG on the server). The default is `github-light`.
+ * Diagram theming is shared with the Vue renderer and lives in
+ * `@qkix/better-blocks-core`. Re-exported so consumers keep importing every
+ * type from this package.
  */
-export type DiagramThemeName =
-  | 'zinc-light'
-  | 'zinc-dark'
-  | 'tokyo-night'
-  | 'tokyo-night-storm'
-  | 'tokyo-night-light'
-  | 'catppuccin-mocha'
-  | 'catppuccin-latte'
-  | 'nord'
-  | 'nord-light'
-  | 'dracula'
-  | 'github-light'
-  | 'github-dark'
-  | 'solarized-light'
-  | 'solarized-dark'
-  | 'one-dark';
-
-/**
- * Custom Mermaid palette. `bg`/`fg` alone produce a clean monochrome diagram;
- * `line`/`accent`/`muted`/`surface`/`border` bring in richer color (each falls
- * back to a derivation from `bg` + `fg` when omitted).
- */
-export type DiagramColors = {
-  bg?: string;
-  fg?: string;
-  line?: string;
-  accent?: string;
-  muted?: string;
-  surface?: string;
-  border?: string;
-  font?: string;
-  transparent?: boolean;
-};
-
-/**
- * Theme for `diagram` (Mermaid) blocks - either a built-in theme name or a
- * custom color object. A bare `string` is accepted for forward compatibility
- * with themes added to `beautiful-mermaid`. Defaults to `github-light`.
- */
-export type DiagramTheme = DiagramThemeName | (string & {}) | DiagramColors;
+export type { DiagramColors, DiagramTheme, DiagramThemeName } from '@qkix/better-blocks-core';
 
 // ── Style ────────────────────────────────────────────────────────────
 
@@ -246,10 +209,20 @@ export type BlocksRendererProps = {
    */
   blockPlugins?: readonly AstroBlockPlugin[];
   /**
-   * Color theme for `diagram` (Mermaid) blocks. Defaults to `github-light`.
-   * Ignored when a custom `diagram` renderer is supplied via `blocks.diagram`.
+   * Color theme for `diagram` (Mermaid) blocks - a built-in palette name or a
+   * custom color object. Ignored when a custom `diagram` renderer is supplied
+   * via `blocks.diagram`.
    */
   diagramTheme?: DiagramTheme;
+  /**
+   * Renders `diagram` blocks with mermaid.js in the browser instead of to SVG
+   * on the server. Off by default, because the server-rendered SVG is what
+   * keeps a page zero-JS; turn it on for diagrams the server-side engine gets
+   * wrong (flowcharts with a cycle, the closing actor row of a sequence
+   * diagram). Ignored when a custom `diagram` renderer is supplied via
+   * `blocks.diagram`.
+   */
+  clientMermaid?: boolean;
   /**
    * Shiki theme for the default `code` block highlighting. Any bundled Shiki
    * theme name (e.g. `github-dark`, `github-light`, `dracula`, `nord`).

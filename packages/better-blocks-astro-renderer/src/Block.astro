@@ -30,6 +30,7 @@ interface Props {
   blocks?: CustomBlocksConfig;
   modifiers?: CustomModifiersConfig;
   diagramTheme?: DiagramTheme;
+  clientMermaid?: boolean;
   /** Shiki theme for default `code` blocks. */
   codeTheme?: string;
   /** Whether default `code` blocks render an opt-in copy button. */
@@ -45,6 +46,7 @@ const {
   blocks,
   modifiers,
   diagramTheme,
+  clientMermaid,
   codeTheme,
   codeCopyButton,
   index,
@@ -79,6 +81,7 @@ const EmbedComp = blocks?.['media-embed'] as any;
               blocks={blocks}
               modifiers={modifiers}
               diagramTheme={diagramTheme}
+              clientMermaid={clientMermaid}
               codeTheme={codeTheme}
               codeCopyButton={codeCopyButton}
               blockPlugins={blockPlugins}
@@ -201,7 +204,16 @@ const EmbedComp = blocks?.['media-embed'] as any;
 
 {block.type === 'math' && <Math node={block} blocks={blocks} />}
 
-{block.type === 'diagram' && <Diagram node={block} blocks={blocks} diagramTheme={diagramTheme} />}
+{
+  block.type === 'diagram' && (
+    <Diagram
+      node={block}
+      blocks={blocks}
+      diagramTheme={diagramTheme}
+      clientMermaid={clientMermaid}
+    />
+  )
+}
 
 {
   block.type === 'callout' && (
@@ -210,6 +222,7 @@ const EmbedComp = blocks?.['media-embed'] as any;
       blocks={blocks}
       modifiers={modifiers}
       diagramTheme={diagramTheme}
+      clientMermaid={clientMermaid}
       codeTheme={codeTheme}
       codeCopyButton={codeCopyButton}
       blockPlugins={blockPlugins}
@@ -224,6 +237,7 @@ const EmbedComp = blocks?.['media-embed'] as any;
       blocks={blocks}
       modifiers={modifiers}
       diagramTheme={diagramTheme}
+      clientMermaid={clientMermaid}
       codeTheme={codeTheme}
       codeCopyButton={codeCopyButton}
       blockPlugins={blockPlugins}

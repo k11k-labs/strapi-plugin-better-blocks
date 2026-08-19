@@ -13,13 +13,22 @@ interface Props {
   blocks?: CustomBlocksConfig;
   modifiers?: CustomModifiersConfig;
   diagramTheme?: DiagramTheme;
+  clientMermaid?: boolean;
   codeTheme?: string;
   codeCopyButton?: boolean;
   blockPlugins?: readonly AstroBlockPlugin[];
 }
 
-const { node, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton, blockPlugins } =
-  Astro.props;
+const {
+  node,
+  blocks,
+  modifiers,
+  diagramTheme,
+  clientMermaid,
+  codeTheme,
+  codeCopyButton,
+  blockPlugins,
+} = Astro.props;
 
 const DetailsComp = blocks?.details as any;
 ---
@@ -33,6 +42,7 @@ const DetailsComp = blocks?.details as any;
           blocks={blocks}
           modifiers={modifiers}
           diagramTheme={diagramTheme}
+          clientMermaid={clientMermaid}
           codeTheme={codeTheme}
           codeCopyButton={codeCopyButton}
           blockPlugins={blockPlugins}
@@ -50,6 +60,7 @@ const DetailsComp = blocks?.details as any;
             blocks={blocks}
             modifiers={modifiers}
             diagramTheme={diagramTheme}
+            clientMermaid={clientMermaid}
             codeTheme={codeTheme}
             codeCopyButton={codeCopyButton}
             blockPlugins={blockPlugins}

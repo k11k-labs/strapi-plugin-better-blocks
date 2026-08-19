@@ -1,14 +1,17 @@
 ---
+import { applyDiagramTheme } from '@qkix/better-blocks-core';
 import { renderMermaidSVG, THEMES } from 'beautiful-mermaid';
 import type { CustomBlocksConfig, DiagramNode, DiagramTheme } from './types';
+import MermaidScript from './MermaidScript.astro';
 
 interface Props {
   node: DiagramNode;
   blocks?: CustomBlocksConfig;
   diagramTheme?: DiagramTheme;
+  clientMermaid?: boolean;
 }
 
-const { node, blocks, diagramTheme } = Astro.props;
+const { node, blocks, diagramTheme, clientMermaid } = Astro.props;
 
 const source = node.value ?? '';
 const format = node.format ?? 'mermaid';
@@ -40,8 +43,14 @@ const themeOptions =
 // server - no browser, no client-side hydration. It throws on empty or invalid
 // input and on unsupported diagram types (gantt, pie, mindmap, gitGraph, …); in
 // that case we fall back to the raw source in a <pre> so content is never lost.
+//
+// It is a reimplementation of mermaid's layout rather than mermaid itself, so
+// it disagrees with mermaid.js on some diagrams - flowcharts containing a cycle
+// come out in the wrong order, and sequence diagrams omit the closing actor row
+// mermaid draws at the foot of the lifelines. `clientMermaid` trades this
+// component's zero-JS default for mermaid.js proper, rendered after load.
 let svg: string | null = null;
-if (!DiagramComp && source) {
+if (!DiagramComp && source && !clientMermaid) {
   try {
     const out = renderMermaidSVG(source, themeOptions);
     svg = typeof out === 'string' && out.includes('<svg') ? out : null;
@@ -49,12 +58,23 @@ if (!DiagramComp && source) {
     svg = null;
   }
 }
+
+// In client mode the theme travels with the source as a mermaid `%%{init}%%`
+// directive, because mermaid's own config is global and shared by every diagram
+// on the page.
+const clientSource = clientMermaid ? applyDiagramTheme(source, diagramTheme) : source;
+
 const Custom = DiagramComp as any;
 ---
 
 {
   Custom ? (
     <Custom code={source} format={format} />
+  ) : clientMermaid ? (
+    <>
+      <pre class="mermaid-source" data-bb-mermaid set:text={clientSource} />
+      <MermaidScript />
+    </>
   ) : svg !== null ? (
     <div class="mermaid-diagram" set:html={svg} />
   ) : (

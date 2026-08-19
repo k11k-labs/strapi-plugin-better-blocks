@@ -4,8 +4,16 @@ import Block from './Block.astro';
 
 type Props = BlocksRendererProps;
 
-const { content, blocks, modifiers, diagramTheme, codeTheme, codeCopyButton, blockPlugins } =
-  Astro.props;
+const {
+  content,
+  blocks,
+  modifiers,
+  diagramTheme,
+  clientMermaid,
+  codeTheme,
+  codeCopyButton,
+  blockPlugins,
+} = Astro.props;
 const isValid = Array.isArray(content) && content.length > 0;
 ---
 
@@ -17,6 +25,7 @@ const isValid = Array.isArray(content) && content.length > 0;
         blocks={blocks}
         modifiers={modifiers}
         diagramTheme={diagramTheme}
+        clientMermaid={clientMermaid}
         codeTheme={codeTheme}
         codeCopyButton={codeCopyButton}
         blockPlugins={blockPlugins}

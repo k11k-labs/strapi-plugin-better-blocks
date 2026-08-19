@@ -67,6 +67,7 @@ export type {
 import type {
   BlockDefinition,
   BlocksContent,
+  DiagramTheme,
   ExtendedBlocksContent,
 } from '@qkix/better-blocks-core';
 import type { Component } from 'vue';
@@ -74,50 +75,11 @@ import type { Component } from 'vue';
 // ── Diagram Theming ──────────────────────────────────────────────────
 
 /**
- * Built-in Mermaid color theme shipped by `beautiful-mermaid` (the engine that
- * renders diagrams to SVG without a browser). The default is a palette matching
- * mermaid.js's familiar look.
+ * Diagram theming is shared with the Astro renderer and lives in
+ * `@qkix/better-blocks-core`. Re-exported so consumers keep importing every
+ * type from this package.
  */
-export type DiagramThemeName =
-  | 'zinc-light'
-  | 'zinc-dark'
-  | 'tokyo-night'
-  | 'tokyo-night-storm'
-  | 'tokyo-night-light'
-  | 'catppuccin-mocha'
-  | 'catppuccin-latte'
-  | 'nord'
-  | 'nord-light'
-  | 'dracula'
-  | 'github-light'
-  | 'github-dark'
-  | 'solarized-light'
-  | 'solarized-dark'
-  | 'one-dark';
-
-/**
- * Custom Mermaid palette. `bg`/`fg` alone produce a clean monochrome diagram;
- * `line`/`accent`/`muted`/`surface`/`border` bring in richer color (each falls
- * back to a derivation from `bg` + `fg` when omitted).
- */
-export type DiagramColors = {
-  bg?: string;
-  fg?: string;
-  line?: string;
-  accent?: string;
-  muted?: string;
-  surface?: string;
-  border?: string;
-  font?: string;
-  transparent?: boolean;
-};
-
-/**
- * Theme for `diagram` (Mermaid) blocks - either a built-in theme name or a
- * custom color object. A bare `string` is accepted for forward compatibility
- * with themes added to `beautiful-mermaid`.
- */
-export type DiagramTheme = DiagramThemeName | (string & {}) | DiagramColors;
+export type { DiagramColors, DiagramTheme, DiagramThemeName } from '@qkix/better-blocks-core';
 
 // ── Style ────────────────────────────────────────────────────────────
 
@@ -240,8 +202,10 @@ export type BlocksRendererProps = {
    */
   blockPlugins?: readonly VueBlockPlugin[];
   /**
-   * Color theme for `diagram` (Mermaid) blocks. Defaults to a palette matching
-   * mermaid.js's familiar look. Ignored when a custom `diagram` renderer is
+   * Color theme for `diagram` (Mermaid) blocks - a built-in palette name or a
+   * custom color object. Applied as a mermaid `%%{init}%%` directive, so a
+   * diagram whose source carries its own directive keeps that one. Defaults to
+   * mermaid.js's own theme. Ignored when a custom `diagram` renderer is
    * supplied via `blocks.diagram`.
    */
   diagramTheme?: DiagramTheme;
