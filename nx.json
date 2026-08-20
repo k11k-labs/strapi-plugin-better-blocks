@@ -63,17 +63,22 @@
     "version": {
       "conventionalCommits": true,
       "preVersionCommand": "pnpm build",
-      "fallbackCurrentVersionResolver": "disk"
+      "fallbackCurrentVersionResolver": "disk",
+      "git": {
+        "commit": false,
+        "tag": false,
+        "push": false
+      }
     },
     "changelog": {
       "automaticFromRef": true,
       "workspaceChangelog": false,
-      "projectChangelogs": true
-    },
-    "git": {
-      "commit": false,
-      "tag": false,
-      "push": false
+      "projectChangelogs": true,
+      "git": {
+        "commit": false,
+        "tag": false,
+        "push": false
+      }
     }
   }
 }

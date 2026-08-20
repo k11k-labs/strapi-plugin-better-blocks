@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       dry_run:
-        description: 'Preview the versions and changelogs without opening a PR'
+        description: 'Print the versions and changelogs as a diff, without opening a PR'
         type: boolean
         default: true
       overrides:
@@ -49,22 +49,44 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      # nx.json sets release.git.{commit,tag,push} to false, so nx only edits
-      # manifests, changelogs and the lockfile. The commit, the branch and the
-      # PR are this workflow's job; tagging waits until the PR is merged.
+      # Versions first, changelogs second - and never interleaved.
+      #
+      # The combined `nx release` command does version+changelog in one pass, so
+      # applying an override meant running it twice, and BOTH passes wrote a
+      # changelog entry: one for the conventional-commits version, one for the
+      # override that supersedes it. The first is a version that never ships,
+      # and it stayed in the changelog forever. Releasing 0.2.0 of the Vue
+      # renderer left a phantom `## 0.1.1` above it.
+      #
+      # The subcommands keep the two apart: every version is settled on disk
+      # before a single changelog pass describes what is actually being
+      # released. This is why nx.json configures git under `release.version` and
+      # `release.changelog` rather than `release.git` - the top-level property
+      # is rejected by the subcommands, and setting it granularly in turn
+      # disables the combined command.
       #
       # Note on 0.x versions: nx maps a "minor" bump to a patch increment and a
       # "major" bump to the middle number, so asking for "minor" on 0.12.0 gets
-      # you 0.12.1. Pass an exact version in `overrides` when that matters.
+      # you 0.12.1. Pass an exact version in `overrides` when that matters - a
+      # behavior change delivered as a patch reaches people running a routine
+      # update.
+      #
       # `projects` exists because nx attributes a change to a file outside every
-      # package - the root README, a shared config - to *all* of them, which
-      # then cascades to their dependents as "a dependency was bumped". A
-      # one-line README edit alongside work in one package therefore proposes a
-      # release of the entire workspace, with changelogs that say nothing.
-      # Naming the projects keeps such a release honest.
+      # package - the root README, a shared config, anything under examples/ -
+      # to *all* of them, which then cascades to their dependents as "a
+      # dependency was bumped". A one-line README edit alongside work in one
+      # package therefore proposes a release of the entire workspace, with
+      # changelogs that say nothing. Naming the projects keeps such a release
+      # honest.
+      #
+      # Nothing here is run with --dry-run. nx only edits files in this
+      # throwaway checkout, and a preview built from the real thing beats one
+      # built from a flag: a dry-run version pass writes no manifests, so the
+      # changelog pass that follows would have nothing to read. `dry_run`
+      # instead gates the commit, the branch and the PR below, and prints the
+      # diff it would have opened.
       - name: Version and changelog
         env:
-          DRY: ${{ inputs.dry_run && '--dry-run' || '' }}
           OVERRIDES: ${{ inputs.overrides }}
           PROJECTS: ${{ inputs.projects }}
         run: |
@@ -75,7 +97,7 @@ jobs:
             echo "Releasing only: $PROJECTS"
           fi
 
-          pnpm exec nx release --skip-publish $FILTER $DRY
+          pnpm exec nx release version $FILTER
 
           for pair in $OVERRIDES; do
             project="${pair%%=*}"
@@ -85,8 +107,47 @@ jobs:
               exit 1
             fi
             echo "Overriding $project to $version"
-            pnpm exec nx release "$version" --projects="$project" --skip-publish $DRY
+            pnpm exec nx release version "$version" --projects="$project"
           done
+
+          # The manifests now hold the versions that will actually ship, so one
+          # changelog pass per project describes exactly what is being released.
+          # It has to be per project: `nx release changelog` takes a single
+          # version, and these projects are versioned independently.
+          #
+          # A version that already has a tag has already shipped and has its
+          # entry - skipping those is the same test the PR body and "Release -
+          # publish" apply, so all three agree on what this release contains.
+          for manifest in packages/*/package.json; do
+            name=$(node -p "require('./$manifest').name")
+            private=$(node -p "require('./$manifest').private === true")
+            [ "$private" = "true" ] && continue
+            version=$(node -p "require('./$manifest').version")
+
+            if git rev-parse -q --verify "refs/tags/$name@$version" >/dev/null; then
+              continue
+            fi
+
+            echo "Changelog: $name@$version"
+            pnpm exec nx release changelog "$version" --projects="$name"
+          done
+
+      # A dry run stops here, having done the real work and thrown it away.
+      - name: Show what a real run would open
+        if: ${{ inputs.dry_run }}
+        run: |
+          set -euo pipefail
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nx release changed nothing - there is nothing to release."
+            exit 0
+          fi
+          echo "::group::Files a real run would change"
+          git diff --cached --stat
+          echo "::endgroup::"
+          echo "::group::Full diff"
+          git diff --cached
+          echo "::endgroup::"
 
       - name: Open the release PR
         if: ${{ !inputs.dry_run }}
