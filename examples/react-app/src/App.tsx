@@ -201,12 +201,17 @@ function App() {
       })
       .then((json) => {
         setArticles(
-          json.data.map((item: Article) => ({
-            id: item.id,
-            documentId: item.documentId,
-            title: item.title,
-            content: item.content,
-          }))
+          json.data
+            // An article whose blocks field was never filled in comes back
+            // with `content: null`; skip those rather than let every section
+            // below guard against it.
+            .filter((item: Article) => Array.isArray(item.content))
+            .map((item: Article) => ({
+              id: item.id,
+              documentId: item.documentId,
+              title: item.title,
+              content: item.content,
+            }))
         );
         setLoading(false);
       })

@@ -2,6 +2,13 @@ export { normalizeCodeLang } from './code';
 export { getFileIcon, formatFileSize } from './file';
 export { getListStyleType } from './list';
 export { getAspectRatio } from './media';
+export {
+  DIAGRAM_THEMES,
+  applyDiagramTheme,
+  resolveDiagramColors,
+  toMermaidThemeVariables,
+} from './diagram';
+export type { DiagramColors, DiagramTheme, DiagramThemeName } from './diagram';
 export { getBlockStyle } from './style';
 export { validateDocument, isBlocksContent } from './validate';
 export type { ValidationIssue, ValidationResult, ValidateOptions } from './validate';

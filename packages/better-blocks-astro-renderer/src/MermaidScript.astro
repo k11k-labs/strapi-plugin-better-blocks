@@ -1,0 +1,52 @@
+---
+/**
+ * Client-side renderer for the opt-in `clientMermaid` mode. Rendered once per
+ * `diagram` block that opts in, but Astro hoists and dedupes identical module
+ * scripts, so the `<script>` below is bundled and runs a single time per page.
+ *
+ * Every `[data-bb-mermaid]` element holds the diagram's source as its text -
+ * which is also the no-JS fallback - and mermaid.js replaces it with the SVG
+ * once it has rendered. mermaid is imported dynamically so the (large) library
+ * is only fetched on pages that actually contain a diagram.
+ *
+ * This component carries no server props; it's a pure client-side enhancer.
+ */
+---
+
+<script>
+  // Marks elements this script has already handled, so an `astro:page-load`
+  // rescan after a view-transition navigation doesn't re-render them.
+  const DONE = 'data-bb-mermaid-done';
+
+  let renderCount = 0;
+
+  async function renderAll() {
+    const targets = document.querySelectorAll<HTMLElement>(`[data-bb-mermaid]:not([${DONE}])`);
+    if (targets.length === 0) return;
+
+    const mermaid = (await import('mermaid')).default;
+    // `startOnLoad` would make mermaid scan the document for `.mermaid`
+    // elements on its own; every diagram here is rendered explicitly.
+    mermaid.initialize({ startOnLoad: false });
+
+    for (const target of targets) {
+      target.setAttribute(DONE, '');
+      const source = target.textContent ?? '';
+      if (!source.trim()) continue;
+
+      try {
+        const { svg } = await mermaid.render(`bb-mermaid-${renderCount++}`, source);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'mermaid-diagram';
+        wrapper.innerHTML = svg;
+        target.replaceWith(wrapper);
+      } catch {
+        // Leave the raw source in its <pre> on parse/render errors, so the
+        // diagram's content is never lost.
+      }
+    }
+  }
+
+  void renderAll();
+  document.addEventListener('astro:page-load', () => void renderAll());
+</script>

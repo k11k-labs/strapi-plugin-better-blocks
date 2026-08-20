@@ -20,7 +20,9 @@ const { data: articles, error } = await useAsyncData<Article[]>('articles', asyn
   // which is also what makes the relative `/uploads/...` media URLs resolve.
   const baseURL = import.meta.server ? config.strapiUrl : '';
   const json = await $fetch<{ data: Article[] }>('/api/articles?status=published', { baseURL });
-  return json.data;
+  // An article whose blocks field was never filled in comes back with
+  // `content: null`; skip those rather than let every section below guard.
+  return json.data.filter((article) => Array.isArray(article.content));
 });
 
 useHead({ title: 'Better Blocks - Vue renderer' });

@@ -43,7 +43,7 @@ The official Strapi blocks renderers are built for React. If your site is built 
 
 This package is a **native Vue 3 renderer**. It renders Strapi v5 Blocks content - including every feature the [Better Blocks](https://github.com/qkix/strapi-plugins) plugin adds (color marks, text alignment, to-do lists, tables, media embeds, and more) - using plain Vue single-file components.
 
-Everything that can be finished on the server is: math is typeset with KaTeX and Mermaid diagrams are rendered to SVG **during SSR**, byte-identical to what the client would produce, so a Nuxt page ships finished markup and hydrates over it with no mismatch. The only two things that run in the browser are the ones that cannot run anywhere else - Shiki code highlighting (asynchronous by nature) and the social-platform widget scripts (lazy, and only when an embed nears the viewport).
+Everything that can be finished on the server is: math is typeset with KaTeX **during SSR**, byte-identical to what the client would produce, so a Nuxt page ships finished markup and hydrates over it with no mismatch. Only what cannot run anywhere else runs in the browser - Shiki code highlighting (asynchronous by nature), mermaid diagrams (mermaid measures text against a real DOM), and the social-platform widget scripts (lazy, and only when an embed nears the viewport).
 
 It is a **drop-in renderer** that handles all Better Blocks features out of the box - no configuration needed. In Nuxt, [one module line](#nuxt) is the whole setup.
 
@@ -173,13 +173,15 @@ import 'katex/dist/katex.min.css';
 
 ### Diagrams (Mermaid)
 
-[Mermaid](https://mermaid.js.org/) diagram blocks (`{ type: 'diagram', format: 'mermaid' }`) are **rendered to inline SVG on the server** using [`beautiful-mermaid`](https://www.npmjs.com/package/beautiful-mermaid) - a pure-Node renderer that needs **no headless browser** (no Puppeteer, no Chromium download). Like math, it is synchronous and deterministic, so the server and the client produce the same SVG and there is nothing to hydrate.
+[Mermaid](https://mermaid.js.org/) diagram blocks (`{ type: 'diagram', format: 'mermaid' }`) are rendered to inline SVG by **mermaid.js itself, in the browser**. mermaid measures text against a real DOM, so - unlike KaTeX - it cannot render during SSR. The server and the first client render both emit the raw definition in a `<pre class="mermaid-source">`, so **hydration matches**, and a `<div class="mermaid-diagram">` wrapping the SVG replaces it after mount.
 
-Supported diagram types - **flowchart, sequence, state, class, ER, and xychart** - render to a `<div class="mermaid-diagram">` wrapping the generated SVG. Diagram types `beautiful-mermaid` does not implement yet (gantt, pie, mindmap, gitGraph, …) and any source that fails to parse fall back gracefully to the raw definition in a `<pre class="mermaid-source">`, so content is never lost.
+mermaid is loaded on demand (one instance shared by every diagram on the page) and stays out of the server bundle entirely. If it fails to load, or the source fails to parse, the `<pre>` remains as a graceful fallback so content is never lost.
+
+> Earlier versions rendered diagrams to SVG on the server with `beautiful-mermaid`, which needs no browser. That is a reimplementation of mermaid's layout rather than mermaid itself, and it disagreed with the real thing on real content - flowcharts containing a cycle came out in the wrong order, and sequence diagrams omitted the closing actor row mermaid draws at the foot of the lifelines. Every diagram type mermaid supports now renders exactly as mermaid renders it, including the ones (gantt, pie, mindmap, gitGraph, …) that had no server-side implementation at all.
 
 #### Diagram colors
 
-Diagrams render **in color** by default, with a palette that mirrors mermaid.js's familiar look (lavender node fills, purple borders, dark edges). Pass `diagramTheme` to pick a built-in palette (`github-light`, `github-dark`, `dracula`, `nord`, `tokyo-night`, `catppuccin-mocha`, `solarized-light`, …) or a custom color object (`{ bg, fg, line, accent, muted, surface, border }`):
+Diagrams use mermaid.js's own default theme. Pass `diagramTheme` to pick a built-in palette (`github-light`, `github-dark`, `dracula`, `nord`, `tokyo-night`, `catppuccin-mocha`, `solarized-light`, …) or a custom color object (`{ bg, fg, line, accent, muted, surface, border, font, transparent }`):
 
 ```vue
 <!-- built-in theme -->
@@ -192,7 +194,7 @@ Diagrams render **in color** by default, with a palette that mirrors mermaid.js'
 />
 ```
 
-> `beautiful-mermaid` derives a clean, single-accent palette from these colors - it is intentionally minimal, not a 1:1 clone of mermaid.js's multi-color default theme. To take full control of the markup (e.g. to render with the real mermaid.js on the client), override the `diagram` block via `blocks.diagram`.
+The palette is applied per diagram, as a [`%%{init}%%` directive](https://mermaid.js.org/config/directives.html) prepended to its source - mermaid's own configuration is global, so it could not carry a different theme for two renderers on one page. A diagram whose source already begins with an `init` directive keeps that one: the author's intent is the more specific.
 
 ### Callouts (Admonitions)
 
@@ -329,7 +331,7 @@ Tables, blockquotes, and code blocks ship with **GitHub-flavored defaults** out 
 
 **Blockquotes** render as `<blockquote class="bb-quote">` with a muted left border and dimmed, indented text. Retheme via `--bb-quote-border` and `--bb-quote-fg`.
 
-**Code blocks** are **syntax-highlighted with [Shiki](https://shiki.style/)**. Shiki resolves grammars and themes asynchronously, so - unlike KaTeX and Mermaid - it cannot highlight during SSR. The server and the first client render both emit the raw source in a plain `<pre class="bb-code-pre">`, so **hydration matches**, and the highlighted markup replaces it after mount. Shiki is loaded on demand (one highlighter per theme, shared by every code block on the page) and stays out of the server bundle entirely; if it fails to load or the grammar is unavailable, the plain `<pre>` remains as a graceful fallback.
+**Code blocks** are **syntax-highlighted with [Shiki](https://shiki.style/)**. Shiki resolves grammars and themes asynchronously, so - like Mermaid, and unlike KaTeX - it cannot highlight during SSR. The server and the first client render both emit the raw source in a plain `<pre class="bb-code-pre">`, so **hydration matches**, and the highlighted markup replaces it after mount. Shiki is loaded on demand (one highlighter per theme, shared by every code block on the page) and stays out of the server bundle entirely; if it fails to load or the grammar is unavailable, the plain `<pre>` remains as a graceful fallback.
 
 The block's `language` (attached in the editor) selects the grammar; unknown or missing languages fall back to `plaintext`, so a stray value never breaks a page.
 
@@ -346,28 +348,28 @@ The copy button is themed via `--bb-code-copy-fg`, `--bb-code-copy-bg`, `--bb-co
 
 ## Supported Blocks
 
-| Block                           | Default element         | Source                      |
-| ------------------------------- | ----------------------- | --------------------------- |
-| `paragraph`                     | `<p>`                   | Strapi core                 |
-| `heading` (1&ndash;6)           | `<h1>`&ndash;`<h6>`     | Strapi core                 |
-| `list` (ordered/unordered/todo) | `<ol>` / `<ul>`         | Strapi core + Better Blocks |
-| `list-item`                     | `<li>`                  | Strapi core                 |
-| `link`                          | `<a>`                   | Strapi core                 |
-| `quote`                         | `<blockquote>`          | Strapi core                 |
-| `code`                          | `<pre>` (Shiki)         | Strapi core                 |
-| `image`                         | `<figure><img>`         | Strapi core                 |
-| `horizontal-line`               | `<hr>`                  | Better Blocks               |
-| `table`                         | `<table>` (thead/tbody) | Better Blocks               |
-| `media-embed`                   | `<iframe>` (16:9)       | Better Blocks               |
-| `math` (inline/block)           | `<span>` / `<div>`      | Better Blocks               |
-| `diagram` (mermaid)             | `<div>` (inline SVG)    | Better Blocks               |
-| `callout` (admonition)          | `<aside>`               | Better Blocks               |
-| `details` (collapsible)         | `<details>`             | Better Blocks               |
-| `button` (CTA / file download)  | `<a>` / `<span>`        | Better Blocks               |
-| `social-embed`                  | `<figure>`              | Better Blocks               |
-| `audio` (HTML5 player)          | `<figure><audio>`       | Better Blocks               |
-| `embed` (generic iframe)        | `<figure><iframe>`      | Better Blocks               |
-| `video` (provider-aware)        | `<figure><video>`       | Better Blocks               |
+| Block                           | Default element              | Source                      |
+| ------------------------------- | ---------------------------- | --------------------------- |
+| `paragraph`                     | `<p>`                        | Strapi core                 |
+| `heading` (1&ndash;6)           | `<h1>`&ndash;`<h6>`          | Strapi core                 |
+| `list` (ordered/unordered/todo) | `<ol>` / `<ul>`              | Strapi core + Better Blocks |
+| `list-item`                     | `<li>`                       | Strapi core                 |
+| `link`                          | `<a>`                        | Strapi core                 |
+| `quote`                         | `<blockquote>`               | Strapi core                 |
+| `code`                          | `<pre>` (Shiki)              | Strapi core                 |
+| `image`                         | `<figure><img>`              | Strapi core                 |
+| `horizontal-line`               | `<hr>`                       | Better Blocks               |
+| `table`                         | `<table>` (thead/tbody)      | Better Blocks               |
+| `media-embed`                   | `<iframe>` (16:9)            | Better Blocks               |
+| `math` (inline/block)           | `<span>` / `<div>`           | Better Blocks               |
+| `diagram` (mermaid)             | `<div>` (inline SVG, client) | Better Blocks               |
+| `callout` (admonition)          | `<aside>`                    | Better Blocks               |
+| `details` (collapsible)         | `<details>`                  | Better Blocks               |
+| `button` (CTA / file download)  | `<a>` / `<span>`             | Better Blocks               |
+| `social-embed`                  | `<figure>`                   | Better Blocks               |
+| `audio` (HTML5 player)          | `<figure><audio>`            | Better Blocks               |
+| `embed` (generic iframe)        | `<figure><iframe>`           | Better Blocks               |
+| `video` (provider-aware)        | `<figure><video>`            | Better Blocks               |
 
 ### Block properties
 
@@ -389,7 +391,7 @@ The copy button is themed via `--bb-code-copy-fg`, `--bb-code-copy-bg`, `--bb-co
 | `format`            | math                      | `inline` (`<span>`) or `block` (`<div>`)                                                               |
 | `value`             | math                      | LaTeX source rendered with KaTeX                                                                       |
 | `format`            | diagram                   | `mermaid` (the only supported diagram format)                                                          |
-| `value`             | diagram                   | Mermaid source, rendered to SVG on the server                                                          |
+| `value`             | diagram                   | Mermaid source, rendered to SVG by mermaid.js on the client                                            |
 | `summary`           | details                   | Plain-text label for the `<summary>`                                                                   |
 | `defaultOpen`       | details                   | Open on initial render (HTML `open` attribute)                                                         |
 | `buttonType`        | button                    | `link` (CTA) or `file` (Media Library download)                                                        |

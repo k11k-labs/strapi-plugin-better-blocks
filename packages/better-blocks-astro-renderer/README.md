@@ -140,7 +140,25 @@ const { blocks } = Astro.props;
 <BlocksRenderer content={blocks} diagramTheme={{ bg: '#fff', fg: '#1f2328', accent: '#8250df' }} />
 ```
 
-> `beautiful-mermaid` derives a clean, single-accent palette from these colors - it is intentionally minimal, not a 1:1 clone of mermaid.js's multi-color default theme. To take full control of the markup (e.g. to render with the real mermaid.js on the client), override the `diagram` block via `blocks.diagram`.
+> `beautiful-mermaid` derives a clean, single-accent palette from these colors - it is intentionally minimal, not a 1:1 clone of mermaid.js's multi-color default theme.
+
+#### Rendering with mermaid.js instead (`clientMermaid`)
+
+`beautiful-mermaid` is a reimplementation of mermaid's layout rather than mermaid itself, and it disagrees with the real thing on some diagrams: **flowcharts containing a cycle come out in the wrong order**, and **sequence diagrams omit the closing actor row** mermaid draws at the foot of the lifelines. Diagram types it does not implement (gantt, pie, mindmap, gitGraph, …) never render at all.
+
+Set `clientMermaid` to render diagrams with mermaid.js in the browser instead:
+
+```astro
+<BlocksRenderer content={blocks} clientMermaid />
+```
+
+The server then emits the raw definition in a `<pre class="mermaid-source" data-bb-mermaid>` and a small module script swaps in a `<div class="mermaid-diagram">` after load. mermaid is imported dynamically, so it is only fetched on pages that actually contain a diagram, and the `<pre>` stays put if it fails to load or the source fails to parse.
+
+This is **off by default on purpose**: the whole point of the server-rendered SVG is that a page stays zero-JS, and the trade is real - with `clientMermaid` a diagram is raw text until JavaScript runs, which is what crawlers and no-JS readers see. Turn it on when diagram fidelity matters more than that. `diagramTheme` works in both modes; in client mode it travels with the source as a [`%%{init}%%` directive](https://mermaid.js.org/config/directives.html), and a diagram whose source already begins with one keeps the author's.
+
+`mermaid` ships as a dependency of this package, so there is nothing extra to install either way.
+
+> To take full control of the markup, override the `diagram` block via `blocks.diagram` - it wins over `clientMermaid`.
 
 ### Callouts (Admonitions)
 

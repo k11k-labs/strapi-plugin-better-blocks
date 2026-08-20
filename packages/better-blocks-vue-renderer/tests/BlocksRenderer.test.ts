@@ -1027,7 +1027,11 @@ describe('BlocksRenderer', () => {
 
   // ── Diagrams (Mermaid) ───────────────────────────────────────────
 
-  it('renders a supported diagram to inline SVG on the server', async () => {
+  it('renders the raw diagram source in a <pre> on the server', async () => {
+    // mermaid measures text against a real DOM, so a diagram cannot be rendered
+    // server-side. The source is what the server ships and what the first
+    // client render repeats, which is what makes hydration match; the SVG is
+    // swapped in after mount (see client.test.ts).
     const { container } = await render([
       {
         type: 'diagram',
@@ -1036,62 +1040,14 @@ describe('BlocksRenderer', () => {
         children: [{ type: 'text', text: '' }],
       },
     ]);
-    const wrapper = container.querySelector('div.mermaid-diagram');
-    expect(wrapper).not.toBeNull();
-    expect(wrapper?.querySelector('svg')).not.toBeNull();
-    expect(container.querySelector('pre.mermaid-source')).toBeNull();
+    const pre = container.querySelector('pre.mermaid-source');
+    expect(pre).not.toBeNull();
+    expect(pre?.textContent).toContain('graph TD');
+    expect(container.querySelector('div.mermaid-diagram')).toBeNull();
+    expect(container.querySelector('svg')).toBeNull();
   });
 
-  it('renders diagrams in color with a mermaid.js-like palette by default', async () => {
-    const { container } = await render([
-      {
-        type: 'diagram',
-        format: 'mermaid',
-        value: 'graph TD\n  A[Start] --> B[End];',
-        children: [{ type: 'text', text: '' }],
-      },
-    ]);
-    // Without a palette beautiful-mermaid renders monochrome (only fg/bg). The
-    // default mirrors mermaid.js: lavender node fill + purple border, so nodes -
-    // not just arrows - are colored.
-    const html = container.querySelector('div.mermaid-diagram')?.innerHTML.toLowerCase() ?? '';
-    expect(html).toContain('#ececff');
-    expect(html).toContain('#9370db');
-  });
-
-  it('applies a built-in diagram theme by name', async () => {
-    const { container } = await render(
-      [
-        {
-          type: 'diagram',
-          format: 'mermaid',
-          value: 'graph TD\n  A[Start] --> B[End];',
-          children: [{ type: 'text', text: '' }],
-        },
-      ],
-      { diagramTheme: 'dracula' }
-    );
-    const html = container.querySelector('div.mermaid-diagram')?.innerHTML ?? '';
-    expect(html.toLowerCase()).toContain('#bd93f9');
-  });
-
-  it('applies a custom diagram color palette object', async () => {
-    const { container } = await render(
-      [
-        {
-          type: 'diagram',
-          format: 'mermaid',
-          value: 'graph TD\n  A[Start] --> B[End];',
-          children: [{ type: 'text', text: '' }],
-        },
-      ],
-      { diagramTheme: { bg: '#ffffff', fg: '#222222', accent: '#ff0000' } }
-    );
-    const html = container.querySelector('div.mermaid-diagram')?.innerHTML ?? '';
-    expect(html.toLowerCase()).toContain('#ff0000');
-  });
-
-  it('falls back to raw source in a <pre> for unsupported diagram types', async () => {
+  it('ships the source for diagram types no engine renders either', async () => {
     const { container } = await render([
       {
         type: 'diagram',
@@ -1103,7 +1059,26 @@ describe('BlocksRenderer', () => {
     const pre = container.querySelector('pre.mermaid-source');
     expect(pre).not.toBeNull();
     expect(pre?.textContent).toContain('gantt');
-    expect(container.querySelector('div.mermaid-diagram')).toBeNull();
+  });
+
+  it('leaves the server-rendered source unthemed, directive and all', async () => {
+    // The theme is applied at render time on the client, not baked into the
+    // markup the server sends - otherwise the two would have to agree byte for
+    // byte for hydration to match.
+    const { container } = await render(
+      [
+        {
+          type: 'diagram',
+          format: 'mermaid',
+          value: 'graph TD\n  A[Start] --> B[End];',
+          children: [{ type: 'text', text: '' }],
+        },
+      ],
+      { diagramTheme: 'dracula' }
+    );
+    const pre = container.querySelector('pre.mermaid-source');
+    expect(pre?.textContent).toBe('graph TD\n  A[Start] --> B[End];');
+    expect(pre?.textContent).not.toContain('%%{init');
   });
 
   it('uses a custom diagram renderer with code and format props', async () => {

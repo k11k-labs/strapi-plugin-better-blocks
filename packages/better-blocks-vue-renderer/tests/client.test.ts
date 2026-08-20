@@ -2,15 +2,28 @@
  * What the components do once they are mounted in a browser.
  *
  * The rest of the suite renders on the server, which is where almost everything
- * happens. Three things cannot: Shiki cannot highlight synchronously, a social
- * widget script has to be fetched, and a cross-origin download has to go through
- * `fetch`. Those are here.
+ * happens. Four things cannot: Shiki cannot highlight synchronously, mermaid
+ * measures text against a real DOM, a social widget script has to be fetched,
+ * and a cross-origin download has to go through `fetch`. Those are here.
  */
 import { mount } from '@vue/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import BlocksRenderer from '../src/BlocksRenderer.vue';
 import type { BlocksContent } from '../src/types';
+
+// mermaid is ~800 kB of layout code that needs real text metrics, which jsdom
+// does not have. Stub it with a renderer that echoes the source it was handed
+// into the markup, so the tests assert on what the component rendered rather
+// than on spy calls - and so the `%%{init}%%` theme directive is visible.
+const mermaidRender = vi.hoisted(() =>
+  vi.fn(async (_id: string, code: string) => ({
+    svg: `<svg class="mock-mermaid"><text>${code}</text></svg>`,
+  }))
+);
+vi.mock('mermaid', () => ({
+  default: { initialize: vi.fn(), render: mermaidRender },
+}));
 
 function mountContent(content: BlocksContent, props: Record<string, unknown> = {}) {
   return mount(BlocksRenderer, {
@@ -171,5 +184,83 @@ describe('file download buttons', () => {
     await anchor.trigger('click');
 
     expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('diagrams', () => {
+  const diagram = (value: string): BlocksContent => [
+    { type: 'diagram', format: 'mermaid', value, children: [{ type: 'text', text: '' }] },
+  ];
+
+  it('renders the SVG after mount, over the server-rendered source', async () => {
+    const wrapper = mountContent(diagram('graph TD\n  A-->B'));
+
+    // The first render is the raw source - the same markup the server sent,
+    // which is what makes hydration match.
+    expect(wrapper.find('pre.mermaid-source').exists()).toBe(true);
+
+    await vi.waitFor(() =>
+      expect(wrapper.find('div.mermaid-diagram svg.mock-mermaid').exists()).toBe(true)
+    );
+    expect(wrapper.find('div.mermaid-diagram').text()).toContain('A-->B');
+    expect(wrapper.find('pre.mermaid-source').exists()).toBe(false);
+  });
+
+  it('hands mermaid the source unchanged when no theme is set', async () => {
+    mountContent(diagram('graph TD\n  A-->B'));
+
+    await vi.waitFor(() => expect(mermaidRender).toHaveBeenCalled());
+    expect(mermaidRender.mock.calls[0][1]).toBe('graph TD\n  A-->B');
+  });
+
+  it('applies a built-in theme as an init directive', async () => {
+    mountContent(diagram('graph TD\n  A-->B'), { diagramTheme: 'dracula' });
+
+    await vi.waitFor(() => expect(mermaidRender).toHaveBeenCalled());
+    const source = mermaidRender.mock.calls[0][1];
+    expect(source).toContain('%%{init:');
+    expect(source).toContain('#282a36');
+    expect(source.endsWith('graph TD\n  A-->B')).toBe(true);
+  });
+
+  it('applies a custom color palette as an init directive', async () => {
+    mountContent(diagram('graph TD\n  A-->B'), {
+      diagramTheme: { bg: '#ffffff', fg: '#222222', accent: '#ff0000' },
+    });
+
+    await vi.waitFor(() => expect(mermaidRender).toHaveBeenCalled());
+    expect(mermaidRender.mock.calls[0][1]).toContain('#ff0000');
+  });
+
+  it('keeps the raw source when mermaid cannot parse the diagram', async () => {
+    mermaidRender.mockRejectedValueOnce(new Error('Parse error'));
+
+    const wrapper = mountContent(diagram('not a diagram'));
+
+    await vi.waitFor(() => expect(mermaidRender).toHaveBeenCalled());
+    expect(wrapper.find('pre.mermaid-source').text()).toBe('not a diagram');
+    expect(wrapper.find('div.mermaid-diagram').exists()).toBe(false);
+  });
+
+  it('gives each diagram on the page its own render id', async () => {
+    mountContent([...diagram('graph TD\n  A-->B'), ...diagram('graph TD\n  C-->D')]);
+
+    await vi.waitFor(() => expect(mermaidRender).toHaveBeenCalledTimes(2));
+    const [first, second] = mermaidRender.mock.calls.map((call) => call[0]);
+    expect(first).not.toBe(second);
+  });
+
+  it('leaves a custom diagram renderer alone', async () => {
+    const wrapper = mountContent(diagram('graph TD\n  A-->B'), {
+      blocks: {
+        diagram: {
+          props: ['code', 'format'],
+          template: '<div class="custom-diagram">{{ code }}</div>',
+        },
+      },
+    });
+
+    await vi.waitFor(() => expect(wrapper.find('.custom-diagram').exists()).toBe(true));
+    expect(mermaidRender).not.toHaveBeenCalled();
   });
 });

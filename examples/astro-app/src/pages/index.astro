@@ -22,12 +22,16 @@ try {
   const res = await fetch(`${STRAPI_URL}/api/articles?status=published`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const json = await res.json();
-  articles = json.data.map((item: Article) => ({
-    id: item.id,
-    documentId: item.documentId,
-    title: item.title,
-    content: item.content,
-  }));
+  articles = json.data
+    // An article whose blocks field was never filled in comes back with
+    // `content: null`; skip those rather than let every section below guard.
+    .filter((item: Article) => Array.isArray(item.content))
+    .map((item: Article) => ({
+      id: item.id,
+      documentId: item.documentId,
+      title: item.title,
+      content: item.content,
+    }));
 } catch (err) {
   error = err instanceof Error ? err.message : String(err);
 }
@@ -77,6 +81,7 @@ try {
           const details = article.content.filter((block) => block.type === 'details');
           const buttons = article.content.filter((block) => block.type === 'button');
           const socialEmbeds = article.content.filter((block) => block.type === 'social-embed');
+          const diagrams = article.content.filter((block) => block.type === 'diagram');
 
           return (
             <article style="margin-bottom: 48px; border-bottom: 1px solid #eee; padding-bottom: 24px;">
@@ -180,6 +185,22 @@ try {
                     content={socialEmbeds}
                     blocks={{ 'social-embed': CustomSocialEmbed }}
                   />
+                </section>
+              )}
+              {diagrams.length > 0 && (
+                <section style="margin-top: 40px; padding-top: 16px; border-top: 2px dashed #d7c7ff;">
+                  <h2 style="color: #7c3aed; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em;">
+                    ⑨ clientMermaid - the same diagrams rendered by mermaid.js
+                  </h2>
+                  <p style="color: #666; font-size: 14px; margin-top: 0;">
+                    Above, diagrams are SVG built on the server: no JavaScript ships, but the
+                    server-side engine reimplements mermaid's layout and disagrees with it - a
+                    flowchart with a cycle comes out in the wrong order, and a sequence diagram
+                    loses the closing actor row. Below, the same blocks with
+                    <code>clientMermaid</code>: mermaid.js renders them in the browser, so they
+                    match mermaid exactly, at the cost of the zero-JS default.
+                  </p>
+                  <BlocksRenderer content={diagrams} clientMermaid />
                 </section>
               )}
             </article>

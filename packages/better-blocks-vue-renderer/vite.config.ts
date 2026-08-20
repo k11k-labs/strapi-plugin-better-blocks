@@ -34,21 +34,18 @@ export default defineConfig({
       cssFileName: 'style',
     },
     rollupOptions: {
-      // Vue is the consumer's; KaTeX, the Mermaid renderer and Shiki are real
+      // Vue is the consumer's; KaTeX, mermaid and Shiki are real
       // `dependencies`, so `npm install` still brings them - they are left
-      // external rather than bundled. That keeps Shiki's dynamic import a real
-      // chunk boundary (it is client-only and must stay out of the server
-      // bundle), and stops a second copy of KaTeX from landing in an app that
-      // already uses it.
-      external: [
-        'vue',
-        'katex',
-        'shiki',
-        'beautiful-mermaid',
-        /^katex\//,
-        /^shiki\//,
-        /^beautiful-mermaid\//,
-      ],
+      // external rather than bundled. That keeps Shiki's and mermaid's dynamic
+      // imports real chunk boundaries (both are client-only and must stay out
+      // of the server bundle), and stops a second copy of KaTeX from landing in
+      // an app that already uses it.
+      //
+      // mermaid in particular must NOT be bundled here: Rollup splits its
+      // per-diagram-type lazy imports into chunks that collide on minified
+      // identifiers, and every render then dies with "Identifier 'h' has
+      // already been declared".
+      external: ['vue', 'katex', 'shiki', 'mermaid', /^katex\//, /^shiki\//, /^mermaid\//],
       output: {
         globals: { vue: 'Vue' },
       },
