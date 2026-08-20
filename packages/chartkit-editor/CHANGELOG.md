@@ -1,3 +1,14 @@
+## 0.2.0 (2026-08-20)
+
+### 🚀 Features
+
+- **chartkit:** place readings by when they are, not by how many there are ([#169](https://github.com/qkix/strapi-plugins/pull/169))
+- **vue-renderer:** render Better Blocks and Chartkit content in Vue and Nuxt ([#156](https://github.com/qkix/strapi-plugins/pull/156))
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.1.5 (2026-08-17)
 
 ### 🧱 Updated Dependencies

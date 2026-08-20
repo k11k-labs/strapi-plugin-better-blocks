@@ -1,6 +1,6 @@
 {
   "name": "@qkix/chartkit-vue-renderer",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Vue 3 renderer for Chartkit charts - server-rendered SVG with zero client-side JavaScript, and the Better Blocks block plugin that draws a chart inside a document",
   "type": "module",
   "types": "./dist/index.d.ts",

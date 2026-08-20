@@ -1,3 +1,7 @@
+## 0.2.6 (2026-08-20)
+
+This was a version bump only for @qkix/chartkit-react-renderer to align it with other projects, there were no code changes.
+
 ## 0.2.5 (2026-08-20)
 
 ### 🧱 Updated Dependencies
