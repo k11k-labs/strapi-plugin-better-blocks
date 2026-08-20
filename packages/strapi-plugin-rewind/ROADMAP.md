@@ -10,16 +10,6 @@ Ideas and disagreement welcome at
 
 ## Next
 
-### Compare any two versions
-
-Every entry has a **What changed** link, and it compares that version with the
-one saved immediately before it. That answers "what did this save do" and not
-"what has changed since Friday", which is the question people usually have when
-they open a history panel.
-
-The diff itself already handles scalars, prose and relations, so this is a
-question of choosing two versions rather than of comparing them.
-
 ### Remember what a relation pointed at
 
 A version stores which document a relation pointed at, not what it was called,

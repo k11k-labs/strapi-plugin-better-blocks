@@ -147,6 +147,18 @@ reported as linked and unlinked.
 Where a field's stored value changed but its readable text did not - a mark
 applied, blocks reordered - it says so, rather than showing an empty diff.
 
+### Comparing any two versions
+
+"What did this save do" is the question the default answers, and it is the one
+asked most. The other one - "what has changed since Friday" - needs both ends,
+so the dialog carries a **Compare with** dropdown listing the other versions of
+that document. Pick one and the diff redraws against it.
+
+The comparison always reads oldest to newest, whichever end you picked first, so
+choosing the earlier version second does not turn every addition into a removal.
+The dropdown offers the versions loaded in the panel; **Show older versions**
+reaches further back and they appear there too.
+
 ### Rendering a field type properly
 
 Pulling the words out of a rich-text field tells an editor _that_ a paragraph

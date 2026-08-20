@@ -213,4 +213,43 @@ describe('diff between consecutive versions', () => {
       after: 'Three',
     });
   });
+
+  it('reads oldest to newest whichever end is nominated', async () => {
+    const article = await app.strapi.documents(UID).create({ data: { title: 'One' } });
+    await settle();
+    await app.strapi
+      .documents(UID)
+      .update({ documentId: article.documentId, data: { title: 'Three' } });
+    await settle();
+
+    const all = await versions();
+
+    // The panel lets a reader pick either end first. Both orders have to
+    // describe the same edit, or picking the older one second would report
+    // every addition as a removal.
+    const forwards = await diff().between(all[1].id, all[0].id);
+    const backwards = await diff().between(all[0].id, all[1].id);
+
+    for (const result of [forwards, backwards]) {
+      expect(result.from.id).toBe(all[0].id);
+      expect(result.to.id).toBe(all[1].id);
+      expect(result.changes.find((c: any) => c.field === 'title')).toMatchObject({
+        before: 'One',
+        after: 'Three',
+      });
+    }
+  });
+
+  it('refuses to compare versions of different documents', async () => {
+    await app.strapi.documents(UID).create({ data: { title: 'Mine' } });
+    await settle();
+    await app.strapi.documents(UID).create({ data: { title: 'Someone else' } });
+    await settle();
+
+    const all = await versions();
+    const [mine, theirs] = [all[0], all[1]];
+    expect(mine.relatedDocumentId).not.toBe(theirs.relatedDocumentId);
+
+    await expect(diff().between(theirs.id, mine.id)).rejects.toThrow('not of the same document');
+  });
 });
