@@ -389,7 +389,128 @@ export const fixtures: Fixture[] = [
       description: 'Labels containing markup, which must arrive as text.',
     },
   },
+  {
+    id: 'time-irregular',
+    breaks: 'uneven gaps - the whole point of a time axis, and invisible on a category one',
+    spec: {
+      version: 2,
+      type: 'line',
+      title: 'Readings at uneven intervals',
+      description: 'Three days, then a fortnight, then a day. The shape should say so.',
+      data: {
+        source: 'inline',
+        labels: ['2026-01-01', '2026-01-02', '2026-01-03', '2026-01-17', '2026-01-18'],
+        series: [{ name: 'Signups', values: [12, 19, 21, 64, 68] }],
+      },
+      options: { xAxis: { type: 'time' } },
+    },
+  },
+  {
+    id: 'time-unsorted',
+    breaks:
+      'labels out of order - a category axis draws them as given, a time axis by when they are',
+    spec: {
+      version: 2,
+      type: 'line',
+      title: 'Readings recorded out of order',
+      data: {
+        source: 'inline',
+        labels: ['2026-03-01', '2026-01-01', '2026-02-01'],
+        series: [{ name: 'Revenue', values: [30, 10, 20] }],
+      },
+      options: { xAxis: { type: 'time' } },
+    },
+  },
+  {
+    id: 'time-bars',
+    breaks: 'bar width on a continuous axis - there is no bandwidth to take it from',
+    spec: {
+      version: 2,
+      type: 'bar',
+      title: 'Monthly total',
+      data: {
+        source: 'inline',
+        labels: ['2026-01-01', '2026-02-01', '2026-03-01', '2026-04-01'],
+        series: [{ name: 'Orders', values: [120, 150, 90, 170] }],
+      },
+      options: { xAxis: { type: 'time' } },
+    },
+  },
+  {
+    id: 'time-within-a-day',
+    breaks: 'a span of hours - a date-only tick format writes the same string all along the axis',
+    spec: {
+      version: 2,
+      type: 'area',
+      title: 'Requests through the day',
+      data: {
+        source: 'inline',
+        labels: [
+          '2026-05-04T00:00:00Z',
+          '2026-05-04T06:00:00Z',
+          '2026-05-04T12:00:00Z',
+          '2026-05-04T18:00:00Z',
+          '2026-05-04T23:00:00Z',
+        ],
+        series: [{ name: 'Requests', values: [80, 210, 640, 520, 150] }],
+      },
+      options: {
+        xAxis: { type: 'time', format: { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' } },
+      },
+    },
+  },
+  {
+    id: 'time-one-reading',
+    breaks: 'a single instant - the domain has no width and every position collapses',
+    spec: {
+      version: 2,
+      type: 'bar',
+      title: 'First day of trading',
+      data: {
+        source: 'inline',
+        labels: ['2026-07-01'],
+        series: [{ name: 'Orders', values: [4] }],
+      },
+      options: { xAxis: { type: 'time' } },
+    },
+  },
+  {
+    id: 'time-a-year-of-days',
+    breaks: 'far more readings than ticks - labels must come from the calendar, not the data',
+    spec: {
+      version: 2,
+      type: 'line',
+      title: 'A year, daily',
+      data: {
+        source: 'inline',
+        labels: yearOfDays(),
+        series: [{ name: 'Active users', values: yearOfValues() }],
+      },
+      options: { xAxis: { type: 'time' } },
+    },
+  },
 ];
+
+/**
+ * A year of daily timestamps, for the case a time axis exists to handle: many
+ * more readings than the axis can label, so the ticks have to come from the
+ * calendar rather than from the data.
+ */
+function yearOfDays(): string[] {
+  const days: string[] = [];
+  const start = Date.UTC(2026, 0, 1);
+
+  for (let i = 0; i < 365; i += 1) {
+    days.push(new Date(start + i * 86_400_000).toISOString().slice(0, 10));
+  }
+
+  return days;
+}
+
+/** Deterministic, so the snapshot is stable: a slow climb with a wobble. */
+function yearOfValues(): number[] {
+  return Array.from({ length: 365 }, (_, i) => Math.round(1000 + i * 4 + Math.sin(i / 9) * 120));
+}
 
 export const fixtureById = (id: string): Fixture => {
   const found = fixtures.find((fixture) => fixture.id === id);

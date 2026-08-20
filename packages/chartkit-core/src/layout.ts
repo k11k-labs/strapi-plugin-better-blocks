@@ -184,19 +184,34 @@ export function computePlotArea(input: {
   titleHeight: number;
   legendHeight: number;
   categoryLabelHeight: number;
+  /**
+   * Half the widest bottom label, when a label can sit on the plot's own edge.
+   * Zero for a category axis, whose labels are centred inside their bands.
+   */
+  edgeLabelWidth?: number;
 }): PlotArea {
-  const { width, height, valueLabels, titleHeight, legendHeight, categoryLabelHeight } = input;
+  const {
+    width,
+    height,
+    valueLabels,
+    titleHeight,
+    legendHeight,
+    categoryLabelHeight,
+    edgeLabelWidth = 0,
+  } = input;
 
   const widestValue = valueLabels.reduce(
     (widest, label) => Math.max(widest, estimateTextWidth(label, LABEL_FONT_SIZE)),
     0
   );
 
-  const left = widestValue + GUTTER * 2;
+  // The first tick of a time axis sits on the left edge of the plot, so its
+  // label reaches back past the value labels; take whichever needs more room.
+  const left = Math.max(widestValue + GUTTER * 2, edgeLabelWidth + GUTTER);
   const top = titleHeight + GUTTER;
-  // Room on the right so the last category label, drawn centered on the final
-  // band, does not overhang the viewBox.
-  const rightMargin = GUTTER * 2;
+  // Room on the right so the last label - a category centred on the final
+  // band, or a time tick sitting on the edge itself - does not overhang.
+  const rightMargin = Math.max(GUTTER * 2, edgeLabelWidth + GUTTER);
   const bottomMargin = categoryLabelHeight + legendHeight + GUTTER;
 
   // Clamped to at least 1: a chart sized smaller than its own furniture would

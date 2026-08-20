@@ -5,7 +5,7 @@
  * writing 1200 on the axis and 1.2K on the bar.
  */
 
-import type { ValueFormat } from './types';
+import type { TimeFormat, ValueFormat } from './types';
 
 /**
  * Builds a formatter for a spec's `valueFormat`.
@@ -128,4 +128,110 @@ function decimalsFor(step: number): number {
 function roundTo(value: number, decimals: number): number {
   const factor = 10 ** decimals;
   return Math.round(value * factor) / factor;
+}
+
+// ── Time ─────────────────────────────────────────────────────────────
+
+const MINUTE = 60_000;
+const HOUR = 60 * MINUTE;
+const DAY = 24 * HOUR;
+
+/**
+ * Granularities, coarsest first, that a time axis picks between.
+ *
+ * Each is a complete `Intl.DateTimeFormat` options set rather than a set of
+ * flags to combine, so what a tick says is decided in one place and can be read
+ * off the list.
+ */
+const TIME_GRANULARITIES: TimeFormat[] = [
+  { year: 'numeric' },
+  { year: 'numeric', month: 'short' },
+  // No year: a fortnight of ticks that each repeat "2026" is eight copies of
+  // one fact, and the extra width is what pushes the labels into rotation.
+  // The variant below carries the year for the span that genuinely crosses one.
+  { month: 'short', day: 'numeric' },
+  { year: 'numeric', month: 'short', day: 'numeric' },
+  // Likewise within a single day: the date is the card's title, not the axis.
+  { hour: 'numeric', minute: '2-digit' },
+  { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' },
+  { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit', second: '2-digit' },
+];
+
+/**
+ * Builds a formatter for the ticks on a time axis.
+ *
+ * The granularity is a property of the tick *set*, not of any one tick: a
+ * format showing only the date writes the same string six times across an
+ * afternoon, which is the time-axis version of the collision
+ * {@link createTickFormatter} guards against for numbers. So the span picks a
+ * starting granularity and it is refined until every tick reads differently.
+ *
+ * An explicit format from the spec is used as given. Someone who asked for
+ * years is allowed to have years, repeated or not.
+ */
+export function createTimeTickFormatter(
+  format: TimeFormat | undefined,
+  locale: string | undefined,
+  ticks: readonly number[]
+): (time: number) => string {
+  if (format) return buildTime(format, locale);
+
+  const span = ticks.length > 1 ? Math.abs(ticks[ticks.length - 1] - ticks[0]) : 0;
+
+  for (let i = startingGranularity(span); i < TIME_GRANULARITIES.length; i += 1) {
+    const candidate = buildTime(TIME_GRANULARITIES[i], locale);
+    if (!collapsesTime(ticks, candidate)) return candidate;
+  }
+
+  return buildTime(TIME_GRANULARITIES[TIME_GRANULARITIES.length - 1], locale);
+}
+
+/**
+ * Where to start looking, from how much time the axis covers.
+ *
+ * Only a starting point: a span of years whose ticks happen to be months still
+ * refines, because the collision check has the last word.
+ */
+function startingGranularity(span: number): number {
+  if (span >= 5 * 365 * DAY) return 0;
+  if (span >= 180 * DAY) return 1;
+  if (span >= 2 * DAY) return 2;
+  return 4;
+}
+
+function buildTime(format: TimeFormat, locale: string | undefined): (time: number) => string {
+  const resolvedLocale = format.locale ?? locale;
+
+  // Same reasoning as createValueFormatter: a bad locale or time zone is
+  // content someone typed, so it degrades rather than throwing.
+  try {
+    const formatter = new Intl.DateTimeFormat(resolvedLocale, {
+      year: format.year,
+      month: format.month,
+      day: format.day,
+      hour: format.hour,
+      minute: format.minute,
+      second: format.second,
+      timeZone: format.timeZone,
+      hour12: format.hour12,
+    });
+
+    return (time) => formatter.format(new Date(time));
+  } catch {
+    const fallback = new Intl.DateTimeFormat(undefined);
+    return (time) => fallback.format(new Date(time));
+  }
+}
+
+function collapsesTime(ticks: readonly number[], formatter: (time: number) => string): boolean {
+  const seen = new Map<string, number>();
+
+  for (const tick of ticks) {
+    const label = formatter(tick);
+    const previous = seen.get(label);
+    if (previous !== undefined && previous !== tick) return true;
+    seen.set(label, tick);
+  }
+
+  return false;
 }

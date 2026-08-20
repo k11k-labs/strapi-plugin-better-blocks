@@ -67,6 +67,21 @@ look right here and wrong there.
 The editor opens in a dialog. Cancel genuinely cancels: it edits a draft and
 only writes on save.
 
+### Labels are dates
+
+Turn this on and the labels stop being names and become instants: readings are
+placed by _when_ they are, so a day's gap and a fortnight's gap no longer look
+alike. Ticks then come from the calendar rather than from your rows, which is
+what lets a year of daily figures label itself with a few months instead of 365
+smeared dates.
+
+Labels have to be dates for it - ISO 8601, e.g. `2026-08-20`. One that is not is
+named in the editor rather than quietly drawn as a category again.
+
+Off by default, including for labels that look like dates: `2024` and `2025` may
+be two categories you meant to weigh equally, and re-spacing them because they
+parse would be a decision this plugin has no business making for you.
+
 ## Three ways to get the numbers in
 
 Most charts already exist as numbers somewhere, and retyping them is the worst
@@ -206,9 +221,9 @@ script, or a field that used to be a different type - it says so and goes
 
 ## Not there yet
 
-Being honest about the edges: no time axes, no tooltips or other
-interactivity, and no per-chart color overrides - palettes are set in your site's
-CSS. Data is stored with the chart rather than queried from a collection.
+Being honest about the edges: no tooltips or other interactivity, and no
+per-chart color overrides - palettes are set in your site's CSS. Data is stored
+with the chart rather than queried from a collection.
 
 Issues and ideas welcome at
 [qkix/strapi-plugins](https://github.com/qkix/strapi-plugins/issues).

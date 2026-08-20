@@ -11,10 +11,10 @@
  * function is written to survive data that carries no information.
  */
 
-import { scaleBand, scaleLinear } from 'd3-scale';
+import { scaleBand, scaleLinear, scaleTime } from 'd3-scale';
 import { ticks as d3Ticks } from 'd3-array';
 
-import type { AxisBounds, Series } from './types';
+import type { AxisBounds, Series, TimeBounds } from './types';
 
 export type Domain = [min: number, max: number];
 
@@ -221,4 +221,141 @@ export function bandScale(
   fn.range = range;
 
   return fn;
+}
+
+// ── Time ─────────────────────────────────────────────────────────────
+
+/** A time scale, as this package uses it. Domain and ticks are epoch ms. */
+export type TimeScale = {
+  (time: number): number;
+  domain: Domain;
+  range: [number, number];
+  ticks: number[];
+};
+
+/**
+ * Parses the axis labels as instants.
+ *
+ * Returns `null` if any label is not a date, so a caller can fall back to
+ * categories rather than draw an axis with holes in it where the unparseable
+ * ones were. `Date.parse` is deliberate: it takes ISO 8601, which is what a
+ * date in JSON should be, and the spec says labels are strings.
+ */
+export function parseTimes(labels: readonly string[]): number[] | null {
+  const out: number[] = [];
+
+  for (const label of labels) {
+    const time = Date.parse(label);
+    if (!Number.isFinite(time)) return null;
+    out.push(time);
+  }
+
+  return out;
+}
+
+/**
+ * The time domain, after bounds.
+ *
+ * Unlike a value domain there is no zero to include: an axis of instants has
+ * no origin worth anchoring to, and starting a week of readings at 1970 would
+ * be absurd rather than honest.
+ */
+export function computeTimeDomain(times: readonly number[], bounds?: TimeBounds): Domain {
+  const finite = times.filter((time) => Number.isFinite(time));
+
+  let min = finite.length > 0 ? Math.min(...finite) : 0;
+  let max = finite.length > 0 ? Math.max(...finite) : 0;
+
+  const lower = bounds?.min === undefined ? undefined : Date.parse(bounds.min);
+  const upper = bounds?.max === undefined ? undefined : Date.parse(bounds.max);
+
+  if (lower !== undefined && Number.isFinite(lower)) min = lower;
+  if (upper !== undefined && Number.isFinite(upper)) max = upper;
+
+  // A single instant, or every reading at the same moment, has no extent. An
+  // hour either side gives the scale something to divide without pretending
+  // the data covers it.
+  if (min === max) return [min - 3_600_000, max + 3_600_000];
+
+  return padDegenerate(min, max);
+}
+
+/**
+ * A time scale over `domain`, with ticks at calendar boundaries.
+ *
+ * d3's time ticks land on whole hours, days, months and years rather than on
+ * arithmetic divisions of the span, which is what makes an axis read as
+ * "1 Feb, 1 Mar, 1 Apr" instead of "3 Feb, 5 Mar, 4 Apr".
+ */
+export function timeScale(domain: Domain, range: [number, number], tickCount = 6): TimeScale {
+  const scale = scaleTime()
+    .domain([new Date(domain[0]), new Date(domain[1])])
+    .range(range);
+
+  const values = scale.ticks(Math.max(2, tickCount)).map((date) => date.getTime());
+
+  const fn = ((time: number) => scale(new Date(time))) as TimeScale;
+  fn.domain = domain;
+  fn.range = range;
+  // Ends rather than nothing, for the same reason niceTicks falls back: a span
+  // narrower than d3's smallest interval must still produce an axis.
+  fn.ticks = values.length >= 2 ? values : [domain[0], domain[1]];
+
+  return fn;
+}
+
+/**
+ * Where a mark sits and how wide it may be, for either kind of x axis.
+ *
+ * Charts ask for a slot by data index and get a left edge and a width, so
+ * nothing in `charts/` has to know which axis it is drawing against. For a time
+ * axis the slot is centred on the instant, which means `slot(i) + bandwidth / 2`
+ * is exactly the point's own position - the line goes through the timestamp,
+ * and the bar straddles it.
+ */
+export type XPlacement = {
+  slot(index: number): number;
+  bandwidth: number;
+  /** Centre-to-centre distance, for deciding how much label fits. */
+  step: number;
+};
+
+export function bandPlacement(labels: readonly string[], scale: BandScale): XPlacement {
+  return {
+    slot: (index: number) => scale(labels[index] ?? ''),
+    bandwidth: scale.bandwidth,
+    step: scale.step,
+  };
+}
+
+/**
+ * Slots on a time axis, sized by the closest pair of readings.
+ *
+ * One width for every mark, taken from the smallest gap, because bars of
+ * differing widths encode a difference that is not in the data - the eye reads
+ * a wider bar as more. The smallest gap is what guarantees no two overlap.
+ */
+export function timePlacement(
+  times: readonly number[],
+  scale: TimeScale,
+  padding = 0.2
+): XPlacement {
+  const positions = times.map((time) => scale(time));
+
+  let closest = Infinity;
+  for (let i = 1; i < positions.length; i += 1) {
+    const gap = Math.abs(positions[i] - positions[i - 1]);
+    if (gap > 0 && gap < closest) closest = gap;
+  }
+
+  // One reading, or several at the same instant: fall back to the whole plot
+  // so a single bar is a bar rather than a hairline.
+  const step = Number.isFinite(closest) ? closest : Math.abs(scale.range[1] - scale.range[0]);
+  const bandwidth = step * (1 - padding);
+
+  return {
+    slot: (index: number) => (positions[index] ?? scale.range[0]) - bandwidth / 2,
+    bandwidth,
+    step,
+  };
 }

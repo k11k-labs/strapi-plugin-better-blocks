@@ -172,6 +172,11 @@ type ChartSpec = {
     valueFormat?: ValueFormat; // Intl.NumberFormat options
     yAxis?: { min?: number; max?: number };
     stackMode?: 'grouped' | 'stacked'; // was `barMode` in version 1
+    xAxis?: {
+      type?: 'category' | 'time'; // defaults to category
+      format?: TimeFormat; // Intl.DateTimeFormat options
+      bounds?: { min?: string; max?: string }; // ISO 8601
+    };
   };
 };
 
@@ -206,6 +211,64 @@ live from a Strapi collection is deliberately _not_ here: it is a design problem
 about permissions and caching, and a resolver that ignores Strapi's permission
 model leaks draft content into public API responses while looking perfectly
 innocent in review.
+
+## A time axis
+
+By default the labels along the bottom are names, placed in the order given,
+one slot each. Ask for a time axis and they become instants instead, placed by
+_when_ they are:
+
+```ts
+{
+  version: 2,
+  type: 'line',
+  data: {
+    source: 'inline',
+    labels: ['2026-01-01', '2026-01-02', '2026-01-17'],
+    series: [{ name: 'Signups', values: [12, 19, 64] }],
+  },
+  options: { xAxis: { type: 'time' } },
+}
+```
+
+Those three readings are a day apart and then a fortnight apart, and on a time
+axis they are drawn that way. As categories they would sit at equal intervals
+and the gap would be invisible - a chart that is wrong in a way nobody notices,
+which is the whole reason this exists.
+
+Four things follow from placing by time rather than by position:
+
+- **Labels must be dates.** ISO 8601, as strings, because that is what a date in
+  JSON should be. A label that does not parse is reported by
+  `validateChartSpec` against its own index, rather than quietly re-spaced.
+- **Order stops mattering.** Readings are drawn in time order whatever order
+  the rows arrive in, so an export that came out unsorted no longer draws as a
+  line doubling back on itself.
+- **Ticks come from the calendar, not from the data.** A year of daily readings
+  gets a handful of month boundaries, not 365 thinned labels. The granularity
+  is chosen from the span and then refined until no two ticks read alike -
+  a date-only format across one afternoon would otherwise write the same string
+  six times.
+- **Bars get a width.** A continuous axis has no band to take one from, so every
+  bar is as wide as the closest pair of readings allows, and the axis gains half
+  a bar of headroom at each end so the first and last are not cut in half.
+
+Set `format` to say how instants are written, and `bounds` to fix either end:
+
+```ts
+options: {
+  xAxis: {
+    type: 'time',
+    format: { hour: 'numeric', minute: '2-digit', timeZone: 'UTC' },
+    bounds: { min: '2026-01-01T00:00:00Z' },
+  },
+}
+```
+
+This is opt-in on purpose. Labels that happen to parse as dates are not
+necessarily meant to be read as dates - `2024` and `2025` may be two categories
+with equal weight - and re-spacing an existing chart because its labels look
+date-shaped is the kind of helpfulness nobody asked for.
 
 ## Accessibility
 

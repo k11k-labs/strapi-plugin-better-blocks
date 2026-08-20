@@ -51,6 +51,9 @@ export type ChartEditorProps = {
  */
 const STACKABLE = new Set<ChartType>(['bar', 'area']);
 
+/** Pie and donut have no axes, so there is nothing for a time axis to change. */
+const HAS_AXES = new Set<ChartType>(['bar', 'line', 'area']);
+
 const TYPES: { value: ChartType; label: string }[] = [
   { value: 'bar', label: 'Bar' },
   { value: 'line', label: 'Line' },
@@ -156,6 +159,32 @@ export function ChartEditor({ spec, onChange, disabled, locale }: ChartEditorPro
                     options: {
                       ...spec.options,
                       stackMode: event.target.checked ? 'stacked' : 'grouped',
+                    },
+                  })
+                }
+              />
+            </Field.Root>
+          </Box>
+        )}
+
+        {HAS_AXES.has(spec.type) && (
+          <Box>
+            <Field.Root name="chart-time-axis" hint="Labels must be dates, e.g. 2026-08-20.">
+              <Field.Label>Labels are dates</Field.Label>
+              <Toggle
+                checked={spec.options?.xAxis?.type === 'time'}
+                disabled={disabled}
+                onLabel="On"
+                offLabel="Off"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                  update({
+                    ...spec,
+                    options: {
+                      ...spec.options,
+                      xAxis: {
+                        ...spec.options?.xAxis,
+                        type: event.target.checked ? 'time' : 'category',
+                      },
                     },
                   })
                 }

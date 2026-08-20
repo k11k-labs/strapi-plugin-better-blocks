@@ -10,16 +10,6 @@ Ideas and disagreement welcome at
 
 ## Next
 
-### A time axis
-
-There is no time axis, so a series of dates is currently a series of labels:
-evenly spaced whatever the gaps between them, and sorted as text unless you
-sorted them yourself. Any chart of something over time is therefore slightly
-wrong in a way that is easy to miss.
-
-This is the largest single gap, because "a number over time" is the most common
-chart there is.
-
 ### Colours per chart, not only per site
 
 Palettes are set in your site's CSS, which is the right default: it keeps every

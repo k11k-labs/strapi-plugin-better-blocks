@@ -7,7 +7,7 @@
  * same either way.
  */
 
-import { bandScale, computeStackedDomain, computeValueDomain, type Domain } from '../scale';
+import { computeStackedDomain, computeValueDomain, type Domain, type XPlacement } from '../scale';
 import { element, round, tag } from '../svg';
 import { seriesColor } from '../theme';
 import type { AxisBounds, StackMode, ChartData, Series } from '../types';
@@ -15,7 +15,7 @@ import type { AxisBounds, StackMode, ChartData, Series } from '../types';
 export type BarRenderInput = {
   data: ChartData;
   mode: StackMode;
-  x: ReturnType<typeof bandScale>;
+  x: XPlacement;
   y: (value: number) => number;
   /** Where the baseline sits, in SVG coordinates. */
   zero: number;
@@ -66,7 +66,7 @@ export function renderBar(input: BarRenderInput): string {
  */
 function renderGroupedBars(
   data: ChartData,
-  x: ReturnType<typeof bandScale>,
+  x: XPlacement,
   y: (value: number) => number,
   zero: number
 ): string {
@@ -94,7 +94,7 @@ function renderGroupedBars(
           const top = y(value);
 
           return tag('rect', {
-            x: round(x(label) + groupInset + seriesIndex * barWidth),
+            x: round(x.slot(i) + groupInset + seriesIndex * barWidth),
             // A negative value draws downward from the baseline, so the rect's
             // origin is the baseline rather than the value.
             y: round(Math.min(top, zero)),
@@ -123,11 +123,7 @@ function renderGroupedBars(
  * Segments are emitted per category rather than per series, because a stack is
  * built by walking the series in order for one category at a time.
  */
-function renderStackedBars(
-  data: ChartData,
-  x: ReturnType<typeof bandScale>,
-  y: (value: number) => number
-): string {
+function renderStackedBars(data: ChartData, x: XPlacement, y: (value: number) => number): string {
   const series = data.series;
   if (series.length === 0) return '';
 
@@ -158,7 +154,7 @@ function renderStackedBars(
           const bottom = y(Math.min(from, to));
 
           return tag('rect', {
-            x: round(x(label) + inset),
+            x: round(x.slot(i) + inset),
             y: round(top),
             width: round(barWidth),
             height: round(Math.abs(bottom - top)),

@@ -10,7 +10,7 @@ import { renderAxes } from './axes';
 import { barDomain, renderBar } from './charts/bar';
 import { lineDomain, renderLine } from './charts/line';
 import { renderPie } from './charts/pie';
-import { createTickFormatter } from './format';
+import { createTickFormatter, createTimeTickFormatter } from './format';
 import { migrateChartSpec } from './migrate';
 import {
   DEFAULT_HEIGHT,
@@ -18,15 +18,24 @@ import {
   LABEL_FONT_SIZE,
   TITLE_FONT_SIZE,
   computePlotArea,
+  estimateTextWidth,
   planCategoryLabels,
 } from './layout';
 import { NO_LEGEND, planLegend, renderLegend } from './legend';
-import { bandScale, linearScale } from './scale';
+import {
+  bandPlacement,
+  bandScale,
+  computeTimeDomain,
+  linearScale,
+  parseTimes,
+  timePlacement,
+  timeScale,
+} from './scale';
 import { element, escapeText, round, text } from './svg';
 import { TEXT_COLOR } from './theme';
 import { validateChartSpec } from './validate';
 import type { ChartIssue } from './validate';
-import type { ChartSpec } from './types';
+import type { ChartData, ChartSpec } from './types';
 
 export type RenderOptions = {
   /**
@@ -191,8 +200,30 @@ function renderCartesianBody(spec: ChartSpec, frame: Frame & { locale?: string }
   // bands come out slightly wider than the real ones and the label plan errs
   // toward giving them more room. Erring that way costs a few pixels of margin;
   // erring the other way clips labels.
-  const provisionalStep = bandScale(spec.data.labels, [0, width]).step;
-  const labelPlan = planCategoryLabels(spec.data.labels, provisionalStep, height);
+  // A time axis only happens when the spec asks for one and every label
+  // actually parses. Falling back to categories rather than refusing keeps a
+  // half-edited chart drawable, and validate() is where the author is told.
+  const parsed = spec.options?.xAxis?.type === 'time' ? parseTimes(spec.data.labels) : null;
+
+  // A line joins consecutive readings, and on a time axis "consecutive" means
+  // in time - not in whatever order the rows happened to arrive. Left in array
+  // order, a series exported unsorted draws as a scribble doubling back on
+  // itself. The permutation is applied to the labels and to every series at
+  // once, so a value never parts company with its own instant.
+  const order = parsed ? parsed.map((_, i) => i).sort((a, b) => parsed[a] - parsed[b]) : null;
+
+  const times = parsed && order ? order.map((i) => parsed[i]) : parsed;
+  const data = order ? reorder(spec.data, order) : spec.data;
+
+  const provisionalBottom = times
+    ? provisionalTimeLabels(times, spec, locale, width)
+    : {
+        labels: [...data.labels],
+        step: bandScale(data.labels, [0, width]).step,
+        edgeWidth: 0,
+      };
+
+  const labelPlan = planCategoryLabels(provisionalBottom.labels, provisionalBottom.step, height);
 
   const plot = computePlotArea({
     width,
@@ -201,20 +232,62 @@ function renderCartesianBody(spec: ChartSpec, frame: Frame & { locale?: string }
     titleHeight,
     legendHeight,
     categoryLabelHeight: labelPlan.height,
+    // A category label is centred in its band and so cannot reach the edge. A
+    // time tick sits on the instant, and the last one is the plot's right edge
+    // exactly, so half its label hangs off the chart without this.
+    edgeLabelWidth: times ? provisionalBottom.edgeWidth : 0,
   });
 
   const y = linearScale(domain, [plot.bottom, plot.top]);
-  const x = bandScale(spec.data.labels, [plot.left, plot.right]);
 
   // Where zero sits. With an all-positive domain this is the plot floor; with
   // negatives in the data it floats, and marks sit either side of it. Clamped,
   // because a cropped axis can put zero outside the plot entirely.
   const zero = clampToPlot(y(0), plot.top, plot.bottom);
 
+  // A bar is centred on its instant, so on a bare domain half of the first and
+  // last bars falls outside the plot. Half a slot of headroom at each end is
+  // what gives them somewhere to sit. Lines need none: a point has no width,
+  // and starting hard against the axis is what a time series should look like.
+  const barPad = spec.type === 'bar' && times ? halfSmallestGap(times) : 0;
+
+  const timeDomain = times
+    ? padDomain(computeTimeDomain(times, spec.options?.xAxis?.bounds), barPad)
+    : null;
+  const time = timeDomain ? timeScale(timeDomain, [plot.left, plot.right]) : null;
+
+  const x =
+    times && time
+      ? timePlacement(times, time)
+      : bandPlacement(data.labels, bandScale(data.labels, [plot.left, plot.right]));
+
+  const bottom =
+    times && time
+      ? {
+          kind: 'time' as const,
+          ticks: time.ticks.map((tick) => ({
+            center: time(tick),
+            label: createTimeTickFormatter(spec.options?.xAxis?.format, locale, time.ticks)(tick),
+          })),
+          // Ticks are evenly spaced in time, so the gap between the first two
+          // is the budget every label has.
+          step:
+            time.ticks.length > 1
+              ? Math.abs(time(time.ticks[1]) - time(time.ticks[0]))
+              : plot.width,
+        }
+      : {
+          kind: 'category' as const,
+          ticks: data.labels.map((label, i) => ({
+            center: x.slot(i) + x.bandwidth / 2,
+            label,
+          })),
+          step: x.step,
+        };
+
   const axes = renderAxes({
-    labels: spec.data.labels,
+    bottom,
     ticks,
-    x,
     y,
     plot,
     chartHeight: height,
@@ -224,9 +297,9 @@ function renderCartesianBody(spec: ChartSpec, frame: Frame & { locale?: string }
 
   const marks =
     spec.type === 'bar'
-      ? renderBar({ data: spec.data, mode, x, y, zero })
+      ? renderBar({ data, mode, x, y, zero })
       : renderLine({
-          data: spec.data,
+          data,
           type: spec.type,
           stacked: mode === 'stacked',
           x,
@@ -268,4 +341,74 @@ function clampToPlot(value: number, top: number, bottom: number): number {
 /** A dimension from the spec, falling back when it is missing or nonsensical. */
 function positive(value: number | undefined, fallback: number): number {
   return typeof value === 'number' && Number.isFinite(value) && value > 0 ? value : fallback;
+}
+
+/**
+ * Tick labels measured against the full chart width, before the plot exists.
+ *
+ * Same circularity as the category case above, broken the same way: ticks
+ * chosen over the wider span are at worst more numerous than the real ones, so
+ * the label plan errs toward reserving too much room rather than too little.
+ */
+function provisionalTimeLabels(
+  times: readonly number[],
+  spec: ChartSpec,
+  locale: string | undefined,
+  width: number
+): { labels: string[]; step: number; edgeWidth: number } {
+  const scale = timeScale(computeTimeDomain(times, spec.options?.xAxis?.bounds), [0, width]);
+  const format = createTimeTickFormatter(spec.options?.xAxis?.format, locale, scale.ticks);
+  const labels = scale.ticks.map(format);
+
+  const step =
+    scale.ticks.length > 1 ? Math.abs(scale(scale.ticks[1]) - scale(scale.ticks[0])) : width;
+
+  const widest = labels.reduce(
+    (most, label) => Math.max(most, estimateTextWidth(label, LABEL_FONT_SIZE)),
+    0
+  );
+
+  return { labels, step, edgeWidth: widest / 2 };
+}
+
+/**
+ * The same data with its points in a different order.
+ *
+ * Labels and every series are permuted together, so a value never parts
+ * company with its own instant. A series shorter than the labels keeps its
+ * holes: a missing index becomes the `null` the renderer already draws as a gap.
+ */
+function reorder(data: ChartData, order: readonly number[]): ChartData {
+  return {
+    ...data,
+    labels: order.map((i) => data.labels[i]),
+    series: data.series.map((one) => ({
+      ...one,
+      values: order.map((i) => one.values[i] ?? null),
+    })),
+  };
+}
+
+/**
+ * Half the closest two readings, in milliseconds.
+ *
+ * The smallest gap is the one that decides how wide a bar may be without
+ * touching its neighbour, so it is also the padding that keeps the outermost
+ * bars inside the plot.
+ */
+function halfSmallestGap(times: readonly number[]): number {
+  let closest = Infinity;
+
+  for (let i = 1; i < times.length; i += 1) {
+    const gap = Math.abs(times[i] - times[i - 1]);
+    if (gap > 0 && gap < closest) closest = gap;
+  }
+
+  // One reading, or several at the same instant: computeTimeDomain has already
+  // given the domain an hour either side, which is room enough.
+  return Number.isFinite(closest) ? closest / 2 : 0;
+}
+
+function padDomain(domain: [number, number], by: number): [number, number] {
+  return by > 0 ? [domain[0] - by, domain[1] + by] : domain;
 }
