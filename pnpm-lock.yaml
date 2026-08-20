@@ -112,9 +112,18 @@ importers:
       '@qkix/strapi-plugin-better-blocks':
         specifier: workspace:*
         version: link:../../packages/strapi-plugin-better-blocks
+      '@qkix/strapi-plugin-blueprint':
+        specifier: workspace:*
+        version: link:../../packages/strapi-plugin-blueprint
       '@qkix/strapi-plugin-chartkit':
         specifier: workspace:*
         version: link:../../packages/strapi-plugin-chartkit
+      '@qkix/strapi-plugin-ferry':
+        specifier: workspace:*
+        version: link:../../packages/strapi-plugin-ferry
+      '@qkix/strapi-plugin-greenlight':
+        specifier: workspace:*
+        version: link:../../packages/strapi-plugin-greenlight
       '@qkix/strapi-plugin-rewind':
         specifier: workspace:*
         version: link:../../packages/strapi-plugin-rewind
