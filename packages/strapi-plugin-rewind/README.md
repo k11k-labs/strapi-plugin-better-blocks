@@ -136,7 +136,7 @@ part of a restore is what it will _not_ do:
 Every entry in the panel has a **What changed** link, comparing that version
 with the one saved immediately before it.
 
-<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/changes.png" alt="A word-level diff: 'put back' struck through and replaced by 'restored in one click', and 'ten' by 'twelve'" width="760" />
+<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/changes.png" alt="The What changed dialog: a Compare with dropdown above a word-level diff, with 'put back' struck through and replaced by 'restored in one click'" width="760" />
 
 Scalars are shown as a plain before and after. Prose - including rich text
 stored as JSON - is compared word by word, with the unchanged stretches

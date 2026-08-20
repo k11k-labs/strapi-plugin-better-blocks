@@ -110,6 +110,9 @@ const Change = ({ change }: { change: FieldChange }) => {
   );
 };
 
+/** The select's value for "compare with whatever came immediately before". */
+const PREVIOUS = 'previous';
+
 /**
  * The comparison target lives here rather than in the panel.
  *
@@ -152,17 +155,25 @@ export const ChangesDialog = ({
           <Typography variant="pi" textColor="neutral600">
             Comparing <b>{subject}</b> with
           </Typography>
+          {/*
+            Every value here is a string, including the ids.
+
+            Mixing the "previous" sentinel with numeric ids leaves the select
+            unable to match its own value back to an option: picking a version
+            and then returning to the default renders the trigger blank, with
+            the right diff underneath it.
+          */}
           <SingleSelect
             aria-label="Compare with"
             size="S"
-            value={againstId ?? 'previous'}
-            onChange={(value) => onChangeAgainst(value === 'previous' ? null : Number(value))}
+            value={againstId === null ? PREVIOUS : String(againstId)}
+            onChange={(value) => onChangeAgainst(String(value) === PREVIOUS ? null : Number(value))}
           >
-            <SingleSelectOption value="previous">
+            <SingleSelectOption value={PREVIOUS}>
               The version saved just before it
             </SingleSelectOption>
             {options.map((option) => (
-              <SingleSelectOption key={option.id} value={option.id}>
+              <SingleSelectOption key={option.id} value={String(option.id)}>
                 {option.name}
               </SingleSelectOption>
             ))}
