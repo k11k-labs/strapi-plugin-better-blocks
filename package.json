@@ -16,7 +16,7 @@
     "typecheck": "nx run-many -t typecheck",
     "format": "prettier --write .",
     "graph": "nx graph",
-    "release:dry": "nx release --dry-run",
+    "release:dry": "nx release version --dry-run",
     "prepare": "husky",
     "build:examples": "nx run-many -t build --projects=tag:scope:example",
     "dev": "nx run @qkix/example-strapi-app:develop"
