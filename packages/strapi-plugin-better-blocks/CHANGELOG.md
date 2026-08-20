@@ -1,3 +1,17 @@
+## 0.23.8 (2026-08-20)
+
+### 🚀 Features
+
+- **vue-renderer:** render Better Blocks and Chartkit content in Vue and Nuxt ([#156](https://github.com/qkix/strapi-plugins/pull/156))
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-core to 0.2.6
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.23.7 (2026-08-18)
 
 ### 📖 Documentation
