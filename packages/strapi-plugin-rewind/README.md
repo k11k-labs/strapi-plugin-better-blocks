@@ -103,7 +103,7 @@ saves the draft and publishes it as two separate operations.
 
 A save that is rolled back records nothing.
 
-<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/panel.png" alt="History entries labelled Replaced by restore, Draft discarded and Edited" width="320" />
+<img src="https://raw.githubusercontent.com/qkix/strapi-plugins/main/packages/strapi-plugin-rewind/docs/panel.png" alt="History entries labelled Replaced by restore, Draft discarded and Edited, the Draft discarded one marked Pinned" width="320" />
 
 The badge says what happened to the document. **Replaced by restore** marks the
 state a restore was about to overwrite - the undo point for that restore.

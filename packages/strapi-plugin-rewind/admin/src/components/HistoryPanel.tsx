@@ -265,18 +265,23 @@ const PanelContent = ({
               <Typography variant="pi" textColor="neutral600">
                 {formatWhen(version.createdAt)}
                 {version.user ? ` · ${version.user.name}` : ''}
-                {/*
-                  The pin icon alone says this in colour, on sixteen pixels.
-                  That is not enough on its own - not for a glance down a list
-                  of ten rows, and not for anyone who does not separate those
-                  two colours - so the state is spelled out here as well.
-                */}
-                {version.pinned ? (
-                  <Typography variant="pi" textColor="primary600" fontWeight="bold">
-                    {' · Pinned'}
-                  </Typography>
-                ) : null}
               </Typography>
+              {/*
+                The pin icon alone says this in colour, on sixteen pixels. That
+                is not enough on its own - not for a glance down a list of ten
+                rows, and not for anyone who does not separate those two colours
+                - so the state is spelled out here as well.
+
+                On its own line rather than appended to the one above. The panel
+                is narrow enough that a date, a name and " · Pinned" do not fit
+                on one line, and the wrap put the separator at the end of the
+                previous line with nothing after it.
+              */}
+              {version.pinned ? (
+                <Typography variant="pi" textColor="primary600" fontWeight="bold">
+                  Pinned
+                </Typography>
+              ) : null}
               <TextButton onClick={() => showChanges(version)}>What changed</TextButton>
             </Flex>
 
