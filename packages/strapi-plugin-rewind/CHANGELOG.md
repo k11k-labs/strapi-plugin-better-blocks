@@ -1,3 +1,13 @@
+## 0.2.1 (2026-08-20)
+
+### 🩹 Fixes
+
+- **rewind:** stop the pinned marker wrapping onto a stranded separator ([#165](https://github.com/qkix/strapi-plugins/pull/165))
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.2.0 (2026-08-20)
 
 ### 🚀 Features
