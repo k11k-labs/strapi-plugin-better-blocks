@@ -68,6 +68,13 @@ const ANCHOR_ORIGINS = new Set(['publish', 'unpublish', 'discardDraft', 'restore
 
 const PAGE_SIZE = 10;
 
+/**
+ * How a version reads when it is named rather than shown as a row - in the
+ * comparison dropdown, and as the fixed end of that comparison.
+ */
+const describe = (version: { origin: string; createdAt: string }): string =>
+  `${ORIGIN_LABEL[version.origin] ?? version.origin} · ${formatWhen(version.createdAt)}`;
+
 const formatWhen = (iso: string): string => {
   const date = new Date(iso);
   const minutes = Math.round((Date.now() - date.getTime()) / 60_000);
@@ -107,7 +114,10 @@ const PanelContent = ({
   } | null>(null);
   const [restoring, setRestoring] = React.useState(false);
 
-  const [changesOpen, setChangesOpen] = React.useState(false);
+  /** The version the diff was opened from; null when the dialog is closed. */
+  const [changesFor, setChangesFor] = React.useState<VersionRow | null>(null);
+  /** The other end of the comparison; null means the version before it. */
+  const [changesAgainst, setChangesAgainst] = React.useState<number | null>(null);
   const [changes, setChanges] = React.useState<VersionDiff | null>(null);
   const [changesLoading, setChangesLoading] = React.useState(false);
 
@@ -143,13 +153,13 @@ const PanelContent = ({
     load(1);
   }, [load, updatedAt]);
 
-  const showChanges = async (version: VersionRow) => {
-    setChangesOpen(true);
+  const loadDiff = async (version: VersionRow, againstId: number | null) => {
     setChangesLoading(true);
     setChanges(null);
     try {
       const { data } = await get<{ data: VersionDiff }>(
-        `/${PLUGIN_ID}/versions/${version.id}/diff`
+        `/${PLUGIN_ID}/versions/${version.id}/diff`,
+        againstId === null ? undefined : { params: { against: againstId } }
       );
       setChanges(data.data);
     } catch {
@@ -157,6 +167,18 @@ const PanelContent = ({
     } finally {
       setChangesLoading(false);
     }
+  };
+
+  const showChanges = (version: VersionRow) => {
+    setChangesFor(version);
+    setChangesAgainst(null);
+    void loadDiff(version, null);
+  };
+
+  const compareWith = (againstId: number | null) => {
+    if (!changesFor) return;
+    setChangesAgainst(againstId);
+    void loadDiff(changesFor, againstId);
   };
 
   /**
@@ -321,11 +343,18 @@ const PanelContent = ({
         </Typography>
       ) : null}
 
-      {changesOpen ? (
+      {changesFor ? (
         <ChangesDialog
           diff={changes}
           loading={changesLoading}
-          onClose={() => setChangesOpen(false)}
+          subject={describe(changesFor)}
+          options={versions
+            .filter((version) => version.id !== changesFor.id)
+            .map((version) => ({ id: version.id, name: describe(version) }))}
+          againstId={changesAgainst}
+          onChangeAgainst={compareWith}
+          hasUnloadedVersions={versions.length < total}
+          onClose={() => setChangesFor(null)}
         />
       ) : null}
 

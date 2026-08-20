@@ -70,6 +70,13 @@ const version = ({ strapi }: { strapi: Core.Strapi }) => ({
 
   async diff(ctx: any) {
     const { against } = ctx.query;
+
+    // Reported as what it is, rather than reaching the service and coming back
+    // as "No version with id NaN".
+    if (against !== undefined && !Number.isInteger(Number(against))) {
+      return ctx.badRequest('against must be a version id.');
+    }
+
     try {
       ctx.body = {
         data: await strapi

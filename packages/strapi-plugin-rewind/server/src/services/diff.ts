@@ -111,8 +111,35 @@ const diff = ({ strapi }: { strapi: Core.Strapi }) => {
      * change?", is what `restore.preview()` already answers.
      */
     async between(versionId: number, againstId?: number): Promise<VersionDiff> {
-      const to = await load(versionId);
-      const from = againstId ? await load(againstId) : await previousTo(to);
+      const requested = await load(versionId);
+      const other = againstId ? await load(againstId) : null;
+
+      // Two versions of different documents have nothing to say to each other,
+      // and the diff would happily describe one turning into the other. The
+      // panel only ever offers versions of the document it is open on, so this
+      // guards the endpoint rather than the UI.
+      if (
+        other &&
+        (other.contentType !== requested.contentType ||
+          other.relatedDocumentId !== requested.relatedDocumentId ||
+          other.locale !== requested.locale)
+      ) {
+        throw new Error('Those two versions are not of the same document and locale.');
+      }
+
+      let from: any;
+      let to: any;
+
+      if (other) {
+        // Whichever end the reader picked first, a diff reads oldest to newest.
+        // Without this, choosing the older one second would report every
+        // addition as a removal.
+        from = other.id < requested.id ? other : requested;
+        to = other.id < requested.id ? requested : other;
+      } else {
+        from = await previousTo(requested);
+        to = requested;
+      }
 
       const attributes = (strapi.getModel(to.contentType as never) as any)?.attributes as Record<
         string,
