@@ -83,6 +83,8 @@ export function validateChartSpec(value: unknown): ChartValidationResult {
 
   if (value.options !== undefined && !isObject(value.options)) {
     fail('options', 'options must be an object');
+  } else if (isObject(value.options)) {
+    validateXAxis(value.options.xAxis, value.data, fail);
   }
 
   return { valid: issues.length === 0, issues };
@@ -183,4 +185,55 @@ function validateData(data: unknown, fail: (path: string, message: string) => vo
 /** Narrowing form of {@link validateChartSpec}, for use at a trust boundary. */
 export function isChartSpec(value: unknown): value is ChartSpec {
   return validateChartSpec(value).valid;
+}
+
+/**
+ * A time axis has to be able to read its own labels.
+ *
+ * Reported per label rather than as one complaint about the axis, because the
+ * useful answer is which one is wrong. The renderer falls back to a category
+ * axis when any of them fails to parse, so an unnoticed typo shows up as a
+ * chart that is quietly evenly spaced again - which is exactly what this
+ * message exists to prevent.
+ */
+function validateXAxis(
+  xAxis: unknown,
+  data: unknown,
+  fail: (path: string, message: string) => void
+): void {
+  if (xAxis === undefined) return;
+
+  if (!isObject(xAxis)) {
+    fail('options.xAxis', 'xAxis must be an object');
+    return;
+  }
+
+  const type = xAxis.type;
+  if (type !== undefined && type !== 'category' && type !== 'time') {
+    fail('options.xAxis.type', `unknown x axis type "${String(type)}"`);
+    return;
+  }
+
+  if (type !== 'time') return;
+
+  for (const end of ['min', 'max'] as const) {
+    const bound = isObject(xAxis.bounds) ? xAxis.bounds[end] : undefined;
+    if (bound === undefined) continue;
+
+    if (typeof bound !== 'string' || !Number.isFinite(Date.parse(bound))) {
+      fail(`options.xAxis.bounds.${end}`, 'a time bound must be a date, as an ISO 8601 string');
+    }
+  }
+
+  if (!isObject(data) || !Array.isArray(data.labels)) return;
+
+  data.labels.forEach((label, i) => {
+    if (typeof label !== 'string') return;
+    if (Number.isFinite(Date.parse(label))) return;
+
+    fail(
+      `data.labels[${i}]`,
+      `the x axis is a time axis, but "${label}" is not a date - use ISO 8601, e.g. 2026-08-20`
+    );
+  });
 }

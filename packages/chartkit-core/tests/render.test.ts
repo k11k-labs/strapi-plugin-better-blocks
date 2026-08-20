@@ -19,6 +19,14 @@ const axisLabels = (svg: string): string[] =>
     ),
   ].map((m) => m[1].replace(/,/g, ''));
 
+/** The bottom-axis label texts, in order, for either axis kind. */
+const bottomLabels = (svg: string): string[] =>
+  [
+    ...(/chartkit-axis-(?:category|time)[^>]*>(.*?)<\/g>/s.exec(svg)?.[1] ?? '').matchAll(
+      /<text[^>]*>([^<]*)<\/text>/g
+    ),
+  ].map((m) => m[1]);
+
 /** The first path `d` in the markup. */
 const pathOf = (svg: string): string => /<path[^>]*d="([^"]*)"/.exec(svg)?.[1] ?? '';
 
@@ -511,5 +519,186 @@ describe('stacked area', () => {
   it('leaves an unstacked area sitting on the baseline', () => {
     const svg = svgOf(fixtureById('area').spec);
     expect(svg).toContain('chartkit-area');
+  });
+});
+
+describe('time axis', () => {
+  const timeSpec = (
+    labels: string[],
+    values: (number | null)[],
+    options: Record<string, unknown> = {}
+  ): ChartSpec => ({
+    version: 2,
+    type: 'line',
+    data: { source: 'inline', labels, series: [{ name: 'S', values }] },
+    options: { xAxis: { type: 'time' }, ...options },
+  });
+
+  it('spaces readings by when they are, not by how many there are', () => {
+    // Three days apart, then thirty. On a category axis these four points are
+    // evenly spaced and the month-long gap is invisible.
+    const svg = svgOf(timeSpec(['2026-01-01', '2026-01-04', '2026-02-03'], [1, 2, 3]));
+    const d = pathOf(svg);
+    const xs = [...d.matchAll(/[ML]([\d.]+)/g)].map((m) => Number(m[1]));
+
+    expect(xs).toHaveLength(3);
+
+    const first = xs[1] - xs[0];
+    const second = xs[2] - xs[1];
+    // The second gap is ten times the first in days, so it must be far wider
+    // on the page. Exact ratios depend on the plot width, hence the bound.
+    expect(second).toBeGreaterThan(first * 5);
+  });
+
+  it('places a reading by its date even when the labels are out of order', () => {
+    const svg = svgOf(fixtureById('time-unsorted').spec);
+    const d = pathOf(svg);
+    const xs = [...d.matchAll(/[ML]([\d.]+)/g)].map((m) => Number(m[1]));
+
+    // Labels are March, January, February. Drawn in array order the path would
+    // double back on itself; a time axis joins readings in time order, so the
+    // x coordinates must come out strictly increasing.
+    expect(xs).toHaveLength(3);
+    expect(xs[0]).toBeLessThan(xs[1]);
+    expect(xs[1]).toBeLessThan(xs[2]);
+  });
+
+  it('keeps each value with its own instant when it sorts them', () => {
+    // March=30, January=10, February=20 in array order. After sorting the line
+    // must read 10, 20, 30 - a permutation that moved labels but not values
+    // would still be strictly increasing in x and completely wrong.
+    const svg = svgOf(fixtureById('time-unsorted').spec);
+    const ys = [...pathOf(svg).matchAll(/[ML][\d.]+,([\d.]+)/g)].map((m) => Number(m[1]));
+
+    // SVG y grows downward, so a rising series descends.
+    expect(ys[0]).toBeGreaterThan(ys[1]);
+    expect(ys[1]).toBeGreaterThan(ys[2]);
+  });
+
+  it('keeps the outermost bars inside the plot', () => {
+    // A bar is centred on its instant and the first instant is the domain's
+    // own start, so without headroom half the first bar hangs off the axis.
+    const svg = svgOf(fixtureById('time-bars').spec);
+    const rects = [...svg.matchAll(/<rect[^>]*x="([\d.-]+)"[^>]*width="([\d.]+)"/g)].map((m) => ({
+      x: Number(m[1]),
+      width: Number(m[2]),
+    }));
+
+    const axisLeft = Number(/chartkit-axis[^>]*>.*?<line[^>]*x1="([\d.]+)"/s.exec(svg)?.[1] ?? 0);
+
+    expect(rects.length).toBeGreaterThan(0);
+    for (const rect of rects) {
+      expect(rect.x).toBeGreaterThanOrEqual(axisLeft - 0.5);
+    }
+  });
+
+  it('leaves a category chart alone unless the axis asks for time', () => {
+    const labels = ['2026-01-01', '2026-01-04', '2026-02-03'];
+    const values = [1, 2, 3];
+
+    const asCategories = svgOf({
+      version: 2,
+      type: 'line',
+      data: { source: 'inline', labels, series: [{ name: 'S', values }] },
+    });
+
+    const xs = [...pathOf(asCategories).matchAll(/[ML]([\d.]+)/g)].map((m) => Number(m[1]));
+
+    // Dates that look like dates are still categories until asked otherwise,
+    // so these stay evenly spaced.
+    expect(xs[1] - xs[0]).toBeCloseTo(xs[2] - xs[1], 5);
+  });
+
+  it('labels the axis from the calendar rather than from the readings', () => {
+    const svg = svgOf(fixtureById('time-a-year-of-days').spec);
+    const labels = bottomLabels(svg);
+
+    // 365 readings; a category axis would try to draw one label per reading
+    // and thin them. Ticks come from the calendar, so there are a handful.
+    expect(labels.length).toBeGreaterThan(1);
+    expect(labels.length).toBeLessThan(20);
+  });
+
+  it('never writes the same tick twice when the span is hours', () => {
+    // A day-granularity format across six hours writes the same date all along
+    // the axis - the time version of the numeric tick collision.
+    const svg = svgOf(
+      timeSpec(
+        [
+          '2026-05-04T00:00:00Z',
+          '2026-05-04T02:00:00Z',
+          '2026-05-04T04:00:00Z',
+          '2026-05-04T06:00:00Z',
+        ],
+        [1, 2, 3, 4]
+      )
+    );
+
+    const labels = bottomLabels(svg).filter(Boolean);
+    expect(new Set(labels).size).toBe(labels.length);
+  });
+
+  it('draws a single reading as a bar with width rather than a hairline', () => {
+    const svg = svgOf(fixtureById('time-one-reading').spec);
+    const widths = [...svg.matchAll(/<rect[^>]*width="([\d.]+)"/g)].map((m) => Number(m[1]));
+
+    expect(widths.length).toBeGreaterThan(0);
+    expect(Math.max(...widths)).toBeGreaterThan(1);
+  });
+
+  it('renders the same geometry whatever the server clock says', () => {
+    // d3's scaleTime ticks on local midnights, so this package would have
+    // produced different coordinates on a developer's machine, in CI, and in
+    // production. Labels are parsed as UTC, so the axis is drawn in UTC too.
+    // A UTC midnight formatted in a western zone slides onto the day before,
+    // which is what this pins.
+    const svg = svgOf(timeSpec(['2026-03-01', '2026-03-15', '2026-03-29'], [1, 2, 3]));
+    const labels = bottomLabels(svg).filter(Boolean);
+
+    // Formatted in the server's zone, a UTC midnight lands on the previous day
+    // anywhere west of Greenwich - the axis would start "Feb 28" for readings
+    // that plainly say the first of March.
+    expect(labels[0].startsWith('Mar 1')).toBe(true);
+    expect(labels.some((label) => label.startsWith('Feb'))).toBe(false);
+  });
+
+  it('refuses a time axis whose labels are not dates', () => {
+    const result = validateChartSpec({
+      version: 2,
+      type: 'line',
+      data: { source: 'inline', labels: ['Q1', 'Q2'], series: [{ name: 'S', values: [1, 2] }] },
+      options: { xAxis: { type: 'time' } },
+    });
+
+    expect(result.valid).toBe(false);
+    // Named per label, because the useful answer is which one is wrong.
+    expect(result.issues.map((issue) => issue.path)).toEqual(['data.labels[0]', 'data.labels[1]']);
+  });
+
+  it('refuses a time bound that is not a date', () => {
+    const result = validateChartSpec({
+      version: 2,
+      type: 'line',
+      data: {
+        source: 'inline',
+        labels: ['2026-01-01'],
+        series: [{ name: 'S', values: [1] }],
+      },
+      options: { xAxis: { type: 'time', bounds: { min: 'last Tuesday' } } },
+    });
+
+    expect(result.valid).toBe(false);
+    expect(result.issues[0].path).toBe('options.xAxis.bounds.min');
+  });
+
+  it('accepts a category axis whose labels are plain names', () => {
+    const result = validateChartSpec({
+      version: 2,
+      type: 'line',
+      data: { source: 'inline', labels: ['Q1', 'Q2'], series: [{ name: 'S', values: [1, 2] }] },
+      options: { xAxis: { type: 'category' } },
+    });
+
+    expect(result.valid).toBe(true);
   });
 });

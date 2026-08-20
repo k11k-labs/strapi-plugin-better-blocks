@@ -23,7 +23,7 @@
 
 import { area as d3Area, line as d3Line } from 'd3-shape';
 
-import { bandScale, computeStackedDomain, computeValueDomain, type Domain } from '../scale';
+import { computeStackedDomain, computeValueDomain, type Domain, type XPlacement } from '../scale';
 import { element, round, tag } from '../svg';
 import { seriesColor } from '../theme';
 import type { AxisBounds, ChartData, ChartType, Series } from '../types';
@@ -33,7 +33,7 @@ export type LineRenderInput = {
   type: ChartType;
   /** Stacking applies to `area` only; a line is always read individually. */
   stacked: boolean;
-  x: ReturnType<typeof bandScale>;
+  x: XPlacement;
   y: (value: number) => number;
   /** Where the baseline sits, in SVG coordinates. Only an area needs it. */
   zero: number;
@@ -75,7 +75,8 @@ export function renderLine(input: LineRenderInput): string {
 
   // A line marks an instant, so it sits at the middle of its category's band
   // rather than spanning it.
-  const centerOf = (label: string) => x(label) + x.bandwidth / 2;
+  // Centre of the slot, which on a time axis is the instant itself.
+  const centerOf = (index: number) => x.slot(index) + x.bandwidth / 2;
 
   const stacking = stacked && type === 'area';
   // Running total per category, so each band is drawn on top of the ones below
@@ -93,7 +94,7 @@ export function renderLine(input: LineRenderInput): string {
         if (stacking && value !== null) baselines[i] = base + value;
 
         return {
-          cx: centerOf(label),
+          cx: centerOf(i),
           value: value === null ? null : stacking ? base + value : value,
           base: stacking ? base : null,
         };

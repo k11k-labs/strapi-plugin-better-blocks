@@ -8,14 +8,33 @@
  */
 
 import { LABEL_FONT_SIZE, planCategoryLabels, truncateToWidth, type PlotArea } from './layout';
-import type { bandScale } from './scale';
 import { element, round, tag, text } from './svg';
 import { AXIS_COLOR, GRID_COLOR, GRID_OPACITY, TEXT_COLOR } from './theme';
 
+/** One tick along the bottom: where it sits, and what it says. */
+export type BottomTick = {
+  center: number;
+  label: string;
+};
+
+/**
+ * The bottom axis, already resolved to ticks.
+ *
+ * A category axis ticks once per data point; a time axis ticks at calendar
+ * boundaries that need not coincide with any reading. Resolving that before
+ * this module means the drawing code is the same either way, and `step` - the
+ * horizontal budget a label has - comes from whichever notion of spacing
+ * applies.
+ */
+export type BottomAxis = {
+  kind: 'category' | 'time';
+  ticks: readonly BottomTick[];
+  step: number;
+};
+
 export type AxesInput = {
-  labels: readonly string[];
+  bottom: BottomAxis;
   ticks: readonly number[];
-  x: ReturnType<typeof bandScale>;
   y: (value: number) => number;
   plot: PlotArea;
   chartHeight: number;
@@ -36,11 +55,11 @@ export type AxesInput = {
  * sandwiches its marks between them.
  */
 export function renderAxes(input: AxesInput): { behind: string; front: string } {
-  const { labels, ticks, x, y, plot, chartHeight, zero, formatValue } = input;
+  const { bottom, ticks, y, plot, chartHeight, zero, formatValue } = input;
 
   return {
     behind: renderGrid(ticks, y, plot) + renderValueAxis(ticks, y, plot, formatValue),
-    front: renderCategoryAxis(labels, x, plot, chartHeight, zero),
+    front: renderBottomAxis(bottom, plot, chartHeight, zero),
   };
 }
 
@@ -105,14 +124,17 @@ function renderValueAxis(
   );
 }
 
-function renderCategoryAxis(
-  labels: readonly string[],
-  x: ReturnType<typeof bandScale>,
+function renderBottomAxis(
+  axis: BottomAxis,
   plot: PlotArea,
   chartHeight: number,
   zero: number
 ): string {
-  const plan = planCategoryLabels(labels, x.step, chartHeight);
+  const plan = planCategoryLabels(
+    axis.ticks.map((tick) => tick.label),
+    axis.step,
+    chartHeight
+  );
 
   const baseline = tag('line', {
     x1: round(plot.left),
@@ -123,12 +145,11 @@ function renderCategoryAxis(
     'stroke-width': 1,
   });
 
-  const drawn = labels
-    .map((label, i) => {
+  const drawn = axis.ticks
+    .map(({ center, label }, i) => {
       // Thinned to whatever the plan says will fit; see AxisLabelPlan.stride.
       if (i % plan.stride !== 0) return '';
 
-      const center = x(label) + x.bandwidth / 2;
       const top = plot.bottom + LABEL_FONT_SIZE;
       const shown = truncateToWidth(label, LABEL_FONT_SIZE, plan.maxWidth);
 
@@ -155,7 +176,7 @@ function renderCategoryAxis(
   return element(
     'g',
     {
-      class: 'chartkit-axis chartkit-axis-category',
+      class: `chartkit-axis chartkit-axis-${axis.kind}`,
       fill: TEXT_COLOR,
       'font-size': LABEL_FONT_SIZE,
     },

@@ -151,6 +151,69 @@ export type ChartOptions = {
   valueFormat?: ValueFormat;
   /** Bounds for the value axis. Omitted ends are taken from the data. */
   yAxis?: AxisBounds;
+  /**
+   * What the labels along the bottom mean. Defaults to `category`, which is
+   * what every chart written before this option existed gets.
+   */
+  xAxis?: XAxis;
+};
+
+/**
+ * How the labels along the bottom are read.
+ *
+ * - **`category`** - labels are names. They are placed in the order given, one
+ *   slot each, whatever they say.
+ * - **`time`** - labels are instants, and are placed by *when* they are. Two
+ *   readings a minute apart sit a minute apart; a missing month leaves a gap.
+ *
+ * This is opt-in rather than sniffed from the data. Labels that happen to look
+ * like dates are not necessarily meant to be read as dates - `2024`, `2025`
+ * may be intended as two categories with equal weight - and quietly re-spacing
+ * an existing chart because its labels parse is the kind of helpfulness nobody
+ * asked for.
+ */
+export type XAxis = {
+  type?: 'category' | 'time';
+  /**
+   * How instants are written on the axis, as an [Intl.DateTimeFormat][1]
+   * options object. Omit it and the granularity is chosen from the span being
+   * drawn: hours for a day, days for a month, months for a year.
+   *
+   * [1]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/DateTimeFormat
+   */
+  format?: TimeFormat;
+  /**
+   * Bounds for a time axis, as ISO 8601 strings. Omitted ends are taken from
+   * the data. Strings rather than numbers because that is what the labels are,
+   * and a spec that mixed the two would be a trap.
+   */
+  bounds?: TimeBounds;
+};
+
+/** Explicit ends for a time axis, as ISO 8601 strings. */
+export type TimeBounds = {
+  min?: string;
+  max?: string;
+};
+
+/**
+ * The subset of `Intl.DateTimeFormat` options worth storing in a document.
+ *
+ * Narrow for the same reason {@link ValueFormat} is: JSON-safe fields with an
+ * obvious meaning on an axis, and nothing that invites the renderer to guess.
+ */
+export type TimeFormat = {
+  year?: 'numeric' | '2-digit';
+  month?: 'numeric' | '2-digit' | 'short' | 'long';
+  day?: 'numeric' | '2-digit';
+  hour?: 'numeric' | '2-digit';
+  minute?: 'numeric' | '2-digit';
+  second?: 'numeric' | '2-digit';
+  /** e.g. `UTC`. Defaults to the renderer's environment. */
+  timeZone?: string;
+  hour12?: boolean;
+  /** BCP 47 tag. Defaults to the renderer's `locale` option. */
+  locale?: string;
 };
 
 /**
