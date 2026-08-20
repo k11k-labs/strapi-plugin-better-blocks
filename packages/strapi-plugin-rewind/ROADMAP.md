@@ -10,13 +10,6 @@ Ideas and disagreement welcome at
 
 ## Next
 
-### A pin button
-
-Pinning already works and prune already honours it. There is simply no button:
-you pin a version by setting `pinned` on the row in the database, which is not a
-thing you can ask an editor to do. The smallest gap between "implemented" and
-"usable" anywhere in this plugin.
-
 ### Compare any two versions
 
 Every entry has a **What changed** link, and it compares that version with the
