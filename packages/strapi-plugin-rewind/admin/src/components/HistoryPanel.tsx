@@ -8,10 +8,12 @@ import {
   Dialog,
   Divider,
   Flex,
+  IconButton,
   Loader,
   TextButton,
   Typography,
 } from '@strapi/design-system';
+import { Pin } from '@strapi/icons';
 
 import { ChangesDialog, type VersionDiff } from './ChangesDialog';
 
@@ -91,7 +93,7 @@ const PanelContent = ({
   documentId: string;
   updatedAt?: string;
 }) => {
-  const { get, post } = useFetchClient();
+  const { get, post, put } = useFetchClient();
 
   const [versions, setVersions] = React.useState<VersionRow[]>([]);
   const [total, setTotal] = React.useState(0);
@@ -154,6 +156,28 @@ const PanelContent = ({
       setChanges(null);
     } finally {
       setChangesLoading(false);
+    }
+  };
+
+  /**
+   * Optimistic, and reverted on failure.
+   *
+   * Pinning has no visible consequence until a prune runs weeks later, so a
+   * spinner on the button would be the only feedback there is - and a pin that
+   * waits for a round trip before it looks pinned reads as a broken button.
+   */
+  const togglePin = async (version: VersionRow) => {
+    const pinned = !version.pinned;
+
+    setVersions((rows) => rows.map((row) => (row.id === version.id ? { ...row, pinned } : row)));
+
+    try {
+      await put(`/${PLUGIN_ID}/versions/${version.id}/pin`, { pinned });
+    } catch {
+      setVersions((rows) =>
+        rows.map((row) => (row.id === version.id ? { ...row, pinned: !pinned } : row))
+      );
+      setError(pinned ? 'Could not pin that version.' : 'Could not unpin that version.');
     }
   };
 
@@ -241,15 +265,38 @@ const PanelContent = ({
               <Typography variant="pi" textColor="neutral600">
                 {formatWhen(version.createdAt)}
                 {version.user ? ` · ${version.user.name}` : ''}
+                {/*
+                  The pin icon alone says this in colour, on sixteen pixels.
+                  That is not enough on its own - not for a glance down a list
+                  of ten rows, and not for anyone who does not separate those
+                  two colours - so the state is spelled out here as well.
+                */}
+                {version.pinned ? (
+                  <Typography variant="pi" textColor="primary600" fontWeight="bold">
+                    {' · Pinned'}
+                  </Typography>
+                ) : null}
               </Typography>
               <TextButton onClick={() => showChanges(version)}>What changed</TextButton>
             </Flex>
 
-            <Box shrink={0}>
+            <Flex shrink={0} gap={1} alignItems="center">
+              <IconButton
+                size="S"
+                variant="ghost"
+                label={
+                  version.pinned
+                    ? 'Unpin this version, so tidying up can remove it'
+                    : 'Pin this version, so tidying up never removes it'
+                }
+                onClick={() => togglePin(version)}
+              >
+                <Pin fill={version.pinned ? 'primary600' : 'neutral500'} />
+              </IconButton>
               <Button size="S" variant="tertiary" onClick={() => askToRestore(version)}>
                 Restore
               </Button>
-            </Box>
+            </Flex>
           </Flex>
           <Box paddingTop={2}>
             <Divider />

@@ -30,6 +30,12 @@ export default {
       config: { policies: ['admin::isAuthenticatedAdmin'] },
     },
     {
+      method: 'PUT',
+      path: '/versions/:id/pin',
+      handler: 'version.pin',
+      config: { policies: ['admin::isAuthenticatedAdmin'] },
+    },
+    {
       method: 'POST',
       path: '/versions/:id/restore',
       handler: 'version.restore',

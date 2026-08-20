@@ -13,6 +13,7 @@ const VERSION_UID = 'plugin::rewind.version';
 let app: TestStrapiInstance;
 
 const retention = () => app.strapi.plugin('rewind').service('retention');
+const pin = () => app.strapi.plugin('rewind').service('pin');
 const lock = () => app.strapi.plugin('rewind').service('lock');
 
 const DAY = 24 * 60 * 60 * 1000;
@@ -176,5 +177,43 @@ describe('the prune lock', () => {
     await new Promise((resolve) => setTimeout(resolve, 20));
 
     expect(await lock().acquire('prune', 60_000)).toBe(true);
+  });
+});
+
+describe('pin', () => {
+  it('keeps a version prune would otherwise thin away', async () => {
+    const keep = await seedVersion(500);
+    await seedVersion(500.1);
+
+    await pin().set(keep.id, true);
+    await retention().prune(NOW);
+
+    const rows = await remaining();
+    expect(rows).toHaveLength(1);
+    expect(rows[0].id).toBe(keep.id);
+  });
+
+  it('hands a version back to prune when it is unpinned again', async () => {
+    const version = await seedVersion(500, 'update', { pinned: true });
+
+    await pin().set(version.id, false);
+    await retention().prune(NOW);
+
+    expect(await remaining()).toHaveLength(0);
+  });
+
+  it('reports the state it left the row in', async () => {
+    const version = await seedVersion(1);
+
+    expect(await pin().set(version.id, true)).toEqual({ id: version.id, pinned: true });
+    // Pinning twice is what a double-clicked toggle does; it is not an error.
+    expect(await pin().set(version.id, true)).toEqual({ id: version.id, pinned: true });
+
+    const [row] = await remaining();
+    expect(Boolean(row.pinned)).toBe(true);
+  });
+
+  it('refuses a version that does not exist', async () => {
+    await expect(pin().set(999_999, true)).rejects.toThrow('No version with id 999999');
   });
 });

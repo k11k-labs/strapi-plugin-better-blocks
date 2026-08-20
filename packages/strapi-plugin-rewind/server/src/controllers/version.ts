@@ -94,6 +94,27 @@ const version = ({ strapi }: { strapi: Core.Strapi }) => ({
     }
   },
 
+  /**
+   * `pinned` is read from the body rather than inferred as a toggle, so that two
+   * editors with the panel open cannot flip the same version past each other:
+   * each request states the state it wants, and the last one wins visibly.
+   */
+  async pin(ctx: any) {
+    const { pinned } = ctx.request.body ?? {};
+
+    if (typeof pinned !== 'boolean') {
+      return ctx.badRequest('pinned must be true or false.');
+    }
+
+    try {
+      ctx.body = {
+        data: await strapi.plugin('rewind').service('pin').set(Number(ctx.params.id), pinned),
+      };
+    } catch (error) {
+      return ctx.notFound(error instanceof Error ? error.message : 'No such version.');
+    }
+  },
+
   async restore(ctx: any) {
     try {
       ctx.body = {

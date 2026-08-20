@@ -172,6 +172,17 @@ type, since every custom field stores itself as `json`.
 > generic text diff. A ready-made renderer for Better Blocks documents is
 > wanted, and not yet written.
 
+## Pinning a version
+
+Every entry has a pin. A pinned version is never thinned, whatever the retention
+settings say and however old it gets - the state the site launched in, the draft
+before a rewrite, the version somebody will ask about in a year.
+
+Pinning is the one thing in this panel that writes to the history rather than to
+the document, and it is the whole of it: a version is pinned or it is not.
+Nothing else about the version changes, and unpinning hands it straight back to
+the next prune.
+
 ## Configuration
 
 | Option                     | Default       | Meaning                                                                                                         |
@@ -202,8 +213,6 @@ Worth knowing before you install it, not after:
 - **Only the Document Service is visible.** Writes made through
   `strapi.db.query()` or the legacy entity service bypass the middleware
   entirely and cannot be captured at any setting.
-- **Nothing pins a version from the panel yet.** The column is there and prune
-  honours it, but there is no button; pin by setting `pinned` on the row.
 - **Deleted relation targets lose their names.** A version stores which document
   a relation pointed at, not what it was called, so a link to something since
   deleted shows as missing rather than as "the article it used to be".
