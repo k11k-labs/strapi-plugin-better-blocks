@@ -1,6 +1,6 @@
 {
   "name": "@qkix/strapi-plugin-better-blocks",
-  "version": "0.23.7",
+  "version": "0.23.8",
   "description": "An enhanced Rich Text (Blocks) field for Strapi with inline color picker and more",
   "strapi": {
     "kind": "plugin",

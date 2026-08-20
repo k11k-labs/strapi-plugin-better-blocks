@@ -1,3 +1,9 @@
+## 0.1.1 (2026-08-20)
+
+### 🧱 Updated Dependencies
+
+- Updated @qkix/better-blocks-vue-renderer to 0.1.1
+
 ## 0.1.0 (2026-08-18)
 
 ### 🚀 Features
