@@ -1,3 +1,13 @@
+## 0.3.0 (2026-08-20)
+
+### 🚀 Features
+
+- **rewind:** compare a version with any other, not only the previous one ([#167](https://github.com/qkix/strapi-plugins/pull/167))
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.2.1 (2026-08-20)
 
 ### 🩹 Fixes
