@@ -11,7 +11,7 @@
  * function is written to survive data that carries no information.
  */
 
-import { scaleBand, scaleLinear, scaleTime } from 'd3-scale';
+import { scaleBand, scaleLinear, scaleUtc } from 'd3-scale';
 import { ticks as d3Ticks } from 'd3-array';
 
 import type { AxisBounds, Series, TimeBounds } from './types';
@@ -286,9 +286,15 @@ export function computeTimeDomain(times: readonly number[], bounds?: TimeBounds)
  * d3's time ticks land on whole hours, days, months and years rather than on
  * arithmetic divisions of the span, which is what makes an axis read as
  * "1 Feb, 1 Mar, 1 Apr" instead of "3 Feb, 5 Mar, 4 Apr".
+ *
+ * UTC rather than local time, and not a detail: `scaleTime` ticks on local
+ * midnights, so the same spec would render different geometry depending on the
+ * server's clock - one set of coordinates on a developer's machine, another in
+ * CI, another in production. A chart that is a pure function of its spec has to
+ * pick a zone and keep it, and the labels are parsed as UTC to begin with.
  */
 export function timeScale(domain: Domain, range: [number, number], tickCount = 6): TimeScale {
-  const scale = scaleTime()
+  const scale = scaleUtc()
     .domain([new Date(domain[0]), new Date(domain[1])])
     .range(range);
 

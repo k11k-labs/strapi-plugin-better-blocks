@@ -212,7 +212,10 @@ function buildTime(format: TimeFormat, locale: string | undefined): (time: numbe
       hour: format.hour,
       minute: format.minute,
       second: format.second,
-      timeZone: format.timeZone,
+      // UTC unless the spec says otherwise, to match the scale: labels are
+      // parsed as UTC, so formatting them in the server's zone would slide a
+      // midnight reading onto the previous day west of Greenwich.
+      timeZone: format.timeZone ?? 'UTC',
       hour12: format.hour12,
     });
 

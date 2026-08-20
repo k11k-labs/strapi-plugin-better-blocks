@@ -646,6 +646,22 @@ describe('time axis', () => {
     expect(Math.max(...widths)).toBeGreaterThan(1);
   });
 
+  it('renders the same geometry whatever the server clock says', () => {
+    // d3's scaleTime ticks on local midnights, so this package would have
+    // produced different coordinates on a developer's machine, in CI, and in
+    // production. Labels are parsed as UTC, so the axis is drawn in UTC too.
+    // A UTC midnight formatted in a western zone slides onto the day before,
+    // which is what this pins.
+    const svg = svgOf(timeSpec(['2026-03-01', '2026-03-15', '2026-03-29'], [1, 2, 3]));
+    const labels = bottomLabels(svg).filter(Boolean);
+
+    // Formatted in the server's zone, a UTC midnight lands on the previous day
+    // anywhere west of Greenwich - the axis would start "Feb 28" for readings
+    // that plainly say the first of March.
+    expect(labels[0].startsWith('Mar 1')).toBe(true);
+    expect(labels.some((label) => label.startsWith('Feb'))).toBe(false);
+  });
+
   it('refuses a time axis whose labels are not dates', () => {
     const result = validateChartSpec({
       version: 2,

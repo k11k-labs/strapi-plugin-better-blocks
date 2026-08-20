@@ -252,6 +252,11 @@ Four things follow from placing by time rather than by position:
 - **Bars get a width.** A continuous axis has no band to take one from, so every
   bar is as wide as the closest pair of readings allows, and the axis gains half
   a bar of headroom at each end so the first and last are not cut in half.
+- **Everything is UTC.** Ticks land on UTC boundaries and labels are formatted in
+  UTC unless `format.timeZone` says otherwise. A chart is a pure function of its
+  spec, and local-time ticks would make the same spec render different geometry
+  on a developer's machine, in CI and in production. Pass `timeZone` when you
+  want a chart read in a particular place.
 
 Set `format` to say how instants are written, and `bounds` to fix either end:
 
