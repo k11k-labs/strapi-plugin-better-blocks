@@ -1,3 +1,13 @@
+## 0.2.0 (2026-08-20)
+
+### 🚀 Features
+
+- **rewind:** pin a version from the history panel ([#162](https://github.com/qkix/strapi-plugins/pull/162))
+
+### ❤️ Thank You
+
+- kkukielka
+
 ## 0.1.4 (2026-08-18)
 
 ### 📖 Documentation
